@@ -1,0 +1,46 @@
+{
+  "name": "@repo/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "clean": "find src -type f \\( -name '*.js' -o -name '*.d.ts' \\) ! -name '*.config.js' ! -name '*.config.cjs' -delete && rm -rf dist",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "deploy": "fly deploy --config fly.toml",
+    "fly:launch": "fly launch --config fly.toml",
+    "fly:status": "fly status",
+    "fly:logs": "fly logs",
+    "fly:ssh": "fly ssh console"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",
+    "@hono/zod-validator": "^0.7.4",
+    "@neondatabase/serverless": "^1.0.2",
+    "@sentry/node": "^10.23.0",
+    "better-auth": "^1.3.34",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.7",
+    "hono": "^4.0.0",
+    "nodemailer": "^7.0.10",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "@types/nodemailer": "^7.0.3",
+    "drizzle-kit": "^0.31.6",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.0.0",
+    "typescript": "^5.1.0"
+  }
+}

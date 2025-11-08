@@ -1,0 +1,50 @@
+# fly.toml app configuration file for Skyll API
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+# Updated: 2025-11-07 (2025 best practices)
+
+app = "skyll-api" # Change this to your desired app name
+primary_region = "sjc" # Change to your preferred region
+
+# Kill configuration
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+# Build configuration
+[build]
+  dockerfile = "Dockerfile"
+
+# Environment variables (secrets should be set via `fly secrets set`)
+[env]
+  PORT = "8000"
+  NODE_ENV = "production"
+  # Set these via: fly secrets set KEY=VALUE
+  # DATABASE_URL
+  # BETTER_AUTH_SECRET
+  # BETTER_AUTH_URL
+
+# HTTP service configuration
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true      # Stop machines when idle (2025 syntax)
+  auto_start_machines = true     # Start machines on demand
+  min_machines_running = 0       # Scale to zero when idle (cost optimization)
+  processes = ["app"]
+
+  # Health check endpoint
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+# VM resources
+[[vm]]
+  memory_mb = 512    # Increased to 512MB for better performance
+  cpu_kind = "shared"
+  cpus = 1
+
+# Deploy configuration
+[deploy]
+  strategy = "rolling"
