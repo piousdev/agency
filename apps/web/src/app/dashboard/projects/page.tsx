@@ -19,7 +19,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { requireUser } from '@/lib/auth/session';
 import {
   Search,
   Plus,
@@ -199,9 +198,6 @@ const priorityConfig = {
 };
 
 export default async function ProjectsPage() {
-  // Server-side authentication
-  const user = await requireUser();
-
   return (
     <div className="container mx-auto py-8 space-y-6">
       {/* Header Section */}
