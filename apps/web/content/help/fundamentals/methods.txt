@@ -1,0 +1,84 @@
+# Methods and Parameters
+
+## HTTP Methods
+
+The Docs API uses standard HTTP methods:
+
+### GET
+
+Used to retrieve data from the API. GET requests should be idempotent and have no side effects.
+
+Example:
+```
+GET /api/users
+GET /api/users/123
+```
+
+### POST
+
+Used to create new resources or trigger actions.
+
+Example:
+```
+POST /api/users
+POST /api/invitations/send
+```
+
+### PATCH
+
+Used to partially update existing resources.
+
+Example:
+```
+PATCH /api/users/123
+```
+
+### DELETE
+
+Used to remove resources.
+
+Example:
+```
+DELETE /api/users/123
+```
+
+## Parameters
+
+### Path parameters
+
+Path parameters are part of the URL and identify specific resources:
+
+```
+/api/users/{userId}
+/api/projects/{projectId}/members
+```
+
+### Query parameters
+
+Query parameters are appended to the URL and used for filtering, pagination, and search:
+
+```
+/api/users?page=1&pageSize=20&status=active
+```
+
+### Request body
+
+POST and PATCH requests include a JSON body with the data to create or update:
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "role": "admin"
+}
+```
+
+## Common parameters
+
+Most list endpoints support these query parameters:
+
+- `page` - Page number (default: 1)
+- `pageSize` - Items per page (default: 20, max: 100)
+- `sort` - Field to sort by
+- `order` - Sort direction (`asc` or `desc`)
+- `search` - Search query string

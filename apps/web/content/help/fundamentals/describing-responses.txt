@@ -1,0 +1,89 @@
+# Describing responses
+
+## Success responses
+
+All successful API responses follow this structure:
+
+```json
+{
+  "success": true,
+  "data": { /* response data */ },
+  "message": "Optional success message"
+}
+```
+
+### Example success response
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user-123",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  "message": "User created successfully"
+}
+```
+
+## Error responses
+
+Error responses include details about what went wrong:
+
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "errors": [
+    {
+      "field": "email",
+      "message": "Invalid email format"
+    }
+  ]
+}
+```
+
+### Common error codes
+
+- **400 Bad Request** - Invalid request parameters
+- **401 Unauthorized** - Missing or invalid authentication
+- **403 Forbidden** - Insufficient permissions
+- **404 Not Found** - Resource doesn't exist
+- **422 Unprocessable Entity** - Validation errors
+- **429 Too Many Requests** - Rate limit exceeded
+- **500 Internal Server Error** - Server-side error
+
+## Paginated responses
+
+List endpoints return paginated data with metadata:
+
+```json
+{
+  "success": true,
+  "data": [
+    { "id": 1, "name": "Item 1" },
+    { "id": 2, "name": "Item 2" }
+  ],
+  "pagination": {
+    "page": 1,
+    "pageSize": 20,
+    "totalCount": 100,
+    "totalPages": 5,
+    "hasNextPage": true,
+    "hasPreviousPage": false
+  }
+}
+```
+
+## Timestamps
+
+All timestamps are returned in ISO 8601 format (UTC):
+
+```
+2024-01-01T12:00:00Z
+```
+
+## Null values
+
+Null or undefined values are omitted from responses unless explicitly requested.

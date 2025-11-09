@@ -1,0 +1,75 @@
+# Support
+
+Need help with the Docs Marketing API? We're here to assist you.
+
+## Support channels
+
+### Documentation
+
+Browse our comprehensive documentation for detailed guides, API references, and best practices.
+
+### Community forum
+
+Join our developer community to ask questions, share knowledge, and connect with other developers.
+
+- **Forum**: https://community.docs-marketing.com
+- **Discord**: https://discord.gg/docs-marketing
+
+### Email support
+
+For technical support, contact our team:
+
+- **General inquiries**: support@docs-marketing.com
+- **Technical support**: api-support@docs-marketing.com
+- **Security issues**: security@docs-marketing.com
+
+### Response times
+
+- **Critical issues**: 2-4 hours
+- **High priority**: 24 hours
+- **Standard requests**: 2-3 business days
+
+## Reporting issues
+
+When reporting an issue, please include:
+
+1. Your account ID or API key (redact sensitive parts)
+2. Complete error messages
+3. Request/response examples
+4. Steps to reproduce the issue
+5. Expected vs actual behavior
+
+## Feature requests
+
+Have an idea for a new feature? We'd love to hear it!
+
+Submit feature requests through:
+- GitHub Issues
+- Community forum
+- Email to product@docs-marketing.com
+
+## Status page
+
+Check the current status of our API services:
+
+**https://status.docs-marketing.com**
+
+- Real-time system status
+- Incident history
+- Scheduled maintenance
+- Performance metrics
+
+## Emergency support
+
+For critical production issues affecting your business:
+
+- **Phone**: +1-800-DOCS-API (24/7)
+- **Emergency email**: emergency@docs-marketing.com
+
+## Resources
+
+- API changelog
+- Migration guides
+- Code examples
+- Video tutorials
+- Webinars and workshops

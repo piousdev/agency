@@ -1,0 +1,14 @@
+# Skyll - Not ready for public indexing yet
+
+User-agent: *
+Disallow: /
+
+# Block all search engines
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Slurp
+Disallow: /

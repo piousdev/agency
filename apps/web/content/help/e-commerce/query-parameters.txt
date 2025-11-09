@@ -1,0 +1,100 @@
+# Query string parameters
+
+Query string parameters are key-value pairs appended to the URL after a `?` symbol. They're optional and used for filtering, sorting, pagination, and search.
+
+## Syntax
+
+Query parameters are added to the URL with the format `?key=value`:
+
+```
+/api/users?page=1
+/api/users?page=1&pageSize=50
+/api/users?status=active&role=admin&search=john
+```
+
+## Common parameters
+
+### Pagination
+
+Control which page of results to return:
+
+- `page` - Page number (starts at 1)
+- `pageSize` - Number of items per page (max 100)
+
+```
+GET /api/users?page=2&pageSize=50
+```
+
+### Filtering
+
+Filter results by field values:
+
+- `status` - Filter by status (e.g., active, inactive)
+- `role` - Filter by role
+- `createdAfter` - Filter by creation date
+- `createdBefore` - Filter by creation date
+
+```
+GET /api/users?status=active&role=admin
+```
+
+### Sorting
+
+Sort results by field:
+
+- `sort` - Field to sort by
+- `order` - Sort direction (`asc` or `desc`)
+
+```
+GET /api/users?sort=createdAt&order=desc
+```
+
+### Search
+
+Search across multiple fields:
+
+- `search` - Search query string
+
+```
+GET /api/users?search=john+doe
+```
+
+## Encoding
+
+Always URL-encode query parameter values:
+
+- Spaces: `%20` or `+`
+- Special characters: Use percent encoding
+
+Example:
+```
+/api/users?search=john%20doe&email=test%40example.com
+```
+
+## Examples
+
+### List active users, page 2
+
+```
+GET /api/users?status=active&page=2&pageSize=20
+```
+
+### Search for users created in the last week
+
+```
+GET /api/users?search=engineer&createdAfter=2024-01-01
+```
+
+### Sort users by name, ascending
+
+```
+GET /api/users?sort=name&order=asc
+```
+
+## Best practices
+
+1. Always provide default values for pagination parameters
+2. Validate and sanitize query parameters on the server
+3. Document available filter options for each endpoint
+4. Use consistent naming conventions across endpoints
+5. Consider rate limiting for expensive search operations

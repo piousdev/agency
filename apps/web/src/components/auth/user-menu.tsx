@@ -1,27 +1,30 @@
 /**
- * User Menu Component - Example of Server-First Client Component
+ * User Menu Component - Header Profile Dropdown
  *
  * This component demonstrates:
- * ✅ Client component for interactivity only (dropdown)
- * ✅ Uses useAuth hook for session data
- * ✅ Minimal client JavaScript
- * ✅ No data fetching (session fetched by Better-Auth)
+ * Client component for interactivity only (dropdown)
+ * Uses useAuth hook for session data
+ * Minimal client JavaScript
+ * No data fetching (session fetched by Better-Auth)
+ * Comprehensive menu from centralized configuration
  */
 
 'use client';
 
-import { LogOut, Settings, User } from 'lucide-react';
 import Link from 'next/link';
+import { UserMenuSkeleton } from '@/components/auth/user-menu-skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { userMenuGroupsWithIcons } from '@/config/user-menu';
 import { useAuth } from '@/lib/hooks/use-auth';
 
 export function UserMenu() {
@@ -29,7 +32,7 @@ export function UserMenu() {
 
   // Loading state
   if (isLoading) {
-    return <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />;
+    return <UserMenuSkeleton />;
   }
 
   // Not authenticated - show sign in button
@@ -45,8 +48,8 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar className="h-10 w-10">
+        <Button variant="ghost" className="relative size-8 rounded-full">
+          <Avatar className="size-8">
             <AvatarImage src={user.image ?? undefined} alt={user.name ?? ''} />
             <AvatarFallback className="bg-primary text-primary-foreground">
               {user.name?.[0]?.toUpperCase() ?? user.email?.[0]?.toUpperCase() ?? 'U'}
@@ -62,26 +65,96 @@ export function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="cursor-pointer">
-            <User className="mr-2 h-4 w-4" />
-            Dashboard
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings" className="cursor-pointer">
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Link>
-        </DropdownMenuItem>
+
+        {/* Profile Group */}
+        <DropdownMenuGroup>
+          {userMenuGroupsWithIcons.profile.map((item) => (
+            <DropdownMenuItem key={item.title} asChild>
+              <Link href={item.url} className="cursor-pointer">
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.title}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="cursor-pointer text-destructive focus:text-destructive"
-          onClick={signOut}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Sign Out
-        </DropdownMenuItem>
+
+        {/* Settings Group */}
+        <DropdownMenuGroup>
+          {userMenuGroupsWithIcons.settings.map((item) => (
+            <DropdownMenuItem key={item.title} asChild>
+              <Link href={item.url} className="cursor-pointer">
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.title}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+
+        {/* Developer Group */}
+        <DropdownMenuGroup>
+          {userMenuGroupsWithIcons.developer.map((item) => (
+            <DropdownMenuItem key={item.title} asChild>
+              <Link href={item.url} className="cursor-pointer">
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.title}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+
+        {/* Security Group */}
+        <DropdownMenuGroup>
+          {userMenuGroupsWithIcons.security.map((item) => (
+            <DropdownMenuItem key={item.title} asChild>
+              <Link href={item.url} className="cursor-pointer">
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.title}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+
+        {/* Workspace Group */}
+        <DropdownMenuGroup>
+          {userMenuGroupsWithIcons.workspace.map((item) => (
+            <DropdownMenuItem key={item.title} asChild>
+              <Link href={item.url} className="cursor-pointer">
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.title}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+
+        {/* Support Group */}
+        <DropdownMenuGroup>
+          {userMenuGroupsWithIcons.support.map((item) => (
+            <DropdownMenuItem key={item.title} asChild>
+              <Link href={item.url} className="cursor-pointer">
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.title}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+
+        {/* Logout */}
+        {userMenuGroupsWithIcons.signout.map((item) => (
+          <DropdownMenuItem
+            key={item.title}
+            className="cursor-pointer text-destructive focus:text-destructive"
+            onClick={signOut}
+          >
+            <item.icon className="mr-2 h-4 w-4" />
+            {item.title}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

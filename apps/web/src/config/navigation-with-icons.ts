@@ -1,0 +1,198 @@
+/**
+ * SKYLL Operations Platform - Navigation with Icons
+ *
+ * This file extends the base navigation configuration with icon assignments.
+ * Icons are imported from Lucide React for consistency across the platform.
+ */
+
+import {
+  BarChart3,
+  Building2,
+  CheckSquare,
+  ClipboardList,
+  FileText,
+  Folder,
+  Headphones,
+  HelpCircle,
+  LayoutDashboard,
+  MessageSquare,
+  Package,
+  Search,
+  Settings,
+  Shield,
+} from 'lucide-react';
+
+import {
+  administrationGroup,
+  adminNavigation,
+  analyticsNavigation,
+  clientManagementGroup,
+  clientsNavigation,
+  collaborationContentGroup,
+  collaborationNavigation,
+  contentNavigation,
+  generalGroup,
+  helpNavigation,
+  insightsGroup,
+  issuesNavigation,
+  type NavigationGroup,
+  type NavigationItem,
+  projectsNavigation,
+  requestsNavigation,
+  searchNavigation,
+  serviceManagementGroup,
+  servicesNavigation,
+  settingsNavigation,
+  tasksNavigation,
+  workManagementGroup,
+  workNavigation,
+} from './navigation';
+
+/**
+ * Add icons to navigation items
+ */
+
+// Work Management icons
+const workWithIcons: NavigationItem = {
+  ...workNavigation,
+  icon: LayoutDashboard,
+};
+
+const projectsWithIcons: NavigationItem = {
+  ...projectsNavigation,
+  icon: Folder,
+};
+
+const tasksWithIcons: NavigationItem = {
+  ...tasksNavigation,
+  icon: ClipboardList,
+};
+
+const issuesWithIcons: NavigationItem = {
+  ...issuesNavigation,
+  icon: CheckSquare,
+};
+
+// Client & Service Management icons
+const clientsWithIcons: NavigationItem = {
+  ...clientsNavigation,
+  icon: Building2,
+};
+
+const servicesWithIcons: NavigationItem = {
+  ...servicesNavigation,
+  icon: Package,
+};
+
+const requestsWithIcons: NavigationItem = {
+  ...requestsNavigation,
+  icon: Headphones,
+};
+
+// Collaboration & Content icons
+const collaborationWithIcons: NavigationItem = {
+  ...collaborationNavigation,
+  icon: MessageSquare,
+};
+
+const contentWithIcons: NavigationItem = {
+  ...contentNavigation,
+  icon: FileText,
+};
+
+// Insights & Administration icons
+const analyticsWithIcons: NavigationItem = {
+  ...analyticsNavigation,
+  icon: BarChart3,
+};
+
+const adminWithIcons: NavigationItem = {
+  ...adminNavigation,
+  icon: Shield,
+};
+
+const settingsWithIcons: NavigationItem = {
+  ...settingsNavigation,
+  icon: Settings,
+};
+
+const searchWithIcons: NavigationItem = {
+  ...searchNavigation,
+  icon: Search,
+};
+
+const helpWithIcons: NavigationItem = {
+  ...helpNavigation,
+  icon: HelpCircle,
+};
+
+/**
+ * Navigation groups with icons
+ */
+export const workManagementGroupWithIcons: NavigationGroup = {
+  ...workManagementGroup,
+  items: [workWithIcons, projectsWithIcons, tasksWithIcons, issuesWithIcons],
+};
+
+export const clientManagementGroupWithIcons: NavigationGroup = {
+  ...clientManagementGroup,
+  items: [clientsWithIcons],
+};
+
+export const serviceManagementGroupWithIcons: NavigationGroup = {
+  ...serviceManagementGroup,
+  items: [servicesWithIcons, requestsWithIcons],
+};
+
+export const collaborationContentGroupWithIcons: NavigationGroup = {
+  ...collaborationContentGroup,
+  items: [collaborationWithIcons, contentWithIcons],
+};
+
+export const insightsGroupWithIcons: NavigationGroup = {
+  ...insightsGroup,
+  items: [analyticsWithIcons],
+};
+
+export const administrationGroupWithIcons: NavigationGroup = {
+  ...administrationGroup,
+  items: [adminWithIcons],
+};
+
+export const generalGroupWithIcons: NavigationGroup = {
+  ...generalGroup,
+  items: [settingsWithIcons, searchWithIcons, helpWithIcons],
+};
+
+/**
+ * Complete sidebar navigation with icons
+ */
+export const sidebarNavigationWithIcons: NavigationGroup[] = [
+  workManagementGroupWithIcons,
+  clientManagementGroupWithIcons,
+  serviceManagementGroupWithIcons,
+  collaborationContentGroupWithIcons,
+  insightsGroupWithIcons,
+  administrationGroupWithIcons,
+  generalGroupWithIcons,
+];
+
+/**
+ * Export individual sections with icons for flexibility
+ */
+export {
+  workWithIcons,
+  projectsWithIcons,
+  tasksWithIcons,
+  issuesWithIcons,
+  clientsWithIcons,
+  servicesWithIcons,
+  requestsWithIcons,
+  collaborationWithIcons,
+  contentWithIcons,
+  analyticsWithIcons,
+  adminWithIcons,
+  settingsWithIcons,
+  searchWithIcons,
+  helpWithIcons,
+};

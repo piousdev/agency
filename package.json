@@ -31,6 +31,12 @@
     "vitest": "^4.0.7"
   },
   "packageManager": "pnpm@9.0.0",
+  "pnpm": {
+    "overrides": {
+      "import-in-the-middle": "1.15.0",
+      "require-in-the-middle": "7.5.2"
+    }
+  },
   "lint-staged": {
     "apps/api/**/*.{js,jsx,ts,tsx}": [
       "bash -c 'turbo run lint --filter=@repo/api'",

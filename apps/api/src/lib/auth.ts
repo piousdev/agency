@@ -1,4 +1,4 @@
-import { betterAuth } from 'better-auth';
+import { AuthContext, betterAuth, BetterAuthOptions } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware } from 'better-auth/plugins';
 import { db } from '../db/index.js';
@@ -292,16 +292,15 @@ export const auth = betterAuth({
    */
   onAPIError: {
     throw: true, // Re-throw the error after logging
-    onError: (
+    onError: async (
       error: unknown,
-      ctx: { headers?: { get: (key: string) => string | null } | null; url?: string | null }
+      ctx: AuthContext<BetterAuthOptions>
     ) => {
       try {
         const err = error as { status?: number; message?: string };
-        const ipAddress =
-          ctx.headers?.get('x-forwarded-for') || ctx.headers?.get('x-real-ip') || 'unknown';
-        const userAgent = ctx.headers?.get('user-agent') || 'unknown';
-        const endpoint = ctx.url ? new URL(ctx.url).pathname : 'unknown';
+        const ipAddress = 'unknown';
+        const userAgent = 'unknown';
+        const endpoint = 'unknown';
 
         // Extract email from request URL or body if available
         let email: string | undefined;
