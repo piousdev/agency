@@ -1,0 +1,70 @@
+# Path parameters
+
+Path parameters are variable parts of the URL path that identify specific resources. They're required and part of the route definition.
+
+## Syntax
+
+Path parameters are defined with curly braces in the route definition:
+
+```
+/api/users/{userId}
+/api/projects/{projectId}/tasks/{taskId}
+```
+
+## Usage
+
+When making a request, replace the parameter placeholders with actual values:
+
+```
+GET /api/users/abc123
+GET /api/projects/proj-456/tasks/task-789
+```
+
+## Validation
+
+Path parameters are validated according to the API specification:
+
+- **User IDs**: Must be valid UUID or string identifiers
+- **Numeric IDs**: Must be positive integers
+- **Slugs**: Must match pattern `[a-z0-9-]+`
+
+## Examples
+
+### Get a specific user
+
+```
+GET /api/users/user-123
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user-123",
+    "name": "John Doe",
+    "email": "john@example.com"
+  }
+}
+```
+
+### Update a project task
+
+```
+PATCH /api/projects/proj-456/tasks/task-789
+```
+
+Request body:
+```json
+{
+  "title": "Updated task title",
+  "status": "completed"
+}
+```
+
+## Best practices
+
+1. Always validate path parameters on the client side before making requests
+2. Use meaningful, descriptive parameter names
+3. Keep parameter values URL-safe (no spaces or special characters)
+4. Document expected parameter formats in your API client

@@ -8,6 +8,21 @@ const nextConfig: NextConfig = {
   // Enable standalone output for optimized Docker deployments
   // This reduces the image size by including only necessary files
   output: 'standalone',
+
+  // Performance optimizations
+  poweredByHeader: false, // Remove X-Powered-By header for security
+  compress: true, // Enable gzip compression
+
+  // Image optimization
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
+  },
+
+  // Experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['@/components/ui', 'lucide-react'],
+  },
 };
 
 /**
