@@ -857,6 +857,209 @@ import { RequireRole } from '@/components/auth';
 
 Reference: `apps/web/src/lib/auth/session.ts` for server-side utilities
 
-```
+## MDX Integration & Documentation Pages
+
+### Overview
+
+The application uses **@next/mdx** for rendering Markdown + JSX content in documentation pages like Help and Changelog. MDX enables rich, interactive documentation with React components embedded in markdown.
+
+### Architecture
+
+**Key Files:**
+
+| File                    | Purpose                                  |
+| ----------------------- | ---------------------------------------- |
+| `mdx-components.tsx`    | Custom component styling for MDX content |
+| `next.config.ts`        | MDX plugin configuration                 |
+| `content/changelog/`    | MDX content files for changelog          |
+| `components/changelog/` | Changelog page components                |
+| `components/help/`      | Help documentation components            |
+
+**Design Pattern:** 3-Column Layout
 
 ```
+┌─────────────┬──────────────────────┬──────────────┐
+│   Sidebar   │   MDX Content        │ Table of     │
+│             │                      │ Contents     │
+│  - Nav      │  - Rendered MDX      │              │
+│  - Sections │  - Custom components │  - Auto-gen  │
+│             │  - Styled markdown   │  - Scroll    │
+└─────────────┴──────────────────────┴──────────────┘
+```
+
+### MDX Component Mapping
+
+**File:** `apps/web/mdx-components.tsx`
+
+All markdown elements are mapped to styled components using Tailwind CSS:
+
+```typescript
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return {
+    h1: ({ children }) => <h1 className="mb-4 mt-8 scroll-mt-20 text-4xl...">{children}</h1>,
+    h2: ({ children }) => <h2 className="mb-3 mt-6 scroll-mt-20 text-3xl...">{children}</h2>,
+    // ... other elements
+    ...components,
+  };
+}
+```
+
+**Key Features:**
+
+- Responsive typography with Tailwind prose plugin
+- Dark mode support via `dark:` variants
+- Scroll offset (`scroll-mt-20`) for anchor navigation
+- Consistent spacing and visual hierarchy
+
+### Example: Changelog Page
+
+**Route:** `/dashboard/changelog/[[...slug]]`
+
+**Implementation:**
+
+1. **MDX Content** - `content/changelog/index.mdx`
+   - Unified changelog for entire monorepo
+   - Organized by version and package
+   - Keep a Changelog format
+
+2. **Page Component** - `app/(default)/dashboard/changelog/[[...slug]]/page.tsx`
+
+   ```typescript
+   import { Changelog } from '@/components/changelog';
+   import ChangelogMDX from '../../../../../../content/changelog/index.mdx';
+
+   export default async function ChangelogPage() {
+     return (
+       <Changelog>
+         <ChangelogMDX />
+       </Changelog>
+     );
+   }
+   ```
+
+3. **Components** - `components/changelog/`
+   - `index.tsx` - Main layout orchestrator (Server Component)
+   - `sidebar.tsx` - Version navigation (Client Component)
+   - `content.tsx` - MDX wrapper with prose styling
+   - `table-of-contents.tsx` - Auto-generated TOC (Client Component)
+   - `config.ts` - Navigation structure
+   - `types.ts` - TypeScript interfaces
+
+4. **Layout Override** - `app/(default)/dashboard/changelog/layout.tsx`
+   ```typescript
+   export default function ChangelogLayout({ children }) {
+     return <div className="-m-4 flex h-full flex-col">{children}</div>;
+   }
+   ```
+
+   - Removes default dashboard padding
+   - Allows changelog to use full viewport
+
+### Server-First MDX Pattern
+
+**✅ Correct Pattern:**
+
+```typescript
+// Server Component (default)
+import ContentMDX from './content.mdx';
+
+export default function Page() {
+  return (
+    <article className="prose">
+      <ContentMDX />
+    </article>
+  );
+}
+```
+
+**❌ Anti-Pattern:**
+
+```typescript
+// Don't use 'use client' for MDX pages
+'use client';
+import ContentMDX from './content.mdx'; // ❌ Adds unnecessary client JS
+```
+
+### Next.js Configuration
+
+**File:** `apps/web/next.config.ts`
+
+```typescript
+import createMDX from '@next/mdx';
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+  },
+});
+
+export default withSentryConfig(withMDX(nextConfig), {
+  // Sentry config...
+});
+```
+
+**Important Notes:**
+
+- **Turbopack Limitation**: remark-gfm plugin removed due to serialization issues
+- **Future Enhancement**: Can add plugins when Next.js improves plugin serialization
+- **Page Extensions**: `['js', 'jsx', 'md', 'mdx', 'ts', 'tsx']`
+
+### Navigation Integration
+
+**Files:**
+
+- `config/navigation.ts` - Base navigation structure
+- `config/navigation-with-icons.ts` - Icon assignments
+
+**Example:**
+
+```typescript
+// 1. Define navigation item
+export const changelogNavigation: NavigationItem = {
+  title: 'Changelog',
+  description: 'Release history and platform updates',
+  url: '/dashboard/changelog',
+};
+
+// 2. Add to navigation group
+export const generalGroup: NavigationGroup = {
+  title: 'General',
+  items: [settingsNavigation, searchNavigation, helpNavigation, changelogNavigation],
+};
+
+// 3. Add icon
+const changelogWithIcons: NavigationItem = {
+  ...changelogNavigation,
+  icon: History, // from lucide-react
+};
+```
+
+### Best Practices
+
+1. **Content Organization**
+   - Store MDX files in `content/` directory
+   - Use meaningful directory structure
+   - Keep content separate from components
+
+2. **Component Styling**
+   - Use `prose` utility classes for typography
+   - Leverage Tailwind's built-in styles
+   - Ensure dark mode compatibility
+
+3. **Performance**
+   - MDX compiles at build time (zero runtime cost)
+   - Server Components by default (no client JS)
+   - Static generation with `generateStaticParams()`
+
+4. **Accessibility**
+   - Semantic HTML from markdown
+   - Proper heading hierarchy
+   - Skip links via `scroll-mt-*` utilities
+
+### References
+
+- [Next.js MDX Documentation](https://nextjs.org/docs/app/building-your-application/configuring/mdx)
+- [MDX Official Docs](https://mdxjs.com/)
+- Implementation: `apps/web/src/components/changelog/`
+- Implementation: `apps/web/src/components/help/`
