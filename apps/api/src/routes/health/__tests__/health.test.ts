@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import app from '../../../index.js';
-import { db } from '../../../db/index.js';
+import { db } from '../../../db';
 
 // Mock database
 vi.mock('../../../db/index.js', () => ({
@@ -17,7 +17,13 @@ describe('Health Check Endpoints', () => {
   describe('GET /health', () => {
     it('should return healthy status when database is accessible', async () => {
       // Mock successful database connection
-      vi.mocked(db.execute).mockResolvedValueOnce([{ health_check: 1 }]);
+      vi.mocked(db.execute).mockResolvedValueOnce({
+        rows: [{ health_check: 1 }],
+        fields: [],
+        command: 'SELECT',
+        rowCount: 1,
+        rowAsArray: false,
+      });
 
       const res = await app.request('/health');
       const data = await res.json();
@@ -47,7 +53,13 @@ describe('Health Check Endpoints', () => {
   describe('GET /health/ready', () => {
     it('should return ready status when database is accessible', async () => {
       // Mock successful database connection
-      vi.mocked(db.execute).mockResolvedValueOnce([{ result: 1 }]);
+      vi.mocked(db.execute).mockResolvedValueOnce({
+        rows: [{ result: 1 }],
+        fields: [],
+        command: 'SELECT',
+        rowCount: 1,
+        rowAsArray: false,
+      });
 
       const res = await app.request('/health/ready');
       const data = await res.json();

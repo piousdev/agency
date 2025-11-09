@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { db } from '../../db/index.js';
+import { db } from '@/db';
 import { sql } from 'drizzle-orm';
-import { type AuthVariables } from '../../middleware/auth.js';
+import { type AuthVariables } from '@/middleware/auth';
 import packageJson from '../../../package.json' with { type: 'json' };
 
 const app = new Hono<{ Variables: AuthVariables }>();

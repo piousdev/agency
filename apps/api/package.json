@@ -1,6 +1,6 @@
 {
   "name": "@repo/api",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -36,11 +36,13 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@types/node": "^22.19.0",
     "@types/nodemailer": "^7.0.3",
     "drizzle-kit": "^0.31.6",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.0.0",
-    "typescript": "^5.1.0"
+    "typescript": "^5.1.0",
+    "typescript-eslint": "^8.46.3"
   }
 }
