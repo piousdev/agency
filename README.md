@@ -263,6 +263,12 @@ pnpm lint                # Lint all apps
 pnpm format              # Format code with Prettier
 pnpm test                # Run all tests
 
+# Versioning (Changesets)
+pnpm changeset           # Create a new changeset
+pnpm changeset:version   # Update versions and CHANGELOGs
+pnpm changeset:status    # View pending changesets
+pnpm changeset:publish   # Publish to npm (future)
+
 # Deployment (requires Fly.io setup)
 pnpm deploy:api          # Deploy API to Fly.io
 pnpm deploy:web          # Deploy Web to Fly.io
@@ -345,6 +351,29 @@ pnpm --filter @repo/web add <package>
 pnpm add -D -w <package>
 ```
 
+### Versioning Workflow
+
+We use [Changesets](https://github.com/changesets/changesets) for version management:
+
+```bash
+# 1. Make your changes
+git checkout -b feature/my-feature
+
+# 2. Create a changeset when ready
+pnpm changeset
+# Select packages, bump type (major/minor/patch), and summary
+
+# 3. Commit changeset with your code
+git add .changeset/*.md
+git commit -m "feat: add new feature"
+
+# 4. (Maintainers) Version packages when ready to release
+pnpm changeset:version  # Updates versions + CHANGELOGs
+git commit -m "chore: version packages"
+```
+
+**See [VERSIONING.md](./VERSIONING.md) for complete guide.**
+
 ## 🧪 Testing
 
 ### Unit Tests (Vitest)
@@ -415,6 +444,8 @@ pnpm deploy:all
 
 ## 📚 Documentation
 
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development workflow and commit guide
+- **[VERSIONING.md](./VERSIONING.md)** - Versioning and changelog guide
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment guide
 - **[openspec/STATUS.md](./openspec/STATUS.md)** - Current implementation status
 - **[apps/api/README.md](./apps/api/README.md)** - API documentation
@@ -448,40 +479,53 @@ pnpm deploy:all
 
 ## 🤝 Contributing
 
-### Branching Strategy
+We use a **hybrid approach** with Conventional Commits + Changesets for structured commits and controlled releases.
 
-- `main` - Production-ready code
-- `develop` - Integration branch
-- `feature/*` - New features
-- `fix/*` - Bug fixes
+### Quick Workflow
 
-### Commit Conventions
+```bash
+# 1. Make your changes
+git checkout -b feat/my-feature
 
-Follow conventional commits:
+# 2. Commit with interactive wizard
+git add .
+pnpm commit    # Guided commit message creation
 
+# 3. Create changeset (for user-facing changes)
+pnpm changeset
+
+# 4. Push and create PR
+git push origin feat/my-feature
 ```
-feat: add user invitation system
-fix: resolve CORS issue in auth handler
+
+### Commit Format (Enforced)
+
+All commits must follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```bash
+feat: add user analytics dashboard
+fix: resolve login timeout issue
 docs: update deployment guide
 chore: upgrade dependencies
 ```
 
-### Pull Request Process
+**Commit types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`
 
-1. Create feature branch from `develop`
-2. Make changes and add tests
-3. Run `pnpm format` and `pnpm lint`
-4. Push and create PR
-5. Wait for CI checks to pass
-6. Request review
-7. Merge to `develop`
+**See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete guide.**
 
-### Code Style
+### When to Create Changesets
 
-- Use TypeScript for all new code
-- Follow existing patterns and conventions
-- Write tests for new features
-- Document complex logic
+✅ Create for: Features, bug fixes, breaking changes, performance improvements
+❌ Skip for: Docs, tests, refactoring (no behavior change)
+
+### Pull Request Checklist
+
+- [ ] Commits follow Conventional Commits format
+- [ ] Tests pass (`pnpm test`)
+- [ ] Code formatted (`pnpm format`)
+- [ ] Linting passes (`pnpm lint`)
+- [ ] Changeset created (if applicable)
+- [ ] Documentation updated (if needed)
 
 ## 🐛 Troubleshooting
 
