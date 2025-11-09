@@ -1,9 +1,9 @@
 'use client';
-
-import { HelpCircle, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { UserMenu } from '@/components/auth/user-menu';
+import Help from '@/components/default/dashboard/navigation/header/help';
+import Settings from '@/components/default/dashboard/navigation/header/settings';
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -13,7 +13,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,9 +23,9 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
-import { Notifications } from '../../notifications';
 import { KeyboardShortcuts } from '../../shortcuts';
 import { CommandPalette } from './command-palette';
+import { Notifications } from './notifications';
 import { ThemeToggle } from './theme-toggle';
 
 function UserMenuSkeleton() {
@@ -63,7 +62,7 @@ export function DefaultHeader() {
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
         <div className="flex items-center gap-2">
           {/* Left side of header */}
-          <SidebarTrigger className="-ml-1" />
+          <SidebarTrigger className="-ml-1 text-foreground" />
           <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
           <Breadcrumb>
             <BreadcrumbList>
@@ -87,7 +86,7 @@ export function DefaultHeader() {
                         <BreadcrumbItem className="hidden md:block">
                           <DropdownMenu>
                             <DropdownMenuTrigger className="flex items-center gap-1">
-                              <BreadcrumbEllipsis />
+                              <BreadcrumbEllipsis className="text-primary" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start">
                               {hidden.map((item) => (
@@ -121,20 +120,16 @@ export function DefaultHeader() {
           {/* Icon Buttons */}
           <div className="flex items-center gap-1">
             {/* Theme Toggle */}
-            <ThemeToggle />
+            <ThemeToggle className="text-primary" />
 
             {/* Notifications */}
             <Notifications />
 
             {/* Help */}
-            <Button variant="ghost" size="icon-sm" aria-label="Help">
-              <HelpCircle className="size-[1.2rem]" />
-            </Button>
+            <Help />
 
             {/* Settings */}
-            <Button variant="ghost" size="icon-sm" aria-label="Settings">
-              <Settings className="size-[1.2rem]" />
-            </Button>
+            <Settings />
 
             {/* Separator before user menu */}
             <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
