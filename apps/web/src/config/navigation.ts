@@ -936,6 +936,13 @@ export const helpNavigation: NavigationItem = {
   url: '/dashboard/help',
 };
 
+// Changelog Section
+export const changelogNavigation: NavigationItem = {
+  title: 'Changelog',
+  description: 'Release history and platform updates',
+  url: '/dashboard/changelog',
+};
+
 // Insights Group (Analytics & Reporting)
 export const insightsGroup: NavigationGroup = {
   title: 'Insights',
@@ -948,10 +955,10 @@ export const administrationGroup: NavigationGroup = {
   items: [adminNavigation],
 };
 
-// General Group (Settings, Help, Search)
+// General Group (Settings, Search, Help, Changelog)
 export const generalGroup: NavigationGroup = {
   title: 'General',
-  items: [settingsNavigation, searchNavigation, helpNavigation],
+  items: [settingsNavigation, searchNavigation, helpNavigation, changelogNavigation],
 };
 
 // ============================================================================

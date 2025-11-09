@@ -14,6 +14,7 @@ import {
   Folder,
   Headphones,
   HelpCircle,
+  History,
   LayoutDashboard,
   MessageSquare,
   Package,
@@ -26,6 +27,7 @@ import {
   administrationGroup,
   adminNavigation,
   analyticsNavigation,
+  changelogNavigation,
   clientManagementGroup,
   clientsNavigation,
   collaborationContentGroup,
@@ -126,6 +128,11 @@ const helpWithIcons: NavigationItem = {
   icon: HelpCircle,
 };
 
+const changelogWithIcons: NavigationItem = {
+  ...changelogNavigation,
+  icon: History,
+};
+
 /**
  * Navigation groups with icons
  */
@@ -161,7 +168,7 @@ export const administrationGroupWithIcons: NavigationGroup = {
 
 export const generalGroupWithIcons: NavigationGroup = {
   ...generalGroup,
-  items: [settingsWithIcons, searchWithIcons, helpWithIcons],
+  items: [settingsWithIcons, searchWithIcons, helpWithIcons, changelogWithIcons],
 };
 
 /**
@@ -195,4 +202,5 @@ export {
   settingsWithIcons,
   searchWithIcons,
   helpWithIcons,
+  changelogWithIcons,
 };
