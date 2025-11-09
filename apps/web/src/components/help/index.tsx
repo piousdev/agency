@@ -2,18 +2,17 @@ import { HELP_SECTIONS } from './config';
 import { Content } from './content';
 import { Sidebar } from './sidebar';
 import { TableOfContents } from './table-of-contents';
-import type { HelpContent } from './types';
 
 interface HelpProps {
-  content: HelpContent;
+  children: React.ReactNode;
 }
 
 /**
  * Help Component
  * Server component that orchestrates the help page layout
- * Combines sidebar navigation, main content, and table of contents
+ * Combines sidebar navigation, MDX content, and table of contents
  */
-export function Help({ content }: HelpProps) {
+export function Help({ children }: HelpProps) {
   return (
     <div className="flex h-full w-full">
       {/* Left Sidebar - Navigation */}
@@ -21,12 +20,12 @@ export function Help({ content }: HelpProps) {
 
       {/* Main Content Area */}
       <main className="min-w-0 flex-1 px-8 py-6">
-        <Content content={content} />
+        <Content>{children}</Content>
       </main>
 
       {/* Right Sidebar - Table of Contents */}
       <aside className="hidden shrink-0 py-6 pr-6 xl:block">
-        <TableOfContents headings={content.headings} />
+        <TableOfContents />
       </aside>
     </div>
   );

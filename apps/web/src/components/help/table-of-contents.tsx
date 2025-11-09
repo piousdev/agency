@@ -3,22 +3,50 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import type { ContentHeading } from './types';
+
+interface Heading {
+  id: string;
+  text: string;
+  level: number;
+}
 
 interface TableOfContentsProps {
-  headings: ContentHeading[];
   className?: string;
 }
 
 /**
  * Table of Contents Component
  * Client component for "On This Page" navigation with scroll-based active state
- * Uses Intersection Observer to track visible sections
+ * Automatically extracts headings from the article element
  */
-export function TableOfContents({ headings, className }: TableOfContentsProps) {
+export function TableOfContents({ className }: TableOfContentsProps) {
+  const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
+    // Extract headings from the article element
+    const articleElement = document.querySelector('article');
+    if (!articleElement) return;
+
+    const headingElements = articleElement.querySelectorAll('h1, h2, h3, h4');
+    const extractedHeadings: Heading[] = [];
+
+    for (const element of headingElements) {
+      const id = element.id;
+      const text = element.textContent || '';
+      const level = Number.parseInt(element.tagName.slice(1), 10);
+
+      if (id && text) {
+        extractedHeadings.push({ id, text, level });
+      }
+    }
+
+    setHeadings(extractedHeadings);
+  }, []);
+
+  useEffect(() => {
+    if (headings.length === 0) return;
+
     // Get all heading elements
     const headingElements = headings
       .map((heading) => document.getElementById(heading.id))

@@ -1,3 +1,9 @@
+---
+title: Methods and Parameters
+description: Understanding HTTP methods and API parameters
+order: 2
+---
+
 # Methods and Parameters
 
 ## HTTP Methods
@@ -9,6 +15,7 @@ The Docs API uses standard HTTP methods:
 Used to retrieve data from the API. GET requests should be idempotent and have no side effects.
 
 Example:
+
 ```
 GET /api/users
 GET /api/users/123
@@ -19,6 +26,7 @@ GET /api/users/123
 Used to create new resources or trigger actions.
 
 Example:
+
 ```
 POST /api/users
 POST /api/invitations/send
@@ -29,6 +37,7 @@ POST /api/invitations/send
 Used to partially update existing resources.
 
 Example:
+
 ```
 PATCH /api/users/123
 ```
@@ -38,6 +47,7 @@ PATCH /api/users/123
 Used to remove resources.
 
 Example:
+
 ```
 DELETE /api/users/123
 ```

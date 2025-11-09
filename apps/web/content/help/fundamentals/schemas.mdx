@@ -1,3 +1,9 @@
+---
+title: Alternative Schemas
+description: Alternative schema patterns
+order: 5
+---
+
 # Alternative Schemas
 
 ## File system
@@ -43,7 +49,9 @@ All successful API responses follow this structure:
 ```json
 {
   "success": true,
-  "data": { /* response data */ },
+  "data": {
+    /* response data */
+  },
   "message": "Optional success message"
 }
 ```
@@ -72,7 +80,9 @@ List endpoints return paginated data with metadata:
 ```json
 {
   "success": true,
-  "data": [ /* array of items */ ],
+  "data": [
+    /* array of items */
+  ],
   "pagination": {
     "page": 1,
     "pageSize": 20,

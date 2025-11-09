@@ -1,95 +1,31 @@
+import { getContentNavigation } from '@/lib/mdx';
 import type { HelpSection } from './types';
 
 /**
  * Help Documentation Structure Configuration
- * Defines the navigation tree for the help documentation
+ * Auto-generated from content/help directory structure + frontmatter
  */
-export const HELP_SECTIONS: HelpSection[] = [
-  {
-    id: 'documentation',
-    title: 'Documentation',
-    slug: 'documentation',
-    children: [
-      {
-        id: 'fundamentals',
-        title: 'Fundamentals',
-        slug: 'fundamentals',
-        children: [
-          {
-            id: 'basics',
-            title: 'The basics',
-            slug: 'basics',
-            file: 'fundamentals/basics.txt',
-          },
-          {
-            id: 'methods',
-            title: 'Methods and Parameters',
-            slug: 'methods',
-            file: 'fundamentals/methods.txt',
-          },
-        ],
-      },
-      {
-        id: 'alternative-schemas',
-        title: 'Alternative Schemas',
-        slug: 'alternative-schemas',
-        children: [
-          {
-            id: 'file-system',
-            title: 'File system',
-            slug: 'file-system',
-            file: 'fundamentals/file-system.txt',
-          },
-          {
-            id: 'describing-responses',
-            title: 'Describing responses',
-            slug: 'describing-responses',
-            file: 'fundamentals/describing-responses.txt',
-          },
-        ],
-      },
-      {
-        id: 'e-commerce',
-        title: 'E-Commerce',
-        slug: 'e-commerce',
-        children: [
-          {
-            id: 'path-parameters',
-            title: 'Path parameters',
-            slug: 'path-parameters',
-            file: 'e-commerce/path-parameters.txt',
-          },
-          {
-            id: 'query-parameters',
-            title: 'Query string parameters',
-            slug: 'query-parameters',
-            file: 'e-commerce/query-parameters.txt',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'guides',
-    title: 'Guides / Tutorials',
-    slug: 'guides',
-    children: [
-      {
-        id: 'getting-started',
-        title: 'Getting Started',
-        slug: 'getting-started',
-        file: 'guides/getting-started.txt',
-      },
-    ],
-  },
-  {
-    id: 'support',
-    title: 'Support',
-    slug: 'support',
-    file: 'support/index.txt',
-    children: [],
-  },
-];
+export function getHelpSections(): HelpSection[] {
+  const navigationTree = getContentNavigation('help');
+
+  // Convert NavigationItem[] to HelpSection[]
+  const convertToHelpSections = (items: ReturnType<typeof getContentNavigation>): HelpSection[] => {
+    return items.map((item) => ({
+      id: item.id,
+      title: item.title,
+      slug: item.slug,
+      file: item.filePath,
+      children: item.children ? convertToHelpSections(item.children) : [],
+    }));
+  };
+
+  return convertToHelpSections(navigationTree);
+}
+
+/**
+ * Cached help sections (generated once per build/request)
+ */
+export const HELP_SECTIONS = getHelpSections();
 
 /**
  * Get the full path to a section by its slug
