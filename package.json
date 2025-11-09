@@ -12,6 +12,11 @@
     "format": "prettier --write .",
     "test": "turbo run test",
     "prepare": "husky",
+    "commit": "cz",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "changeset:status": "changeset status",
     "deploy:api": "cd apps/api && fly deploy --config fly.toml",
     "deploy:web": "cd apps/web && fly deploy --config fly.toml --build-arg NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL",
     "deploy:all": "pnpm deploy:api && pnpm deploy:web",
@@ -21,7 +26,13 @@
   },
   "devDependencies": {
     "@better-auth/cli": "^1.3.34",
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.7",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@vitest/ui": "^4.0.7",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.39.1",
     "eslint-config-turbo": "^2.6.0",
     "husky": "^9.1.7",
@@ -49,5 +60,10 @@
     "**/*.{json,css,md,mdx}": [
       "prettier --write"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
