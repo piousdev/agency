@@ -142,6 +142,76 @@ This is **NOT** a multi-tenant SaaS product - it's Skyll's core business applica
 - **Commit Messages**: Clear, descriptive messages explaining "why" not just "what"
 - **Change IDs**: Verb-led kebab-case (e.g., `add-subscription-tiers`, `update-client-permissions`)
 
+### Versioning
+
+**System**: Changesets (official Turborepo recommendation)
+
+**Philosophy**: Independent versioning for each package, with clear changelogs and semantic versioning.
+
+**Workflow**:
+
+1. **Make Changes**: Develop features/fixes in feature branch
+2. **Create Changeset**: Run `pnpm changeset` when ready
+   - Select affected packages (`@repo/web`, `@repo/api`, or both)
+   - Choose bump type:
+     - **MAJOR**: Breaking changes (API changes, schema migrations)
+     - **MINOR**: New features (backward-compatible)
+     - **PATCH**: Bug fixes and small improvements
+   - Write clear summary explaining the change
+3. **Commit Changeset**: Include changeset file in PR
+   ```bash
+   git add .changeset/*.md
+   git commit -m "feat: add user analytics dashboard"
+   ```
+4. **Version Packages** (Maintainers): When ready to release
+   ```bash
+   pnpm changeset:version  # Updates versions + CHANGELOGs
+   git commit -m "chore: version packages"
+   ```
+
+**When to Create Changeset**:
+
+- ✅ New features or functionality
+- ✅ Bug fixes that affect users
+- ✅ Breaking changes (always mark as MAJOR)
+- ✅ Performance improvements
+- ✅ Dependency updates that change behavior
+- ❌ Documentation updates
+- ❌ Internal refactoring (no behavior change)
+- ❌ Test additions (unless fixing incorrect tests)
+- ❌ Configuration changes that don't affect output
+
+**Changeset Summary Guidelines**:
+
+- Write for users/developers, not implementation details
+- Explain "what changed" and "why it matters"
+- Prefix breaking changes with `BREAKING:`
+- Keep summaries concise (1-3 sentences)
+- Reference related issues/PRs if applicable
+
+**Examples**:
+
+```bash
+# Good
+Add user analytics dashboard with real-time metrics
+
+# Bad
+Update code
+
+# Breaking Change
+BREAKING: Remove deprecated /v1/auth endpoints
+Migration: Use /api/auth/* endpoints instead
+```
+
+**Configuration**:
+
+- **Base Branch**: `main`
+- **Access**: `restricted` (private packages for now)
+- **Changelog Generator**: `@changesets/changelog-github` (includes commit/PR links)
+- **Internal Dependencies**: Auto-bump as patch when dependencies change
+
+**Resources**: See [VERSIONING.md](../VERSIONING.md) for complete guide
+
 ## Domain Context
 
 ### Business Model
