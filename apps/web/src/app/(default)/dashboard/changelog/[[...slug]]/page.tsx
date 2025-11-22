@@ -33,11 +33,11 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
       );
     }
 
-    // Redirect to latest version
-    redirect(`/dashboard/changelog/${versions[0].dateSlug}`);
+    // Redirect to latest version (we know versions has at least one element here)
+    redirect(`/dashboard/changelog/${versions[0]!.dateSlug}`);
   }
 
-  const dateSlug = slug[0];
+  const dateSlug = slug[0]!; // We know slug has at least one element here
 
   // Find the version
   const version = versions.find((v) => v.dateSlug === dateSlug);

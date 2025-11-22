@@ -1,4 +1,4 @@
-import type { MDXComponents } from 'mdx/types';
+import React from 'react';
 
 /**
  * MDX Components Customization
@@ -11,6 +11,10 @@ import type { MDXComponents } from 'mdx/types';
  *
  * For more info: https://nextjs.org/docs/app/api-reference/file-conventions/mdx-components
  */
+
+type MDXComponentsType = {
+  [key: string]: React.ComponentType<any>;
+};
 
 /**
  * Generate a URL-friendly slug from heading text
@@ -31,7 +35,7 @@ function slugify(children: React.ReactNode): string {
     .replace(/-+$/, ''); // Trim - from end
 }
 
-export function useMDXComponents(components: MDXComponents): MDXComponents {
+export function useMDXComponents(components: MDXComponentsType): MDXComponentsType {
   return {
     // Headings with auto-generated IDs for anchor links
     h1: ({ children }) => {

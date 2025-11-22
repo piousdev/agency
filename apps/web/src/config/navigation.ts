@@ -320,30 +320,40 @@ export const userMenuGroups = {
  */
 
 // Work Section
-export const workNavigation: NavigationItem = {
-  title: 'Work',
+export const businessCenterNavigation: NavigationItem = {
+  title: 'Business Center',
   description: 'Central hub for daily operations and overview',
-  url: '/dashboard/work',
+  url: '/dashboard/business-center',
   items: [
     {
-      title: 'Dashboard',
-      description: 'Personalized overview with key metrics and quick actions',
-      url: '/dashboard/work/dashboard',
+      title: 'Overview',
+      description: 'Central hub for daily operations and overview',
+      url: '/dashboard/business-center',
     },
     {
-      title: 'My Tasks',
-      description: 'Tasks assigned to current user',
-      url: '/dashboard/work/my-tasks',
+      title: 'Intake Queue',
+      description: 'Manage incoming client requests',
+      url: '/dashboard/business-center/intake-queue',
     },
     {
-      title: 'My Feed',
-      description: 'Activity feed and recent updates',
-      url: '/dashboard/work/feed',
+      title: 'Projects',
+      description: 'Manage all projects with filters for content and software',
+      url: '/dashboard/business-center/projects',
     },
     {
-      title: 'Dashboards',
-      description: 'Access to all custom dashboards and reports',
-      url: '/dashboard/work/dashboards',
+      title: 'Team Capacity',
+      description: 'View and manage team workload',
+      url: '/dashboard/business-center/team-capacity',
+    },
+    {
+      title: 'Deliverables',
+      description: 'Track project deliverables and deadlines',
+      url: '/dashboard/business-center/deliverables',
+    },
+    {
+      title: 'Recently Completed',
+      description: 'Recently finished projects and tasks',
+      url: '/dashboard/business-center/recently-completed',
     },
   ],
 };
@@ -382,6 +392,7 @@ export const projectsNavigation: NavigationItem = {
     {
       title: 'Views',
       description: 'Different project visualizations',
+      url: '/dashboard/projects/views',
       items: [
         {
           title: 'Board View',
@@ -499,7 +510,7 @@ export const tasksNavigation: NavigationItem = {
 // Work Management Group
 export const workManagementGroup: NavigationGroup = {
   title: 'Work Management',
-  items: [workNavigation, projectsNavigation, tasksNavigation, issuesNavigation],
+  items: [businessCenterNavigation, projectsNavigation, tasksNavigation, issuesNavigation],
 };
 
 /**

@@ -3,12 +3,14 @@ export * from './enums';
 
 // Export all tables
 export * from './account';
+export * from './activity';
 export * from './client';
 export * from './comment';
 export * from './file';
 export * from './file-upload-tracking';
 export * from './invitation';
 export * from './project';
+export * from './project-assignment';
 export * from './rate-limit';
 export * from './role';
 export * from './role-assignment';

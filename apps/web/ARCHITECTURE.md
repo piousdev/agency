@@ -946,6 +946,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
    - `types.ts` - TypeScript interfaces
 
 4. **Layout Override** - `app/(default)/dashboard/changelog/layout.tsx`
+
    ```typescript
    export default function ChangelogLayout({ children }) {
      return <div className="-m-4 flex h-full flex-col">{children}</div>;
@@ -1063,3 +1064,313 @@ const changelogWithIcons: NavigationItem = {
 - [MDX Official Docs](https://mdxjs.com/)
 - Implementation: `apps/web/src/components/changelog/`
 - Implementation: `apps/web/src/components/help/`
+
+## Business Center Dashboard
+
+### Overview
+
+The **Business Center** is an internal-only dashboard for agency team members to manage client work, team capacity, and project deliveries. It provides a comprehensive 6-section interface for operational oversight.
+
+### Architecture
+
+**Access Control:**
+
+- **Server-Side**: Page protected with `requireUser()` + `isInternal` check
+- **Client-Side**: Optional guard hook `useBusinessCenterAccess()` for client components
+- **Route**: `/dashboard/business-center` (internal users only)
+
+**Data Flow:**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ Business Center Page (Server Component)                  │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │ 1. Authenticate user (requireUser)                    │ │
+│ │ 2. Verify internal status (isInternal check)          │ │
+│ │ 3. Fetch all dashboard data from Hono API             │ │
+│ │ 4. Pass data to BusinessCenter component              │ │
+│ └──────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────┘
+                          ↓
+┌──────────────────────────────────────────────────────────┐
+│ BusinessCenter Component (Server Component)              │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │ Distributes data to 6 child components:               │ │
+│ │ 1. IntakeQueue        - New client requests          │ │
+│ │ 2. ActiveWorkContent  - Creative projects            │ │
+│ │ 3. ActiveWorkSoftware - Development projects         │ │
+│ │ 4. TeamCapacity       - Workload & availability      │ │
+│ │ 5. DeliveryCalendar   - Upcoming delivery dates      │ │
+│ │ 6. RecentlyCompleted  - Last 14 days deliveries      │ │
+│ └──────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────┘
+                          ↓
+┌──────────────────────────────────────────────────────────┐
+│ Client Components (Interactive Elements)                 │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │ - AssignModal: Assign tickets/projects to team       │ │
+│ │ - CapacityModal: Update team member capacity         │ │
+│ │ - AssignTrigger: Button to open assign modal         │ │
+│ └──────────────────────────────────────────────────────┘ │
+│ Uses Server Actions for mutations:                       │
+│ - assignTicketAction, assignProjectAction               │
+│ - updateCapacityAction, updateProjectStatusAction       │
+└──────────────────────────────────────────────────────────┘
+```
+
+### 6-Section Dashboard Layout
+
+**Grid Structure:** 3-column responsive grid (1 col mobile, 2 col tablet, 3 col desktop)
+
+| Section                       | Purpose                                 | Data Source                                                                  | Key Features                                   |
+| ----------------------------- | --------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
+| **1. Intake Queue**           | New client requests awaiting assignment | `intakeTickets[]`                                                            | Priority badges, assign to team member         |
+| **2. Active Work - Content**  | Creative/media projects in production   | `activeProjects[]` filtered by `client.type === 'creative'`                  | Stage grouping (Pre/In/Post-Production)        |
+| **3. Active Work - Software** | Software development projects           | `activeProjects[]` filtered by `client.type IN ('software', 'full_service')` | Stage grouping (Design/Dev/Test/Delivery)      |
+| **4. Team Capacity**          | Team workload and availability          | `teamMembers[]`                                                              | Capacity %, status indicators, update capacity |
+| **5. Delivery Calendar**      | Upcoming project delivery dates         | `upcomingDeliveries[]`                                                       | Grouped by date, multi-delivery warnings       |
+| **6. Recently Completed**     | Projects delivered in last 14 days      | `recentlyCompleted[]`                                                        | Sorted by most recent first                    |
+
+### Component Architecture
+
+**File Structure:**
+
+```
+apps/web/src/components/business-center/
+├── index.tsx                      # Main layout component
+├── types.ts                       # Centralized type definitions
+├── intake-queue.tsx               # Section 1 (Server Component)
+├── active-work-content.tsx        # Section 2 (Server Component)
+├── active-work-software.tsx       # Section 3 (Server Component)
+├── team-capacity.tsx              # Section 4 (Server Component)
+├── delivery-calendar.tsx          # Section 5 (Server Component)
+├── recently-completed.tsx         # Section 6 (Server Component)
+├── assign-modal.tsx               # Assignment modal (Client Component)
+├── capacity-modal.tsx             # Capacity update modal (Client Component)
+├── assign-trigger.tsx             # Button wrapper (Client Component)
+├── use-business-center-access.ts  # Client-side guard hook
+└── __tests__/                     # Component tests
+    └── business-center.test.tsx
+```
+
+**Server Components (Data Display):**
+
+- All section components are Server Components
+- Receive props from parent BusinessCenter component
+- Handle data filtering and grouping logic
+- Display empty states when no data
+- Use semantic color system from global CSS variables
+
+**Client Components (Interactive Elements):**
+
+- `assign-modal.tsx`: Generic assignment for tickets (single-select) or projects (multi-select)
+- `capacity-modal.tsx`: Update team member capacity (0-200%)
+- `assign-trigger.tsx`: Reusable button that opens AssignModal
+- All use `useActionState` hook for Server Action integration
+
+### Data Interface
+
+**Type:** `BusinessCenterData`
+
+```typescript
+export interface BusinessCenterData {
+  intakeTickets: TicketWithRelations[]; // New requests
+  activeProjects: ProjectWithRelations[]; // In-progress projects
+  teamMembers: TeamMember[]; // Team with capacity info
+  upcomingDeliveries: ProjectWithRelations[]; // Future deliveries
+  recentlyCompleted: ProjectWithRelations[]; // Last 14 days
+}
+```
+
+**Key Type Extensions:**
+
+```typescript
+// Team member with capacity calculations
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  capacityPercentage: number; // 0-200%
+  availableCapacity: number; // Calculated available %
+  status: 'available' | 'at_capacity' | 'overloaded';
+  projectCount: number;
+  projects: TeamMemberProject[];
+}
+
+// Project with relationships
+interface ProjectWithRelations extends Project {
+  client: { id: string; name: string; type: string };
+  assignees: ProjectAssignee[];
+}
+```
+
+### Server Actions
+
+**Location:** `apps/web/src/app/(default)/dashboard/business-center/actions.ts`
+
+| Action                          | Purpose                  | Validation                      | Revalidation                 |
+| ------------------------------- | ------------------------ | ------------------------------- | ---------------------------- |
+| `createIntakeAction`            | Create new intake ticket | `createTicketSchema`            | `/dashboard/business-center` |
+| `assignTicketAction`            | Assign ticket to user    | `assignTicketSchema`            | `/dashboard/business-center` |
+| `assignProjectAction`           | Assign project to team   | `assignProjectSchema`           | `/dashboard/business-center` |
+| `updateProjectStatusAction`     | Change project status    | `updateProjectStatusSchema`     | `/dashboard/business-center` |
+| `updateProjectCompletionAction` | Update completion %      | `updateProjectCompletionSchema` | `/dashboard/business-center` |
+| `updateCapacityAction`          | Update team capacity     | `updateCapacitySchema`          | `/dashboard/business-center` |
+
+All actions follow the pattern:
+
+1. Extract form data
+2. Validate with Zod schema
+3. Call Hono API function
+4. Handle errors
+5. Revalidate page cache
+6. Return success/error response
+
+### Stage Grouping Logic
+
+**Content Projects (Creative/Media):**
+
+| Stage           | Criteria                                   | Example                             |
+| --------------- | ------------------------------------------ | ----------------------------------- |
+| Pre-Production  | < 30% completion OR status === 'proposal'  | Concept development, script writing |
+| In-Production   | 30-79% completion                          | Active filming, design work         |
+| Post-Production | ≥ 80% completion OR status === 'in_review' | Editing, final review               |
+
+**Software Projects (Development):**
+
+| Stage       | Criteria                                    | Example                           |
+| ----------- | ------------------------------------------- | --------------------------------- |
+| Design      | < 20% completion OR status === 'proposal'   | Architecture planning, wireframes |
+| Development | 20-69% completion                           | Active coding                     |
+| Testing     | 70-94% completion OR status === 'in_review' | QA, bug fixes                     |
+| Delivery    | ≥ 95% completion                            | Ready for deployment              |
+
+### Capacity Management
+
+**Capacity Levels:**
+
+| Range  | Status      | Color  | Meaning                            |
+| ------ | ----------- | ------ | ---------------------------------- |
+| 0-79%  | Available   | Green  | Can take new work                  |
+| 80-99% | At Capacity | Yellow | Fully allocated                    |
+| 100%+  | Overloaded  | Red    | Over-committed (requires approval) |
+
+**Capacity Modal:**
+
+- Range: 0-200% (5% increments)
+- Warning shown for 100%+ assignments
+- Guidelines displayed in modal
+- Server validation enforces range
+
+### Testing
+
+**Test Coverage:**
+
+1. **Backend Unit Tests** (`apps/web/src/app/(default)/dashboard/business-center/__tests__/actions.test.ts`)
+   - All 6 server actions
+   - Validation error handling
+   - API error handling
+   - Revalidation calls
+
+2. **Frontend Component Tests** (`apps/web/src/components/business-center/__tests__/business-center.test.tsx`)
+   - Main component rendering
+   - All 6 sections present
+   - Empty state displays
+
+3. **E2E Playwright Tests** (`apps/web/e2e/business-center.spec.ts`)
+   - Page accessibility (auth required, internal only)
+   - All sections visible
+   - Modal interactions
+   - Form submissions
+   - Capacity updates
+   - Assignment workflows
+
+### Design Patterns
+
+**Global CSS Variables:**
+
+- Uses semantic color system from `apps/web/src/app/globals.css`
+- Colors: `success`, `warning`, `error`, `info`, `primary`, `muted`
+- Opacity modifiers: `/10`, `/20`, `/50` for backgrounds
+
+**Empty States:**
+
+- Consistent pattern across all sections
+- Icon + primary message + secondary hint
+- Uses `text-muted-foreground` for subdued appearance
+
+**Server-First Architecture:**
+
+- All data fetching on server
+- Client components only for interactivity
+- `useActionState` for form handling
+- Optimistic UI updates via revalidation
+
+### Access Control Best Practices
+
+```typescript
+// ✅ DO: Server-side protection (page.tsx)
+export default async function BusinessCenterPage() {
+  const user = await requireUser();
+
+  if (!user.isInternal) {
+    redirect('/dashboard');
+  }
+
+  // ... fetch data and render
+}
+
+// ✅ DO: Client guard for UX optimization (optional)
+function MyClientComponent() {
+  const { hasAccess } = useBusinessCenterAccess();
+  if (!hasAccess) return null;
+  // ... render
+}
+
+// ❌ DON'T: Rely only on client-side checks
+// Server Components are the security boundary
+```
+
+### Performance Optimizations
+
+1. **Server Components by Default**
+   - Minimal client JavaScript
+   - Only modals and triggers are client components
+
+2. **Request Caching**
+   - `getSession()` cached per request via React `cache()`
+   - Prevents multiple auth checks per render
+
+3. **Data Filtering**
+   - Each section filters its own data
+   - Shared `activeProjects` array filtered by client type
+
+4. **Revalidation Strategy**
+   - All mutations revalidate `/dashboard/business-center`
+   - Ensures fresh data after actions
+
+### Future Enhancements
+
+**Planned Features:**
+
+- Real-time updates via WebSocket
+- Advanced filtering and search
+- Bulk assignment operations
+- Capacity forecasting
+- Historical analytics
+- Export to CSV/PDF
+
+**Technical Debt:**
+
+- Add comprehensive error boundaries
+- Implement loading skeletons
+- Add retry logic for failed actions
+- Optimize large dataset rendering
+
+### References
+
+- Implementation: `apps/web/src/components/business-center/`
+- Server Actions: `apps/web/src/app/(default)/dashboard/business-center/actions.ts`
+- Page Component: `apps/web/src/app/(default)/dashboard/business-center/page.tsx`
+- Type Definitions: `apps/web/src/components/business-center/types.ts`
+- Tests: `apps/web/e2e/business-center.spec.ts`

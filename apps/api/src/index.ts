@@ -3,15 +3,18 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import dbTestRoutes from './routes/db-test.js';
-import invitationRoutes from './routes/invitations/index.js';
-import userRoutes from './routes/users/index.js';
-import roleRoutes from './routes/roles/index.js';
-import healthRoutes from './routes/health/index.js';
 import { auth } from './lib/auth.js';
-import { errorHandler } from './middleware/handle-errors.js';
-import { authContext, type AuthVariables } from './middleware/auth.js';
 import { initSentry } from './lib/sentry.js';
+import { type AuthVariables, authContext } from './middleware/auth.js';
+import { errorHandler } from './middleware/handle-errors.js';
+import clientRoutes from './routes/clients/index.js';
+import dbTestRoutes from './routes/db-test.js';
+import healthRoutes from './routes/health/index.js';
+import invitationRoutes from './routes/invitations/index.js';
+import projectRoutes from './routes/projects/index.js';
+import roleRoutes from './routes/roles/index.js';
+import ticketRoutes from './routes/tickets/index.js';
+import userRoutes from './routes/users/index.js';
 
 // Initialize Sentry for error tracking and monitoring
 initSentry();
@@ -48,6 +51,9 @@ app.get('/', (c) => {
       invitations: '/api/invitations',
       users: '/api/users',
       roles: '/api/roles',
+      tickets: '/api/tickets',
+      projects: '/api/projects',
+      clients: '/api/clients',
     },
   });
 });
@@ -60,18 +66,24 @@ app.on(['POST', 'GET'], '/api/auth/*', (c) => {
 // Routes
 app.route('/health', healthRoutes);
 app.route('/db', dbTestRoutes);
+app.route('/api/clients', clientRoutes);
 app.route('/api/invitations', invitationRoutes);
 app.route('/api/users', userRoutes);
 app.route('/api/roles', roleRoutes);
+app.route('/api/tickets', ticketRoutes);
+app.route('/api/projects', projectRoutes);
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
 
-console.log(`Hono server starting on http://localhost:${port}`);
+// Only start the server if not running in test mode
+if (!process.env.VITEST) {
+  console.log(`Hono server starting on http://localhost:${port}`);
 
-serve({
-  fetch: app.fetch,
-  port,
-});
+  serve({
+    fetch: app.fetch,
+    port,
+  });
+}
 
 export default app;
 export type AppType = typeof app;

@@ -8,21 +8,20 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+import {
+  assignRole,
+  deleteUser,
+  extendExpiration,
+  removeRole,
+  updateInternalStatus,
+  updateUser,
+} from '@/lib/api/users';
 import { requireRole } from '@/lib/auth/session';
 import {
-  updateUser,
-  deleteUser,
-  updateInternalStatus,
-  extendExpiration,
-  assignRole,
-  removeRole,
-} from '@/lib/api/users';
-import {
-  updateUserSchema,
-  updateInternalStatusSchema,
-  extendExpirationSchema,
   assignRoleSchema,
+  extendExpirationSchema,
+  updateInternalStatusSchema,
+  updateUserSchema,
 } from '@/lib/schemas/user';
 
 /**

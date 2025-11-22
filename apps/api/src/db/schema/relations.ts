@@ -1,14 +1,16 @@
 import { relations } from 'drizzle-orm';
 import { account } from './account';
+import { activity } from './activity';
 import { client } from './client';
 import { comment } from './comment';
 import { file } from './file';
 import { invitation } from './invitation';
 import { project } from './project';
+import { projectAssignment } from './project-assignment';
 import { role } from './role';
 import { roleAssignment } from './role-assignment';
 import { session } from './session';
-import { ticket } from './ticket';
+import { ticket, ticketActivity } from './ticket';
 import { user } from './user';
 import { userToClient } from './user-to-client';
 
@@ -21,8 +23,11 @@ export const userRelations = relations(user, ({ many }) => ({
   rolesAssignedByUser: many(roleAssignment, { relationName: 'assignedRoles' }),
   createdTickets: many(ticket, { relationName: 'createdTickets' }),
   assignedTickets: many(ticket, { relationName: 'assignedTickets' }),
+  projectAssignments: many(projectAssignment),
   comments: many(comment),
   files: many(file),
+  activities: many(activity),
+  ticketActivities: many(ticketActivity),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -62,9 +67,11 @@ export const projectRelations = relations(project, ({ one, many }) => ({
     fields: [project.clientId],
     references: [client.id],
   }),
+  projectAssignments: many(projectAssignment),
   tickets: many(ticket),
   comments: many(comment),
   files: many(file),
+  activities: many(activity),
 }));
 
 export const ticketRelations = relations(ticket, ({ one, many }) => ({
@@ -86,8 +93,26 @@ export const ticketRelations = relations(ticket, ({ one, many }) => ({
     references: [user.id],
     relationName: 'assignedTickets',
   }),
+  parentTicket: one(ticket, {
+    fields: [ticket.parentTicketId],
+    references: [ticket.id],
+    relationName: 'childTickets',
+  }),
+  childTickets: many(ticket, { relationName: 'childTickets' }),
   comments: many(comment),
   files: many(file),
+  activities: many(ticketActivity),
+}));
+
+export const ticketActivityRelations = relations(ticketActivity, ({ one }) => ({
+  ticket: one(ticket, {
+    fields: [ticketActivity.ticketId],
+    references: [ticket.id],
+  }),
+  actor: one(user, {
+    fields: [ticketActivity.actorId],
+    references: [user.id],
+  }),
 }));
 
 export const commentRelations = relations(comment, ({ one, many }) => ({
@@ -154,5 +179,27 @@ export const roleAssignmentRelations = relations(roleAssignment, ({ one }) => ({
     fields: [roleAssignment.assignedById],
     references: [user.id],
     relationName: 'assignedRoles',
+  }),
+}));
+
+export const projectAssignmentRelations = relations(projectAssignment, ({ one }) => ({
+  project: one(project, {
+    fields: [projectAssignment.projectId],
+    references: [project.id],
+  }),
+  user: one(user, {
+    fields: [projectAssignment.userId],
+    references: [user.id],
+  }),
+}));
+
+export const activityRelations = relations(activity, ({ one }) => ({
+  project: one(project, {
+    fields: [activity.projectId],
+    references: [project.id],
+  }),
+  actor: one(user, {
+    fields: [activity.actorId],
+    references: [user.id],
   }),
 }));

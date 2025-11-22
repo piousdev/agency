@@ -31,7 +31,7 @@ export default async function AcceptInvitePage({ params }: { params: Promise<{ t
 
   // Render form with validated invitation data
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-muted px-4 py-12">
       <AcceptInviteForm token={token} invitation={validationResult.invitation} />
     </div>
   );
@@ -42,13 +42,13 @@ export default async function AcceptInvitePage({ params }: { params: Promise<{ t
  */
 function InvalidInvitationCard({ message }: { message: string }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-muted px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-red-600">Invalid Invitation</CardTitle>
+          <CardTitle className="text-2xl font-bold text-error">Invalid Invitation</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md bg-red-50 p-4 text-sm text-red-800 border border-red-200">
+          <div className="rounded-md bg-error/10 p-4 text-sm text-error-foreground border border-error">
             {message}
           </div>
         </CardContent>

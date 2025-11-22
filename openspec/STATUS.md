@@ -418,6 +418,136 @@ Critical fixes to ensure proper testing and production deployment readiness.
 
 ---
 
+### 4. Business Center Dashboard (add-business-center) - **ARCHIVED** 🎉
+
+**Archived**: 2025-11-09 as `2025-11-09-add-business-center`
+
+Complete internal operations dashboard for agency team to manage intake, projects, and team capacity.
+
+#### ✅ Database Schema & Migrations (COMPLETE)
+
+- ✅ Created `project_assignment` join table for many-to-many relationships
+  - Composite indexes for performance
+  - Cascade delete rules
+  - Full Drizzle relations configured
+- ✅ Extended `user` table with `capacity_percentage` column
+  - Integer 0-200 with check constraint
+  - Indexed for filtering
+- ✅ Extended `project` table with `completion_percentage` column
+  - Integer 0-100 with check constraint
+- ✅ Applied migrations and verified in Neon Postgres
+
+#### ✅ Backend API Endpoints (COMPLETE)
+
+- ✅ Tickets API (`/api/tickets`)
+  - GET /api/tickets - List with filters (type, status, priority, assignee, client)
+  - POST /api/tickets - Create intake ticket
+  - PATCH /api/tickets/:id - Update ticket
+  - PATCH /api/tickets/:id/assign - Assign to user
+  - All endpoints protected with requireInternal() middleware
+  - 18 tests passing
+- ✅ Projects API extensions (`/api/projects`)
+  - GET /api/projects - List with filters and pagination
+  - PATCH /api/projects/:id/assign - Multi-select team assignment
+  - PATCH /api/projects/:id/status - Update project status
+  - PATCH /api/projects/:id/completion - Update completion percentage
+  - 25 tests passing
+- ✅ Users API extensions (`/api/users`)
+  - GET /api/users/team - List internal team members
+  - PATCH /api/users/:id/capacity - Update capacity percentage
+  - Returns capacity metadata with assignments
+- ✅ Comprehensive Zod validation schemas for all inputs
+
+#### ✅ Frontend Components (COMPLETE)
+
+- ✅ Main Business Center layout (`dashboard/business-center/page.tsx`)
+  - Server Component with requireUser() protection
+  - Role check: redirects non-internal users
+  - 6-section grid layout
+- ✅ Section 1: Intake Queue (`intake-queue.tsx`)
+  - Unassigned tickets list with priority badges
+  - "New Request" button with modal form
+  - Detail modal with assignment capability
+- ✅ Sections 2-3: Active Work (`active-work-content.tsx`, `active-work-software.tsx`)
+  - Content projects grouped by Pre/In/Post-Production stages
+  - Software projects grouped by Design/Dev/Testing/Delivery stages
+  - Progress bars, assignee avatars, deadline displays
+  - Quick actions: Change Assignee, Update Status
+- ✅ Section 4: Team Capacity (`team-capacity.tsx`)
+  - Table with capacity visualization
+  - Color-coded status (green/yellow/red)
+  - Update capacity modal with validation
+- ✅ Section 5: Delivery Calendar (`delivery-calendar.tsx`)
+  - Chronologically sorted delivery dates
+  - Highlights dates with multiple deliveries
+  - Service type badges (Content/Software)
+- ✅ Section 6: Recently Completed (`recently-completed.tsx`)
+  - Last 14 days of delivered projects
+  - Completion dates and team member display
+
+#### ✅ Shared Components & Utilities (COMPLETE)
+
+- ✅ Generic Assignment Modal (`assign-modal.tsx`)
+  - Works for both tickets (single) and projects (multi-select)
+  - Capacity warnings for overloaded members
+  - Server Actions with useActionState
+- ✅ Reusable Assignment Trigger (`assign-trigger.tsx`)
+  - Configurable button styles
+  - Handles both entity types
+- ✅ Capacity Update Modal (`capacity-modal.tsx`)
+  - Number input with 0-200 range
+  - Warnings for >100% capacity
+- ✅ Type definitions (`types.ts`)
+  - BusinessCenterData interface
+  - Proper type exports for all components
+
+#### ✅ Navigation & Access Control (COMPLETE)
+
+- ✅ Added to navigation config (`config/navigation.ts`)
+  - Business Center menu item with icon
+  - Proper grouping in dashboard nav
+- ✅ Multi-layer access control
+  - Middleware: Cookie-based auth check
+  - Server Component: requireUser() + isInternal check
+  - Client hook: useBusinessCenterAccess() for redirect
+  - Defense-in-depth security
+
+#### ✅ Testing (COMPLETE)
+
+- ✅ Backend unit tests
+  - 18 tickets API tests passing
+  - 25 projects API tests passing
+  - Coverage for all CRUD operations and auth protection
+- ✅ Frontend component tests
+  - Basic rendering tests for Business Center
+- ✅ E2E tests with Playwright (`tests/e2e/business-center.spec.ts`)
+  - Access control (internal vs client users)
+  - Complete intake workflow (create → assign)
+  - Project assignment with multi-select
+  - Capacity updates with validation
+  - Delivery calendar display
+  - Integration flow testing full user journey
+
+#### ✅ Documentation & Deployment Validation (COMPLETE)
+
+- ✅ ARCHITECTURE.md updated with Business Center pattern
+  - Complete feature documentation
+  - Example code patterns
+- ✅ Inline code comments throughout
+  - Complex queries documented
+  - Capacity calculation logic explained
+- ✅ Linting: ✅ Both API and Web passed
+- ✅ Tests: ✅ All 43 API tests + E2E tests passing
+- ✅ Build: ✅ Production build successful, no TypeScript errors
+- ✅ Database migrations validated
+- ✅ Performance acceptable
+
+**New Specification Created**:
+
+- `specs/business-center/spec.md` - Complete Business Center requirements
+
+---
+
 ## 🚧 In Progress
 
 **No active changes** - All work has been completed and archived!
@@ -503,7 +633,7 @@ Neon Postgres (cloud)
 
 ### All Proposals - **100% COMPLETE!** 🎉
 
-**Three Major Initiatives Completed:**
+**Four Major Initiatives Completed:**
 
 1. **Infrastructure Proposal** - ✅ ARCHIVED (2025-11-07)
    - Complete monorepo setup with Turborepo + pnpm
@@ -528,6 +658,14 @@ Neon Postgres (cloud)
    - Health check endpoints (API + Web)
    - Environment variable documentation
 
+4. **Business Center Dashboard** - ✅ ARCHIVED (2025-11-09)
+   - Complete internal operations dashboard (6 sections)
+   - Database schema extensions (project assignments, capacity tracking)
+   - Backend APIs for tickets, projects, and capacity management
+   - Frontend components with Server-First architecture
+   - Multi-layer access control (internal users only)
+   - Comprehensive testing (43 API tests + E2E tests passing)
+
 ### Overall Project Status
 
 - ✅ **100% of planned features implemented**
@@ -542,6 +680,7 @@ Neon Postgres (cloud)
 - `specs/authentication/spec.md` - Auth system requirements
 - `specs/api-health-check/spec.md` - Health check endpoints
 - `specs/testing/spec.md` - Test configuration
+- `specs/business-center/spec.md` - Business Center dashboard requirements
 
 ---
 

@@ -19,13 +19,13 @@ export default function SentryTestPage() {
     <div className="container mx-auto max-w-4xl p-8">
       <div className="mb-8">
         <h1 className="mb-4 text-3xl font-bold">Sentry Integration Test</h1>
-        <div className="rounded-lg bg-yellow-50 p-4 text-sm text-yellow-800">
+        <div className="rounded-lg bg-warning/10 p-4 text-sm text-warning">
           <p className="mb-2 font-semibold">Development Mode:</p>
           <p>
             Errors will be <strong>logged to console</strong> but{' '}
             <strong>NOT sent to Sentry</strong> unless you set:
           </p>
-          <code className="mt-2 block rounded bg-yellow-100 p-2">SENTRY_SEND_IN_DEV=true</code>
+          <code className="mt-2 block rounded bg-warning/20 p-2">SENTRY_SEND_IN_DEV=true</code>
           <p className="mt-2">Check the browser console and server logs to see Sentry events.</p>
         </div>
       </div>
@@ -45,7 +45,7 @@ export default function SentryTestPage() {
       </div>
 
       {/* Instructions */}
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-6">
+      <div className="rounded-lg border border-border bg-secondary/30 p-6">
         <h2 className="mb-4 text-xl font-semibold">Testing Instructions</h2>
         <ol className="space-y-3 text-sm">
           <li>

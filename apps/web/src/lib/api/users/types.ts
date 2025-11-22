@@ -104,3 +104,31 @@ export interface ListRolesParams {
   sortOrder?: 'asc' | 'desc';
   roleType?: 'internal' | 'client' | 'all';
 }
+
+export interface UpdateCapacityInput {
+  capacityPercentage: number;
+}
+
+export interface TeamMemberProject {
+  id: string;
+  name: string;
+  status: string;
+  completionPercentage: number;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  capacityPercentage: number;
+  availableCapacity: number;
+  status: 'available' | 'at_capacity' | 'overloaded';
+  projectCount: number;
+  projects: TeamMemberProject[];
+}
+
+export interface TeamMembersResponse {
+  success: boolean;
+  data: TeamMember[];
+}

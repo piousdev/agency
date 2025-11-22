@@ -101,7 +101,7 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
 
           {/* Role details preview */}
           {selectedRole && (
-            <div className="rounded-lg border p-4 space-y-3 bg-accent/30">
+            <div className="rounded-lg border p-4 space-y-3 bg-secondary/50">
               <div className="flex items-start gap-2">
                 <Shield className="h-5 w-5 text-primary mt-0.5" />
                 <div className="flex-1">
@@ -144,8 +144,8 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
 
           {/* Success message */}
           {state.success && (
-            <Alert className="border-green-500 bg-green-50 text-green-900">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <Alert className="border-success bg-success/10 text-success">
+              <CheckCircle2 className="h-4 w-4 text-success" />
               <AlertDescription>{state.message}</AlertDescription>
             </Alert>
           )}

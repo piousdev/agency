@@ -51,10 +51,8 @@ export default async function UserRolesPage({ params }: PageProps) {
           </Button>
         </div>
 
-        <div className="rounded-lg border border-destructive bg-destructive/10 p-6">
-          <h2 className="text-lg font-semibold text-destructive mb-2">
-            Role Assignment Not Available
-          </h2>
+        <div className="rounded-lg border border-error bg-error/10 p-6">
+          <h2 className="text-lg font-semibold text-error mb-2">Role Assignment Not Available</h2>
           <p className="text-sm text-muted-foreground">
             Role assignment is only available for internal team members. External users and clients
             cannot have custom roles assigned.

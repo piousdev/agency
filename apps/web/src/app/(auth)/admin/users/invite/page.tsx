@@ -4,11 +4,11 @@
  * Protected route - requires internal team member access
  */
 
-import { requireRole } from '@/lib/auth/session';
-import { InviteForm } from './form';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { requireRole } from '@/lib/auth/session';
+import { InviteForm } from './form';
 
 export const metadata = {
   title: 'Invite User | Admin',

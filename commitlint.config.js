@@ -1,5 +1,5 @@
 /**
- * Commitlint Configuration
+ * commitlint Configuration
  * Enforces Conventional Commits format
  *
  * Format: <type>(<scope>): <subject>
@@ -34,18 +34,18 @@ export default {
       2,
       'always',
       [
-        'feat',     // New feature
-        'fix',      // Bug fix
-        'docs',     // Documentation
-        'style',    // Formatting, missing semicolons, etc
+        'feat', // New feature
+        'fix', // Bug fix
+        'docs', // Documentation
+        'style', // Formatting, missing semicolons, etc
         'refactor', // Code refactoring
-        'perf',     // Performance improvement
-        'test',     // Tests
-        'build',    // Build system or dependencies
-        'ci',       // CI/CD
-        'chore',    // Other changes
-        'revert'    // Revert
-      ]
+        'perf', // Performance improvement
+        'test', // Tests
+        'build', // Build system or dependencies
+        'ci', // CI/CD
+        'chore', // Other changes
+        'revert', // Revert
+      ],
     ],
 
     // Subject must not be empty
@@ -67,6 +67,6 @@ export default {
     'header-max-length': [2, 'always', 100],
 
     // Scope is optional but recommended
-    'scope-case': [2, 'always', 'lower-case']
-  }
+    'scope-case': [2, 'always', 'lower-case'],
+  },
 };

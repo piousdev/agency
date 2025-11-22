@@ -89,7 +89,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
@@ -98,7 +98,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             {error && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 border border-red-200">
+              <div className="rounded-md bg-error/10 p-3 text-sm text-error border border-error">
                 {error}
               </div>
             )}
@@ -111,7 +111,7 @@ export default function LoginPage() {
                 {...register('email')}
                 disabled={isLoading}
               />
-              {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+              {errors.email && <p className="text-sm text-error">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -123,7 +123,7 @@ export default function LoginPage() {
                 {...register('password')}
                 disabled={isLoading}
               />
-              {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+              {errors.password && <p className="text-sm text-error">{errors.password.message}</p>}
             </div>
 
             <div className="flex items-center space-x-2">
@@ -144,9 +144,9 @@ export default function LoginPage() {
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
 
-            <div className="text-sm text-center text-gray-600">
+            <div className="text-sm text-center text-muted-foreground">
               Don't have an account?{' '}
-              <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+              <a href="/signup" className="font-medium text-primary hover:text-primary/80">
                 Sign up
               </a>
             </div>

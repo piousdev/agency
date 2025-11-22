@@ -6,23 +6,19 @@
  */
 
 import {
-  BarChart3,
   Building2,
   CheckSquare,
-  ClipboardList,
   FileText,
-  Folder,
   Headphones,
   HelpCircle,
   History,
-  LayoutDashboard,
   MessageSquare,
   Package,
   Search,
   Settings,
   Shield,
 } from 'lucide-react';
-
+import { BusinessCenter, Chart, Projects, Task } from '@/components/icons';
 import {
   administrationGroup,
   adminNavigation,
@@ -47,7 +43,7 @@ import {
   settingsNavigation,
   tasksNavigation,
   workManagementGroup,
-  workNavigation,
+  businessCenterNavigation,
 } from './navigation';
 
 /**
@@ -55,19 +51,19 @@ import {
  */
 
 // Work Management icons
-const workWithIcons: NavigationItem = {
-  ...workNavigation,
-  icon: LayoutDashboard,
+const businessCenterWithIcons: NavigationItem = {
+  ...businessCenterNavigation,
+  icon: BusinessCenter,
 };
 
 const projectsWithIcons: NavigationItem = {
   ...projectsNavigation,
-  icon: Folder,
+  icon: Projects,
 };
 
 const tasksWithIcons: NavigationItem = {
   ...tasksNavigation,
-  icon: ClipboardList,
+  icon: Task,
 };
 
 const issuesWithIcons: NavigationItem = {
@@ -105,7 +101,7 @@ const contentWithIcons: NavigationItem = {
 // Insights & Administration icons
 const analyticsWithIcons: NavigationItem = {
   ...analyticsNavigation,
-  icon: BarChart3,
+  icon: Chart,
 };
 
 const adminWithIcons: NavigationItem = {
@@ -138,7 +134,7 @@ const changelogWithIcons: NavigationItem = {
  */
 export const workManagementGroupWithIcons: NavigationGroup = {
   ...workManagementGroup,
-  items: [workWithIcons, projectsWithIcons, tasksWithIcons, issuesWithIcons],
+  items: [businessCenterWithIcons, projectsWithIcons, tasksWithIcons, issuesWithIcons],
 };
 
 export const clientManagementGroupWithIcons: NavigationGroup = {
@@ -188,7 +184,7 @@ export const sidebarNavigationWithIcons: NavigationGroup[] = [
  * Export individual sections with icons for flexibility
  */
 export {
-  workWithIcons,
+  businessCenterWithIcons,
   projectsWithIcons,
   tasksWithIcons,
   issuesWithIcons,

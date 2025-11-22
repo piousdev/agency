@@ -156,7 +156,7 @@ export const auth = betterAuth({
    * - Includes "X-Retry-After" header with seconds until retry allowed
    */
   rateLimit: {
-    enabled: true, // Enabled in production, disabled in development by default
+    enabled: !process.env.VITEST, // Disable rate limiting in test mode
     window: 60, // Global default: 60 seconds
     max: 100, // Global default: 100 requests per window
     storage: 'database', // Persist to PostgreSQL for production reliability
@@ -292,10 +292,7 @@ export const auth = betterAuth({
    */
   onAPIError: {
     throw: true, // Re-throw the error after logging
-    onError: async (
-      error: unknown,
-      ctx: AuthContext<BetterAuthOptions>
-    ) => {
+    onError: async (error: unknown, _ctx: AuthContext<BetterAuthOptions>) => {
       try {
         const err = error as { status?: number; message?: string };
         const ipAddress = 'unknown';

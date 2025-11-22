@@ -49,12 +49,13 @@
       ]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "env": ["VITEST"]
     },
     "test": {
       "outputs": ["coverage/**", "node_modules/.cache/vitest/**"],
       "dependsOn": ["^build"],
-      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL"]
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "VITEST"]
     },
     "test:watch": {
       "cache": false,

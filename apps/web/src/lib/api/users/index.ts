@@ -4,21 +4,32 @@
  *
  * Usage in Server Components or Server Actions:
  * ```tsx
- * import { listUsers, updateUser } from "@/lib/api/users";
+ * import { listUsers, updateUser, listTeamMembers } from "@/lib/api/users";
  * ```
  */
 
+// User CRUD operations
 export { deleteUser } from './delete';
 export { extendExpiration } from './expiration';
 export { getUser } from './get';
-// Helper utilities (exported for testing/advanced use)
-export { buildApiUrl, getAuthHeaders } from './api-utils';
+export { listUsers } from './list';
+export { updateUser } from './update';
+
 // User status operations
 export { updateInternalStatus } from './internal-status';
-// User CRUD operations
-export { listUsers } from './list';
+
+// Capacity operations
+export { updateCapacity } from './capacity';
+
+// Team operations
+export { listTeamMembers } from './team';
+
 // Role operations
 export { assignRole, listRoles, removeRole } from './roles';
+
+// Helper utilities (exported for testing/advanced use)
+export { buildApiUrl, getAuthHeaders } from './api-utils';
+
 // Type exports
 export type {
   ApiResponse,
@@ -29,9 +40,12 @@ export type {
   PaginatedRolesResponse,
   PaginatedUsersResponse,
   Role,
+  TeamMember,
+  TeamMemberProject,
+  TeamMembersResponse,
+  UpdateCapacityInput,
   UpdateInternalStatusInput,
   UpdateUserInput,
   User,
   UserResponse,
 } from './types';
-export { updateUser } from './update';

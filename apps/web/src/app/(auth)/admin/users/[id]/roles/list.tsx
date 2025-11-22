@@ -94,7 +94,7 @@ export function CurrentRolesList({ userId, roles }: CurrentRolesListProps) {
             {roles.map((role) => (
               <div
                 key={role.id}
-                className="flex items-start justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                className="flex items-start justify-between p-4 border rounded-lg hover:bg-secondary/50 transition-colors"
               >
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">

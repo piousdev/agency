@@ -68,93 +68,114 @@ export function UserMenu() {
 
         {/* Profile Group */}
         <DropdownMenuGroup>
-          {userMenuGroupsWithIcons.profile.map((item) => (
-            <DropdownMenuItem key={item.title} asChild>
-              <Link href={item.url} className="cursor-pointer">
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          {userMenuGroupsWithIcons.profile.map((item) => {
+            const Icon = item.icon!;
+            return (
+              <DropdownMenuItem key={item.title} asChild>
+                <Link href={item.url!} className="cursor-pointer">
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.title}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         {/* Settings Group */}
         <DropdownMenuGroup>
-          {userMenuGroupsWithIcons.settings.map((item) => (
-            <DropdownMenuItem key={item.title} asChild>
-              <Link href={item.url} className="cursor-pointer">
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          {userMenuGroupsWithIcons.settings.map((item) => {
+            const Icon = item.icon!;
+            return (
+              <DropdownMenuItem key={item.title} asChild>
+                <Link href={item.url!} className="cursor-pointer">
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.title}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         {/* Developer Group */}
         <DropdownMenuGroup>
-          {userMenuGroupsWithIcons.developer.map((item) => (
-            <DropdownMenuItem key={item.title} asChild>
-              <Link href={item.url} className="cursor-pointer">
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          {userMenuGroupsWithIcons.developer.map((item) => {
+            const Icon = item.icon!;
+            return (
+              <DropdownMenuItem key={item.title} asChild>
+                <Link href={item.url!} className="cursor-pointer">
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.title}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         {/* Security Group */}
         <DropdownMenuGroup>
-          {userMenuGroupsWithIcons.security.map((item) => (
-            <DropdownMenuItem key={item.title} asChild>
-              <Link href={item.url} className="cursor-pointer">
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          {userMenuGroupsWithIcons.security.map((item) => {
+            const Icon = item.icon!;
+            return (
+              <DropdownMenuItem key={item.title} asChild>
+                <Link href={item.url!} className="cursor-pointer">
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.title}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         {/* Workspace Group */}
         <DropdownMenuGroup>
-          {userMenuGroupsWithIcons.workspace.map((item) => (
-            <DropdownMenuItem key={item.title} asChild>
-              <Link href={item.url} className="cursor-pointer">
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          {userMenuGroupsWithIcons.workspace.map((item) => {
+            const Icon = item.icon!;
+            return (
+              <DropdownMenuItem key={item.title} asChild>
+                <Link href={item.url!} className="cursor-pointer">
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.title}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         {/* Support Group */}
         <DropdownMenuGroup>
-          {userMenuGroupsWithIcons.support.map((item) => (
-            <DropdownMenuItem key={item.title} asChild>
-              <Link href={item.url} className="cursor-pointer">
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          {userMenuGroupsWithIcons.support.map((item) => {
+            const Icon = item.icon!;
+            return (
+              <DropdownMenuItem key={item.title} asChild>
+                <Link href={item.url!} className="cursor-pointer">
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.title}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
         {/* Logout */}
-        {userMenuGroupsWithIcons.signout.map((item) => (
-          <DropdownMenuItem
-            key={item.title}
-            className="cursor-pointer text-destructive focus:text-destructive"
-            onClick={signOut}
-          >
-            <item.icon className="mr-2 h-4 w-4" />
-            {item.title}
-          </DropdownMenuItem>
-        ))}
+        {userMenuGroupsWithIcons.signout.map((item) => {
+          const Icon = item.icon!;
+          return (
+            <DropdownMenuItem
+              key={item.title}
+              className="cursor-pointer text-destructive focus:text-destructive"
+              onClick={signOut}
+            >
+              <Icon className="mr-2 h-4 w-4" />
+              {item.title}
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

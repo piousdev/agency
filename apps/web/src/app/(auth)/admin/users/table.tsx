@@ -93,7 +93,10 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                 <TableRow key={user.id}>
                   {/* Name */}
                   <TableCell className="font-medium">
-                    <Link href={`/apps/web/src/app/(auth)/admin/users/${user.id}`} className="hover:underline">
+                    <Link
+                      href={`/apps/web/src/app/(auth)/admin/users/${user.id}`}
+                      className="hover:underline"
+                    >
                       {user.name}
                     </Link>
                   </TableCell>

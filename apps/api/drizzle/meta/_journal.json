@@ -8,6 +8,34 @@
       "when": 1762528143958,
       "tag": "0000_init_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1762697945858,
+      "tag": "0001_outstanding_post",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762703628245,
+      "tag": "0002_charming_bloodscream",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763799282612,
+      "tag": "0003_serious_goliath",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763804627126,
+      "tag": "0004_wild_loners",
+      "breakpoints": true
     }
   ]
 }

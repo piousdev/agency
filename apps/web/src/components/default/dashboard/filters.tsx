@@ -200,8 +200,7 @@ export function SaveFilterDialog({ currentFilters, onSave }: SaveFilterDialogPro
 }
 
 type SavedFiltersListProps = {
-  onApplyFilter:
-    (filter: SavedFilter) => void;
+  onApplyFilter: (filter: SavedFilter) => void;
   className?: string;
 };
 

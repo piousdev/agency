@@ -5,8 +5,9 @@
 
 'use client';
 
-import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +18,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { toast } from 'sonner';
 import { deleteUserAction } from './actions';
 
 interface DeleteUserDialogProps {

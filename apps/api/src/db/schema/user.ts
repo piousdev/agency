@@ -1,5 +1,14 @@
 import { sql } from 'drizzle-orm';
-import { boolean, check, index, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  check,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { userRoleEnum } from './enums';
 
 export const user = pgTable(
@@ -13,6 +22,8 @@ export const user = pgTable(
     role: userRoleEnum('role').default('client').notNull(),
     // Flag to distinguish internal team members from client users
     isInternal: boolean('is_internal').default(false).notNull(),
+    // Capacity allocation percentage for internal team members (0-200%)
+    capacityPercentage: integer('capacity_percentage').default(0).notNull(),
     // Optional expiration for temporary access (e.g., one-time clients)
     expiresAt: timestamp('expires_at'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -26,6 +37,8 @@ export const user = pgTable(
     index('user_role_idx').on(table.role),
     // B-Tree index on isInternal for filtering team vs client users
     index('user_is_internal_idx').on(table.isInternal),
+    // B-Tree index on capacityPercentage for filtering by capacity
+    index('user_capacity_percentage_idx').on(table.capacityPercentage),
     // B-Tree index on expiresAt for finding expired accounts
     index('user_expires_at_idx').on(table.expiresAt),
     // BRIN indexes on timestamp columns (space-efficient for time-series data)
@@ -35,6 +48,11 @@ export const user = pgTable(
     check(
       'user_email_check',
       sql`${table.email} ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`
+    ),
+    // Check constraint for capacity percentage (0-200%)
+    check(
+      'user_capacity_percentage_check',
+      sql`${table.capacityPercentage} >= 0 AND ${table.capacityPercentage} <= 200`
     ),
   ]
 );

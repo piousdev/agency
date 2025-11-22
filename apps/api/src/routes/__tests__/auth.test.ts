@@ -62,15 +62,8 @@ describe('Authentication API Endpoints', () => {
       // Store user ID for cleanup
       _testUserId = data.user.id;
 
-      // Should set session cookie
-      const setCookie = res.headers.get('set-cookie');
-      expect(setCookie).toBeTruthy();
-      expect(setCookie).toContain('better-auth.session_token');
-
-      // Store cookie for subsequent tests
-      if (setCookie) {
-        sessionCookie = setCookie.split(';')[0];
-      }
+      // With email verification required, sign-up doesn't create a session
+      // User must verify email and then sign in to get a session cookie
     });
 
     it('should reject duplicate email registration', async () => {
@@ -174,6 +167,16 @@ describe('Authentication API Endpoints', () => {
 
   describe('POST /api/auth/sign-in/email', () => {
     it('should successfully login with valid credentials', async () => {
+      // First, verify the email (required for sign-in)
+      if (_testUserId) {
+        await db
+          .update(user)
+          .set({
+            emailVerified: true,
+          })
+          .where(eq(user.id, _testUserId));
+      }
+
       const res = await app.request('/api/auth/sign-in/email', {
         method: 'POST',
         headers: {
@@ -340,6 +343,16 @@ describe('Authentication API Endpoints', () => {
     let loginCookie: string | null = null;
 
     it('should set encrypted session cookie with cache config', async () => {
+      // Ensure email is verified before signing in
+      if (_testUserId) {
+        await db
+          .update(user)
+          .set({
+            emailVerified: true,
+          })
+          .where(eq(user.id, _testUserId));
+      }
+
       // Login to get fresh session
       const loginRes = await app.request('/api/auth/sign-in/email', {
         method: 'POST',
@@ -416,7 +429,29 @@ describe('Authorization Middleware Tests', () => {
     if (signUpRes.status === 200) {
       const data = await signUpRes.json();
       testUserId = data.user.id;
-      const setCookie = signUpRes.headers.get('set-cookie');
+
+      // Verify email (required for authentication)
+      if (testUserId) {
+        await db
+          .update(user)
+          .set({
+            emailVerified: true,
+          })
+          .where(eq(user.id, testUserId));
+      }
+
+      // Sign in to get session cookie (sign-up doesn't auto-sign-in when email verification is required)
+      const signInRes = await app.request('/api/auth/sign-in/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'middleware.test@example.com',
+          password: 'SecurePassword123!',
+        }),
+      });
+      const setCookie = signInRes.headers.get('set-cookie');
       if (setCookie) {
         authenticatedCookie = setCookie.split(';')[0];
       }

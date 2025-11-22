@@ -4,6 +4,14 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
@@ -12,10 +20,14 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { NavigationItem } from '@/config/navigation';
 
 export function Main({ items, groupLabel }: { items: NavigationItem[]; groupLabel?: string }) {
+  const { state, isMobile } = useSidebar();
+
   const handleSearchClick = (e: React.MouseEvent) => {
     e.preventDefault();
     // Trigger command palette
@@ -52,7 +64,46 @@ export function Main({ items, groupLabel }: { items: NavigationItem[]; groupLabe
             );
           }
 
-          // For items with subitems (collapsible)
+          // For items with subitems
+          if (state === 'collapsed' && !isMobile) {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <DropdownMenu>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger asChild>
+                        <SidebarMenuButton>
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
+                          <ChevronRight className="ml-auto" />
+                        </SidebarMenuButton>
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="right"
+                      align="center"
+                      hidden={state !== 'collapsed' || isMobile}
+                    >
+                      {item.title}
+                    </TooltipContent>
+                  </Tooltip>
+                  <DropdownMenuContent side="right" align="start" sideOffset={20}>
+                    <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {item.items?.map((subItem) => (
+                      <DropdownMenuItem key={subItem.title} asChild>
+                        <Link href={subItem.url || '#'}>
+                          <span>{subItem.title}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            );
+          }
+
+          // For items with subitems (collapsible - expanded state or mobile)
           return (
             <Collapsible
               key={item.title}

@@ -1,4 +1,5 @@
 import { defineConfig, mergeConfig } from 'vitest/config';
+import { resolve } from 'path';
 import sharedConfig from '../../vitest.shared';
 
 /**
@@ -8,6 +9,11 @@ import sharedConfig from '../../vitest.shared';
 export default mergeConfig(
   sharedConfig,
   defineConfig({
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src'),
+      },
+    },
     test: {
       name: '@repo/api',
       environment: 'node',

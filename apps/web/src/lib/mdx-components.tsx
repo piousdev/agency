@@ -1,4 +1,8 @@
-import type { MDXComponents } from 'mdx/types';
+import React from 'react';
+
+type MDXComponentsType = {
+  [key: string]: React.ComponentType<any>;
+};
 
 /**
  * Generate a URL-friendly slug from heading text
@@ -24,7 +28,7 @@ function slugify(children: React.ReactNode): string {
  * Provides styled components for MDX content
  * Uses design system from globals.css via CSS custom properties
  */
-export const mdxComponents: MDXComponents = {
+export const mdxComponents: MDXComponentsType = {
   // Headings with auto-generated IDs for anchor links
   h1: ({ children }) => {
     const id = slugify(children);

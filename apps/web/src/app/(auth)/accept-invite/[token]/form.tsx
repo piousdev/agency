@@ -11,8 +11,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { PasswordInput } from '@/components/ui/password-input';
 import { Label } from '@/components/ui/label';
+import { PasswordInput } from '@/components/ui/password-input';
 import type { InvitationData } from '@/lib/api/invitations';
 import { type AcceptInviteState, acceptInviteAction } from './actions';
 
@@ -48,7 +48,7 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
       <form action={formAction}>
         <CardContent className="space-y-4">
           {state?.errors?._form && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 border border-red-200">
+            <div className="rounded-md p-3 text-sm border border-error bg-error/10 text-error-foreground">
               {state.errors._form.join(', ')}
             </div>
           )}
@@ -61,11 +61,11 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
               type="text"
               placeholder="John Doe"
               disabled={isPending}
-              className={state?.errors?.name ? 'border-red-500' : ''}
+              className={state?.errors?.name ? 'border border-error focus-visible:ring-error' : ''}
               required
             />
             {state?.errors?.name && (
-              <p className="text-sm text-red-600">{state.errors.name.join(', ')}</p>
+              <p className="text-sm text-error">{state.errors.name.join(', ')}</p>
             )}
           </div>
 
@@ -77,10 +77,12 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
               type="email"
               defaultValue={invitation.email}
               disabled={true}
-              className="bg-gray-100 cursor-not-allowed"
+              className="cursor-not-allowed bg-muted text-muted-foreground opacity-90"
               required
             />
-            <p className="text-xs text-gray-500">Email is pre-filled from your invitation</p>
+            <p className="text-xs text-muted-foreground">
+              Email is pre-filled from your invitation
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -90,12 +92,14 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
               name="password"
               placeholder="Create a strong password"
               disabled={isPending}
-              className={state?.errors?.password ? 'border-red-500' : ''}
+              className={
+                state?.errors?.password ? 'border border-error focus-visible:ring-error' : ''
+              }
               showStrengthIndicator={true}
               required
             />
             {state?.errors?.password && (
-              <p className="text-sm text-red-600">{state.errors.password.join(', ')}</p>
+              <p className="text-sm text-error">{state.errors.password.join(', ')}</p>
             )}
           </div>
 
@@ -106,12 +110,14 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
               name="confirmPassword"
               placeholder="Confirm your password"
               disabled={isPending}
-              className={state?.errors?.confirmPassword ? 'border-red-500' : ''}
+              className={
+                state?.errors?.confirmPassword ? 'border border-error focus-visible:ring-error' : ''
+              }
               showStrengthIndicator={false}
               required
             />
             {state?.errors?.confirmPassword && (
-              <p className="text-sm text-red-600">{state.errors.confirmPassword.join(', ')}</p>
+              <p className="text-sm text-error">{state.errors.confirmPassword.join(', ')}</p>
             )}
           </div>
         </CardContent>
@@ -121,9 +127,9 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
             {isPending ? 'Creating Account...' : 'Create Account'}
           </Button>
 
-          <div className="text-sm text-center text-gray-600">
+          <div className="text-sm text-center text-muted-foreground">
             Already have an account?{' '}
-            <a href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+            <a href="/login" className="font-medium text-primary hover:text-primary/80">
               Sign in
             </a>
           </div>
