@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { format, differenceInDays } from 'date-fns';
-import { GanttChart, Plus } from 'lucide-react';
+import { IconTimeline, IconPlus } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,7 +51,7 @@ export default async function ProjectTimelineViewPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <GanttChart className="h-6 w-6" />
+            <IconTimeline className="h-6 w-6" />
             <h1 className="text-4xl font-bold">Timeline View</h1>
           </div>
           <p className="text-muted-foreground mt-2">Gantt-style project timeline</p>
@@ -62,7 +62,7 @@ export default async function ProjectTimelineViewPage() {
           </Link>
           <Link href="/dashboard/projects/new">
             <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+              <IconPlus className="h-4 w-4" />
               New Project
             </Button>
           </Link>
@@ -93,11 +93,11 @@ export default async function ProjectTimelineViewPage() {
           <div className="space-y-4">
             {sortedProjects.length === 0 ? (
               <div className="text-center py-12">
-                <GanttChart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <IconTimeline className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground">No projects to display</p>
                 <Link href="/dashboard/projects/new">
                   <Button className="mt-4">
-                    <Plus className="h-4 w-4 mr-2" />
+                    <IconPlus className="h-4 w-4 mr-2" />
                     Create Project
                   </Button>
                 </Link>

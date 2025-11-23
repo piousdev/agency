@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { IconLoader2 } from '@tabler/icons-react';
 
 interface StatusOption {
   value: string;
@@ -103,7 +103,7 @@ export function StatusDialog({
             Cancel
           </Button>
           <Button onClick={handleUpdate} disabled={selectedStatus === currentStatus || isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             Update Status
           </Button>
         </DialogFooter>

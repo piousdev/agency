@@ -2,7 +2,14 @@
 
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { MessageSquare, Send, MoreVertical, Pencil, Trash2, Lock } from 'lucide-react';
+import {
+  IconMessage,
+  IconSend,
+  IconDotsVertical,
+  IconPencil,
+  IconTrash,
+  IconLock,
+} from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -116,7 +123,7 @@ export function Comments({
               htmlFor="internal"
               className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-pointer"
             >
-              <Lock className="h-3.5 w-3.5" />
+              <IconLock className="h-3.5 w-3.5" />
               Internal only
             </label>
           </div>
@@ -126,7 +133,7 @@ export function Comments({
             disabled={!newComment.trim() || isSubmitting}
             className="gap-1.5"
           >
-            <Send className="h-3.5 w-3.5" />
+            <IconSend className="h-3.5 w-3.5" />
             Post
           </Button>
         </div>
@@ -136,7 +143,7 @@ export function Comments({
       <div className="space-y-4">
         {comments.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <MessageSquare className="h-10 w-10 text-muted-foreground/30" />
+            <IconMessage className="h-10 w-10 text-muted-foreground/30" />
             <p className="mt-3 text-sm text-muted-foreground">No comments yet</p>
             <p className="text-xs text-muted-foreground/70">Start the discussion</p>
           </div>
@@ -154,7 +161,7 @@ export function Comments({
               {/* Internal Badge */}
               {comment.isInternal && (
                 <div className="absolute top-2 right-2 flex items-center gap-1 text-xs text-amber-500/80">
-                  <Lock className="h-3 w-3" />
+                  <IconLock className="h-3 w-3" />
                   Internal
                 </div>
               )}
@@ -220,19 +227,19 @@ export function Comments({
                         size="icon"
                         className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
-                        <MoreVertical className="h-4 w-4" />
+                        <IconDotsVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => startEditing(comment)}>
-                        <Pencil className="h-4 w-4 mr-2" />
+                        <IconPencil className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleDelete(comment.id)}
                         className="text-destructive focus:text-destructive"
                       >
-                        <Trash2 className="h-4 w-4 mr-2" />
+                        <IconTrash className="h-4 w-4 mr-2" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>

@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import {
-  Calendar,
-  CheckCircle2,
-  Clock,
-  MoreHorizontal,
-  Pause,
-  Users,
-  AlertCircle,
-  Archive,
-  Wrench,
-} from 'lucide-react';
+  IconCalendar,
+  IconCircleCheck,
+  IconClock,
+  IconDots,
+  IconPlayerPause,
+  IconUsers,
+  IconAlertCircle,
+  IconArchive,
+  IconTool,
+} from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,17 +40,17 @@ const statusConfig: Record<
     icon: React.ElementType;
   }
 > = {
-  proposal: { label: 'Proposal', variant: 'secondary', icon: AlertCircle },
-  in_development: { label: 'In Development', variant: 'default', icon: Clock },
-  in_review: { label: 'In Review', variant: 'secondary', icon: Clock },
-  delivered: { label: 'Delivered', variant: 'outline', icon: CheckCircle2 },
-  on_hold: { label: 'On Hold', variant: 'destructive', icon: Pause },
-  maintenance: { label: 'Maintenance', variant: 'outline', icon: Wrench },
-  archived: { label: 'Archived', variant: 'outline', icon: Archive },
+  proposal: { label: 'Proposal', variant: 'secondary', icon: IconAlertCircle },
+  in_development: { label: 'In Development', variant: 'default', icon: IconClock },
+  in_review: { label: 'In Review', variant: 'secondary', icon: IconClock },
+  delivered: { label: 'Delivered', variant: 'outline', icon: IconCircleCheck },
+  on_hold: { label: 'On Hold', variant: 'destructive', icon: IconPlayerPause },
+  maintenance: { label: 'Maintenance', variant: 'outline', icon: IconTool },
+  archived: { label: 'Archived', variant: 'outline', icon: IconArchive },
 };
 
 function getStatusConfig(status: string) {
-  return statusConfig[status] ?? { label: status, variant: 'outline' as const, icon: Clock };
+  return statusConfig[status] ?? { label: status, variant: 'outline' as const, icon: IconClock };
 }
 
 export default async function ArchivedProjectsPage() {
@@ -120,7 +120,7 @@ export default async function ArchivedProjectsPage() {
                   <TableRow>
                     <TableCell colSpan={7} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center gap-2">
-                        <Archive className="h-8 w-8 text-muted-foreground" />
+                        <IconArchive className="h-8 w-8 text-muted-foreground" />
                         <p className="text-muted-foreground">No archived projects</p>
                       </div>
                     </TableCell>
@@ -146,7 +146,7 @@ export default async function ArchivedProjectsPage() {
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <IconUsers className="h-4 w-4 text-muted-foreground" />
                             <span className="text-sm">{project.client?.name ?? 'Unknown'}</span>
                           </div>
                         </TableCell>
@@ -191,14 +191,14 @@ export default async function ArchivedProjectsPage() {
                           <div className="space-y-1 text-xs">
                             {project.deliveredAt && (
                               <div className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
+                                <IconCalendar className="h-3 w-3" />
                                 <span>
                                   Delivered: {new Date(project.deliveredAt).toLocaleDateString()}
                                 </span>
                               </div>
                             )}
                             <div className="flex items-center gap-1 text-muted-foreground">
-                              <Clock className="h-3 w-3" />
+                              <IconClock className="h-3 w-3" />
                               <span>
                                 Updated: {new Date(project.updatedAt).toLocaleDateString()}
                               </span>
@@ -209,7 +209,7 @@ export default async function ArchivedProjectsPage() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
+                                <IconDots className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">

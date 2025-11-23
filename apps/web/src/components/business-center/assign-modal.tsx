@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, CheckCircle2, Loader2, Users } from 'lucide-react';
+import { IconAlertTriangle, IconCircleCheck, IconLoader2, IconUsers } from '@tabler/icons-react';
 import { useActionState, useId, useState } from 'react';
 import {
   assignProjectAction,
@@ -43,19 +43,19 @@ function getStatusConfig(status: TeamMember['status']) {
       return {
         label: 'Available',
         color: 'text-success bg-success/10 border-success/20',
-        icon: CheckCircle2,
+        icon: IconCircleCheck,
       };
     case 'at_capacity':
       return {
         label: 'At Capacity',
         color: 'text-warning bg-warning/10 border-warning/20',
-        icon: AlertTriangle,
+        icon: IconAlertTriangle,
       };
     case 'overloaded':
       return {
         label: 'Overloaded',
         color: 'text-error bg-error/10 border-error/20',
-        icon: AlertTriangle,
+        icon: IconAlertTriangle,
       };
   }
 }
@@ -145,7 +145,7 @@ export function AssignModal({
           {/* Overloaded Warning */}
           {hasOverloadedWarning && (
             <div className="bg-warning/10 border border-warning/20 text-warning px-4 py-3 rounded-md text-sm flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              <IconAlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="font-medium">Capacity Warning</p>
                 <p className="text-xs mt-1">
@@ -177,7 +177,7 @@ export function AssignModal({
 
             {teamMembers.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <IconUsers className="h-12 w-12 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">No team members available</p>
               </div>
             ) : entityType === 'ticket' ? (
@@ -303,7 +303,7 @@ export function AssignModal({
                 (entityType === 'ticket' ? !selectedUserId : selectedUserIds.size === 0)
               }
             >
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isPending ? 'Assigning...' : 'Assign'}
             </Button>
           </div>

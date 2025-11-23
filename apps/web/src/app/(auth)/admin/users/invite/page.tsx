@@ -4,7 +4,7 @@
  * Protected route - requires internal team member access
  */
 
-import { ArrowLeft } from 'lucide-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { requireRole } from '@/lib/auth/session';
@@ -25,7 +25,7 @@ export default async function InviteUserPage() {
       <div className="mb-6">
         <Button variant="ghost" asChild>
           <Link href="/apps/web/src/app/(auth)/admin/users">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <IconArrowLeft className="h-4 w-4 mr-2" />
             Back to Users
           </Link>
         </Button>

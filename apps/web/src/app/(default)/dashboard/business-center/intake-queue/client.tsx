@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { IconChevronDown, IconPlus } from '@tabler/icons-react';
 import { ViewSwitcher, type ViewMode } from '@/components/business-center/view-switcher';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -121,7 +122,7 @@ export function IntakeQueueClient({ tickets, teamMembers }: IntakeQueueClientPro
               </Badge>
             )}
           </span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${statusOpen ? 'rotate-180' : ''}`}
           />
         </CollapsibleTrigger>
@@ -160,7 +161,7 @@ export function IntakeQueueClient({ tickets, teamMembers }: IntakeQueueClientPro
               </Badge>
             )}
           </span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${priorityOpen ? 'rotate-180' : ''}`}
           />
         </CollapsibleTrigger>
@@ -201,7 +202,7 @@ export function IntakeQueueClient({ tickets, teamMembers }: IntakeQueueClientPro
               </Badge>
             )}
           </span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${typeOpen ? 'rotate-180' : ''}`}
           />
         </CollapsibleTrigger>
@@ -241,7 +242,7 @@ export function IntakeQueueClient({ tickets, teamMembers }: IntakeQueueClientPro
                   </Badge>
                 )}
               </span>
-              <ChevronDown
+              <IconChevronDown
                 className={`h-4 w-4 text-muted-foreground transition-transform ${assigneesOpen ? 'rotate-180' : ''}`}
               />
             </CollapsibleTrigger>
@@ -315,6 +316,14 @@ export function IntakeQueueClient({ tickets, teamMembers }: IntakeQueueClientPro
         filterContent={filterContent}
         activeFilterCount={activeFilterCount}
         onExport={handleExport}
+        primaryAction={
+          <Button asChild>
+            <Link href="/dashboard/business-center/intake-queue/new">
+              <IconPlus className="mr-2 h-4 w-4" />
+              New Ticket
+            </Link>
+          </Button>
+        }
       />
 
       {view === 'table' && <IntakeTableView tickets={filteredTickets} />}

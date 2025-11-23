@@ -1,7 +1,15 @@
 'use client';
 
 import { type Column } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, ArrowUpDown, EyeOff, GripVertical, Pin, PinOff } from 'lucide-react';
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconArrowsUpDown,
+  IconEyeOff,
+  IconGripVertical,
+  IconPin,
+  IconPinnedOff,
+} from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -54,7 +62,7 @@ export function DataTableColumnHeader<TData, TValue>({
             className="cursor-grab text-muted-foreground hover:text-foreground"
             aria-label="Drag to reorder column"
           >
-            <GripVertical className="h-4 w-4" />
+            <IconGripVertical className="h-4 w-4" />
           </div>
         )}
         <span>{title}</span>
@@ -79,7 +87,7 @@ export function DataTableColumnHeader<TData, TValue>({
             e.preventDefault();
           }}
         >
-          <GripVertical className="h-4 w-4" />
+          <IconGripVertical className="h-4 w-4" />
         </div>
       )}
       <DropdownMenu>
@@ -95,15 +103,15 @@ export function DataTableColumnHeader<TData, TValue>({
             {canSort && (
               <span className="ml-2">
                 {isSorted === 'desc' ? (
-                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                  <IconArrowDown className="h-4 w-4" aria-hidden="true" />
                 ) : isSorted === 'asc' ? (
-                  <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                  <IconArrowUp className="h-4 w-4" aria-hidden="true" />
                 ) : (
-                  <ArrowUpDown className="h-4 w-4 opacity-50" aria-hidden="true" />
+                  <IconArrowsUpDown className="h-4 w-4 opacity-50" aria-hidden="true" />
                 )}
               </span>
             )}
-            {isPinned && <Pin className="ml-1 h-3 w-3 text-primary" aria-hidden="true" />}
+            {isPinned && <IconPin className="ml-1 h-3 w-3 text-primary" aria-hidden="true" />}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
@@ -113,19 +121,19 @@ export function DataTableColumnHeader<TData, TValue>({
                 onClick={() => column.toggleSorting(false)}
                 aria-label="Sort ascending"
               >
-                <ArrowUp className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                <IconArrowUp className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                 Asc
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => column.toggleSorting(true)}
                 aria-label="Sort descending"
               >
-                <ArrowDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                <IconArrowDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                 Desc
               </DropdownMenuItem>
               {isSorted && (
                 <DropdownMenuItem onClick={() => column.clearSorting()} aria-label="Clear sorting">
-                  <ArrowUpDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                  <IconArrowsUpDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                   Clear
                 </DropdownMenuItem>
               )}
@@ -139,7 +147,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   onClick={() => column.pin('left')}
                   aria-label="Pin column to left"
                 >
-                  <Pin className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                  <IconPin className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                   Pin Left
                 </DropdownMenuItem>
               )}
@@ -148,13 +156,13 @@ export function DataTableColumnHeader<TData, TValue>({
                   onClick={() => column.pin('right')}
                   aria-label="Pin column to right"
                 >
-                  <Pin className="mr-2 h-3.5 w-3.5 text-muted-foreground/70 rotate-90" />
+                  <IconPin className="mr-2 h-3.5 w-3.5 text-muted-foreground/70 rotate-90" />
                   Pin Right
                 </DropdownMenuItem>
               )}
               {isPinned && (
                 <DropdownMenuItem onClick={() => column.pin(false)} aria-label="Unpin column">
-                  <PinOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                  <IconPinnedOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                   Unpin
                 </DropdownMenuItem>
               )}
@@ -166,7 +174,7 @@ export function DataTableColumnHeader<TData, TValue>({
               onClick={() => column.toggleVisibility(false)}
               aria-label={`Hide ${title} column`}
             >
-              <EyeOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+              <IconEyeOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
               Hide
             </DropdownMenuItem>
           )}

@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageSquare, Paperclip, Activity } from 'lucide-react';
+import { IconMessage, IconPaperclip, IconActivity } from '@tabler/icons-react';
 import { Comments } from './comments';
 import { Attachments } from './attachments';
 import { ActivityFeed } from './activity-feed';
@@ -84,7 +84,7 @@ export function ProjectDetailSections({
             value="comments"
             className="flex items-center gap-2 data-[state=active]:bg-background"
           >
-            <MessageSquare className="h-4 w-4" />
+            <IconMessage className="h-4 w-4" />
             Comments
             {comments.length > 0 && (
               <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
@@ -96,7 +96,7 @@ export function ProjectDetailSections({
             value="attachments"
             className="flex items-center gap-2 data-[state=active]:bg-background"
           >
-            <Paperclip className="h-4 w-4" />
+            <IconPaperclip className="h-4 w-4" />
             Attachments
             {files.length > 0 && (
               <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
@@ -108,7 +108,7 @@ export function ProjectDetailSections({
             value="activity"
             className="flex items-center gap-2 data-[state=active]:bg-background"
           >
-            <Activity className="h-4 w-4" />
+            <IconActivity className="h-4 w-4" />
             Activity
             {activities.length > 0 && (
               <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">

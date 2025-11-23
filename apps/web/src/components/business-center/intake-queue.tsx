@@ -1,4 +1,10 @@
-import { AlertCircle, CheckCircle2, Clock, Inbox, Plus } from 'lucide-react';
+import {
+  IconAlertCircle,
+  IconCircleCheck,
+  IconClock,
+  IconInbox,
+  IconPlus,
+} from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,11 +47,11 @@ const priorityConfig = {
  * Status configuration for styling using global CSS variables
  */
 const statusConfig = {
-  open: { label: 'Open', icon: AlertCircle, color: 'bg-info' },
-  in_progress: { label: 'In Progress', icon: Clock, color: 'bg-warning' },
-  pending_client: { label: 'Pending Client', icon: Clock, color: 'bg-warning' },
-  resolved: { label: 'Resolved', icon: CheckCircle2, color: 'bg-success' },
-  closed: { label: 'Closed', icon: CheckCircle2, color: 'bg-muted' },
+  open: { label: 'Open', icon: IconAlertCircle, color: 'bg-info' },
+  in_progress: { label: 'In Progress', icon: IconClock, color: 'bg-warning' },
+  pending_client: { label: 'Pending Client', icon: IconClock, color: 'bg-warning' },
+  resolved: { label: 'Resolved', icon: IconCircleCheck, color: 'bg-success' },
+  closed: { label: 'Closed', icon: IconCircleCheck, color: 'bg-muted' },
 };
 
 /**
@@ -63,14 +69,14 @@ export function IntakeQueue({ tickets, teamMembers }: IntakeQueueProps) {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Intake Queue ({intakeTickets.length})</h3>
           <Button size="sm" className="gap-2">
-            <Plus className="h-4 w-4" />
+            <IconPlus className="h-4 w-4" />
             New Request
           </Button>
         </div>
 
         {/* Empty state */}
         <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg">
-          <Inbox className="h-16 w-16 mx-auto mb-4 opacity-30" />
+          <IconInbox className="h-16 w-16 mx-auto mb-4 opacity-30" />
           <p className="text-base font-medium">No pending intake requests</p>
           <p className="text-sm mt-2">New client requests will appear here</p>
         </div>
@@ -84,7 +90,7 @@ export function IntakeQueue({ tickets, teamMembers }: IntakeQueueProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Intake Queue ({intakeTickets.length})</h3>
         <Button size="sm" className="gap-2">
-          <Plus className="h-4 w-4" />
+          <IconPlus className="h-4 w-4" />
           New Request
         </Button>
       </div>

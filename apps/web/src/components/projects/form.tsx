@@ -24,7 +24,7 @@ import {
   createProjectAction,
   updateProjectAction,
 } from '@/app/(default)/dashboard/projects/actions';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
 
 interface ProjectFormProps {
   project?: ProjectWithRelations & {
@@ -64,7 +64,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
       {/* Error Alert */}
       {state.message && !state.success && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <IconAlertCircle className="h-4 w-4" />
           <AlertDescription>{state.message}</AlertDescription>
         </Alert>
       )}
@@ -290,7 +290,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
           Cancel
         </Button>
         <Button type="submit" disabled={isPending}>
-          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
           {mode === 'create' ? 'Create Project' : 'Save Changes'}
         </Button>
       </div>

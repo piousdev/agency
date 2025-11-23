@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import {
+  boolean,
   index,
   integer,
   jsonb,
@@ -10,7 +11,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { client } from './client';
-import { ticketPriorityEnum, ticketStatusEnum, ticketTypeEnum } from './enums';
+import {
+  ticketPriorityEnum,
+  ticketResolutionEnum,
+  ticketStatusEnum,
+  ticketTypeEnum,
+} from './enums';
 import { project } from './project';
 import { user } from './user';
 
@@ -75,6 +81,31 @@ export const ticket = pgTable(
     }),
     // Parent ticket for linked/merged tickets
     parentTicketId: text('parent_ticket_id'),
+
+    // ============================================
+    // Industry-standard additions (Jira, Zendesk, ClickUp)
+    // ============================================
+
+    // Resolution - how the ticket was resolved
+    resolution: ticketResolutionEnum('resolution'),
+
+    // Agile/Scrum fields
+    storyPoints: integer('story_points'), // Fibonacci: 1, 2, 3, 5, 8, 13, 21
+    sprintId: text('sprint_id'), // FK to sprint table (added later to avoid circular dep)
+
+    // Version tracking (like Jira)
+    affectedVersion: varchar('affected_version', { length: 50 }), // Version where bug exists
+    fixVersion: varchar('fix_version', { length: 50 }), // Version with fix
+
+    // Component/module tracking
+    component: varchar('component', { length: 100 }), // e.g., "frontend", "api", "database"
+
+    // Visibility control
+    isInternal: boolean('is_internal').default(false).notNull(), // Internal notes vs customer-visible
+
+    // Acceptance criteria (Agile)
+    acceptanceCriteria: text('acceptance_criteria'),
+
     // Timestamps
     resolvedAt: timestamp('resolved_at'),
     closedAt: timestamp('closed_at'),
@@ -116,6 +147,11 @@ export const ticket = pgTable(
     index('ticket_resolved_at_idx').using('brin', table.resolvedAt),
     index('ticket_closed_at_idx').using('brin', table.closedAt),
     index('ticket_due_at_idx').using('brin', table.dueAt),
+    // New indexes for industry-standard fields
+    index('ticket_resolution_idx').on(table.resolution),
+    index('ticket_sprint_id_idx').on(table.sprintId),
+    index('ticket_component_idx').on(table.component),
+    index('ticket_is_internal_idx').on(table.isInternal),
   ]
 );
 

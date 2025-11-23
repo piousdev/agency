@@ -1,18 +1,24 @@
 import { relations } from 'drizzle-orm';
 import { account } from './account';
 import { activity } from './activity';
+import { checklist, checklistItem } from './checklist';
 import { client } from './client';
+import { clientContact } from './client-contact';
 import { comment } from './comment';
 import { file } from './file';
 import { invitation } from './invitation';
+import { label, projectLabel, ticketLabel } from './label';
+import { milestone } from './milestone';
 import { project } from './project';
 import { projectAssignment } from './project-assignment';
 import { role } from './role';
 import { roleAssignment } from './role-assignment';
 import { session } from './session';
+import { sprint } from './sprint';
 import { ticket, ticketActivity } from './ticket';
 import { user } from './user';
 import { userToClient } from './user-to-client';
+import { projectWatcher, ticketWatcher } from './watcher';
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -28,6 +34,12 @@ export const userRelations = relations(user, ({ many }) => ({
   files: many(file),
   activities: many(activity),
   ticketActivities: many(ticketActivity),
+  // New relations for industry-standard features
+  ownedProjects: many(project, { relationName: 'projectOwner' }),
+  projectWatching: many(projectWatcher),
+  ticketWatching: many(ticketWatcher),
+  completedChecklistItems: many(checklistItem, { relationName: 'completedBy' }),
+  assignedChecklistItems: many(checklistItem, { relationName: 'assignedChecklistItems' }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -49,6 +61,8 @@ export const clientRelations = relations(client, ({ many }) => ({
   projects: many(project),
   tickets: many(ticket),
   invitations: many(invitation),
+  // New relation for multiple contacts
+  contacts: many(clientContact),
 }));
 
 export const userToClientRelations = relations(userToClient, ({ one }) => ({
@@ -67,11 +81,22 @@ export const projectRelations = relations(project, ({ one, many }) => ({
     fields: [project.clientId],
     references: [client.id],
   }),
+  owner: one(user, {
+    fields: [project.ownerId],
+    references: [user.id],
+    relationName: 'projectOwner',
+  }),
   projectAssignments: many(projectAssignment),
   tickets: many(ticket),
   comments: many(comment),
   files: many(file),
   activities: many(activity),
+  // New industry-standard relations
+  milestones: many(milestone),
+  sprints: many(sprint),
+  watchers: many(projectWatcher),
+  labels: many(projectLabel),
+  checklists: many(checklist, { relationName: 'projectChecklists' }),
 }));
 
 export const ticketRelations = relations(ticket, ({ one, many }) => ({
@@ -102,6 +127,14 @@ export const ticketRelations = relations(ticket, ({ one, many }) => ({
   comments: many(comment),
   files: many(file),
   activities: many(ticketActivity),
+  // New industry-standard relations
+  sprint: one(sprint, {
+    fields: [ticket.sprintId],
+    references: [sprint.id],
+  }),
+  watchers: many(ticketWatcher),
+  labels: many(ticketLabel),
+  checklists: many(checklist, { relationName: 'ticketChecklists' }),
 }));
 
 export const ticketActivityRelations = relations(ticketActivity, ({ one }) => ({
@@ -201,5 +234,117 @@ export const activityRelations = relations(activity, ({ one }) => ({
   actor: one(user, {
     fields: [activity.actorId],
     references: [user.id],
+  }),
+}));
+
+// ============================================
+// New industry-standard relations
+// ============================================
+
+// Client Contact relations
+export const clientContactRelations = relations(clientContact, ({ one }) => ({
+  client: one(client, {
+    fields: [clientContact.clientId],
+    references: [client.id],
+  }),
+}));
+
+// Sprint relations
+export const sprintRelations = relations(sprint, ({ one, many }) => ({
+  project: one(project, {
+    fields: [sprint.projectId],
+    references: [project.id],
+  }),
+  tickets: many(ticket),
+}));
+
+// Milestone relations
+export const milestoneRelations = relations(milestone, ({ one }) => ({
+  project: one(project, {
+    fields: [milestone.projectId],
+    references: [project.id],
+  }),
+}));
+
+// Label relations
+export const labelRelations = relations(label, ({ many }) => ({
+  projectLabels: many(projectLabel),
+  ticketLabels: many(ticketLabel),
+}));
+
+export const projectLabelRelations = relations(projectLabel, ({ one }) => ({
+  project: one(project, {
+    fields: [projectLabel.projectId],
+    references: [project.id],
+  }),
+  label: one(label, {
+    fields: [projectLabel.labelId],
+    references: [label.id],
+  }),
+}));
+
+export const ticketLabelRelations = relations(ticketLabel, ({ one }) => ({
+  ticket: one(ticket, {
+    fields: [ticketLabel.ticketId],
+    references: [ticket.id],
+  }),
+  label: one(label, {
+    fields: [ticketLabel.labelId],
+    references: [label.id],
+  }),
+}));
+
+// Watcher relations
+export const projectWatcherRelations = relations(projectWatcher, ({ one }) => ({
+  project: one(project, {
+    fields: [projectWatcher.projectId],
+    references: [project.id],
+  }),
+  user: one(user, {
+    fields: [projectWatcher.userId],
+    references: [user.id],
+  }),
+}));
+
+export const ticketWatcherRelations = relations(ticketWatcher, ({ one }) => ({
+  ticket: one(ticket, {
+    fields: [ticketWatcher.ticketId],
+    references: [ticket.id],
+  }),
+  user: one(user, {
+    fields: [ticketWatcher.userId],
+    references: [user.id],
+  }),
+}));
+
+// Checklist relations
+export const checklistRelations = relations(checklist, ({ one, many }) => ({
+  ticket: one(ticket, {
+    fields: [checklist.ticketId],
+    references: [ticket.id],
+    relationName: 'ticketChecklists',
+  }),
+  project: one(project, {
+    fields: [checklist.projectId],
+    references: [project.id],
+    relationName: 'projectChecklists',
+  }),
+  items: many(checklistItem),
+}));
+
+export const checklistItemRelations = relations(checklistItem, ({ one }) => ({
+  checklist: one(checklist, {
+    fields: [checklistItem.checklistId],
+    references: [checklist.id],
+  }),
+  completedBy: one(user, {
+    fields: [checklistItem.completedById],
+    references: [user.id],
+    relationName: 'completedBy',
+  }),
+  assignee: one(user, {
+    fields: [checklistItem.assigneeId],
+    references: [user.id],
+    relationName: 'assignedChecklistItems',
   }),
 }));

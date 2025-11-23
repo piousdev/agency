@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react';
 import { useActionState, useId } from 'react';
 import { updateCapacityAction } from '@/app/(default)/dashboard/business-center/actions';
 import { Button } from '@/components/ui/button';
@@ -95,7 +95,7 @@ export function CapacityModal({
 
           {/* Warning for high capacity */}
           <div className="bg-warning/10 border border-warning/20 text-warning px-4 py-3 rounded-md text-sm flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <IconAlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-medium">Capacity Guidelines</p>
               <ul className="mt-1 space-y-1 text-xs">
@@ -117,7 +117,7 @@ export function CapacityModal({
               Cancel
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isPending ? 'Updating...' : 'Update Capacity'}
             </Button>
           </div>

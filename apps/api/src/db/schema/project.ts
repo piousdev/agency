@@ -1,8 +1,10 @@
 import { sql } from 'drizzle-orm';
 import {
+  boolean,
   check,
   index,
   integer,
+  jsonb,
   numeric,
   pgTable,
   text,
@@ -10,7 +12,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { client } from './client';
-import { projectPriorityEnum, projectStatusEnum } from './enums';
+import { projectPriorityEnum, projectStatusEnum, projectVisibilityEnum } from './enums';
+import { user } from './user';
 
 export const project = pgTable(
   'project',
@@ -36,6 +39,29 @@ export const project = pgTable(
     productionUrl: varchar('production_url', { length: 2048 }), // Live URL
     stagingUrl: varchar('staging_url', { length: 2048 }), // Staging URL
     notes: text('notes'), // Internal notes
+
+    // ============================================
+    // Industry-standard additions (Monday, Asana, ClickUp)
+    // ============================================
+
+    // Visual customization
+    color: varchar('color', { length: 7 }), // Hex color for project identification
+    icon: varchar('icon', { length: 50 }), // Icon identifier (e.g., "folder", "rocket")
+
+    // Visibility and access control
+    visibility: projectVisibilityEnum('visibility').default('team').notNull(),
+    isTemplate: boolean('is_template').default(false).notNull(), // Template projects
+
+    // Ownership (different from assignees)
+    ownerId: text('owner_id').references(() => user.id, { onDelete: 'set null' }),
+
+    // Goals and objectives
+    goals: text('goals'), // Project objectives/success criteria
+
+    // Custom fields for extensibility
+    customFields: jsonb('custom_fields').$type<Record<string, unknown>>().default({}),
+
+    // Dates
     startedAt: timestamp('started_at'),
     deliveredAt: timestamp('delivered_at'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -64,6 +90,10 @@ export const project = pgTable(
       'project_completion_percentage_check',
       sql`${table.completionPercentage} >= 0 AND ${table.completionPercentage} <= 100`
     ),
+    // New indexes for industry-standard fields
+    index('project_visibility_idx').on(table.visibility),
+    index('project_is_template_idx').on(table.isTemplate),
+    index('project_owner_id_idx').on(table.ownerId),
   ]
 );
 

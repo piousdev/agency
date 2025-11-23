@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CalendarDays, GanttChart, LayoutGrid, List } from 'lucide-react';
+import { IconCalendar, IconTimeline, IconLayoutGrid, IconList } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireUser } from '@/lib/auth/session';
@@ -8,25 +8,25 @@ const views = [
   {
     title: 'List View',
     description: 'Detailed table view with all project information',
-    icon: List,
+    icon: IconList,
     href: '/dashboard/projects/views/list',
   },
   {
     title: 'Board View',
     description: 'Kanban-style board grouped by project status',
-    icon: LayoutGrid,
+    icon: IconLayoutGrid,
     href: '/dashboard/projects/views/board',
   },
   {
     title: 'Calendar View',
     description: 'Monthly calendar showing projects by delivery date',
-    icon: CalendarDays,
+    icon: IconCalendar,
     href: '/dashboard/projects/views/calendar',
   },
   {
     title: 'Timeline View',
     description: 'Gantt-style timeline sorted by due dates',
-    icon: GanttChart,
+    icon: IconTimeline,
     href: '/dashboard/projects/views/timeline',
   },
 ];

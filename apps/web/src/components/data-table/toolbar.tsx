@@ -1,7 +1,13 @@
 'use client';
 
 import { type Table } from '@tanstack/react-table';
-import { X, Search, SlidersHorizontal, Columns3, RotateCcw } from 'lucide-react';
+import {
+  IconX,
+  IconSearch,
+  IconAdjustmentsHorizontal,
+  IconColumns3,
+  IconRotate2,
+} from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -70,7 +76,7 @@ export function DataTableToolbar<TData>({
         {/* Global Search */}
         {enableGlobalFilter && (
           <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search all columns..."
               value={searchValue}
@@ -89,7 +95,7 @@ export function DataTableToolbar<TData>({
                 }}
                 aria-label="Clear search"
               >
-                <X className="h-4 w-4" />
+                <IconX className="h-4 w-4" />
               </Button>
             )}
           </div>
@@ -101,7 +107,7 @@ export function DataTableToolbar<TData>({
         {/* Active filters indicator */}
         {activeFiltersCount > 0 && (
           <Badge variant="secondary" className="h-7 gap-1">
-            <SlidersHorizontal className="h-3 w-3" />
+            <IconAdjustmentsHorizontal className="h-3 w-3" />
             {activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''}
           </Badge>
         )}
@@ -109,7 +115,7 @@ export function DataTableToolbar<TData>({
         {/* Reset button */}
         {enableReset && isFiltered && (
           <Button variant="ghost" size="sm" onClick={handleReset} className="h-8 px-2 lg:px-3">
-            <RotateCcw className="mr-2 h-4 w-4" />
+            <IconRotate2 className="mr-2 h-4 w-4" />
             Reset
           </Button>
         )}
@@ -121,7 +127,7 @@ export function DataTableToolbar<TData>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8">
-                <Columns3 className="mr-2 h-4 w-4" />
+                <IconColumns3 className="mr-2 h-4 w-4" />
                 Columns
               </Button>
             </DropdownMenuTrigger>

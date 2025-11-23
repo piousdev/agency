@@ -1,17 +1,17 @@
 import Link from 'next/link';
 import {
-  Calendar,
-  CheckCircle2,
-  Clock,
-  List,
-  MoreHorizontal,
-  Pause,
-  Plus,
-  Users,
-  AlertCircle,
-  Archive,
-  Wrench,
-} from 'lucide-react';
+  IconCalendar,
+  IconCircleCheck,
+  IconClock,
+  IconList,
+  IconDots,
+  IconPlayerPause,
+  IconPlus,
+  IconUsers,
+  IconAlertCircle,
+  IconArchive,
+  IconTool,
+} from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -42,17 +42,17 @@ const statusConfig: Record<
     icon: React.ElementType;
   }
 > = {
-  proposal: { label: 'Proposal', variant: 'secondary', icon: AlertCircle },
-  in_development: { label: 'In Development', variant: 'default', icon: Clock },
-  in_review: { label: 'In Review', variant: 'secondary', icon: Clock },
-  delivered: { label: 'Delivered', variant: 'outline', icon: CheckCircle2 },
-  on_hold: { label: 'On Hold', variant: 'destructive', icon: Pause },
-  maintenance: { label: 'Maintenance', variant: 'outline', icon: Wrench },
-  archived: { label: 'Archived', variant: 'outline', icon: Archive },
+  proposal: { label: 'Proposal', variant: 'secondary', icon: IconAlertCircle },
+  in_development: { label: 'In Development', variant: 'default', icon: IconClock },
+  in_review: { label: 'In Review', variant: 'secondary', icon: IconClock },
+  delivered: { label: 'Delivered', variant: 'outline', icon: IconCircleCheck },
+  on_hold: { label: 'On Hold', variant: 'destructive', icon: IconPlayerPause },
+  maintenance: { label: 'Maintenance', variant: 'outline', icon: IconTool },
+  archived: { label: 'Archived', variant: 'outline', icon: IconArchive },
 };
 
 function getStatusConfig(status: string) {
-  return statusConfig[status] ?? { label: status, variant: 'outline' as const, icon: Clock };
+  return statusConfig[status] ?? { label: status, variant: 'outline' as const, icon: IconClock };
 }
 
 export default async function ProjectListViewPage() {
@@ -66,7 +66,7 @@ export default async function ProjectListViewPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <List className="h-6 w-6" />
+            <IconList className="h-6 w-6" />
             <h1 className="text-4xl font-bold">List View</h1>
           </div>
           <p className="text-muted-foreground mt-2">Detailed project list with all information</p>
@@ -77,7 +77,7 @@ export default async function ProjectListViewPage() {
           </Link>
           <Link href="/dashboard/projects/new">
             <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+              <IconPlus className="h-4 w-4" />
               New Project
             </Button>
           </Link>
@@ -107,7 +107,7 @@ export default async function ProjectListViewPage() {
                         <p className="text-muted-foreground">No projects found</p>
                         <Link href="/dashboard/projects/new">
                           <Button variant="outline" size="sm">
-                            <Plus className="h-4 w-4 mr-2" />
+                            <IconPlus className="h-4 w-4 mr-2" />
                             Create your first project
                           </Button>
                         </Link>
@@ -135,7 +135,7 @@ export default async function ProjectListViewPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <IconUsers className="h-4 w-4 text-muted-foreground" />
                             <span className="text-sm">{project.client?.name ?? 'Unknown'}</span>
                           </div>
                         </TableCell>
@@ -180,14 +180,14 @@ export default async function ProjectListViewPage() {
                           <div className="space-y-1 text-xs">
                             {project.deliveredAt && (
                               <div className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
+                                <IconCalendar className="h-3 w-3" />
                                 <span>
                                   Due: {new Date(project.deliveredAt).toLocaleDateString()}
                                 </span>
                               </div>
                             )}
                             <div className="flex items-center gap-1 text-muted-foreground">
-                              <Clock className="h-3 w-3" />
+                              <IconClock className="h-3 w-3" />
                               <span>
                                 Updated: {new Date(project.updatedAt).toLocaleDateString()}
                               </span>
@@ -198,7 +198,7 @@ export default async function ProjectListViewPage() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
+                                <IconDots className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">

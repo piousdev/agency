@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Changelog } from '@/components/changelog';
 import { loadMDXFile } from '@/lib/mdx';
 import { getChangelogVersions, getAdjacentVersions } from '@/lib/changelog';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 
 interface ChangelogPageProps {
   params: Promise<{
@@ -66,7 +66,7 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
                   href={`/dashboard/changelog/${prev.dateSlug}`}
                   className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <ArrowLeft className="size-4" />
+                  <IconArrowLeft className="size-4" />
                   <div className="flex flex-col">
                     <span className="text-xs uppercase tracking-wider">Previous</span>
                     <span className="font-medium">{prev.title}</span>
@@ -87,7 +87,7 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
                     <span className="text-xs uppercase tracking-wider">Next</span>
                     <span className="font-medium">{next.title}</span>
                   </div>
-                  <ArrowRight className="size-4" />
+                  <IconArrowRight className="size-4" />
                 </Link>
               ) : (
                 <div />

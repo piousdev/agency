@@ -10,13 +10,13 @@ import {
   type DroppableStateSnapshot,
   type DropResult,
 } from '@hello-pangea/dnd';
+import { IconGripVertical, IconLoader2 } from '@tabler/icons-react';
 import { format } from 'date-fns';
-import { Building2, Calendar, GripVertical, Loader2, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { updateTicketPriorityAction } from '@/lib/actions/business-center/tickets';
 import type { Ticket, TicketWithRelations } from '@/lib/api/tickets/types';
 import { cn } from '@/lib/utils';
@@ -37,11 +37,54 @@ const priorityLabels: Record<TicketPriority, string> = {
 };
 
 const priorityColors: Record<TicketPriority, string> = {
-  critical: 'bg-destructive/10 ring-destructive/30',
-  high: 'bg-warning/10 ring-warning/30',
-  medium: 'bg-info/10 ring-info/30',
+  critical: 'bg-red-500/10 ring-red-500/30',
+  high: 'bg-orange-500/10 ring-orange-500/30',
+  medium: 'bg-amber-500/10 ring-amber-500/30',
   low: 'bg-muted ring-muted-foreground/20',
 };
+
+const priorityHeaderColors: Record<TicketPriority, string> = {
+  critical: 'text-red-600 dark:text-red-400',
+  high: 'text-orange-600 dark:text-orange-400',
+  medium: 'text-amber-600 dark:text-amber-400',
+  low: 'text-muted-foreground',
+};
+
+const typeConfig: Record<string, { label: string; color: string }> = {
+  bug: {
+    label: 'Bug',
+    color: 'bg-red-500/10 text-red-600 border-red-200 dark:border-red-500/30',
+  },
+  feature: {
+    label: 'Feature',
+    color: 'bg-purple-500/10 text-purple-600 border-purple-200 dark:border-purple-500/30',
+  },
+  support: {
+    label: 'Support',
+    color: 'bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-500/30',
+  },
+  question: {
+    label: 'Question',
+    color: 'bg-slate-500/10 text-slate-600 border-slate-200 dark:border-slate-500/30',
+  },
+};
+
+const statusConfig: Record<string, { label: string; dot: string }> = {
+  new: { label: 'New', dot: 'bg-blue-500' },
+  in_progress: { label: 'In Progress', dot: 'bg-amber-500' },
+  pending: { label: 'Pending', dot: 'bg-purple-500' },
+  resolved: { label: 'Resolved', dot: 'bg-emerald-500' },
+  closed: { label: 'Closed', dot: 'bg-slate-400' },
+};
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 export function IntakeKanbanView({ tickets: initialTickets }: IntakeKanbanViewProps) {
   const router = useRouter();
@@ -159,9 +202,14 @@ export function IntakeKanbanView({ tickets: initialTickets }: IntakeKanbanViewPr
         {priorities.map((priority) => (
           <div key={priority} className="min-w-0">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold">{priorityLabels[priority]}</h3>
-                <Badge variant="secondary">{ticketsByPriority[priority].length}</Badge>
+              {/* Column Header */}
+              <div className="flex items-center justify-between px-1">
+                <h3 className={cn('text-sm font-semibold', priorityHeaderColors[priority])}>
+                  {priorityLabels[priority]}
+                </h3>
+                <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  {ticketsByPriority[priority].length}
+                </span>
               </div>
 
               <Droppable droppableId={priority}>
@@ -170,84 +218,128 @@ export function IntakeKanbanView({ tickets: initialTickets }: IntakeKanbanViewPr
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     className={cn(
-                      'space-y-3 min-h-[200px] rounded-lg p-2 transition-colors',
+                      'space-y-2 min-h-[200px] rounded-lg p-2 transition-colors',
                       snapshot.isDraggingOver && priorityColors[priority],
                       snapshot.isDraggingOver && 'ring-2'
                     )}
                   >
                     {ticketsByPriority[priority].length === 0 && !snapshot.isDraggingOver && (
-                      <Card className="border-dashed">
-                        <CardContent className="pt-6 text-center text-sm text-muted-foreground">
-                          No {priority} priority tickets
-                        </CardContent>
-                      </Card>
+                      <div className="flex items-center justify-center h-24 rounded-lg border border-dashed border-border/50 text-sm text-muted-foreground">
+                        No tickets
+                      </div>
                     )}
-                    {ticketsByPriority[priority].map((ticket, index) => (
-                      <Draggable key={ticket.id} draggableId={ticket.id} index={index}>
-                        {(
-                          dragProvided: DraggableProvided,
-                          dragSnapshot: DraggableStateSnapshot
-                        ) => (
-                          <Card
-                            ref={dragProvided.innerRef}
-                            {...dragProvided.draggableProps}
-                            className={cn(
-                              'transition-shadow cursor-pointer hover:shadow-md',
-                              dragSnapshot.isDragging &&
-                                'shadow-lg ring-2 ring-primary/30 cursor-grabbing',
-                              isPending && draggingId === ticket.id && 'opacity-70'
-                            )}
-                            onClick={() => !dragSnapshot.isDragging && handleCardClick(ticket.id)}
-                          >
-                            <CardHeader className="pb-3">
-                              <div className="flex items-start gap-2">
-                                <div
-                                  {...(dragProvided.dragHandleProps ?? {})}
-                                  className="mt-0.5 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
-                                  onClick={(e) => e.stopPropagation()}
+                    {ticketsByPriority[priority].map((ticket, index) => {
+                      const type = typeConfig[ticket.type] ?? {
+                        label: ticket.type,
+                        color: 'bg-muted text-muted-foreground',
+                      };
+                      const status = statusConfig[ticket.status] ?? {
+                        label: ticket.status,
+                        dot: 'bg-muted-foreground',
+                      };
+
+                      return (
+                        <Draggable key={ticket.id} draggableId={ticket.id} index={index}>
+                          {(
+                            dragProvided: DraggableProvided,
+                            dragSnapshot: DraggableStateSnapshot
+                          ) => (
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              ref={dragProvided.innerRef}
+                              {...dragProvided.draggableProps}
+                              className={cn(
+                                'bg-card border rounded-lg p-3 transition-all cursor-pointer hover:shadow-md hover:border-border w-full text-left',
+                                dragSnapshot.isDragging &&
+                                  'shadow-lg ring-2 ring-primary/30 cursor-grabbing',
+                                isPending && draggingId === ticket.id && 'opacity-70'
+                              )}
+                              onClick={() => !dragSnapshot.isDragging && handleCardClick(ticket.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleCardClick(ticket.id);
+                                }
+                              }}
+                            >
+                              {/* Card Header: Type + Drag Handle */}
+                              <div className="flex items-center justify-between gap-2 mb-2">
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    'text-[10px] font-medium px-1.5 py-0 h-5',
+                                    type.color
+                                  )}
                                 >
-                                  <GripVertical className="h-4 w-4" />
+                                  {type.label}
+                                </Badge>
+                                <div className="flex items-center gap-1">
+                                  {isPending && draggingId === ticket.id && (
+                                    <IconLoader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                                  )}
+                                  <button
+                                    type="button"
+                                    {...(dragProvided.dragHandleProps ?? {})}
+                                    className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <IconGripVertical className="h-4 w-4" />
+                                  </button>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-start justify-between gap-2">
-                                    <CardTitle className="text-sm line-clamp-2">
-                                      {ticket.title}
-                                    </CardTitle>
-                                    {isPending && draggingId === ticket.id && (
-                                      <Loader2 className="h-3 w-3 animate-spin shrink-0" />
-                                    )}
-                                  </div>
-                                </div>
                               </div>
-                            </CardHeader>
-                            <CardContent className="space-y-2 text-sm">
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <Building2 className="h-3 w-3 shrink-0" />
-                                <span className="truncate">{ticket.client?.name || 'N/A'}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <Calendar className="h-3 w-3 shrink-0" />
-                                <span>{format(new Date(ticket.createdAt), 'MMM d')}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <User className="h-3 w-3 shrink-0" />
-                                <span className="truncate">
-                                  {ticket.assignedTo?.name || 'Unassigned'}
+
+                              {/* Title */}
+                              <h4 className="text-sm font-medium leading-snug line-clamp-2 mb-2">
+                                {ticket.title}
+                              </h4>
+
+                              {/* Meta: Client + Date */}
+                              <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                                <span className="truncate max-w-[60%]">
+                                  {ticket.client?.name || 'No client'}
+                                </span>
+                                <span className="tabular-nums shrink-0">
+                                  {format(new Date(ticket.createdAt), 'MMM d')}
                                 </span>
                               </div>
-                              <div className="flex flex-wrap gap-2 pt-2">
-                                <Badge variant="outline" className="text-xs">
-                                  {ticket.type}
-                                </Badge>
-                                <Badge variant="secondary" className="text-xs">
-                                  {ticket.status}
-                                </Badge>
+
+                              {/* Footer: Assignee + Status */}
+                              <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                                {ticket.assignedTo ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <Avatar className="h-5 w-5">
+                                      {ticket.assignedTo.image && (
+                                        <AvatarImage
+                                          src={ticket.assignedTo.image}
+                                          alt={ticket.assignedTo.name || ''}
+                                        />
+                                      )}
+                                      <AvatarFallback className="text-[8px] font-medium bg-muted">
+                                        {getInitials(
+                                          ticket.assignedTo.name || ticket.assignedTo.email || '?'
+                                        )}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-xs truncate max-w-[70px]">
+                                      {ticket.assignedTo.name?.split(' ')[0] ||
+                                        ticket.assignedTo.email?.split('@')[0]}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-amber-600 dark:text-amber-500">
+                                    Unassigned
+                                  </span>
+                                )}
+                                <div className="flex items-center gap-1.5">
+                                  <span className={cn('w-1.5 h-1.5 rounded-full', status.dot)} />
+                                </div>
                               </div>
-                            </CardContent>
-                          </Card>
-                        )}
-                      </Draggable>
-                    ))}
+                            </div>
+                          )}
+                        </Draggable>
+                      );
+                    })}
                     {provided.placeholder}
                   </div>
                 )}

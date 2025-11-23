@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown } from 'lucide-react';
+import { IconChevronDown } from '@tabler/icons-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,7 +55,7 @@ export function TimeFilter({ value, onChange, options = defaultOptions }: TimeFi
           className="h-7 px-2 gap-1 text-xs font-medium bg-background/50 border-border/50 hover:bg-background hover:border-border shrink-0"
         >
           <span>{shortLabels[value]}</span>
-          <ChevronDown className="h-3 w-3 text-muted-foreground" />
+          <IconChevronDown className="h-3 w-3 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[120px]">

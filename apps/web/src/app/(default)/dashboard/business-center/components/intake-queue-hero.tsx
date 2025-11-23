@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Inbox, TrendingUp, TrendingDown } from 'lucide-react';
+import { IconInbox, IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
 import {
   BentoCard,
@@ -38,13 +38,13 @@ export function IntakeQueueHero({ count, trend }: IntakeQueueHeroProps) {
     <BentoCard colSpan="2" isHero aria-label={`Intake Queue: ${count} pending requests`}>
       {/* Watermark Icon */}
       <div className="absolute -top-8 -right-8 opacity-[0.03] pointer-events-none">
-        <Inbox className="w-56 h-56" />
+        <IconInbox className="w-56 h-56" />
       </div>
 
       <BentoCardHeader>
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-primary/10 rounded-xl">
-            <Inbox className="h-5 w-5 text-primary" />
+            <IconInbox className="h-5 w-5 text-primary" />
           </div>
           <div className="flex items-center gap-1.5">
             <h3 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
@@ -73,9 +73,9 @@ export function IntakeQueueHero({ count, trend }: IntakeQueueHeroProps) {
                 )}
               >
                 {trend.direction === 'up' ? (
-                  <TrendingUp className="h-3 w-3" />
+                  <IconTrendingUp className="h-3 w-3" />
                 ) : trend.direction === 'down' ? (
-                  <TrendingDown className="h-3 w-3" />
+                  <IconTrendingDown className="h-3 w-3" />
                 ) : null}
                 {trend.value > 0 ? '+' : ''}
                 {trend.value}%

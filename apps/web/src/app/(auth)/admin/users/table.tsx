@@ -5,7 +5,7 @@
 
 'use client';
 
-import { Edit, MoreHorizontal, Trash2, UserCog } from 'lucide-react';
+import { IconDots, IconPencil, IconTrash, IconUserCog } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -144,7 +144,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
+                          <IconDots className="h-4 w-4" />
                           <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>
@@ -153,13 +153,13 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                           <Link href={`/apps/web/src/app/(auth)/admin/users/${user.id}`}>
-                            <UserCog className="h-4 w-4 mr-2" />
+                            <IconUserCog className="h-4 w-4 mr-2" />
                             View Details
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={`/apps/web/src/app/(auth)/admin/users/${user.id}/edit`}>
-                            <Edit className="h-4 w-4 mr-2" />
+                            <IconPencil className="h-4 w-4 mr-2" />
                             Edit User
                           </Link>
                         </DropdownMenuItem>
@@ -168,7 +168,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                           className="text-destructive focus:text-destructive"
                           onClick={() => setDeleteUserId(user.id)}
                         >
-                          <Trash2 className="h-4 w-4 mr-2" />
+                          <IconTrash className="h-4 w-4 mr-2" />
                           Delete User
                         </DropdownMenuItem>
                       </DropdownMenuContent>

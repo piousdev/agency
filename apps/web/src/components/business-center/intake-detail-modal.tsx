@@ -1,6 +1,13 @@
 'use client';
 
-import { AlertCircle, Briefcase, Calendar, CheckCircle2, Clock, User } from 'lucide-react';
+import {
+  IconAlertCircle,
+  IconBriefcase,
+  IconCalendar,
+  IconCircleCheck,
+  IconClock,
+  IconUser,
+} from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -43,11 +50,11 @@ const priorityConfig = {
  * Status configuration for styling using global CSS variables
  */
 const statusConfig = {
-  open: { label: 'Open', icon: AlertCircle, color: 'bg-info' },
-  in_progress: { label: 'In Progress', icon: Clock, color: 'bg-warning' },
-  pending_client: { label: 'Pending Client', icon: Clock, color: 'bg-warning' },
-  resolved: { label: 'Resolved', icon: CheckCircle2, color: 'bg-success' },
-  closed: { label: 'Closed', icon: CheckCircle2, color: 'bg-muted' },
+  open: { label: 'Open', icon: IconAlertCircle, color: 'bg-info' },
+  in_progress: { label: 'In Progress', icon: IconClock, color: 'bg-warning' },
+  pending_client: { label: 'Pending Client', icon: IconClock, color: 'bg-warning' },
+  resolved: { label: 'Resolved', icon: IconCircleCheck, color: 'bg-success' },
+  closed: { label: 'Closed', icon: IconCircleCheck, color: 'bg-muted' },
 };
 
 /**
@@ -93,7 +100,7 @@ export function IntakeDetailModal({
             <div className="space-y-2">
               <div className="text-sm font-medium text-muted-foreground">Type</div>
               <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-muted-foreground" />
+                <IconBriefcase className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium capitalize">{ticket.type}</span>
               </div>
             </div>
@@ -153,7 +160,7 @@ export function IntakeDetailModal({
               <div className="p-3 bg-warning/10 rounded-lg border border-warning/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-warning">
-                    <User className="h-4 w-4" />
+                    <IconUser className="h-4 w-4" />
                     <span className="text-sm font-medium">Not assigned</span>
                   </div>
                   {onAssign && (
@@ -170,7 +177,7 @@ export function IntakeDetailModal({
           <div className="space-y-2">
             <div className="text-sm font-medium text-muted-foreground">Created By</div>
             <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg border">
-              <User className="h-8 w-8 text-muted-foreground" />
+              <IconUser className="h-8 w-8 text-muted-foreground" />
               <div>
                 <div className="font-medium text-sm">{ticket.createdBy.name}</div>
                 <div className="text-xs text-muted-foreground">{ticket.createdBy.email}</div>
@@ -183,7 +190,7 @@ export function IntakeDetailModal({
             <div className="space-y-2">
               <div className="text-sm font-medium text-muted-foreground">Created</div>
               <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <IconCalendar className="h-4 w-4 text-muted-foreground" />
                 <span>
                   {new Date(ticket.createdAt).toLocaleDateString('en-US', {
                     month: 'short',
@@ -199,7 +206,7 @@ export function IntakeDetailModal({
             <div className="space-y-2">
               <div className="text-sm font-medium text-muted-foreground">Last Updated</div>
               <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <IconCalendar className="h-4 w-4 text-muted-foreground" />
                 <span>
                   {new Date(ticket.updatedAt).toLocaleDateString('en-US', {
                     month: 'short',

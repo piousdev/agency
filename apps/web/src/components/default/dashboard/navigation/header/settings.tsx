@@ -1,4 +1,4 @@
-import { Settings as Cog } from 'lucide-react';
+import { IconSettings } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -11,7 +11,7 @@ export default function Settings() {
         aria-label="Settings"
         className="rounded-full cursor-pointer"
       >
-        <Cog className="size-[1.2rem] text-primary" />
+        <IconSettings className="size-[1.2rem] text-primary" />
       </Button>
     </Link>
   );

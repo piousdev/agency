@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutGrid, List, Kanban } from 'lucide-react';
+import { IconLayoutGrid, IconList, IconLayoutKanban } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -21,7 +21,7 @@ export function ViewSwitcher({ currentView, onViewChange, showKanban = true }: V
         className="h-9 gap-2"
         onClick={() => onViewChange('table')}
       >
-        <List className="h-4 w-4" />
+        <IconList className="h-4 w-4" />
         Table
       </Button>
       <Button
@@ -30,7 +30,7 @@ export function ViewSwitcher({ currentView, onViewChange, showKanban = true }: V
         className="h-9 gap-2"
         onClick={() => onViewChange('cards')}
       >
-        <LayoutGrid className="h-4 w-4" />
+        <IconLayoutGrid className="h-4 w-4" />
         Cards
       </Button>
       {showKanban && (
@@ -40,7 +40,7 @@ export function ViewSwitcher({ currentView, onViewChange, showKanban = true }: V
           className="h-9 gap-2"
           onClick={() => onViewChange('kanban')}
         >
-          <Kanban className="h-4 w-4" />
+          <IconLayoutKanban className="h-4 w-4" />
           Kanban
         </Button>
       )}

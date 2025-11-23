@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { IconCircleCheck } from '@tabler/icons-react';
 import {
   BentoCard,
   BentoCardContent,
@@ -34,13 +34,13 @@ export function CompletedProjectsCard({
     >
       {/* Watermark Icon */}
       <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none">
-        <CheckCircle className="w-32 h-32" />
+        <IconCircleCheck className="w-32 h-32" />
       </div>
 
       <BentoCardHeader>
         <div className="flex items-center gap-2">
           <div className="p-2 bg-success/10 rounded-lg">
-            <CheckCircle className="h-4 w-4 text-success" />
+            <IconCircleCheck className="h-4 w-4 text-success" />
           </div>
           <div className="flex items-center gap-1.5">
             <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">

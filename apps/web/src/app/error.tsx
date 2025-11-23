@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import * as Sentry from '@sentry/nextjs';
-import { RefreshCw, Home } from 'lucide-react';
+import { IconRefresh, IconHome } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -58,12 +58,12 @@ export default function Error({
         {/* Action Buttons */}
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button size="lg" onClick={reset}>
-            <RefreshCw className="size-4" />
+            <IconRefresh className="size-4" />
             Try again
           </Button>
           <Button variant="outline" size="lg" asChild>
             <Link href="/dashboard">
-              <Home className="size-4" />
+              <IconHome className="size-4" />
               Go to Dashboard
             </Link>
           </Button>

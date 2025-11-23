@@ -2,18 +2,18 @@
 
 import { formatDistanceToNow } from 'date-fns';
 import {
-  Activity as ActivityIcon,
-  Plus,
-  Edit,
-  ArrowRight,
-  UserPlus,
-  UserMinus,
-  MessageSquare,
-  Upload,
-  Trash2,
-  AlertTriangle,
-  Calendar,
-} from 'lucide-react';
+  IconActivity,
+  IconPlus,
+  IconEdit,
+  IconArrowRight,
+  IconUserPlus,
+  IconUserMinus,
+  IconMessage,
+  IconUpload,
+  IconTrash,
+  IconAlertTriangle,
+  IconCalendar,
+} from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Activity, ActivityType } from '@/lib/api/projects';
 import { cn } from '@/lib/utils';
@@ -41,19 +41,19 @@ interface ActivityConfig {
 
 const activityConfig: Record<ActivityType, ActivityConfig> = {
   project_created: {
-    icon: Plus,
+    icon: IconPlus,
     color: 'text-emerald-500',
     bgColor: 'bg-emerald-500/10',
     getMessage: () => 'created this project',
   },
   project_updated: {
-    icon: Edit,
+    icon: IconEdit,
     color: 'text-blue-500',
     bgColor: 'bg-blue-500/10',
     getMessage: () => 'updated project details',
   },
   status_changed: {
-    icon: ArrowRight,
+    icon: IconArrowRight,
     color: 'text-violet-500',
     bgColor: 'bg-violet-500/10',
     getMessage: (metadata) => {
@@ -63,7 +63,7 @@ const activityConfig: Record<ActivityType, ActivityConfig> = {
     },
   },
   assignee_added: {
-    icon: UserPlus,
+    icon: IconUserPlus,
     color: 'text-cyan-500',
     bgColor: 'bg-cyan-500/10',
     getMessage: (metadata) => {
@@ -72,7 +72,7 @@ const activityConfig: Record<ActivityType, ActivityConfig> = {
     },
   },
   assignee_removed: {
-    icon: UserMinus,
+    icon: IconUserMinus,
     color: 'text-rose-500',
     bgColor: 'bg-rose-500/10',
     getMessage: (metadata) => {
@@ -81,7 +81,7 @@ const activityConfig: Record<ActivityType, ActivityConfig> = {
     },
   },
   comment_added: {
-    icon: MessageSquare,
+    icon: IconMessage,
     color: 'text-amber-500',
     bgColor: 'bg-amber-500/10',
     getMessage: (metadata) => {
@@ -90,7 +90,7 @@ const activityConfig: Record<ActivityType, ActivityConfig> = {
     },
   },
   file_uploaded: {
-    icon: Upload,
+    icon: IconUpload,
     color: 'text-indigo-500',
     bgColor: 'bg-indigo-500/10',
     getMessage: (metadata) => {
@@ -99,7 +99,7 @@ const activityConfig: Record<ActivityType, ActivityConfig> = {
     },
   },
   file_deleted: {
-    icon: Trash2,
+    icon: IconTrash,
     color: 'text-red-500',
     bgColor: 'bg-red-500/10',
     getMessage: (metadata) => {
@@ -108,7 +108,7 @@ const activityConfig: Record<ActivityType, ActivityConfig> = {
     },
   },
   priority_changed: {
-    icon: AlertTriangle,
+    icon: IconAlertTriangle,
     color: 'text-orange-500',
     bgColor: 'bg-orange-500/10',
     getMessage: (metadata) => {
@@ -118,7 +118,7 @@ const activityConfig: Record<ActivityType, ActivityConfig> = {
     },
   },
   due_date_changed: {
-    icon: Calendar,
+    icon: IconCalendar,
     color: 'text-teal-500',
     bgColor: 'bg-teal-500/10',
     getMessage: (metadata) => {
@@ -142,7 +142,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
   if (activities.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <ActivityIcon className="h-10 w-10 text-muted-foreground/30" />
+        <IconActivity className="h-10 w-10 text-muted-foreground/30" />
         <p className="mt-3 text-sm text-muted-foreground">No activity yet</p>
         <p className="text-xs text-muted-foreground/70">Activity will be tracked here</p>
       </div>

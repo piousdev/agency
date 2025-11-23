@@ -1,20 +1,20 @@
-import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react';
+import { IconCommand, IconLayoutDashboard, IconWaveSine } from '@tabler/icons-react';
 
 export const company = {
   teams: [
     {
       name: 'Skyll Inc.',
-      logo: GalleryVerticalEnd,
+      logo: IconLayoutDashboard,
       plan: 'Agency',
     },
     {
       name: 'Software.',
-      logo: AudioWaveform,
+      logo: IconWaveSine,
       plan: 'Startup',
     },
     {
       name: 'Evil Corp.',
-      logo: Command,
+      logo: IconCommand,
       plan: 'Free',
     },
   ],

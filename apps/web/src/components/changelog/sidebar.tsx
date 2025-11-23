@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronRight, History } from 'lucide-react';
+import { IconChevronDown, IconChevronRight, IconHistory } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -95,11 +95,11 @@ export function Sidebar({ sections, className }: SidebarProps) {
               )}
             >
               {expanded ? (
-                <ChevronDown className="size-4 shrink-0" />
+                <IconChevronDown className="size-4 shrink-0" />
               ) : (
-                <ChevronRight className="size-4 shrink-0" />
+                <IconChevronRight className="size-4 shrink-0" />
               )}
-              <History className="size-4 shrink-0" />
+              <IconHistory className="size-4 shrink-0" />
               <span className="flex-1 text-left">{section.title}</span>
             </button>
           ) : (

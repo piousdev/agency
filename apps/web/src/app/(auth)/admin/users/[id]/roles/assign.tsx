@@ -6,7 +6,13 @@
 
 'use client';
 
-import { AlertCircle, CheckCircle2, Loader2, Plus, Shield } from 'lucide-react';
+import {
+  IconAlertCircle,
+  IconCircleCheck,
+  IconLoader2,
+  IconPlus,
+  IconShield,
+} from '@tabler/icons-react';
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -87,7 +93,7 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
                 {availableRoles.map((role) => (
                   <SelectItem key={role.id} value={role.id}>
                     <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4" />
+                      <IconShield className="h-4 w-4" />
                       <span>{role.name}</span>
                     </div>
                   </SelectItem>
@@ -103,7 +109,7 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
           {selectedRole && (
             <div className="rounded-lg border p-4 space-y-3 bg-secondary/50">
               <div className="flex items-start gap-2">
-                <Shield className="h-5 w-5 text-primary mt-0.5" />
+                <IconShield className="h-5 w-5 text-primary mt-0.5" />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold">{selectedRole.name}</h3>
@@ -137,7 +143,7 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
           {/* Error message */}
           {state.message && !state.success && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <IconAlertCircle className="h-4 w-4" />
               <AlertDescription>{state.message}</AlertDescription>
             </Alert>
           )}
@@ -145,7 +151,7 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
           {/* Success message */}
           {state.success && (
             <Alert className="border-success bg-success/10 text-success">
-              <CheckCircle2 className="h-4 w-4 text-success" />
+              <IconCircleCheck className="h-4 w-4 text-success" />
               <AlertDescription>{state.message}</AlertDescription>
             </Alert>
           )}
@@ -154,12 +160,12 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
           <Button type="submit" disabled={isPending || !selectedRoleId} className="w-full">
             {isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                 Assigning Role...
               </>
             ) : (
               <>
-                <Plus className="mr-2 h-4 w-4" />
+                <IconPlus className="mr-2 h-4 w-4" />
                 Assign Role
               </>
             )}

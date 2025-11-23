@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Check, CheckCheck, Filter, X } from 'lucide-react';
+import { IconBell, IconCheck, IconChecks, IconFilter, IconX } from '@tabler/icons-react';
 import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -111,7 +111,7 @@ export function Notifications() {
           className="relative rounded-full cursor-pointer"
           aria-label="Notifications"
         >
-          <Bell className="size-[1.2rem] text-primary" />
+          <IconBell className="size-[1.2rem] text-primary" />
           {unreadCount > 0 && (
             <Badge
               variant="destructive"
@@ -125,7 +125,7 @@ export function Notifications() {
       <DropdownMenuContent align="end" className="w-[400px] p-0">
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center gap-2">
-            <Bell className="size-4" />
+            <IconBell className="size-4" />
             <span className="font-semibold">Notifications</span>
             {unreadCount > 0 && (
               <Badge variant="secondary" className="ml-1">
@@ -137,7 +137,7 @@ export function Notifications() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon-sm">
-                  <Filter className="size-4" />
+                  <IconFilter className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -149,7 +149,7 @@ export function Notifications() {
             </DropdownMenu>
             {unreadCount > 0 && (
               <Button variant="ghost" size="icon-sm" onClick={markAllAsRead}>
-                <CheckCheck className="size-4" />
+                <IconChecks className="size-4" />
               </Button>
             )}
           </div>
@@ -158,7 +158,7 @@ export function Notifications() {
         <ScrollArea className="h-[400px]">
           {filteredNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Bell className="mb-2 size-8 text-muted-foreground" />
+              <IconBell className="mb-2 size-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
                 {filter === 'unread' ? 'No unread notifications' : 'No notifications'}
               </p>
@@ -195,7 +195,7 @@ export function Notifications() {
                         onClick={() => markAsRead(notification.id)}
                         aria-label="Mark as read"
                       >
-                        <Check className="size-4" />
+                        <IconCheck className="size-4" />
                       </Button>
                     )}
                     <Button
@@ -204,7 +204,7 @@ export function Notifications() {
                       onClick={() => deleteNotification(notification.id)}
                       aria-label="Delete notification"
                     >
-                      <X className="size-4" />
+                      <IconX className="size-4" />
                     </Button>
                   </div>
                 </div>

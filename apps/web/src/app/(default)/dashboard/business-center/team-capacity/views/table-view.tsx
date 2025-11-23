@@ -1,33 +1,231 @@
+'use client';
+
+import { useState } from 'react';
+import { type ColumnDef, type Row } from '@tanstack/react-table';
+import { IconDots, IconUser, IconCalendar, IconChartBar } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { DataTable } from '@/components/data-table';
 import type { TeamMember } from '@/lib/api/users/types';
 
 interface TeamTableViewProps {
   teamMembers: TeamMember[];
 }
 
-const statusColors = {
+type MemberStatus = 'available' | 'at_capacity' | 'overloaded';
+
+const statusVariants: Record<MemberStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
   available: 'default',
   at_capacity: 'secondary',
   overloaded: 'destructive',
-} as const;
+};
 
-const statusLabels = {
+const statusLabels: Record<MemberStatus, string> = {
   available: 'Available',
   at_capacity: 'At Capacity',
   overloaded: 'Overloaded',
-} as const;
+};
 
 export function TeamTableView({ teamMembers }: TeamTableViewProps) {
-  if (teamMembers.length === 0) {
+  const [orderedMembers, setOrderedMembers] = useState(teamMembers);
+
+  const handleRowOrderChange = (newRowIdOrder: string[]) => {
+    setOrderedMembers((prev) => {
+      // Create a map for O(1) lookup of items by ID
+      const itemMap = new Map(prev.map((item) => [item.id, item]));
+
+      // Reorder items to match the new ID order
+      const reordered = newRowIdOrder
+        .map((id) => itemMap.get(id))
+        .filter((item): item is TeamMember => item !== undefined);
+
+      // Preserve any items not in the new order (shouldn't happen, but safe)
+      const reorderedIds = new Set(newRowIdOrder);
+      const remaining = prev.filter((item) => !reorderedIds.has(item.id));
+
+      return [...reordered, ...remaining];
+    });
+  };
+
+  const columns: ColumnDef<TeamMember>[] = [
+    {
+      accessorKey: 'name',
+      header: 'Team Member',
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[200px] truncate" title={row.original.name}>
+          {row.original.name}
+        </div>
+      ),
+      meta: {
+        displayName: 'Team Member',
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        const status = row.original.status;
+        return <Badge variant={statusVariants[status]}>{statusLabels[status]}</Badge>;
+      },
+      filterFn: (row, id, value: string[]) => {
+        if (!value?.length) return true;
+        return value.includes(row.getValue(id));
+      },
+      meta: {
+        displayName: 'Status',
+        filterType: 'multi-select',
+        filterOptions: Object.entries(statusLabels).map(([value, label]) => ({
+          label,
+          value,
+        })),
+      },
+    },
+    {
+      accessorKey: 'capacityPercentage',
+      header: 'Capacity',
+      cell: ({ row }) => {
+        const percentage = row.original.capacityPercentage;
+        return (
+          <div className="flex items-center gap-2 min-w-[140px]">
+            <Progress
+              value={percentage}
+              className={`h-2 w-24 ${percentage > 100 ? '[&>div]:bg-destructive' : percentage > 80 ? '[&>div]:bg-yellow-500' : ''}`}
+            />
+            <span className="text-sm text-muted-foreground w-12">{percentage}%</span>
+          </div>
+        );
+      },
+      sortingFn: 'basic',
+      meta: {
+        displayName: 'Capacity Used',
+        filterType: 'number-range',
+      },
+    },
+    {
+      accessorKey: 'availableCapacity',
+      header: 'Available',
+      cell: ({ row }) => (
+        <span
+          className={`text-sm ${row.original.availableCapacity < 20 ? 'text-destructive' : 'text-muted-foreground'}`}
+        >
+          {row.original.availableCapacity}%
+        </span>
+      ),
+      sortingFn: 'basic',
+      meta: {
+        displayName: 'Available Capacity',
+        filterType: 'number-range',
+      },
+    },
+    {
+      accessorKey: 'projectCount',
+      header: 'Projects',
+      cell: ({ row }) => <span className="text-muted-foreground">{row.original.projectCount}</span>,
+      sortingFn: 'basic',
+      meta: {
+        displayName: 'Project Count',
+        filterType: 'number-range',
+      },
+    },
+    {
+      accessorKey: 'projects',
+      header: 'Active Projects',
+      enableSorting: false,
+      cell: ({ row }) => {
+        const projects = row.original.projects;
+        if (!projects?.length) {
+          return <span className="text-muted-foreground text-sm">No active projects</span>;
+        }
+
+        return (
+          <div className="flex flex-wrap gap-1 max-w-[200px]">
+            {projects.slice(0, 2).map((project) => (
+              <Badge
+                key={project.id}
+                variant="outline"
+                className="text-xs truncate max-w-[90px]"
+                title={project.name}
+              >
+                {project.name}
+              </Badge>
+            ))}
+            {projects.length > 2 && (
+              <Badge variant="outline" className="text-xs">
+                +{projects.length - 2}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+      meta: {
+        displayName: 'Active Projects',
+      },
+    },
+  ];
+
+  const renderRowActions = (row: Row<TeamMember>) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <IconDots className="h-4 w-4" />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.stopPropagation();
+            // TODO: View member profile
+          }}
+        >
+          <IconUser className="mr-2 h-4 w-4" />
+          View Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.stopPropagation();
+            // TODO: View member schedule
+          }}
+        >
+          <IconCalendar className="mr-2 h-4 w-4" />
+          View Schedule
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.stopPropagation();
+            // TODO: View workload details
+          }}
+        >
+          <IconChartBar className="mr-2 h-4 w-4" />
+          Workload Details
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  const renderBulkActions = () => (
+    <>
+      <Button variant="outline" size="sm">
+        Assign to Project
+      </Button>
+      <Button variant="outline" size="sm">
+        Export Report
+      </Button>
+    </>
+  );
+
+  if (orderedMembers.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-muted-foreground">
         No team members found
@@ -36,57 +234,31 @@ export function TeamTableView({ teamMembers }: TeamTableViewProps) {
   }
 
   return (
-    <div className="rounded-lg border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Team Member</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Capacity</TableHead>
-            <TableHead>Available</TableHead>
-            <TableHead>Projects</TableHead>
-            <TableHead>Active Projects</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {teamMembers.map((member) => (
-            <TableRow key={member.id}>
-              <TableCell className="font-medium">{member.name}</TableCell>
-              <TableCell>
-                <Badge variant={statusColors[member.status]}>{statusLabels[member.status]}</Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Progress value={member.capacityPercentage} className="w-24" />
-                  <span className="text-sm text-muted-foreground">
-                    {member.capacityPercentage}%
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="text-muted-foreground">{member.availableCapacity}%</TableCell>
-              <TableCell className="text-muted-foreground">{member.projectCount}</TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {member.projects.length > 0 ? (
-                    member.projects.slice(0, 2).map((project) => (
-                      <Badge key={project.id} variant="outline" className="text-xs">
-                        {project.name}
-                      </Badge>
-                    ))
-                  ) : (
-                    <span className="text-muted-foreground text-sm">No active projects</span>
-                  )}
-                  {member.projects.length > 2 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{member.projects.length - 2}
-                    </Badge>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <DataTable
+      columns={columns}
+      data={orderedMembers}
+      config={{
+        enableRowSelection: 'multi',
+        enableColumnVisibility: true,
+        enableColumnOrdering: true,
+        enableColumnPinning: true,
+        enableColumnResizing: true,
+        enableSorting: true,
+        enableGlobalFilter: true,
+        enableColumnFilters: true,
+        enableRowOrdering: true,
+        enableVirtualization: orderedMembers.length > 100,
+        estimatedRowHeight: 56,
+        virtualTableHeight: 600,
+        enableKeyboardNavigation: true,
+      }}
+      initialSorting={[{ id: 'capacityPercentage', desc: true }]}
+      onRowOrderChange={handleRowOrderChange}
+      renderRowActions={renderRowActions}
+      renderBulkActions={renderBulkActions}
+      emptyMessage="No team members found matching your criteria"
+      tableCaption="Team capacity overview with workload distribution"
+      getRowId={(row) => row.id}
+    />
   );
 }

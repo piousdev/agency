@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { RefreshCw, Home, ArrowLeft, AlertCircle } from 'lucide-react';
+import { IconRefresh, IconHome, IconArrowLeft, IconAlertCircle } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 
 export type ErrorType = 'api' | 'network' | 'auth' | 'notFound' | 'server' | 'unknown';
@@ -154,20 +154,20 @@ export function ErrorDisplay({
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           {showGoBack && (
             <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="size-4" />
+              <IconArrowLeft className="size-4" />
               Go back
             </Button>
           )}
           {showRefresh && (
             <Button onClick={handleRefresh}>
-              <RefreshCw className="size-4" />
+              <IconRefresh className="size-4" />
               Try again
             </Button>
           )}
           {showReturnHome && (
             <Button variant="outline" asChild>
               <Link href="/dashboard">
-                <Home className="size-4" />
+                <IconHome className="size-4" />
                 Dashboard
               </Link>
             </Button>
@@ -184,11 +184,11 @@ export function ErrorDisplay({
 export function ErrorInline({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20">
-      <AlertCircle className="size-5 text-destructive flex-shrink-0" />
+      <IconAlertCircle className="size-5 text-destructive flex-shrink-0" />
       <p className="text-sm text-foreground flex-1">{message}</p>
       {onRetry && (
         <Button variant="ghost" size="sm" onClick={onRetry} className="flex-shrink-0">
-          <RefreshCw className="size-3.5" />
+          <IconRefresh className="size-3.5" />
           Retry
         </Button>
       )}

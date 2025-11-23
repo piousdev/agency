@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Search, X } from 'lucide-react';
+import { IconFileText, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
@@ -134,7 +134,7 @@ export function CommandSearchBar() {
         className="relative h-9 w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
         onClick={() => setOpen(true)}
       >
-        <Search className="mr-2 size-4" />
+        <IconSearch className="mr-2 size-4" />
         <span className="hidden lg:inline-flex">Search by keyword</span>
         <span className="inline-flex lg:hidden">Search...</span>
         <KbdGroup className="pointer-events-none absolute right-1.5 top-1.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
@@ -151,7 +151,7 @@ export function CommandSearchBar() {
           <DialogTitle className="sr-only">Search</DialogTitle>
           {/* Search Input - Separate rounded container */}
           <div className="flex items-center gap-2 rounded-lg border bg-background px-4 py-3 shadow-sm">
-            <Search className="size-4 shrink-0 text-muted-foreground" />
+            <IconSearch className="size-4 shrink-0 text-muted-foreground" />
             <input
               className="flex h-9 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Search by keyword"
@@ -165,7 +165,7 @@ export function CommandSearchBar() {
                 className="flex size-5 items-center justify-center rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Clear search"
               >
-                <X className="size-4" />
+                <IconX className="size-4" />
               </button>
             )}
           </div>
@@ -274,7 +274,7 @@ export function CommandSearchBar() {
                           </div>
                         ) : (
                           <div className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                            <FileText className="size-5" />
+                            <IconFileText className="size-5" />
                           </div>
                         )}
                         <div className="flex min-w-0 flex-1 flex-col gap-1">

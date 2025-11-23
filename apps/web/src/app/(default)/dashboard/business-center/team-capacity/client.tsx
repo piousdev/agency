@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { IconChevronDown } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -98,7 +98,7 @@ export function TeamCapacityClient({ teamMembers }: TeamCapacityClientProps) {
               </Badge>
             )}
           </span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${statusOpen ? 'rotate-180' : ''}`}
           />
         </CollapsibleTrigger>

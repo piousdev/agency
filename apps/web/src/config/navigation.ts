@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
+import type { Icon } from '@tabler/icons-react';
 
 /**
  * SKYLL Operations Platform - Navigation Structure
@@ -14,7 +14,7 @@ import type { LucideIcon } from 'lucide-react';
 export interface NavigationItem {
   title: string;
   url?: string;
-  icon?: LucideIcon | React.ComponentType;
+  icon?: Icon | React.ComponentType;
   description?: string;
   items?: NavigationItem[];
   badge?: number;
@@ -339,6 +339,11 @@ export const businessCenterNavigation: NavigationItem = {
       title: 'Projects',
       description: 'Manage all projects with filters for content and software',
       url: '/dashboard/business-center/projects',
+    },
+    {
+      title: 'Clients',
+      description: 'Manage client organizations',
+      url: '/dashboard/business-center/clients',
     },
     {
       title: 'Team Capacity',

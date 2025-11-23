@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import * as Sentry from '@sentry/nextjs';
-import { RefreshCw, Home } from 'lucide-react';
+import { IconRefresh, IconHome } from '@tabler/icons-react';
 
 /**
  * Root-level error boundary
@@ -156,7 +156,7 @@ export default function GlobalError({
               onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
             >
-              <RefreshCw size={16} />
+              <IconRefresh size={16} />
               Try again
             </button>
             <a
@@ -182,7 +182,7 @@ export default function GlobalError({
               }
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
-              <Home size={16} />
+              <IconHome size={16} />
               Go to Dashboard
             </a>
           </div>

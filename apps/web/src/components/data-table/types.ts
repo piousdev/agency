@@ -94,8 +94,10 @@ export interface DataTableProps<TData> {
   onRowClick?: (row: Row<TData>) => void;
   /** Callback when a row is double-clicked */
   onRowDoubleClick?: (row: Row<TData>) => void;
-  /** Callback when row order changes (for row drag-and-drop) */
-  onRowOrderChange?: (sourceIndex: number, destinationIndex: number) => void;
+  /** Callback when row order changes (for row drag-and-drop).
+   * Provides the new order of row IDs after the drag operation.
+   * The parent component should reorder its data to match this ID order. */
+  onRowOrderChange?: (newRowIdOrder: string[]) => void;
   /** Cursor pagination state */
   pagination?: CursorPaginationState;
   /** Callback to load more data */

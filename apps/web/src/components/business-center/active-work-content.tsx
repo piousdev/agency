@@ -1,4 +1,4 @@
-import { Calendar, Palette, Users } from 'lucide-react';
+import { IconCalendar, IconPalette, IconUsers } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -74,7 +74,7 @@ export function ActiveWorkContent({ projects, teamMembers }: ActiveWorkContentPr
   if (creativeProjects.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <Palette className="h-12 w-12 mx-auto mb-2 opacity-50" />
+        <IconPalette className="h-12 w-12 mx-auto mb-2 opacity-50" />
         <p className="text-sm">No active content projects</p>
         <p className="text-xs mt-1">Projects will appear here</p>
       </div>
@@ -112,7 +112,7 @@ export function ActiveWorkContent({ projects, teamMembers }: ActiveWorkContentPr
                     {/* Assignees */}
                     {project.assignees.length > 0 && (
                       <div className="flex items-center gap-2">
-                        <Users className="h-3 w-3 text-muted-foreground" />
+                        <IconUsers className="h-3 w-3 text-muted-foreground" />
                         <div className="flex items-center gap-1">
                           {project.assignees.slice(0, 3).map((assignee, idx) => (
                             <div
@@ -144,7 +144,7 @@ export function ActiveWorkContent({ projects, teamMembers }: ActiveWorkContentPr
                     {/* Deadline (if available) */}
                     {project.deliveredAt && (
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
+                        <IconCalendar className="h-3 w-3" />
                         <span>
                           Due{' '}
                           {new Date(project.deliveredAt).toLocaleDateString('en-US', {

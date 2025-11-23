@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useMemo, useId, useState } from 'react';
+import { useRef, useCallback, useMemo, useId, useState, useEffect } from 'react';
 import {
   flexRender,
   type ColumnDef,
@@ -14,9 +14,11 @@ import {
   Droppable,
   Draggable,
   type DropResult,
+  type DragStart,
   type DraggableProvided,
   type DroppableProvided,
   type DraggableStateSnapshot,
+  type DroppableStateSnapshot,
 } from '@hello-pangea/dnd';
 import { createPortal } from 'react-dom';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -28,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { GripVertical, Loader2 } from 'lucide-react';
+import { IconGripVertical, IconLoader2 } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
 import { DataTableColumnHeader, getColumnPinningStyles } from './column-header';
@@ -98,6 +100,21 @@ export function DataTable<TData>({
   const generatedId = useId();
   const resolvedTableId = tableId || `data-table-${generatedId}`;
   const [dragMode, setDragMode] = useState<'column' | 'row' | null>(null);
+  // Track column drag state for visual feedback
+  const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
+  const [dragOverColumnIndex, setDragOverColumnIndex] = useState<number | null>(null);
+  const [dropTargetColumnId, setDropTargetColumnId] = useState<string | null>(null);
+  const [isDropAtEnd, setIsDropAtEnd] = useState(false);
+  // Track row drag state for visual feedback
+  const [draggedRowId, setDraggedRowId] = useState<string | null>(null);
+  const [dropTargetRowIndex, setDropTargetRowIndex] = useState<number | null>(null);
+  const [isRowDropAtEnd, setIsRowDropAtEnd] = useState(false);
+
+  // Track if component has mounted to avoid hydration issues with DnD
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Add selection column if enabled
   const columnsWithDragHandle = useMemo<ColumnDef<TData, unknown>[]>(() => {
@@ -120,7 +137,7 @@ export function DataTable<TData>({
             className="flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
             data-row-drag-handle={row.id}
           >
-            <GripVertical className="h-4 w-4" />
+            <IconGripVertical className="h-4 w-4" />
           </div>
         ),
         meta: {
@@ -172,23 +189,30 @@ export function DataTable<TData>({
   }, [userColumns, defaultConfig.enableRowSelection, defaultConfig.enableRowOrdering]);
 
   // Initialize table state
-  const { table, globalFilter, setGlobalFilter, columnOrder, setColumnOrder, resetAllState } =
-    useDataTable({
-      data,
-      columns: columnsWithDragHandle,
-      config: defaultConfig,
-      initialSorting,
-      initialColumnFilters,
-      initialColumnVisibility,
-      initialColumnOrder,
-      initialColumnPinning,
-      initialRowSelection,
-      onSortingChange,
-      onColumnFiltersChange,
-      onGlobalFilterChange,
-      onRowSelectionChange,
-      getRowId,
-    });
+  const {
+    table,
+    globalFilter,
+    setGlobalFilter,
+    columnOrder,
+    setColumnOrder,
+    resetAllState,
+    setSorting,
+  } = useDataTable({
+    data,
+    columns: columnsWithDragHandle,
+    config: defaultConfig,
+    initialSorting,
+    initialColumnFilters,
+    initialColumnVisibility,
+    initialColumnOrder,
+    initialColumnPinning,
+    initialRowSelection,
+    onSortingChange,
+    onColumnFiltersChange,
+    onGlobalFilterChange,
+    onRowSelectionChange,
+    getRowId,
+  });
 
   const { rows } = table.getRowModel();
 
@@ -204,17 +228,75 @@ export function DataTable<TData>({
   });
 
   // Unified drag-and-drop handler
-  const handleDragStart = useCallback((result: { draggableId: string; type: string }) => {
-    if (result.type === 'COLUMN') {
+  const handleDragStart = useCallback((start: DragStart) => {
+    if (start.type === 'COLUMN') {
       setDragMode('column');
-    } else if (result.type === 'ROW') {
+      setDraggedColumnId(start.draggableId.replace('col-', ''));
+    } else if (start.type === 'ROW') {
       setDragMode('row');
+      setDraggedRowId(start.draggableId);
     }
   }, []);
+
+  // Track drag position for visual feedback
+  const handleDragUpdate = useCallback(
+    (update: {
+      destination: { index: number } | null;
+      source: { index: number };
+      type: string;
+    }) => {
+      if (update.type === 'COLUMN' && update.destination) {
+        setDragOverColumnIndex(update.destination.index);
+        // Get the column ID at the destination index for highlighting the entire column
+        // Use getHeaderGroups to get headers in the same order as they're rendered
+        const headerGroups = table.getHeaderGroups();
+        const headers = headerGroups[0]?.headers || [];
+        const sourceIndex = update.source.index;
+        const destIndex = update.destination.index;
+        const lastValidIndex = headers.length - 1;
+
+        // Determine if we're moving to the end of the list
+        // When dragging forward (left to right) and the destination is the last index,
+        // we want to show the indicator on the right side
+        const isDraggingForward = sourceIndex < destIndex;
+        const dropAtEnd =
+          destIndex >= headers.length || (isDraggingForward && destIndex === lastValidIndex);
+        setIsDropAtEnd(dropAtEnd);
+
+        const targetHeader = headers[Math.min(destIndex, lastValidIndex)];
+        setDropTargetColumnId(targetHeader?.id || null);
+      } else if (update.type === 'ROW' && update.destination) {
+        const sourceIndex = update.source.index;
+        const destIndex = update.destination.index;
+        const lastValidIndex = rows.length - 1;
+
+        // Determine if we're moving to the end of the list
+        const isDraggingDown = sourceIndex < destIndex;
+        const dropAtEnd =
+          destIndex >= rows.length || (isDraggingDown && destIndex === lastValidIndex);
+        setIsRowDropAtEnd(dropAtEnd);
+        setDropTargetRowIndex(destIndex);
+      } else {
+        setDragOverColumnIndex(null);
+        setDropTargetColumnId(null);
+        setIsDropAtEnd(false);
+        setDropTargetRowIndex(null);
+        setIsRowDropAtEnd(false);
+      }
+    },
+    [table, rows]
+  );
 
   const handleDragEnd = useCallback(
     (result: DropResult) => {
       setDragMode(null);
+      setDraggedColumnId(null);
+      setDragOverColumnIndex(null);
+      setDropTargetColumnId(null);
+      setIsDropAtEnd(false);
+      setDraggedRowId(null);
+      setDropTargetRowIndex(null);
+      setIsRowDropAtEnd(false);
 
       if (!result.destination) return;
       if (result.source.index === result.destination.index) return;
@@ -229,43 +311,72 @@ export function DataTable<TData>({
         }
 
         // Get the visible headers to map indices correctly
-        const visibleHeaders = table.getAllLeafColumns().map((c) => c.id);
+        const headerGroups = table.getHeaderGroups();
+        const visibleHeaders = headerGroups[0]?.headers.map((h) => h.id) || [];
+        const sourceIndex = result.source.index;
+        const destIndex = result.destination.index;
+
+        // Determine if we're moving to the end of the list
+        // When dragging forward (left to right) and the destination is the last index,
+        // we want to place the item AFTER the last item (at the end)
+        const lastValidIndex = visibleHeaders.length - 1;
+        const isDraggingForward = sourceIndex < destIndex;
+        const isDropAtEnd =
+          destIndex >= visibleHeaders.length || (isDraggingForward && destIndex === lastValidIndex);
 
         // Get the column ID at the destination position
-        const destHeaderId = visibleHeaders[result.destination.index];
+        const destHeaderId = visibleHeaders[Math.min(destIndex, lastValidIndex)];
 
-        // Don't allow dropping on special columns
-        if (destHeaderId === 'select' || destHeaderId === 'drag-handle') {
+        // Don't allow dropping on special columns or invalid index
+        if (!destHeaderId || destHeaderId === 'select' || destHeaderId === 'drag-handle') {
           return;
         }
 
-        // Find source and destination indices in the columnOrder array
+        // Find source index in the columnOrder array
         const sourceOrderIndex = columnOrder.indexOf(draggedColumnId);
-        const destOrderIndex = columnOrder.indexOf(destHeaderId);
+        if (sourceOrderIndex === -1) return;
 
-        if (sourceOrderIndex === -1 || destOrderIndex === -1) return;
-        if (sourceOrderIndex === destOrderIndex) return;
-
-        // Reorder the array using arrayMove pattern
+        // Reorder the array
         const newOrder = [...columnOrder];
         const [removed] = newOrder.splice(sourceOrderIndex, 1);
         if (removed) {
-          // When source < dest, the dest index shifts down by 1 after removal
-          const adjustedDestIndex =
-            sourceOrderIndex < destOrderIndex ? destOrderIndex - 1 : destOrderIndex;
-          newOrder.splice(adjustedDestIndex, 0, removed);
+          if (isDropAtEnd) {
+            // If dropping at the end, push to the end of the array
+            newOrder.push(removed);
+          } else {
+            // Find destination index in the columnOrder array
+            const destOrderIndex = newOrder.indexOf(destHeaderId);
+            if (destOrderIndex === -1) return;
+            // Insert at the destination position
+            newOrder.splice(destOrderIndex, 0, removed);
+          }
           setColumnOrder(newOrder);
         }
       } else if (result.type === 'ROW') {
-        // Row reordering
+        // Row reordering - compute the new order of all row IDs and pass to parent
         if (onRowOrderChange) {
           const sourceIndex = result.source.index;
           const destinationIndex = result.destination.index;
-          onRowOrderChange(sourceIndex, destinationIndex);
+
+          // Get current row IDs in their visible order
+          const currentIds = rows.map((row) => row.id);
+
+          // Perform the reorder on the ID array
+          const newIds = [...currentIds];
+          const [movedId] = newIds.splice(sourceIndex, 1);
+          if (movedId !== undefined) {
+            newIds.splice(destinationIndex, 0, movedId);
+
+            // Clear sorting when manually reordering rows
+            // This prevents the table from re-sorting and overriding the manual order
+            setSorting([]);
+
+            onRowOrderChange(newIds);
+          }
         }
       }
     },
-    [columnOrder, setColumnOrder, onRowOrderChange, table]
+    [columnOrder, setColumnOrder, onRowOrderChange, setSorting, table, rows]
   );
 
   // Keyboard navigation
@@ -380,10 +491,19 @@ export function DataTable<TData>({
     row: Row<TData>,
     index: number,
     isDragging = false,
-    dragHandleProps?: DraggableProvided['dragHandleProps']
+    dragHandleProps?: DraggableProvided['dragHandleProps'],
+    isRowDropTarget = false,
+    rowDropAtEnd = false
   ) => {
     return row.getVisibleCells().map((cell, cellIndex) => {
       const isDragHandleCell = cell.column.id === 'drag-handle';
+      // Check if this cell's column is the drop target during column drag
+      const isColumnDropTarget =
+        dropTargetColumnId !== null &&
+        cell.column.id === dropTargetColumnId &&
+        draggedColumnId !== null &&
+        cell.column.id !== draggedColumnId;
+
       return (
         <TableCell
           key={cell.id}
@@ -392,15 +512,37 @@ export function DataTable<TData>({
           onKeyDown={isDragHandleCell ? undefined : (e) => handleKeyDown(e, row, cellIndex)}
           tabIndex={defaultConfig.enableKeyboardNavigation && !isDragHandleCell ? -1 : undefined}
           role="gridcell"
-          className={cn(isDragging && 'bg-muted')}
+          className={cn(
+            'relative transition-colors duration-150',
+            isDragging && 'bg-muted',
+            isColumnDropTarget && 'bg-primary/10'
+          )}
         >
+          {/* Drop indicator line for column drag */}
+          {isColumnDropTarget && (
+            <div
+              className={cn(
+                'absolute top-0 bottom-0 w-0.5 bg-primary z-10',
+                isDropAtEnd ? 'right-0' : 'left-0'
+              )}
+            />
+          )}
+          {/* Drop indicator line for row drag - spans full width of each cell */}
+          {isRowDropTarget && (
+            <div
+              className={cn(
+                'absolute left-0 right-0 h-0.5 bg-primary z-10',
+                rowDropAtEnd ? 'bottom-0' : 'top-0'
+              )}
+            />
+          )}
           {isDragHandleCell && dragHandleProps ? (
             <div
               {...dragHandleProps}
               className="flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
               onClick={(e) => e.stopPropagation()}
             >
-              <GripVertical className="h-4 w-4" />
+              <IconGripVertical className="h-4 w-4" />
             </div>
           ) : (
             flexRender(cell.column.columnDef.cell, cell.getContext())
@@ -412,7 +554,15 @@ export function DataTable<TData>({
 
   // Render individual row (with or without DnD)
   const renderRow = (row: Row<TData>, index: number) => {
-    if (defaultConfig.enableRowOrdering) {
+    // Check if this row is the drop target during row drag
+    const isRowDropTarget =
+      dropTargetRowIndex !== null &&
+      index === dropTargetRowIndex &&
+      draggedRowId !== null &&
+      row.id !== draggedRowId;
+
+    // Only use Draggable when mounted to avoid hydration issues
+    if (defaultConfig.enableRowOrdering && isMounted) {
       return (
         <Draggable key={row.id} draggableId={row.id} index={index}>
           {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
@@ -426,7 +576,8 @@ export function DataTable<TData>({
               className={cn(
                 onRowClick && 'cursor-pointer',
                 row.getIsSelected() && 'bg-muted/50',
-                snapshot.isDragging && 'bg-muted shadow-lg'
+                snapshot.isDragging && 'bg-muted shadow-lg',
+                isRowDropTarget && 'bg-primary/5'
               )}
               style={{
                 ...provided.draggableProps.style,
@@ -435,7 +586,14 @@ export function DataTable<TData>({
               role="row"
               aria-selected={row.getIsSelected()}
             >
-              {renderRowContent(row, index, snapshot.isDragging, provided.dragHandleProps)}
+              {renderRowContent(
+                row,
+                index,
+                snapshot.isDragging,
+                provided.dragHandleProps,
+                isRowDropTarget,
+                isRowDropAtEnd
+              )}
               {renderRowActions && (
                 <TableCell className="w-[50px]">{renderRowActions(row)}</TableCell>
               )}
@@ -457,18 +615,40 @@ export function DataTable<TData>({
         role="row"
         aria-selected={row.getIsSelected()}
       >
-        {row.getVisibleCells().map((cell, cellIndex) => (
-          <TableCell
-            key={cell.id}
-            data-cell-index={cellIndex}
-            style={getColumnPinningStyles(cell.column)}
-            onKeyDown={(e) => handleKeyDown(e, row, cellIndex)}
-            tabIndex={defaultConfig.enableKeyboardNavigation ? -1 : undefined}
-            role="gridcell"
-          >
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </TableCell>
-        ))}
+        {row.getVisibleCells().map((cell, cellIndex) => {
+          // Check if this cell's column is the drop target during column drag
+          const isColumnDropTarget =
+            dropTargetColumnId !== null &&
+            cell.column.id === dropTargetColumnId &&
+            draggedColumnId !== null &&
+            cell.column.id !== draggedColumnId;
+
+          return (
+            <TableCell
+              key={cell.id}
+              data-cell-index={cellIndex}
+              style={getColumnPinningStyles(cell.column)}
+              onKeyDown={(e) => handleKeyDown(e, row, cellIndex)}
+              tabIndex={defaultConfig.enableKeyboardNavigation ? -1 : undefined}
+              role="gridcell"
+              className={cn(
+                'relative transition-colors duration-150',
+                isColumnDropTarget && 'bg-primary/10'
+              )}
+            >
+              {/* Drop indicator line for column drag */}
+              {isColumnDropTarget && (
+                <div
+                  className={cn(
+                    'absolute top-0 bottom-0 w-0.5 bg-primary z-10',
+                    isDropAtEnd ? 'right-0' : 'left-0'
+                  )}
+                />
+              )}
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          );
+        })}
         {renderRowActions && <TableCell className="w-[50px]">{renderRowActions(row)}</TableCell>}
       </TableRow>
     );
@@ -485,7 +665,7 @@ export function DataTable<TData>({
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <IconLoader2 className="h-4 w-4 animate-spin" />
                 Loading...
               </div>
             ) : (
@@ -562,24 +742,36 @@ export function DataTable<TData>({
       <div
         ref={tableContainerRef}
         className={cn(
-          'rounded-md border overflow-auto',
+          'rounded-md border',
+          // Disable overflow-auto when row ordering is enabled to avoid nested scroll container issues
+          // @hello-pangea/dnd doesn't support drag-and-drop within nested scroll containers
+          !defaultConfig.enableRowOrdering && 'overflow-auto',
           defaultConfig.enableVirtualization && `h-[${defaultConfig.virtualTableHeight}px]`
         )}
         style={
           defaultConfig.enableVirtualization
-            ? { height: defaultConfig.virtualTableHeight, overflow: 'auto' }
+            ? { height: defaultConfig.virtualTableHeight }
             : undefined
         }
         role="region"
         aria-label={tableCaption || 'Data table'}
         tabIndex={0}
       >
-        <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-          <Table id={resolvedTableId} role="grid" aria-rowcount={rows.length}>
+        <DragDropContext
+          onDragStart={handleDragStart}
+          onDragUpdate={handleDragUpdate}
+          onDragEnd={handleDragEnd}
+        >
+          <Table
+            id={resolvedTableId}
+            role="grid"
+            aria-rowcount={rows.length}
+            disableOverflow={defaultConfig.enableRowOrdering}
+          >
             {tableCaption && <caption className="sr-only">{tableCaption}</caption>}
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) =>
-                defaultConfig.enableColumnOrdering ? (
+                defaultConfig.enableColumnOrdering && isMounted ? (
                   <Droppable
                     key={headerGroup.id}
                     droppableId={`columns-${headerGroup.id}`}
@@ -594,12 +786,15 @@ export function DataTable<TData>({
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className="bg-background border rounded px-4 py-2 shadow-lg z-50 font-medium text-sm"
+                          className="bg-background border-2 border-primary rounded-md px-4 py-2 shadow-xl z-50 font-medium text-sm ring-2 ring-primary/20"
                           style={{
                             ...provided.draggableProps.style,
                           }}
                         >
-                          {renderHeaderCellForPortal(header)}
+                          <div className="flex items-center gap-2">
+                            <IconGripVertical className="h-3 w-3 text-muted-foreground" />
+                            {renderHeaderCellForPortal(header)}
+                          </div>
                         </div>
                       );
                     }}
@@ -626,46 +821,69 @@ export function DataTable<TData>({
                               {(
                                 draggableProvided: DraggableProvided,
                                 snapshot: DraggableStateSnapshot
-                              ) => (
-                                <TableHead
-                                  ref={draggableProvided.innerRef}
-                                  {...draggableProvided.draggableProps}
-                                  style={{
-                                    ...getColumnPinningStyles(header.column),
-                                    ...draggableProvided.draggableProps.style,
-                                    width: header.getSize(),
-                                  }}
-                                  colSpan={header.colSpan}
-                                  role="columnheader"
-                                  aria-sort={
-                                    header.column.getIsSorted()
-                                      ? header.column.getIsSorted() === 'asc'
-                                        ? 'ascending'
-                                        : 'descending'
-                                      : undefined
-                                  }
-                                  className={cn(snapshot.isDragging && 'opacity-50 bg-muted')}
-                                >
-                                  {renderHeaderCell(
-                                    header,
-                                    canDrag ? draggableProvided.dragHandleProps : undefined
-                                  )}
-                                  {/* Resize handle */}
-                                  {defaultConfig.enableColumnResizing &&
-                                    header.column.getCanResize() && (
+                              ) => {
+                                // Determine if this column should show a drop indicator
+                                const isDropTarget =
+                                  draggedColumnId !== null &&
+                                  dragOverColumnIndex === index &&
+                                  header.id !== `col-${draggedColumnId}` &&
+                                  header.id !== draggedColumnId;
+
+                                return (
+                                  <TableHead
+                                    ref={draggableProvided.innerRef}
+                                    {...draggableProvided.draggableProps}
+                                    style={{
+                                      ...getColumnPinningStyles(header.column),
+                                      ...draggableProvided.draggableProps.style,
+                                      width: header.getSize(),
+                                    }}
+                                    colSpan={header.colSpan}
+                                    role="columnheader"
+                                    aria-sort={
+                                      header.column.getIsSorted()
+                                        ? header.column.getIsSorted() === 'asc'
+                                          ? 'ascending'
+                                          : 'descending'
+                                        : undefined
+                                    }
+                                    className={cn(
+                                      'relative transition-colors duration-150',
+                                      snapshot.isDragging &&
+                                        'opacity-50 bg-muted ring-2 ring-primary ring-offset-1',
+                                      isDropTarget && 'bg-primary/10'
+                                    )}
+                                  >
+                                    {/* Drop indicator line */}
+                                    {isDropTarget && (
                                       <div
-                                        onMouseDown={header.getResizeHandler()}
-                                        onTouchStart={header.getResizeHandler()}
-                                        onDoubleClick={() => header.column.resetSize()}
                                         className={cn(
-                                          'absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none',
-                                          'bg-transparent hover:bg-primary/50',
-                                          header.column.getIsResizing() && 'bg-primary'
+                                          'absolute top-0 bottom-0 w-0.5 bg-primary z-10',
+                                          isDropAtEnd ? 'right-0' : 'left-0'
                                         )}
                                       />
                                     )}
-                                </TableHead>
-                              )}
+                                    {renderHeaderCell(
+                                      header,
+                                      canDrag ? draggableProvided.dragHandleProps : undefined
+                                    )}
+                                    {/* Resize handle */}
+                                    {defaultConfig.enableColumnResizing &&
+                                      header.column.getCanResize() && (
+                                        <div
+                                          onMouseDown={header.getResizeHandler()}
+                                          onTouchStart={header.getResizeHandler()}
+                                          onDoubleClick={() => header.column.resetSize()}
+                                          className={cn(
+                                            'absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none',
+                                            'bg-transparent hover:bg-primary/50',
+                                            header.column.getIsResizing() && 'bg-primary'
+                                          )}
+                                        />
+                                      )}
+                                  </TableHead>
+                                );
+                              }}
                             </Draggable>
                           );
                         })}
@@ -714,8 +932,40 @@ export function DataTable<TData>({
                 )
               )}
             </TableHeader>
-            {defaultConfig.enableRowOrdering ? (
-              <Droppable droppableId="rows" type="ROW">
+            {defaultConfig.enableRowOrdering && isMounted ? (
+              <Droppable
+                droppableId="rows"
+                type="ROW"
+                renderClone={(provided, snapshot, rubric) => {
+                  // Render a div clone (not tr) that gets portaled to document.body
+                  // This avoids nested scroll container issues and HTML structure errors
+                  const row = rows[rubric.source.index];
+                  if (!row) return <div ref={provided.innerRef} />;
+                  return (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="flex items-center gap-2 bg-background border rounded-md shadow-lg p-3"
+                      style={{
+                        ...provided.draggableProps.style,
+                      }}
+                    >
+                      <IconGripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <span className="text-sm font-medium truncate">
+                        {/* Display first text column value as preview */}
+                        {(row
+                          .getVisibleCells()
+                          .find(
+                            (cell) =>
+                              cell.column.id !== 'select' && cell.column.id !== 'drag-handle'
+                          )
+                          ?.getValue() as string) || `Row ${rubric.source.index + 1}`}
+                      </span>
+                    </div>
+                  );
+                }}
+              >
                 {(droppableProvided: DroppableProvided) => (
                   <TableBody
                     ref={droppableProvided.innerRef}
@@ -755,7 +1005,7 @@ export function DataTable<TData>({
       {/* Loading indicator for virtual scroll */}
       {isLoading && rows.length > 0 && (
         <div className="flex justify-center py-2">
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <IconLoader2 className="h-4 w-4 animate-spin" />
         </div>
       )}
 

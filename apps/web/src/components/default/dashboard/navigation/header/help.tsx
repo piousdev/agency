@@ -1,4 +1,4 @@
-import { HelpCircle } from 'lucide-react';
+import { IconHelpCircle } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -11,7 +11,7 @@ export default function Help() {
         aria-label="Help"
         className="rounded-full cursor-pointer"
       >
-        <HelpCircle className="size-[1.2rem] text-primary" />
+        <IconHelpCircle className="size-[1.2rem] text-primary" />
       </Button>
     </Link>
   );

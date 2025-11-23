@@ -1,6 +1,12 @@
 'use client';
 
-import { CheckCircle2, Copy, Shield, Smartphone, XCircle } from 'lucide-react';
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconCopy,
+  IconDeviceMobile,
+  IconShield,
+} from '@tabler/icons-react';
 import Image from 'next/image';
 import * as React from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -83,7 +89,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Shield className="size-5" />
+                <IconShield className="size-5" />
                 Enable Two-Factor Authentication
               </DialogTitle>
               <DialogDescription>
@@ -93,7 +99,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
 
             <div className="space-y-4 py-4">
               <Alert>
-                <Smartphone className="size-4" />
+                <IconDeviceMobile className="size-4" />
                 <AlertDescription>
                   You'll need an authenticator app like Google Authenticator, Authy, or 1Password to
                   scan the QR code.
@@ -151,7 +157,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
                     {secretKey}
                   </code>
                   <Button variant="outline" size="sm" onClick={() => copyToClipboard(secretKey)}>
-                    <Copy className="size-4" />
+                    <IconCopy className="size-4" />
                   </Button>
                 </div>
               </div>
@@ -190,7 +196,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
 
               {error && (
                 <Alert variant="destructive">
-                  <XCircle className="size-4" />
+                  <IconCircleX className="size-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
@@ -222,7 +228,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
 
             <div className="space-y-4 py-4">
               <Alert>
-                <Shield className="size-4" />
+                <IconShield className="size-4" />
                 <AlertDescription className="font-medium">
                   Each code can only be used once. Keep them secure!
                 </AlertDescription>
@@ -244,7 +250,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
                 className="w-full"
                 onClick={() => copyToClipboard(backupCodes.join('\n'))}
               >
-                <Copy className="mr-2 size-4" />
+                <IconCopy className="mr-2 size-4" />
                 Copy All Codes
               </Button>
             </div>
@@ -261,7 +267,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <CheckCircle2 className="size-5 text-green-600" />
+                <IconCircleCheck className="size-5 text-green-600" />
                 2FA Enabled Successfully
               </DialogTitle>
               <DialogDescription>
@@ -271,7 +277,7 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
 
             <div className="py-4">
               <Alert>
-                <Shield className="size-4" />
+                <IconShield className="size-4" />
                 <AlertDescription>
                   From now on, you'll need to enter a code from your authenticator app when signing
                   in.
@@ -312,12 +318,12 @@ export function TwoFactorManagement() {
           </div>
           {is2FAEnabled ? (
             <div className="flex items-center gap-2 text-sm text-green-600">
-              <CheckCircle2 className="size-4" />
+              <IconCircleCheck className="size-4" />
               Enabled
             </div>
           ) : (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <XCircle className="size-4" />
+              <IconCircleX className="size-4" />
               Disabled
             </div>
           )}
@@ -335,7 +341,7 @@ export function TwoFactorManagement() {
             </>
           ) : (
             <Button size="sm" onClick={() => setShowSetupDialog(true)}>
-              <Shield className="mr-2 size-4" />
+              <IconShield className="mr-2 size-4" />
               Enable 2FA
             </Button>
           )}

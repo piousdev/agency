@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronLeft, Download, SlidersHorizontal } from 'lucide-react';
+import { IconChevronLeft, IconDownload, IconAdjustmentsHorizontal } from '@tabler/icons-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,8 @@ interface BusinessCenterHeaderProps {
   activeFilterCount?: number;
   /** Export handler */
   onExport?: () => void;
+  /** Primary action button (e.g., "+ New Ticket") */
+  primaryAction?: React.ReactNode;
   className?: string;
 }
 
@@ -27,6 +29,7 @@ const tabs = [
   { label: 'Overview', href: '/dashboard/business-center' },
   { label: 'Intake', href: '/dashboard/business-center/intake-queue' },
   { label: 'Projects', href: '/dashboard/business-center/projects' },
+  { label: 'Clients', href: '/dashboard/business-center/clients' },
   { label: 'Deliverables', href: '/dashboard/business-center/deliverables' },
   { label: 'Team', href: '/dashboard/business-center/team-capacity' },
   { label: 'Completed', href: '/dashboard/business-center/recently-completed' },
@@ -38,6 +41,7 @@ export function BusinessCenterHeader({
   filterContent,
   activeFilterCount = 0,
   onExport,
+  primaryAction,
   className,
 }: BusinessCenterHeaderProps) {
   const pathname = usePathname();
@@ -58,7 +62,7 @@ export function BusinessCenterHeader({
   const displayTitle = firstName ? `Welcome back, ${firstName}` : 'Welcome back';
   const displayDescription = "Glad to have you back! Let's get started.";
 
-  const hasActions = viewSwitcher || filterContent || onExport;
+  const hasActions = viewSwitcher || filterContent || onExport || primaryAction;
 
   return (
     <TooltipProvider delayDuration={300}>
@@ -100,46 +104,49 @@ export function BusinessCenterHeader({
 
         {/* Actions Row - only show if there are actions */}
         {hasActions && (
-          <div className="flex items-center gap-2">
-            {viewSwitcher}
-            {filterContent && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 relative"
-                    aria-label="Filter"
-                  >
-                    <SlidersHorizontal className="h-4 w-4" />
-                    {activeFilterCount > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-                        {activeFilterCount}
-                      </span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80" align="start">
-                  {filterContent}
-                </PopoverContent>
-              </Popover>
-            )}
-            {onExport && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={onExport}
-                    aria-label="Export"
-                  >
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Export</TooltipContent>
-              </Tooltip>
-            )}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              {viewSwitcher}
+              {filterContent && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 relative"
+                      aria-label="Filter"
+                    >
+                      <IconAdjustmentsHorizontal className="h-4 w-4" />
+                      {activeFilterCount > 0 && (
+                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                          {activeFilterCount}
+                        </span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80" align="start">
+                    {filterContent}
+                  </PopoverContent>
+                </Popover>
+              )}
+              {onExport && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={onExport}
+                      aria-label="Export"
+                    >
+                      <IconDownload className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Export</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+            {primaryAction}
           </div>
         )}
       </div>
@@ -178,7 +185,7 @@ export function DetailPageHeader({
               size="sm"
               className="-ml-2 h-8 text-muted-foreground hover:text-foreground"
             >
-              <ChevronLeft className="mr-1 h-4 w-4" />
+              <IconChevronLeft className="mr-1 h-4 w-4" />
               {backLabel}
             </Button>
           </Link>

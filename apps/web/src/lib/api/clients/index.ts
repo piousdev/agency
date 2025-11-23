@@ -4,4 +4,15 @@
  */
 
 export { listClients } from './list';
-export type { Client, ClientsListResponse } from './types';
+export { getClient } from './get';
+export { createClient, type CreateClientResponse } from './create';
+export { updateClient, type UpdateClientResponse } from './update';
+export type {
+  Client,
+  ClientDetail,
+  ClientProject,
+  ClientTicket,
+  ClientStats,
+  ClientsListResponse,
+  ClientResponse,
+} from './types';

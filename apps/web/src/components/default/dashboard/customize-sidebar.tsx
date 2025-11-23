@@ -1,6 +1,6 @@
 'use client';
 
-import { GripVertical, Settings } from 'lucide-react';
+import { IconGripVertical, IconSettings } from '@tabler/icons-react';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -128,7 +128,7 @@ export function SidebarCustomizationDialog() {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon-sm" aria-label="Customize sidebar">
-          <Settings className="size-4" />
+          <IconSettings className="size-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -159,7 +159,7 @@ export function SidebarCustomizationDialog() {
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <GripVertical className="size-4 text-muted-foreground" />
+                  <IconGripVertical className="size-4 text-muted-foreground" />
                   <Label htmlFor={`section-${section.id}`} className="cursor-move">
                     {section.title}
                   </Label>

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import * as Sentry from '@sentry/nextjs';
-import { RefreshCw, LogIn } from 'lucide-react';
+import { IconRefresh, IconLogin } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -58,12 +58,12 @@ export default function AuthError({
         {/* Action Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button onClick={reset}>
-            <RefreshCw className="size-4" />
+            <IconRefresh className="size-4" />
             Try again
           </Button>
           <Button variant="outline" asChild>
             <Link href="/login">
-              <LogIn className="size-4" />
+              <IconLogin className="size-4" />
               Back to login
             </Link>
           </Button>

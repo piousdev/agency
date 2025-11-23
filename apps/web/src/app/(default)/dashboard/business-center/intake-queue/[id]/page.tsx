@@ -2,25 +2,25 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { format, formatDistanceToNow, isPast, differenceInMinutes } from 'date-fns';
 import {
-  ChevronLeft,
-  Building2,
-  Calendar,
-  User,
-  AlertCircle,
-  FileText,
-  Clock,
-  Tag,
-  Globe,
-  Mail,
-  Phone,
-  ExternalLink,
-  MessageSquare,
-  Paperclip,
-  Timer,
-  AlertTriangle,
-  CheckCircle2,
-  Link2,
-} from 'lucide-react';
+  IconChevronLeft,
+  IconBuilding,
+  IconCalendar,
+  IconUser,
+  IconAlertCircle,
+  IconFileText,
+  IconClock,
+  IconTag,
+  IconWorld,
+  IconMail,
+  IconPhone,
+  IconExternalLink,
+  IconMessage,
+  IconPaperclip,
+  IconHourglass,
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconLink,
+} from '@tabler/icons-react';
 import { requireUser } from '@/lib/auth/session';
 import { getTicket } from '@/lib/api/tickets';
 import { listTeamMembers } from '@/lib/api/users';
@@ -32,7 +32,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { TicketActions } from './actions-client';
-import { ActivityFeed } from './activity-feed';
+import { TicketActivity } from './ticket-activity';
 import { CommentsSection } from './comments-section';
 
 interface TicketDetailPageProps {
@@ -55,26 +55,26 @@ const statusConfig = {
 };
 
 const typeConfig = {
-  intake: { label: 'Intake', icon: FileText },
-  bug: { label: 'Bug', icon: AlertCircle },
-  support: { label: 'Support', icon: MessageSquare },
-  incident: { label: 'Incident', icon: AlertTriangle },
-  change_request: { label: 'Change Request', icon: FileText },
+  intake: { label: 'Intake', icon: IconFileText },
+  bug: { label: 'Bug', icon: IconAlertCircle },
+  support: { label: 'Support', icon: IconMessage },
+  incident: { label: 'Incident', icon: IconAlertTriangle },
+  change_request: { label: 'Change Request', icon: IconFileText },
 };
 
 const sourceConfig = {
-  web_form: { label: 'Web Form', icon: Globe },
-  email: { label: 'Email', icon: Mail },
-  phone: { label: 'Phone', icon: Phone },
-  chat: { label: 'Chat', icon: MessageSquare },
-  api: { label: 'API', icon: Globe },
-  internal: { label: 'Internal', icon: Building2 },
+  web_form: { label: 'Web Form', icon: IconWorld },
+  email: { label: 'Email', icon: IconMail },
+  phone: { label: 'Phone', icon: IconPhone },
+  chat: { label: 'Chat', icon: IconMessage },
+  api: { label: 'API', icon: IconWorld },
+  internal: { label: 'Internal', icon: IconBuilding },
 };
 
 const slaStatusConfig = {
-  on_track: { label: 'On Track', variant: 'default' as const, icon: CheckCircle2 },
-  at_risk: { label: 'At Risk', variant: 'outline' as const, icon: AlertTriangle },
-  breached: { label: 'Breached', variant: 'destructive' as const, icon: AlertCircle },
+  on_track: { label: 'On Track', variant: 'default' as const, icon: IconCircleCheck },
+  at_risk: { label: 'At Risk', variant: 'outline' as const, icon: IconAlertTriangle },
+  breached: { label: 'Breached', variant: 'destructive' as const, icon: IconAlertCircle },
 };
 
 function formatDuration(minutes: number | null): string {
@@ -126,7 +126,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
             <Link href="/dashboard/business-center/intake-queue">
-              <ChevronLeft className="h-4 w-4 mr-1" />
+              <IconChevronLeft className="h-4 w-4 mr-1" />
               Back
             </Link>
           </Button>
@@ -170,7 +170,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               {/* Description */}
               <div>
                 <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
+                  <IconFileText className="h-4 w-4" />
                   Description
                 </h3>
                 <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap">
@@ -182,7 +182,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               {ticket.tags && ticket.tags.length > 0 && (
                 <div>
                   <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
-                    <Tag className="h-4 w-4" />
+                    <IconTag className="h-4 w-4" />
                     Tags
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -199,7 +199,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               {(ticket.environment || ticket.affectedUrl || ticket.browserInfo) && (
                 <div>
                   <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
-                    <Globe className="h-4 w-4" />
+                    <IconWorld className="h-4 w-4" />
                     Technical Context
                   </h3>
                   <div className="grid gap-2 text-sm">
@@ -220,7 +220,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                         >
                           {ticket.affectedUrl.substring(0, 50)}
                           {ticket.affectedUrl.length > 50 && '...'}
-                          <ExternalLink className="h-3 w-3" />
+                          <IconExternalLink className="h-3 w-3" />
                         </a>
                       </div>
                     )}
@@ -240,7 +240,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
           <Tabs defaultValue="comments" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="comments" className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
+                <IconMessage className="h-4 w-4" />
                 Comments
                 {ticket.comments && ticket.comments.length > 0 && (
                   <Badge variant="secondary" className="ml-1">
@@ -249,7 +249,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                 )}
               </TabsTrigger>
               <TabsTrigger value="files" className="flex items-center gap-2">
-                <Paperclip className="h-4 w-4" />
+                <IconPaperclip className="h-4 w-4" />
                 Files
                 {ticket.files && ticket.files.length > 0 && (
                   <Badge variant="secondary" className="ml-1">
@@ -258,7 +258,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                 )}
               </TabsTrigger>
               <TabsTrigger value="activity" className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
+                <IconClock className="h-4 w-4" />
                 Activity
               </TabsTrigger>
             </TabsList>
@@ -278,7 +278,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                           className="flex items-center justify-between p-3 rounded-lg border"
                         >
                           <div className="flex items-center gap-3">
-                            <Paperclip className="h-4 w-4 text-muted-foreground" />
+                            <IconPaperclip className="h-4 w-4 text-muted-foreground" />
                             <div>
                               <p className="font-medium">{file.name}</p>
                               <p className="text-xs text-muted-foreground">
@@ -288,7 +288,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                           </div>
                           <Button variant="ghost" size="sm" asChild>
                             <a href={file.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-4 w-4" />
+                              <IconExternalLink className="h-4 w-4" />
                             </a>
                           </Button>
                         </div>
@@ -302,7 +302,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             </TabsContent>
 
             <TabsContent value="activity" className="mt-4">
-              <ActivityFeed activities={ticket.activities || []} />
+              <TicketActivity ticketId={ticket.id} />
             </TabsContent>
           </Tabs>
         </div>
@@ -314,7 +314,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             <Card className={isOverdue ? 'border-destructive' : ''}>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Timer className="h-4 w-4" />
+                  <IconHourglass className="h-4 w-4" />
                   SLA Status
                 </CardTitle>
               </CardHeader>
@@ -364,7 +364,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
+                  <IconClock className="h-4 w-4" />
                   Time Tracking
                 </CardTitle>
               </CardHeader>
@@ -394,7 +394,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
-                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <IconBuilding className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Client</p>
                   <p className="font-medium">{ticket.client?.name || 'N/A'}</p>
@@ -424,7 +424,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               <Separator />
 
               <div className="flex items-center gap-3">
-                <User className="h-4 w-4 text-muted-foreground" />
+                <IconUser className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Assigned To</p>
                   {ticket.assignedTo ? (
@@ -444,7 +444,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               <Separator />
 
               <div className="flex items-center gap-3">
-                <User className="h-4 w-4 text-muted-foreground" />
+                <IconUser className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Created By</p>
                   <p className="font-medium">{ticket.createdBy?.name || 'Unknown'}</p>
@@ -454,7 +454,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
               <Separator />
 
               <div className="flex items-center gap-3">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <IconCalendar className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Last Updated</p>
                   <p className="font-medium">{format(new Date(ticket.updatedAt), 'MMM d, yyyy')}</p>
@@ -465,7 +465,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                 <>
                   <Separator />
                   <div className="flex items-center gap-3">
-                    <Link2 className="h-4 w-4 text-muted-foreground" />
+                    <IconLink className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="text-sm text-muted-foreground">Related Project</p>
                       <Link
@@ -483,7 +483,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                 <>
                   <Separator />
                   <div className="flex items-center gap-3">
-                    <Link2 className="h-4 w-4 text-muted-foreground" />
+                    <IconLink className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="text-sm text-muted-foreground">Parent Ticket</p>
                       <Link
@@ -504,20 +504,20 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <User className="h-4 w-4" />
+                  <IconUser className="h-4 w-4" />
                   Contact Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {ticket.contactName && (
                   <div className="flex items-center gap-2 text-sm">
-                    <User className="h-4 w-4 text-muted-foreground" />
+                    <IconUser className="h-4 w-4 text-muted-foreground" />
                     <span>{ticket.contactName}</span>
                   </div>
                 )}
                 {ticket.contactEmail && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <IconMail className="h-4 w-4 text-muted-foreground" />
                     <a
                       href={`mailto:${ticket.contactEmail}`}
                       className="text-primary hover:underline"
@@ -528,7 +528,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
                 )}
                 {ticket.contactPhone && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <IconPhone className="h-4 w-4 text-muted-foreground" />
                     <a href={`tel:${ticket.contactPhone}`} className="text-primary hover:underline">
                       {ticket.contactPhone}
                     </a>
@@ -559,7 +559,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Link2 className="h-4 w-4" />
+                  <IconLink className="h-4 w-4" />
                   Linked Tickets
                 </CardTitle>
               </CardHeader>

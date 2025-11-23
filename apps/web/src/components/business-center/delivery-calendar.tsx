@@ -1,4 +1,4 @@
-import { Calendar, Code, Palette } from 'lucide-react';
+import { IconCalendar, IconCode, IconPalette } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
@@ -44,9 +44,9 @@ function groupByDeliveryDate(projects: ProjectWithRelations[]) {
  */
 function getServiceIcon(clientType: string) {
   if (clientType === 'creative') {
-    return <Palette className="h-4 w-4" />;
+    return <IconPalette className="h-4 w-4" />;
   }
-  return <Code className="h-4 w-4" />;
+  return <IconCode className="h-4 w-4" />;
 }
 
 /**
@@ -75,7 +75,7 @@ export function DeliveryCalendar({ projects }: DeliveryCalendarProps) {
   if (dates.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
+        <IconCalendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
         <p className="text-sm">No upcoming deliveries</p>
         <p className="text-xs mt-1">Delivery schedule will appear here</p>
       </div>

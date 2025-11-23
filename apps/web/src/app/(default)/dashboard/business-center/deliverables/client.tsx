@@ -1,15 +1,25 @@
 'use client';
 
-import { useState } from 'react';
 import {
+  IconAlertTriangle,
+  IconCalendar,
+  IconCalendarClock,
+  IconClock,
+  IconFilter,
+  IconLayoutList,
+  IconTable,
+  IconX,
+} from '@tabler/icons-react';
+import {
+  endOfMonth,
+  endOfWeek,
   isAfter,
   isBefore,
   isToday,
   startOfToday,
-  endOfWeek,
   startOfWeek,
-  endOfMonth,
 } from 'date-fns';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,24 +27,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  AlertTriangle,
-  Calendar,
-  CalendarClock,
-  Clock,
-  Filter,
-  LayoutList,
-  Table2,
-  X,
-} from 'lucide-react';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import type { TeamMember } from '@/lib/api/users/types';
-import { DeliverableTimelineView } from './views/timeline-view';
-import { DeliverableListView } from './views/list-view';
-import { DeliverableCalendarView } from './views/calendar-view';
 import { BusinessCenterHeader } from '../components/header';
+import { DeliverableCalendarView } from './views/calendar-view';
+import { DeliverableTableView } from './views/table-view';
+import { DeliverableTimelineView } from './views/timeline-view';
 
-type ViewMode = 'timeline' | 'list' | 'calendar';
+type ViewMode = 'timeline' | 'table' | 'calendar';
 type TimeFilter = 'all' | 'overdue' | 'today' | 'this_week' | 'this_month' | 'upcoming';
 type StatusFilter = 'all' | 'scheduled' | 'unscheduled';
 
@@ -192,7 +192,7 @@ export function DeliverablesClient({
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <IconAlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">{stats.overdue}</div>
@@ -206,7 +206,7 @@ export function DeliverablesClient({
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Due Today</CardTitle>
-            <Clock className="h-4 w-4 text-orange-500" />
+            <IconClock className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.dueToday}</div>
@@ -220,7 +220,7 @@ export function DeliverablesClient({
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <CalendarClock className="h-4 w-4 text-blue-500" />
+            <IconCalendarClock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.dueThisWeek}</div>
@@ -234,7 +234,7 @@ export function DeliverablesClient({
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">This Month</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.dueThisMonth}</div>
@@ -248,7 +248,7 @@ export function DeliverablesClient({
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Unscheduled</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.unscheduled}</div>
@@ -262,15 +262,15 @@ export function DeliverablesClient({
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <TabsList>
             <TabsTrigger value="timeline" className="gap-2">
-              <LayoutList className="h-4 w-4" />
+              <IconLayoutList className="h-4 w-4" />
               Timeline
             </TabsTrigger>
-            <TabsTrigger value="list" className="gap-2">
-              <Table2 className="h-4 w-4" />
-              List
+            <TabsTrigger value="table" className="gap-2">
+              <IconTable className="h-4 w-4" />
+              Table
             </TabsTrigger>
             <TabsTrigger value="calendar" className="gap-2">
-              <Calendar className="h-4 w-4" />
+              <IconCalendar className="h-4 w-4" />
               Calendar
             </TabsTrigger>
           </TabsList>
@@ -298,7 +298,7 @@ export function DeliverablesClient({
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
-                  <Filter className="h-4 w-4" />
+                  <IconFilter className="h-4 w-4" />
                   Filters
                   {hasActiveFilters && (
                     <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 text-xs">
@@ -315,7 +315,7 @@ export function DeliverablesClient({
                     <h4 className="font-medium">Filters</h4>
                     {hasActiveFilters && (
                       <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8 px-2">
-                        <X className="mr-1 h-3 w-3" />
+                        <IconX className="mr-1 h-3 w-3" />
                         Clear all
                       </Button>
                     )}
@@ -379,25 +379,25 @@ export function DeliverablesClient({
             {timeFilter !== 'all' && (
               <Badge variant="secondary" className="gap-1">
                 {timeFilter.replace('_', ' ')}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => setTimeFilter('all')} />
+                <IconX className="h-3 w-3 cursor-pointer" onClick={() => setTimeFilter('all')} />
               </Badge>
             )}
             {statusFilter !== 'all' && (
               <Badge variant="secondary" className="gap-1">
                 {statusFilter}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => setStatusFilter('all')} />
+                <IconX className="h-3 w-3 cursor-pointer" onClick={() => setStatusFilter('all')} />
               </Badge>
             )}
             {projectType !== 'all' && (
               <Badge variant="secondary" className="gap-1">
                 {projectType}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => setProjectType('all')} />
+                <IconX className="h-3 w-3 cursor-pointer" onClick={() => setProjectType('all')} />
               </Badge>
             )}
             {selectedStatuses.map((status) => (
               <Badge key={status} variant="secondary" className="gap-1">
                 {statusLabels[status]}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => toggleStatus(status)} />
+                <IconX className="h-3 w-3 cursor-pointer" onClick={() => toggleStatus(status)} />
               </Badge>
             ))}
             {selectedAssignees.map((id) => {
@@ -405,7 +405,7 @@ export function DeliverablesClient({
               return (
                 <Badge key={id} variant="secondary" className="gap-1">
                   {member?.name || id}
-                  <X className="h-3 w-3 cursor-pointer" onClick={() => toggleAssignee(id)} />
+                  <IconX className="h-3 w-3 cursor-pointer" onClick={() => toggleAssignee(id)} />
                 </Badge>
               );
             })}
@@ -416,8 +416,8 @@ export function DeliverablesClient({
         <TabsContent value="timeline" className="mt-6">
           <DeliverableTimelineView projects={filteredProjects} />
         </TabsContent>
-        <TabsContent value="list" className="mt-6">
-          <DeliverableListView projects={filteredProjects} />
+        <TabsContent value="table" className="mt-6">
+          <DeliverableTableView projects={filteredProjects} />
         </TabsContent>
         <TabsContent value="calendar" className="mt-6">
           <DeliverableCalendarView projects={filteredProjects} />

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Home, ArrowLeft } from 'lucide-react';
+import { IconHome, IconArrowLeft } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -34,12 +34,12 @@ export default function DashboardNotFound() {
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button asChild>
             <Link href="/dashboard">
-              <Home className="size-4" />
+              <IconHome className="size-4" />
               Dashboard
             </Link>
           </Button>
           <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="size-4" />
+            <IconArrowLeft className="size-4" />
             Go back
           </Button>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { MoreVertical, X } from 'lucide-react';
+import { IconDotsVertical, IconX } from '@tabler/icons-react';
 import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -88,7 +88,7 @@ export function BulkActionsBar({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <MoreVertical className="size-4" />
+                <IconDotsVertical className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center">
@@ -131,7 +131,7 @@ export function BulkActionsBar({
 
       {/* Clear selection */}
       <Button variant="ghost" size="sm" onClick={onClearSelection}>
-        <X className="size-4" />
+        <IconX className="size-4" />
       </Button>
     </div>
   );

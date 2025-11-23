@@ -2,23 +2,26 @@
  * SKYLL Operations Platform - Navigation with Icons
  *
  * This file extends the base navigation configuration with icon assignments.
- * Icons are imported from Lucide React for consistency across the platform.
+ * Icons are imported from Tabler Icons for consistency across the platform.
  */
 
 import {
-  Building2,
-  CheckSquare,
-  FileText,
-  Headphones,
-  HelpCircle,
-  History,
-  MessageSquare,
-  Package,
-  Search,
-  Settings,
-  Shield,
-} from 'lucide-react';
-import { BusinessCenter, Chart, Projects, Task } from '@/components/icons';
+  IconBriefcase,
+  IconBuilding,
+  IconCheckbox,
+  IconChartBar,
+  IconFileText,
+  IconFolders,
+  IconHeadphones,
+  IconHelpCircle,
+  IconHistory,
+  IconListDetails,
+  IconMessage,
+  IconPackage,
+  IconSearch,
+  IconSettings,
+  IconShield,
+} from '@tabler/icons-react';
 import {
   administrationGroup,
   adminNavigation,
@@ -53,80 +56,80 @@ import {
 // Work Management icons
 const businessCenterWithIcons: NavigationItem = {
   ...businessCenterNavigation,
-  icon: BusinessCenter,
+  icon: IconBriefcase,
 };
 
 const projectsWithIcons: NavigationItem = {
   ...projectsNavigation,
-  icon: Projects,
+  icon: IconFolders,
 };
 
 const tasksWithIcons: NavigationItem = {
   ...tasksNavigation,
-  icon: Task,
+  icon: IconListDetails,
 };
 
 const issuesWithIcons: NavigationItem = {
   ...issuesNavigation,
-  icon: CheckSquare,
+  icon: IconCheckbox,
 };
 
 // Client & Service Management icons
 const clientsWithIcons: NavigationItem = {
   ...clientsNavigation,
-  icon: Building2,
+  icon: IconBuilding,
 };
 
 const servicesWithIcons: NavigationItem = {
   ...servicesNavigation,
-  icon: Package,
+  icon: IconPackage,
 };
 
 const requestsWithIcons: NavigationItem = {
   ...requestsNavigation,
-  icon: Headphones,
+  icon: IconHeadphones,
 };
 
 // Collaboration & Content icons
 const collaborationWithIcons: NavigationItem = {
   ...collaborationNavigation,
-  icon: MessageSquare,
+  icon: IconMessage,
 };
 
 const contentWithIcons: NavigationItem = {
   ...contentNavigation,
-  icon: FileText,
+  icon: IconFileText,
 };
 
 // Insights & Administration icons
 const analyticsWithIcons: NavigationItem = {
   ...analyticsNavigation,
-  icon: Chart,
+  icon: IconChartBar,
 };
 
 const adminWithIcons: NavigationItem = {
   ...adminNavigation,
-  icon: Shield,
+  icon: IconShield,
 };
 
 const settingsWithIcons: NavigationItem = {
   ...settingsNavigation,
-  icon: Settings,
+  icon: IconSettings,
 };
 
 const searchWithIcons: NavigationItem = {
   ...searchNavigation,
-  icon: Search,
+  icon: IconSearch,
 };
 
 const helpWithIcons: NavigationItem = {
   ...helpNavigation,
-  icon: HelpCircle,
+  icon: IconHelpCircle,
 };
 
 const changelogWithIcons: NavigationItem = {
   ...changelogNavigation,
-  icon: History,
+  icon: IconHistory,
 };
 
 /**

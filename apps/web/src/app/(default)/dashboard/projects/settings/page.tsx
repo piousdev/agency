@@ -1,4 +1,12 @@
-import { Bell, Eye, Lock, Palette, Settings, Tags, Users } from 'lucide-react';
+import {
+  IconBell,
+  IconEye,
+  IconLock,
+  IconPalette,
+  IconSettings,
+  IconTags,
+  IconUsers,
+} from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -23,7 +31,7 @@ export default async function ProjectSettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-muted-foreground" />
+              <IconEye className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Default View</CardTitle>
             </div>
             <CardDescription>Choose your preferred project list view</CardDescription>
@@ -51,7 +59,7 @@ export default async function ProjectSettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Palette className="h-5 w-5 text-muted-foreground" />
+              <IconPalette className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Display</CardTitle>
             </div>
             <CardDescription>Customize how projects are displayed</CardDescription>
@@ -91,7 +99,7 @@ export default async function ProjectSettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-muted-foreground" />
+              <IconBell className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Notifications</CardTitle>
             </div>
             <CardDescription>Manage project-related notifications</CardDescription>
@@ -143,7 +151,7 @@ export default async function ProjectSettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-muted-foreground" />
+              <IconUsers className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Team Defaults</CardTitle>
             </div>
             <CardDescription>Default settings for team assignments</CardDescription>
@@ -175,7 +183,7 @@ export default async function ProjectSettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-muted-foreground" />
+              <IconLock className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Privacy</CardTitle>
             </div>
             <CardDescription>Control project visibility defaults</CardDescription>
@@ -205,14 +213,14 @@ export default async function ProjectSettingsPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Tags className="h-5 w-5 text-muted-foreground" />
+              <IconTags className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Tags & Categories</CardTitle>
             </div>
             <CardDescription>Manage project tags and categories</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Tags className="h-10 w-10 text-muted-foreground mb-4" />
+              <IconTags className="h-10 w-10 text-muted-foreground mb-4" />
               <p className="text-muted-foreground">Tag management coming soon</p>
               <Button variant="outline" className="mt-4" disabled>
                 Manage Tags
@@ -225,7 +233,7 @@ export default async function ProjectSettingsPage() {
       {/* Save Button */}
       <div className="flex justify-end">
         <Button disabled>
-          <Settings className="h-4 w-4 mr-2" />
+          <IconSettings className="h-4 w-4 mr-2" />
           Save Settings
         </Button>
       </div>

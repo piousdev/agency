@@ -1,16 +1,16 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ChevronLeft,
-  Edit,
-  Calendar,
-  Users,
-  ExternalLink,
-  GitBranch,
-  Globe,
-  Server,
-  FileText,
-} from 'lucide-react';
+  IconChevronLeft,
+  IconEdit,
+  IconCalendar,
+  IconUsers,
+  IconExternalLink,
+  IconGitBranch,
+  IconWorld,
+  IconServer,
+  IconFileText,
+} from '@tabler/icons-react';
 import { requireUser } from '@/lib/auth/session';
 import { getProject } from '@/lib/api/projects';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { projectStatusOptions } from '@/lib/schemas/project';
 import { DetailPageHeader } from '../../components/header';
+import { ProjectActivity } from './project-activity';
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
@@ -71,7 +72,7 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
       >
         <Link href={`/dashboard/projects/${id}/edit`}>
           <Button>
-            <Edit className="h-4 w-4 mr-2" />
+            <IconEdit className="h-4 w-4 mr-2" />
             Edit Project
           </Button>
         </Link>
@@ -117,12 +118,12 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
               {project.repositoryUrl && (
                 <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-2">
-                    <GitBranch className="h-4 w-4 text-muted-foreground" />
+                    <IconGitBranch className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">Repository</span>
                   </div>
                   <a href={project.repositoryUrl} target="_blank" rel="noopener noreferrer">
                     <Button variant="ghost" size="sm">
-                      <ExternalLink className="h-4 w-4" />
+                      <IconExternalLink className="h-4 w-4" />
                     </Button>
                   </a>
                 </div>
@@ -130,12 +131,12 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
               {project.stagingUrl && (
                 <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-2">
-                    <Server className="h-4 w-4 text-muted-foreground" />
+                    <IconServer className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">Staging</span>
                   </div>
                   <a href={project.stagingUrl} target="_blank" rel="noopener noreferrer">
                     <Button variant="ghost" size="sm">
-                      <ExternalLink className="h-4 w-4" />
+                      <IconExternalLink className="h-4 w-4" />
                     </Button>
                   </a>
                 </div>
@@ -143,12 +144,12 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
               {project.productionUrl && (
                 <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <IconWorld className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">Production</span>
                   </div>
                   <a href={project.productionUrl} target="_blank" rel="noopener noreferrer">
                     <Button variant="ghost" size="sm">
-                      <ExternalLink className="h-4 w-4" />
+                      <IconExternalLink className="h-4 w-4" />
                     </Button>
                   </a>
                 </div>
@@ -166,7 +167,7 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Calendar className="h-4 w-4" />
+                <IconCalendar className="h-4 w-4" />
                 Timeline
               </CardTitle>
             </CardHeader>
@@ -191,7 +192,7 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Users className="h-4 w-4" />
+                <IconUsers className="h-4 w-4" />
                 Team ({project.assignees?.length ?? 0})
               </CardTitle>
             </CardHeader>
@@ -220,13 +221,16 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
             </CardContent>
           </Card>
 
+          {/* Activity Feed */}
+          <ProjectActivity projectId={id} />
+
           {/* View Full Details Link */}
           <Card>
             <CardContent className="pt-6">
               <Link href={`/dashboard/projects/${id}`}>
                 <Button variant="outline" className="w-full">
                   View Full Details
-                  <ExternalLink className="h-4 w-4 ml-2" />
+                  <IconExternalLink className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
             </CardContent>

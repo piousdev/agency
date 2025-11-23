@@ -1,6 +1,12 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { Building2, CalendarClock, LayoutGrid, Plus, Users } from 'lucide-react';
+import {
+  IconBuilding,
+  IconCalendarTime,
+  IconLayoutGrid,
+  IconPlus,
+  IconUsers,
+} from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,7 +50,7 @@ export default async function ProjectBoardViewPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <LayoutGrid className="h-6 w-6" />
+            <IconLayoutGrid className="h-6 w-6" />
             <h1 className="text-4xl font-bold">Board View</h1>
           </div>
           <p className="text-muted-foreground mt-2">Kanban-style project visualization</p>
@@ -55,7 +61,7 @@ export default async function ProjectBoardViewPage() {
           </Link>
           <Link href="/dashboard/projects/new">
             <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+              <IconPlus className="h-4 w-4" />
               New Project
             </Button>
           </Link>
@@ -97,13 +103,13 @@ export default async function ProjectBoardViewPage() {
                           </CardHeader>
                           <CardContent className="space-y-2 text-sm">
                             <div className="flex items-center gap-2 text-muted-foreground">
-                              <Building2 className="h-3 w-3" />
+                              <IconBuilding className="h-3 w-3" />
                               <span className="truncate">
                                 {project.client?.name || 'No client'}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-muted-foreground">
-                              <CalendarClock className="h-3 w-3" />
+                              <IconCalendarTime className="h-3 w-3" />
                               <span className={isOverdue ? 'text-destructive' : ''}>
                                 {project.deliveredAt
                                   ? format(new Date(project.deliveredAt), 'MMM d, yyyy')
@@ -112,7 +118,7 @@ export default async function ProjectBoardViewPage() {
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-muted-foreground">
-                              <Users className="h-3 w-3" />
+                              <IconUsers className="h-3 w-3" />
                               <span>
                                 {project.assignees && project.assignees.length > 0
                                   ? `${project.assignees.length} member${project.assignees.length !== 1 ? 's' : ''}`

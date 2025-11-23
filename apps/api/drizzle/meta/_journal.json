@@ -36,6 +36,20 @@
       "when": 1763804627126,
       "tag": "0004_wild_loners",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1763893405889,
+      "tag": "0005_known_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763898777493,
+      "tag": "0006_sturdy_the_renegades",
+      "breakpoints": true
     }
   ]
 }

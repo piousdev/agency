@@ -1,6 +1,13 @@
 'use client';
 
-import { CheckCircle2, Laptop, Monitor, MoreVertical, Smartphone, Tablet } from 'lucide-react';
+import {
+  IconCircleCheck,
+  IconDeviceDesktop,
+  IconDeviceLaptop,
+  IconDeviceMobile,
+  IconDeviceTablet,
+  IconDotsVertical,
+} from '@tabler/icons-react';
 import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -64,15 +71,15 @@ const mockSessions: ActiveSession[] = [
 function getDeviceIcon(type: DeviceType) {
   switch (type) {
     case 'desktop':
-      return Monitor;
+      return IconDeviceDesktop;
     case 'laptop':
-      return Laptop;
+      return IconDeviceLaptop;
     case 'tablet':
-      return Tablet;
+      return IconDeviceTablet;
     case 'mobile':
-      return Smartphone;
+      return IconDeviceMobile;
     default:
-      return Monitor;
+      return IconDeviceDesktop;
   }
 }
 
@@ -139,7 +146,7 @@ export function SessionsManager() {
                   <h4 className="font-medium">{session.deviceName}</h4>
                   {session.current && (
                     <Badge variant="secondary" className="flex items-center gap-1">
-                      <CheckCircle2 className="size-3" />
+                      <IconCircleCheck className="size-3" />
                       Current
                     </Badge>
                   )}
@@ -158,7 +165,7 @@ export function SessionsManager() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon-sm">
-                      <MoreVertical className="size-4" />
+                      <IconDotsVertical className="size-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">

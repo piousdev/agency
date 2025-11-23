@@ -11,7 +11,7 @@
 
 'use client';
 
-import { AlertCircle } from 'lucide-react';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -133,7 +133,7 @@ export function EnhancedLoginForm({ returnUrl = '/dashboard' }: EnhancedLoginFor
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <Alert variant={needsVerification ? 'default' : 'destructive'}>
-              <AlertCircle className="h-4 w-4" />
+              <IconAlertCircle className="h-4 w-4" />
               <AlertDescription>
                 <div className="space-y-2">
                   <p>{error}</p>

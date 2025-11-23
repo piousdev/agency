@@ -1,4 +1,11 @@
-import { Calendar, CheckCircle, Code, Inbox, Palette, Users } from 'lucide-react';
+import {
+  IconCalendar,
+  IconCircleCheck,
+  IconCode,
+  IconInbox,
+  IconPalette,
+  IconUsers,
+} from '@tabler/icons-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import type { TicketWithRelations } from '@/lib/api/tickets/types';
@@ -61,7 +68,7 @@ export function BusinessCenter({ data }: BusinessCenterProps) {
         <Card className="xl:col-span-1">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Inbox className="h-5 w-5 text-info" />
+              <IconInbox className="h-5 w-5 text-info" />
               <CardTitle>Intake Queue</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -77,7 +84,7 @@ export function BusinessCenter({ data }: BusinessCenterProps) {
         <Card className="xl:col-span-1">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Palette className="h-5 w-5 text-primary" />
+              <IconPalette className="h-5 w-5 text-primary" />
               <CardTitle>Active Work - Content</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground mt-1">Creative projects in production</p>
@@ -91,7 +98,7 @@ export function BusinessCenter({ data }: BusinessCenterProps) {
         <Card className="xl:col-span-1">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Code className="h-5 w-5 text-success" />
+              <IconCode className="h-5 w-5 text-success" />
               <CardTitle>Active Work - Software</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground mt-1">Software development projects</p>
@@ -105,7 +112,7 @@ export function BusinessCenter({ data }: BusinessCenterProps) {
         <Card className="xl:col-span-1">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-warning" />
+              <IconUsers className="h-5 w-5 text-warning" />
               <CardTitle>Team Capacity</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -121,7 +128,7 @@ export function BusinessCenter({ data }: BusinessCenterProps) {
         <Card className="xl:col-span-1">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-error" />
+              <IconCalendar className="h-5 w-5 text-error" />
               <CardTitle>Delivery Calendar</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground mt-1">Upcoming project delivery dates</p>
@@ -135,7 +142,7 @@ export function BusinessCenter({ data }: BusinessCenterProps) {
         <Card className="xl:col-span-1">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-success" />
+              <IconCircleCheck className="h-5 w-5 text-success" />
               <CardTitle>Recently Completed</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground mt-1">

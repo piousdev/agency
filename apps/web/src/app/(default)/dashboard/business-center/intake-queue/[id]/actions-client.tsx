@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
+import { IconLoader2 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import {
   assignTicketAction,
@@ -126,7 +126,7 @@ export function TicketActions({
             onClick={handleAssign}
             disabled={isPending || !selectedAssignee || selectedAssignee === currentAssigneeId}
           >
-            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Assign'}
+            {isPending ? <IconLoader2 className="h-4 w-4 animate-spin" /> : 'Assign'}
           </Button>
         </div>
       </div>

@@ -1,6 +1,15 @@
 'use client';
 
-import { Clock, FileText, Layers, Search, Settings, Star, X, Zap } from 'lucide-react';
+import {
+  IconBolt,
+  IconClock,
+  IconFileText,
+  IconStack,
+  IconSearch,
+  IconSettings,
+  IconStar,
+  IconX,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
@@ -93,7 +102,7 @@ export function CommandPalette() {
         type: 'action',
         title: 'Keyboard Shortcuts',
         subtitle: 'View all keyboard shortcuts',
-        icon: Zap,
+        icon: IconBolt,
         group: 'Actions',
         keywords: ['keyboard', 'shortcuts', 'hotkeys', 'commands'],
         action: () => {
@@ -106,7 +115,7 @@ export function CommandPalette() {
         type: 'action',
         title: 'Settings',
         subtitle: 'Open application settings',
-        icon: Settings,
+        icon: IconSettings,
         group: 'Actions',
         keywords: ['settings', 'preferences', 'config'],
         action: () => router.push('/settings'),
@@ -116,7 +125,7 @@ export function CommandPalette() {
         type: 'action',
         title: 'Toggle Theme',
         subtitle: 'Switch between light and dark mode',
-        icon: Layers,
+        icon: IconStack,
         group: 'Actions',
         keywords: ['theme', 'dark', 'light', 'mode'],
         action: () => {
@@ -176,7 +185,7 @@ export function CommandPalette() {
           type: 'recent',
           title: item.title,
           url: item.url,
-          icon: Clock,
+          icon: IconClock,
           group: 'Recent',
         })
       );
@@ -188,7 +197,7 @@ export function CommandPalette() {
           type: 'favorite',
           title: item.title,
           url: item.url,
-          icon: Star,
+          icon: IconStar,
           group: 'Favorites',
         })
       );
@@ -246,7 +255,7 @@ export function CommandPalette() {
         className="relative h-9 w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
         onClick={() => setOpen(true)}
       >
-        <Search className="mr-2 size-4" />
+        <IconSearch className="mr-2 size-4" />
         <span className="hidden lg:inline-flex">Search or jump to...</span>
         <span className="inline-flex lg:hidden">Search...</span>
         <KbdGroup className="pointer-events-none absolute right-1.5 top-1.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
@@ -263,7 +272,7 @@ export function CommandPalette() {
           <DialogTitle className="sr-only">Command Palette</DialogTitle>
           {/* Search Input - Separate rounded container */}
           <div className="flex items-center gap-2 rounded-lg border bg-background px-4 py-3 shadow-sm">
-            <Search className="size-4 shrink-0 text-muted-foreground" />
+            <IconSearch className="size-4 shrink-0 text-muted-foreground" />
             <input
               className="flex h-9 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Search pages, actions, or jump to..."
@@ -278,7 +287,7 @@ export function CommandPalette() {
                 className="flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                 aria-label="Clear search"
               >
-                <X className="size-4" />
+                <IconX className="size-4" />
               </button>
             )}
           </div>
@@ -318,7 +327,7 @@ export function CommandPalette() {
                             : 'text-muted-foreground hover:text-foreground'
                         )}
                       >
-                        <Clock className="mr-1.5 inline-block size-3" />
+                        <IconClock className="mr-1.5 inline-block size-3" />
                         Recent
                         {activeTab === 'recent' && (
                           <span className="absolute -bottom-px left-0 right-0 h-0.5 rounded-t-sm bg-foreground" />
@@ -337,7 +346,7 @@ export function CommandPalette() {
                             : 'text-muted-foreground hover:text-foreground'
                         )}
                       >
-                        <Star className="mr-1.5 inline-block size-3" />
+                        <IconStar className="mr-1.5 inline-block size-3" />
                         Favorites
                         {activeTab === 'favorites' && (
                           <span className="absolute -bottom-px left-0 right-0 h-0.5 rounded-t-sm bg-foreground" />
@@ -365,13 +374,13 @@ export function CommandPalette() {
                               type: 'recent',
                               title: item.title,
                               url: item.url,
-                              icon: Clock,
+                              icon: IconClock,
                             })
                           }
                           className="flex items-start gap-3 rounded-lg px-3 py-3 aria-selected:bg-accent aria-selected:text-accent-foreground"
                         >
                           <div className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                            <Clock className="size-5" />
+                            <IconClock className="size-5" />
                           </div>
                           <div className="flex min-w-0 flex-1 flex-col gap-1">
                             <span className="font-semibold text-foreground">{item.title}</span>
@@ -396,13 +405,13 @@ export function CommandPalette() {
                               type: 'favorite',
                               title: item.title,
                               url: item.url,
-                              icon: Star,
+                              icon: IconStar,
                             })
                           }
                           className="flex items-start gap-3 rounded-lg px-3 py-3 aria-selected:bg-accent aria-selected:text-accent-foreground"
                         >
                           <div className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                            <Star className="size-5 fill-current" />
+                            <IconStar className="size-5 fill-current" />
                           </div>
                           <div className="flex min-w-0 flex-1 flex-col gap-1">
                             <span className="font-semibold text-foreground">{item.title}</span>
@@ -432,7 +441,7 @@ export function CommandPalette() {
                           </div>
                         ) : (
                           <div className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                            <FileText className="size-5" />
+                            <IconFileText className="size-5" />
                           </div>
                         )}
                         <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -453,7 +462,7 @@ export function CommandPalette() {
                               isResultFavorited ? 'Remove from favorites' : 'Add to favorites'
                             }
                           >
-                            <Star
+                            <IconStar
                               className={cn(
                                 'size-4',
                                 isResultFavorited && 'fill-current text-yellow-500'

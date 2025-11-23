@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle, Mail, XCircle } from 'lucide-react';
+import { IconCircleCheck, IconCircleX, IconMail } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -100,7 +100,7 @@ export function VerifyEmailContent() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-info/20">
-            <Mail className="h-8 w-8 text-info" />
+            <IconMail className="h-8 w-8 text-info" />
           </div>
           <CardTitle className="text-2xl font-bold">No Verification Token</CardTitle>
           <CardDescription>
@@ -136,7 +136,7 @@ export function VerifyEmailContent() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/20">
-            <CheckCircle className="h-10 w-10 text-success" />
+            <IconCircleCheck className="h-10 w-10 text-success" />
           </div>
           <CardTitle className="text-2xl font-bold text-success">Email Verified!</CardTitle>
           <CardDescription>
@@ -162,7 +162,7 @@ export function VerifyEmailContent() {
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-error/20">
-          <XCircle className="h-10 w-10 text-error" />
+          <IconCircleX className="h-10 w-10 text-error" />
         </div>
         <CardTitle className="text-2xl font-bold text-error">Verification Failed</CardTitle>
         <CardDescription>{error}</CardDescription>

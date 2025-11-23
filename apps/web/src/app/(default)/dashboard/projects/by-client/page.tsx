@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Building2, FolderOpen, Plus } from 'lucide-react';
+import { IconBuilding, IconFolderOpen, IconPlus } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -72,7 +72,7 @@ export default async function ProjectsByClientPage() {
         </div>
         <Link href="/dashboard/projects/new">
           <Button className="gap-2">
-            <Plus className="h-4 w-4" />
+            <IconPlus className="h-4 w-4" />
             New Project
           </Button>
         </Link>
@@ -105,11 +105,11 @@ export default async function ProjectsByClientPage() {
         <Card>
           <CardContent className="py-12">
             <div className="flex flex-col items-center justify-center gap-4">
-              <Building2 className="h-12 w-12 text-muted-foreground" />
+              <IconBuilding className="h-12 w-12 text-muted-foreground" />
               <p className="text-muted-foreground">No projects found</p>
               <Link href="/dashboard/projects/new">
                 <Button>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <IconPlus className="h-4 w-4 mr-2" />
                   Create your first project
                 </Button>
               </Link>
@@ -124,7 +124,7 @@ export default async function ProjectsByClientPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-primary" />
+                      <IconBuilding className="h-5 w-5 text-primary" />
                     </div>
                     <div>
                       <CardTitle className="text-lg">{group.name}</CardTitle>
@@ -163,7 +163,7 @@ export default async function ProjectsByClientPage() {
                         href={`/dashboard/projects/${project.id}`}
                         className="flex items-center gap-2 text-sm hover:underline"
                       >
-                        <FolderOpen className="h-3 w-3 text-muted-foreground" />
+                        <IconFolderOpen className="h-3 w-3 text-muted-foreground" />
                         <span className="truncate">{project.name}</span>
                       </Link>
                     ))}

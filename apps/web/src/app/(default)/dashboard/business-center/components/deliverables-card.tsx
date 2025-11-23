@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar } from 'lucide-react';
+import { IconCalendar } from '@tabler/icons-react';
 import {
   BentoCard,
   BentoCardContent,
@@ -36,13 +36,13 @@ export function DeliverablesCard({
     >
       {/* Watermark Icon */}
       <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none">
-        <Calendar className="w-32 h-32" />
+        <IconCalendar className="w-32 h-32" />
       </div>
 
       <BentoCardHeader>
         <div className="flex items-center gap-2">
           <div className="p-2 bg-info/10 rounded-lg">
-            <Calendar className="h-4 w-4 text-info" />
+            <IconCalendar className="h-4 w-4 text-info" />
           </div>
           <div className="flex items-center gap-1.5">
             <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">

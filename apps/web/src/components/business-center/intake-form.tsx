@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
+import { IconLoader2 } from '@tabler/icons-react';
 import { useActionState, useId } from 'react';
 import { createIntakeAction } from '@/app/(default)/dashboard/business-center/actions';
 import { Button } from '@/components/ui/button';
@@ -140,7 +140,7 @@ export function IntakeForm({ clients, open, onOpenChange, trigger }: IntakeFormP
               Cancel
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isPending ? 'Creating...' : 'Create Request'}
             </Button>
           </div>

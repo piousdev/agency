@@ -1,60 +1,29 @@
-/**
- * Zod validation schemas for project management forms
- * Used for client-side and server-side validation
- */
-
 import { z } from 'zod';
 
 /**
- * Schema for assigning team members to a project
+ * Project status enum values
  */
-export const assignProjectSchema = z.object({
-  userIds: z.array(z.string()).min(1, 'At least one team member is required'),
-});
+export const projectStatusValues = [
+  'proposal',
+  'in_development',
+  'in_review',
+  'delivered',
+  'on_hold',
+  'maintenance',
+  'archived',
+] as const;
+
+export type ProjectStatus = (typeof projectStatusValues)[number];
 
 /**
- * Schema for removing a team member from a project
+ * Project priority enum values
  */
-export const removeProjectAssignmentSchema = z.object({
-  userId: z.string().min(1, 'User ID is required'),
-});
+export const projectPriorityValues = ['low', 'medium', 'high', 'urgent'] as const;
+
+export type ProjectPriority = (typeof projectPriorityValues)[number];
 
 /**
- * Schema for updating project status
- */
-export const updateProjectStatusSchema = z.object({
-  status: z.enum(['intake', 'proposal', 'in_development', 'in_review', 'delivered', 'on_hold']),
-});
-
-/**
- *
- * Schema for updating project completion percentage
- */
-export const updateProjectCompletionSchema = z.object({
-  completionPercentage: z
-    .number()
-    .int('Completion percentage must be a whole number')
-    .min(0, 'Completion percentage cannot be negative')
-    .max(100, 'Completion percentage cannot exceed 100'),
-});
-
-/**
- * Schema for list projects query parameters
- */
-export const listProjectsQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  pageSize: z.coerce.number().int().positive().max(100).default(20),
-  sortBy: z.enum(['name', 'createdAt', 'updatedAt', 'deliveredAt']).default('updatedAt'),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  status: z
-    .enum(['intake', 'proposal', 'in_development', 'in_review', 'delivered', 'on_hold'])
-    .optional(),
-  clientId: z.string().optional(),
-  assignedToId: z.string().optional(),
-});
-
-/**
- * Project status options for forms
+ * Status options for UI select components
  */
 export const projectStatusOptions = [
   { value: 'proposal', label: 'Proposal' },
@@ -67,47 +36,136 @@ export const projectStatusOptions = [
 ] as const;
 
 /**
+ * Priority options for UI select components
+ */
+export const projectPriorityOptions = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+  { value: 'urgent', label: 'Urgent' },
+] as const;
+
+/**
+ * URL validation helper
+ */
+const optionalUrl = z
+  .string()
+  .url('Must be a valid URL')
+  .max(2048, 'URL too long')
+  .optional()
+  .or(z.literal(''));
+
+/**
  * Schema for creating a new project
  */
 export const createProjectSchema = z.object({
   name: z
     .string()
     .min(1, 'Project name is required')
-    .max(255, 'Name must be less than 255 characters'),
+    .max(255, 'Project name must be less than 255 characters'),
   description: z.string().optional(),
   clientId: z.string().min(1, 'Client is required'),
-  status: z
-    .enum([
-      'proposal',
-      'in_development',
-      'in_review',
-      'delivered',
-      'on_hold',
-      'maintenance',
-      'archived',
-    ])
-    .default('proposal'),
-  completionPercentage: z.coerce.number().int().min(0).max(100).default(0),
-  repositoryUrl: z.string().url('Invalid URL').max(2048).optional().or(z.literal('')),
-  productionUrl: z.string().url('Invalid URL').max(2048).optional().or(z.literal('')),
-  stagingUrl: z.string().url('Invalid URL').max(2048).optional().or(z.literal('')),
+  status: z.enum(projectStatusValues).default('proposal'),
+  priority: z.enum(projectPriorityValues).default('medium'),
+  dueDate: z.coerce.date().optional().nullable(),
+  completionPercentage: z.coerce.number().int().min(0).max(100).default(0).optional(),
+  estimatedHours: z.coerce.number().int().positive().optional().nullable(),
+  budgetAmount: z.coerce.number().positive().optional().nullable(),
+  budgetCurrency: z.string().length(3).default('USD').optional(),
+  repositoryUrl: optionalUrl,
+  productionUrl: optionalUrl,
+  stagingUrl: optionalUrl,
   notes: z.string().optional(),
   startedAt: z.string().optional().nullable(),
   deliveredAt: z.string().optional().nullable(),
+  assigneeIds: z.array(z.string()).optional(),
 });
+
+export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 
 /**
  * Schema for updating an existing project
  */
-export const updateProjectSchema = createProjectSchema.partial().extend({
-  name: z.string().min(1, 'Project name is required').max(255).optional(),
+export const updateProjectSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Project name is required')
+    .max(255, 'Project name must be less than 255 characters')
+    .optional(),
+  description: z.string().optional().nullable(),
+  clientId: z.string().min(1, 'Client is required').optional(),
+  status: z.enum(projectStatusValues).optional(),
+  priority: z.enum(projectPriorityValues).optional(),
+  dueDate: z.coerce.date().optional().nullable(),
+  completionPercentage: z.coerce.number().int().min(0).max(100).optional(),
+  estimatedHours: z.coerce.number().int().positive().optional().nullable(),
+  actualHours: z.coerce.number().int().min(0).optional(),
+  budgetAmount: z.coerce.number().positive().optional().nullable(),
+  budgetCurrency: z.string().length(3).optional(),
+  repositoryUrl: optionalUrl.nullable(),
+  productionUrl: optionalUrl.nullable(),
+  stagingUrl: optionalUrl.nullable(),
+  notes: z.string().optional().nullable(),
+  startedAt: z.string().optional().nullable(),
+  deliveredAt: z.string().optional().nullable(),
 });
 
-// Type exports for TypeScript
-export type AssignProjectInput = z.infer<typeof assignProjectSchema>;
-export type RemoveProjectAssignmentInput = z.infer<typeof removeProjectAssignmentSchema>;
+export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
+
+/**
+ * Schema for project status update (quick action)
+ */
+export const updateProjectStatusSchema = z.object({
+  status: z.enum(projectStatusValues),
+});
+
 export type UpdateProjectStatusInput = z.infer<typeof updateProjectStatusSchema>;
+
+/**
+ * Schema for project completion update (quick action)
+ */
+export const updateProjectCompletionSchema = z.object({
+  completionPercentage: z.coerce.number().int().min(0).max(100),
+});
+
 export type UpdateProjectCompletionInput = z.infer<typeof updateProjectCompletionSchema>;
-export type ListProjectsQuery = z.infer<typeof listProjectsQuerySchema>;
-export type CreateProjectFormInput = z.infer<typeof createProjectSchema>;
-export type UpdateProjectFormInput = z.infer<typeof updateProjectSchema>;
+
+/**
+ * Schema for project priority update (quick action)
+ */
+export const updateProjectPrioritySchema = z.object({
+  priority: z.enum(projectPriorityValues),
+});
+
+export type UpdateProjectPriorityInput = z.infer<typeof updateProjectPrioritySchema>;
+
+/**
+ * Schema for project assignment
+ */
+export const assignProjectSchema = z.object({
+  userIds: z.array(z.string()).min(1, 'At least one user must be selected'),
+});
+
+export type AssignProjectInput = z.infer<typeof assignProjectSchema>;
+
+/**
+ * Schema for bulk project operations
+ */
+export const bulkProjectOperationSchema = z.object({
+  projectIds: z
+    .array(z.string())
+    .min(1, 'Select at least one project')
+    .max(100, 'Maximum 100 projects'),
+  operation: z.enum(['update_status', 'update_priority', 'assign', 'delete']),
+  status: z.enum(projectStatusValues).optional(),
+  priority: z.enum(projectPriorityValues).optional(),
+  assigneeIds: z.array(z.string()).optional(),
+});
+
+export type BulkProjectOperationInput = z.infer<typeof bulkProjectOperationSchema>;
+
+/**
+ * Form input type aliases (use z.input for pre-parse types with optional defaults)
+ */
+export type CreateProjectFormInput = z.input<typeof createProjectSchema>;
+export type UpdateProjectFormInput = z.input<typeof updateProjectSchema>;

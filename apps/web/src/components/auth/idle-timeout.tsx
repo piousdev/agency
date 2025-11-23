@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useIdleTimeout } from '@/lib/hooks/use-idle-timeout';
 import { toast } from 'sonner';
+import { IconAlertCircle } from '@tabler/icons-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,19 +69,7 @@ export function IdleTimeoutProvider({ children }: { children: React.ReactNode })
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <svg
-                className="h-6 w-6 text-orange-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <IconAlertCircle className="h-6 w-6 text-orange-500" />
               Still there?
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-3">

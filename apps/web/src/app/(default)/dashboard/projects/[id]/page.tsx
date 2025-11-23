@@ -1,21 +1,21 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft,
-  Pencil,
-  Clock,
-  Users,
-  ArrowUpRight,
-  GitBranch,
-  Globe,
-  Server,
-  FileText,
-  Building2,
-  CalendarDays,
-  CalendarCheck,
-  TrendingUp,
-  Link2,
-} from 'lucide-react';
+  IconArrowLeft,
+  IconPencil,
+  IconClock,
+  IconUsers,
+  IconArrowUpRight,
+  IconGitBranch,
+  IconWorld,
+  IconServer,
+  IconFileText,
+  IconBuilding,
+  IconCalendar,
+  IconCalendarCheck,
+  IconTrendingUp,
+  IconLink,
+} from '@tabler/icons-react';
 import { requireUser } from '@/lib/auth/session';
 import {
   getProject,
@@ -113,7 +113,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             href="/dashboard/projects"
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <IconArrowLeft className="h-4 w-4" />
             <span>Projects</span>
           </Link>
 
@@ -132,25 +132,25 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               </div>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5" />
+                  <IconBuilding className="h-3.5 w-3.5" />
                   {project.client?.name ?? 'No client'}
                 </span>
                 <span className="text-border">•</span>
                 <span className="flex items-center gap-1.5">
-                  <Users className="h-3.5 w-3.5" />
+                  <IconUsers className="h-3.5 w-3.5" />
                   {project.assignees?.length ?? 0} member
                   {(project.assignees?.length ?? 0) !== 1 ? 's' : ''}
                 </span>
                 <span className="text-border">•</span>
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5" />
+                  <IconClock className="h-3.5 w-3.5" />
                   Updated {formatDate(project.updatedAt)}
                 </span>
               </div>
             </div>
             <Link href={`/dashboard/projects/${id}/edit`}>
               <Button variant="outline" size="sm" className="gap-2">
-                <Pencil className="h-3.5 w-3.5" />
+                <IconPencil className="h-3.5 w-3.5" />
                 Edit
               </Button>
             </Link>
@@ -170,7 +170,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                   Progress
                 </h2>
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
                   <span className="text-2xl font-semibold tabular-nums">
                     {project.completionPercentage}%
                   </span>
@@ -207,7 +207,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             {/* Project Links */}
             <section className="space-y-4">
               <div className="flex items-center gap-2">
-                <Link2 className="h-4 w-4 text-muted-foreground" />
+                <IconLink className="h-4 w-4 text-muted-foreground" />
                 <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
                   Links
                 </h2>
@@ -223,7 +223,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                       className="group flex items-center gap-3 rounded-lg border border-border/60 bg-card/50 p-4 transition-all hover:border-border hover:bg-card"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                        <GitBranch className="h-5 w-5 text-muted-foreground" />
+                        <IconGitBranch className="h-5 w-5 text-muted-foreground" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">Repository</p>
@@ -231,7 +231,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                           {new URL(project.repositoryUrl).hostname}
                         </p>
                       </div>
-                      <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                      <IconArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                     </a>
                   )}
 
@@ -243,7 +243,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                       className="group flex items-center gap-3 rounded-lg border border-border/60 bg-card/50 p-4 transition-all hover:border-border hover:bg-card"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                        <Server className="h-5 w-5 text-muted-foreground" />
+                        <IconServer className="h-5 w-5 text-muted-foreground" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">Staging</p>
@@ -251,7 +251,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                           {new URL(project.stagingUrl).hostname}
                         </p>
                       </div>
-                      <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                      <IconArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                     </a>
                   )}
 
@@ -263,7 +263,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                       className="group flex items-center gap-3 rounded-lg border border-border/60 bg-card/50 p-4 transition-all hover:border-border hover:bg-card"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                        <Globe className="h-5 w-5 text-muted-foreground" />
+                        <IconWorld className="h-5 w-5 text-muted-foreground" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">Production</p>
@@ -271,14 +271,14 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                           {new URL(project.productionUrl).hostname}
                         </p>
                       </div>
-                      <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                      <IconArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                     </a>
                   )}
                 </div>
               ) : (
                 <div className="flex items-center justify-center rounded-lg border border-dashed border-border/60 bg-muted/20 py-8">
                   <div className="text-center">
-                    <Link2 className="mx-auto h-8 w-8 text-muted-foreground/40" />
+                    <IconLink className="mx-auto h-8 w-8 text-muted-foreground/40" />
                     <p className="mt-2 text-sm text-muted-foreground">No links configured</p>
                     <Link href={`/dashboard/projects/${id}/edit`}>
                       <Button variant="link" size="sm" className="mt-1">
@@ -294,7 +294,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             {project.notes && (
               <section className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <IconFileText className="h-4 w-4 text-muted-foreground" />
                   <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
                     Internal Notes
                   </h2>
@@ -329,7 +329,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <CalendarDays className="h-4 w-4" />
+                    <IconCalendar className="h-4 w-4" />
                     <span className="text-sm">Started</span>
                   </div>
                   <span
@@ -343,7 +343,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <CalendarCheck className="h-4 w-4" />
+                    <IconCalendarCheck className="h-4 w-4" />
                     <span className="text-sm">Delivered</span>
                   </div>
                   <span
@@ -393,7 +393,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-6 text-center">
-                  <Users className="h-8 w-8 text-muted-foreground/40" />
+                  <IconUsers className="h-8 w-8 text-muted-foreground/40" />
                   <p className="mt-2 text-sm text-muted-foreground">No members assigned</p>
                   <Link href={`/dashboard/projects/${id}/edit`}>
                     <Button variant="link" size="sm" className="mt-1">
@@ -411,7 +411,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               </h3>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                  <Building2 className="h-5 w-5 text-muted-foreground" />
+                  <IconBuilding className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{project.client?.name ?? 'Unknown'}</p>

@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Loader2, MessageSquare, Lock } from 'lucide-react';
+import { IconLoader2, IconMessage, IconLock } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import type { TicketComment } from '@/lib/api/tickets/types';
 import { addTicketCommentAction } from '@/lib/actions/business-center/tickets';
@@ -32,7 +32,7 @@ function CommentItem({ comment }: { comment: TicketComment }) {
           <span className="font-medium text-sm">{comment.author.name}</span>
           {comment.isInternal && (
             <Badge variant="secondary" className="text-xs flex items-center gap-1">
-              <Lock className="h-3 w-3" />
+              <IconLock className="h-3 w-3" />
               Internal
             </Badge>
           )}
@@ -82,7 +82,7 @@ export function CommentsSection({ ticketId, comments }: CommentsSectionProps) {
           </div>
         ) : (
           <div className="text-center text-muted-foreground py-4">
-            <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <IconMessage className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p>No comments yet</p>
           </div>
         )}
@@ -105,14 +105,14 @@ export function CommentsSection({ ticketId, comments }: CommentsSectionProps) {
                 disabled={isPending}
               />
               <Label htmlFor="internal" className="text-sm flex items-center gap-1">
-                <Lock className="h-3 w-3" />
+                <IconLock className="h-3 w-3" />
                 Internal note (hidden from client)
               </Label>
             </div>
             <Button onClick={handleSubmit} disabled={isPending || !content.trim()}>
               {isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
                   Posting...
                 </>
               ) : (

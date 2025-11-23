@@ -2,45 +2,45 @@
  * User Menu with Icons - FOR HEADER PROFILE DROPDOWN
  *
  * This file extends the user menu configuration from navigation.ts by adding icons.
- * It imports the base navigation items and enhances them with Lucide icons.
+ * It imports the base navigation items and enhances them with Tabler icons.
  *
  * Architecture: This file should ONLY add icon mappings, not recreate navigation items.
  */
 
 import {
-  Bell,
-  Building2,
-  HelpCircle,
-  Key,
-  Link,
-  LogOut,
-  Palette,
-  Settings,
-  Shield,
-  User as UserIcon,
-  UserPlus,
-} from 'lucide-react';
+  IconBell,
+  IconBuilding,
+  IconHelp,
+  IconKey,
+  IconLink,
+  IconLogout,
+  IconPalette,
+  IconSettings,
+  IconShield,
+  IconUser,
+  IconUserPlus,
+} from '@tabler/icons-react';
 
 import type { NavigationItem } from './navigation';
 import { userMenu, userMenuGroups } from './navigation';
 
 /**
  * Icon mapping for user menu items
- * Maps menu item titles to their corresponding Lucide icons
+ * Maps menu item titles to their corresponding Tabler icons
  */
 const iconMap: Record<string, React.ComponentType> = {
-  'View Profile': UserIcon,
-  'Edit Profile': Settings,
-  'Account Settings': Settings,
-  'Notification Preferences': Bell,
-  'Display Preferences': Palette,
-  Integrations: Link,
-  'API Keys': Key,
-  'Privacy & Security': Shield,
-  'Help & Support': HelpCircle,
-  'Switch Organization/Workspace': Building2,
-  'Invite Team Member': UserPlus,
-  Logout: LogOut,
+  'View Profile': IconUser,
+  'Edit Profile': IconSettings,
+  'Account Settings': IconSettings,
+  'Notification Preferences': IconBell,
+  'Display Preferences': IconPalette,
+  Integrations: IconLink,
+  'API Keys': IconKey,
+  'Privacy & Security': IconShield,
+  'Help & Support': IconHelp,
+  'Switch Organization/Workspace': IconBuilding,
+  'Invite Team Member': IconUserPlus,
+  Logout: IconLogout,
 };
 
 /**

@@ -15,18 +15,18 @@ import {
   isBefore,
 } from 'date-fns';
 import {
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Building2,
-  Users,
-  Percent,
-  Pencil,
-  Plus,
-  X,
-  Loader2,
-  CalendarPlus,
-} from 'lucide-react';
+  IconChevronLeft,
+  IconChevronRight,
+  IconCalendar,
+  IconBuilding,
+  IconUsers,
+  IconPercentage,
+  IconPencil,
+  IconPlus,
+  IconX,
+  IconLoader2,
+  IconCalendarPlus,
+} from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -61,21 +61,23 @@ interface ProjectCalendarViewProps {
 }
 
 const statusColors = {
-  intake: 'bg-gray-500',
   proposal: 'bg-blue-500',
   in_development: 'bg-yellow-500',
   in_review: 'bg-purple-500',
   delivered: 'bg-green-500',
   on_hold: 'bg-red-500',
+  maintenance: 'bg-cyan-500',
+  archived: 'bg-gray-500',
 } as const;
 
 const statusLabels = {
-  intake: 'Intake',
   proposal: 'Proposal',
   in_development: 'In Development',
   in_review: 'In Review',
   delivered: 'Delivered',
   on_hold: 'On Hold',
+  maintenance: 'Maintenance',
+  archived: 'Archived',
 } as const;
 
 const typeColors = {
@@ -257,10 +259,10 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                 Today
               </Button>
               <Button variant="outline" size="icon" onClick={goToPreviousMonth}>
-                <ChevronLeft className="h-4 w-4" />
+                <IconChevronLeft className="h-4 w-4" />
               </Button>
               <Button variant="outline" size="icon" onClick={goToNextMonth}>
-                <ChevronRight className="h-4 w-4" />
+                <IconChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </CardHeader>
@@ -347,7 +349,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                   setScheduleDialogOpen(true);
                 }}
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <IconPlus className="h-4 w-4 mr-1" />
                 Schedule
               </Button>
             )}
@@ -395,7 +397,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
+              <IconCalendar className="h-5 w-5" />
               {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
             </DialogTitle>
           </DialogHeader>
@@ -409,13 +411,13 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
 
             {selectedDateProjects.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <IconCalendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
                 <p>No deliveries scheduled for this date</p>
                 {projectsWithoutDelivery.length > 0 &&
                   selectedDate &&
                   !isPastDate(selectedDate) && (
                     <Button variant="outline" className="mt-4" onClick={handleScheduleClick}>
-                      <CalendarPlus className="h-4 w-4 mr-2" />
+                      <IconCalendarPlus className="h-4 w-4 mr-2" />
                       Schedule a Delivery
                     </Button>
                   )}
@@ -432,7 +434,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                       selectedDate &&
                       !isPastDate(selectedDate) && (
                         <Button variant="outline" size="sm" onClick={handleScheduleClick}>
-                          <Plus className="h-4 w-4 mr-1" />
+                          <IconPlus className="h-4 w-4 mr-1" />
                           Add
                         </Button>
                       )}
@@ -469,7 +471,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                               className="h-6 w-6"
                               onClick={() => handleEditClick(project)}
                             >
-                              <Pencil className="h-3 w-3" />
+                              <IconPencil className="h-3 w-3" />
                             </Button>
                           </div>
                         </div>
@@ -484,11 +486,11 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                         {/* Project details */}
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <Building2 className="h-4 w-4" />
+                            <IconBuilding className="h-4 w-4" />
                             <span>{project.client?.name || 'N/A'}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <Users className="h-4 w-4" />
+                            <IconUsers className="h-4 w-4" />
                             <span>
                               {project.assignees?.length || 0} assignee
                               {project.assignees?.length !== 1 ? 's' : ''}
@@ -500,7 +502,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                         <div className="space-y-1">
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground flex items-center gap-1">
-                              <Percent className="h-3 w-3" />
+                              <IconPercentage className="h-3 w-3" />
                               Completion
                             </span>
                             <span className="font-medium">{project.completionPercentage}%</span>
@@ -556,9 +558,9 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
               className="sm:mr-auto"
             >
               {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <IconLoader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <X className="h-4 w-4 mr-1" />
+                <IconX className="h-4 w-4 mr-1" />
               )}
               Remove Date
             </Button>
@@ -566,7 +568,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
               Cancel
             </Button>
             <Button onClick={handleSaveDelivery} disabled={isPending || !editDate}>
-              {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+              {isPending && <IconLoader2 className="h-4 w-4 animate-spin mr-2" />}
               Save
             </Button>
           </DialogFooter>
@@ -623,7 +625,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
               onClick={handleScheduleDelivery}
               disabled={isPending || !selectedProjectId || !scheduleDate}
             >
-              {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+              {isPending && <IconLoader2 className="h-4 w-4 animate-spin mr-2" />}
               Schedule
             </Button>
           </DialogFooter>

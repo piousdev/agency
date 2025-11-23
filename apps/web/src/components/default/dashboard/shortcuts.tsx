@@ -1,6 +1,6 @@
 'use client';
 
-import { Command } from 'lucide-react';
+import { IconCommand } from '@tabler/icons-react';
 import * as React from 'react';
 import {
   Dialog,
@@ -87,7 +87,7 @@ export function KeyboardShortcuts() {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Command className="size-5" />
+            <IconCommand className="size-5" />
             Keyboard Shortcuts
           </DialogTitle>
           <DialogDescription>

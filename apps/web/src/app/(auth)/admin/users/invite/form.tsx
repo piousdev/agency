@@ -6,7 +6,7 @@
 
 'use client';
 
-import { AlertCircle, CheckCircle2, Loader2, Mail } from 'lucide-react';
+import { IconAlertCircle, IconCircleCheck, IconLoader2, IconMail } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useId } from 'react';
 import { toast } from 'sonner';
@@ -71,7 +71,7 @@ export function InviteForm() {
               Email Address <span className="text-destructive">*</span>
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <IconMail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id={emailId}
                 name="email"
@@ -112,7 +112,7 @@ export function InviteForm() {
           {/* Error message */}
           {state.message && !state.success && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <IconAlertCircle className="h-4 w-4" />
               <AlertDescription>{state.message}</AlertDescription>
             </Alert>
           )}
@@ -120,7 +120,7 @@ export function InviteForm() {
           {/* Success message */}
           {state.success && (
             <Alert className="border-success bg-success/10 text-success">
-              <CheckCircle2 className="h-4 w-4 text-success" />
+              <IconCircleCheck className="h-4 w-4 text-success" />
               <AlertDescription>{state.message} Redirecting to users list...</AlertDescription>
             </Alert>
           )}
@@ -130,7 +130,7 @@ export function InviteForm() {
             <Button type="submit" disabled={isPending} className="flex-1">
               {isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                   Sending Invitation...
                 </>
               ) : (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Users } from 'lucide-react';
+import { IconUsers } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
 import {
   BentoCard,
@@ -64,13 +64,13 @@ export function TeamCapacityHero({
     <BentoCard aria-label={`Team Capacity: ${availabilityRate}% available`}>
       {/* Watermark Icon */}
       <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none">
-        <Users className="w-32 h-32" />
+        <IconUsers className="w-32 h-32" />
       </div>
 
       <BentoCardHeader>
         <div className="flex items-center gap-2">
           <div className="p-2 bg-primary/10 rounded-lg">
-            <Users className="h-4 w-4 text-primary" />
+            <IconUsers className="h-4 w-4 text-primary" />
           </div>
           <div className="flex items-center gap-1.5">
             <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">

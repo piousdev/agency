@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { X, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { IconX, IconChevronDown, IconPlus } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -177,7 +178,7 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
               </Badge>
             )}
           </span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${statusOpen ? 'rotate-180' : ''}`}
           />
         </CollapsibleTrigger>
@@ -238,7 +239,7 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
                   </Badge>
                 )}
               </span>
-              <ChevronDown
+              <IconChevronDown
                 className={`h-4 w-4 text-muted-foreground transition-transform ${assigneesOpen ? 'rotate-180' : ''}`}
               />
             </CollapsibleTrigger>
@@ -303,6 +304,14 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
         filterContent={filterContent}
         activeFilterCount={activeFiltersCount}
         onExport={handleExport}
+        primaryAction={
+          <Button asChild>
+            <Link href="/dashboard/business-center/projects/new">
+              <IconPlus className="mr-2 h-4 w-4" />
+              New Project
+            </Link>
+          </Button>
+        }
       />
 
       {/* Project Type Tabs */}

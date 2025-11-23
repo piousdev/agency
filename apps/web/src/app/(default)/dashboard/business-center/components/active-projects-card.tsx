@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Code, FileText, FolderOpen } from 'lucide-react';
+import { IconCode, IconFileText, IconFolderOpen } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
 import {
   BentoCard,
@@ -27,7 +27,7 @@ export function ActiveProjectsCard({ contentCount, softwareCount }: ActiveProjec
     {
       label: 'Content',
       count: contentCount,
-      icon: FileText,
+      icon: IconFileText,
       color: 'bg-chart-1',
       textColor: 'text-chart-1',
       href: '/dashboard/business-center/content-projects',
@@ -36,7 +36,7 @@ export function ActiveProjectsCard({ contentCount, softwareCount }: ActiveProjec
     {
       label: 'Software',
       count: softwareCount,
-      icon: Code,
+      icon: IconCode,
       color: 'bg-chart-2',
       textColor: 'text-chart-2',
       href: '/dashboard/business-center/software-projects',
@@ -50,13 +50,13 @@ export function ActiveProjectsCard({ contentCount, softwareCount }: ActiveProjec
     >
       {/* Watermark Icon */}
       <div className="absolute -top-6 -right-6 opacity-[0.03] pointer-events-none">
-        <FolderOpen className="w-40 h-40" />
+        <IconFolderOpen className="w-40 h-40" />
       </div>
 
       <BentoCardHeader>
         <div className="flex items-center gap-2">
           <div className="p-2 bg-primary/10 rounded-lg">
-            <FolderOpen className="h-4 w-4 text-primary" />
+            <IconFolderOpen className="h-4 w-4 text-primary" />
           </div>
           <div className="flex items-center gap-1.5">
             <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">

@@ -8,7 +8,7 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { IconCalendar, IconChevronLeft, IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -62,7 +62,7 @@ export default async function ProjectCalendarViewPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <CalendarDays className="h-6 w-6" />
+            <IconCalendar className="h-6 w-6" />
             <h1 className="text-4xl font-bold">Calendar View</h1>
           </div>
           <p className="text-muted-foreground mt-2">View projects by delivery date</p>
@@ -73,7 +73,7 @@ export default async function ProjectCalendarViewPage() {
           </Link>
           <Link href="/dashboard/projects/new">
             <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+              <IconPlus className="h-4 w-4" />
               New Project
             </Button>
           </Link>
@@ -86,13 +86,13 @@ export default async function ProjectCalendarViewPage() {
             <CardTitle className="text-2xl">{format(today, 'MMMM yyyy')}</CardTitle>
             <div className="flex gap-2">
               <Button variant="outline" size="icon" disabled>
-                <ChevronLeft className="h-4 w-4" />
+                <IconChevronLeft className="h-4 w-4" />
               </Button>
               <Button variant="outline" size="sm" disabled>
                 Today
               </Button>
               <Button variant="outline" size="icon" disabled>
-                <ChevronRight className="h-4 w-4" />
+                <IconChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>

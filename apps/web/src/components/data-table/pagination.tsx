@@ -1,7 +1,13 @@
 'use client';
 
 import { type Table } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Loader2 } from 'lucide-react';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+  IconLoader2,
+} from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -90,7 +96,7 @@ export function DataTablePagination<TData>({
             disabled={!table.getCanPreviousPage()}
             aria-label="Go to first page"
           >
-            <ChevronsLeft className="h-4 w-4" />
+            <IconChevronsLeft className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
@@ -100,7 +106,7 @@ export function DataTablePagination<TData>({
             disabled={!table.getCanPreviousPage()}
             aria-label="Go to previous page"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <IconChevronLeft className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
@@ -110,7 +116,7 @@ export function DataTablePagination<TData>({
             disabled={!table.getCanNextPage()}
             aria-label="Go to next page"
           >
-            <ChevronRight className="h-4 w-4" />
+            <IconChevronRight className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
@@ -120,7 +126,7 @@ export function DataTablePagination<TData>({
             disabled={!table.getCanNextPage()}
             aria-label="Go to last page"
           >
-            <ChevronsRight className="h-4 w-4" />
+            <IconChevronsRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -167,7 +173,7 @@ export function DataTableLoadMore({
       >
         {isLoading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
             Loading...
           </>
         ) : (
@@ -219,7 +225,7 @@ export function DataTableInfiniteScroll({
     >
       {isLoading && (
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <IconLoader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm">Loading more...</span>
         </div>
       )}

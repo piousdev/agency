@@ -1,6 +1,14 @@
 'use client';
 
-import { Bookmark, Check, Filter, MoreVertical, Plus, Star, Trash2 } from 'lucide-react';
+import {
+  IconBookmark,
+  IconCheck,
+  IconDotsVertical,
+  IconFilter,
+  IconPlus,
+  IconStar,
+  IconTrash,
+} from '@tabler/icons-react';
 import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -138,7 +146,7 @@ export function SaveFilterDialog({ currentFilters, onSave }: SaveFilterDialogPro
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Bookmark className="mr-2 size-4" />
+          <IconBookmark className="mr-2 size-4" />
           Save Filter
         </Button>
       </DialogTrigger>
@@ -226,7 +234,7 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className={className}>
-          <Filter className="mr-2 size-4" />
+          <IconFilter className="mr-2 size-4" />
           Saved Filters
           {favoriteFilters.length > 0 && (
             <Badge variant="secondary" className="ml-2">
@@ -250,7 +258,7 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
                     className="h-auto flex-1 justify-start py-1.5 text-left font-normal"
                     onClick={() => handleApply(filter)}
                   >
-                    <Star className="mr-2 size-4 shrink-0 fill-current text-yellow-500" />
+                    <IconStar className="mr-2 size-4 shrink-0 fill-current text-yellow-500" />
                     <div className="flex-1 truncate">{filter.name}</div>
                   </Button>
                   <DropdownMenu>
@@ -260,16 +268,16 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
                         size="icon-sm"
                         className="opacity-0 transition-opacity group-hover:opacity-100"
                       >
-                        <MoreVertical className="size-4" />
+                        <IconDotsVertical className="size-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleApply(filter)}>
-                        <Check className="mr-2 size-4" />
+                        <IconCheck className="mr-2 size-4" />
                         Apply Filter
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => toggleFavorite(filter.id)}>
-                        <Star className="mr-2 size-4" />
+                        <IconStar className="mr-2 size-4" />
                         Remove from Favorites
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -277,7 +285,7 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
                         onClick={() => removeFilter(filter.id)}
                         className="text-destructive"
                       >
-                        <Trash2 className="mr-2 size-4" />
+                        <IconTrash className="mr-2 size-4" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -299,7 +307,7 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
                     className="h-auto flex-1 justify-start py-1.5 text-left font-normal"
                     onClick={() => handleApply(filter)}
                   >
-                    <Filter className="mr-2 size-4 shrink-0" />
+                    <IconFilter className="mr-2 size-4 shrink-0" />
                     <div className="flex-1 truncate">{filter.name}</div>
                   </Button>
                   <DropdownMenu>
@@ -309,16 +317,16 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
                         size="icon-sm"
                         className="opacity-0 transition-opacity group-hover:opacity-100"
                       >
-                        <MoreVertical className="size-4" />
+                        <IconDotsVertical className="size-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleApply(filter)}>
-                        <Check className="mr-2 size-4" />
+                        <IconCheck className="mr-2 size-4" />
                         Apply Filter
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => toggleFavorite(filter.id)}>
-                        <Star className="mr-2 size-4" />
+                        <IconStar className="mr-2 size-4" />
                         Add to Favorites
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -326,7 +334,7 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
                         onClick={() => removeFilter(filter.id)}
                         className="text-destructive"
                       >
-                        <Trash2 className="mr-2 size-4" />
+                        <IconTrash className="mr-2 size-4" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -344,7 +352,7 @@ export function SavedFiltersList({ onApplyFilter, className }: SavedFiltersListP
         <DropdownMenuSeparator />
         <div className="px-2 py-2">
           <Button variant="ghost" size="sm" className="w-full justify-start">
-            <Plus className="mr-2 size-4" />
+            <IconPlus className="mr-2 size-4" />
             Manage Filters
           </Button>
         </div>

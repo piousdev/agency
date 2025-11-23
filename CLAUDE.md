@@ -152,3 +152,42 @@ Trigger this rule when:
 - Actions: Use verbs (e.g., `handle-errors.ts`, not `error-handler.ts`)
 
 **Reference**: See `apps/web/ARCHITECTURE.md` → "File Naming Conventions" for complete rules and examples.
+
+CRITICAL RULE - Package Manager (pnpm):
+This project uses **pnpm**, NOT npm or npx. NEVER use npx.
+
+**Correct Usage:**
+
+```bash
+# Root level scripts
+pnpm build
+pnpm lint
+pnpm test
+
+# Workspace-specific scripts
+pnpm --filter @repo/api dev
+pnpm --filter @repo/web dev
+pnpm --filter @repo/api db:generate
+pnpm --filter @repo/api db:migrate
+pnpm --filter @repo/api db:seed
+
+# Running binaries (instead of npx)
+pnpm exec drizzle-kit generate
+pnpm exec tsx script.ts
+```
+
+**WRONG - Never do this:**
+
+```bash
+npx drizzle-kit generate  # ❌ WRONG
+npx tsx script.ts         # ❌ WRONG
+npm install               # ❌ WRONG
+```
+
+**Available API Database Scripts:**
+
+- `pnpm --filter @repo/api db:generate` - Generate Drizzle migrations
+- `pnpm --filter @repo/api db:migrate` - Run Drizzle migrations
+- `pnpm --filter @repo/api db:push` - Push schema changes directly
+- `pnpm --filter @repo/api db:studio` - Open Drizzle Studio
+- `pnpm --filter @repo/api db:seed` - Seed the database

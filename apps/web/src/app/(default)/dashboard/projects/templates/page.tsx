@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Copy, FileText, Folder, MoreHorizontal, Plus } from 'lucide-react';
+import { IconCopy, IconFileText, IconFolder, IconDots, IconPlus } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,7 +84,7 @@ export default async function ProjectTemplatesPage() {
           </p>
         </div>
         <Button className="gap-2" disabled>
-          <Plus className="h-4 w-4" />
+          <IconPlus className="h-4 w-4" />
           Create Template
         </Button>
       </div>
@@ -119,7 +119,7 @@ export default async function ProjectTemplatesPage() {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Folder className="h-5 w-5 text-primary" />
+                    <IconFolder className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">{template.name}</CardTitle>
@@ -131,16 +131,16 @@ export default async function ProjectTemplatesPage() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
+                      <IconDots className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem disabled>
-                      <Copy className="h-4 w-4 mr-2" />
+                      <IconCopy className="h-4 w-4 mr-2" />
                       Use Template
                     </DropdownMenuItem>
                     <DropdownMenuItem disabled>
-                      <FileText className="h-4 w-4 mr-2" />
+                      <IconFileText className="h-4 w-4 mr-2" />
                       View Details
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -162,7 +162,7 @@ export default async function ProjectTemplatesPage() {
               </div>
 
               <Button className="w-full" variant="outline" disabled>
-                <Copy className="h-4 w-4 mr-2" />
+                <IconCopy className="h-4 w-4 mr-2" />
                 Use This Template
               </Button>
             </CardContent>
@@ -174,7 +174,7 @@ export default async function ProjectTemplatesPage() {
         <CardContent className="py-8">
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-              <Plus className="h-6 w-6 text-muted-foreground" />
+              <IconPlus className="h-6 w-6 text-muted-foreground" />
             </div>
             <div>
               <h3 className="font-semibold">Create Custom Template</h3>

@@ -7,7 +7,14 @@ export interface Project {
   id: string;
   name: string;
   description: string | null;
-  status: 'intake' | 'proposal' | 'in_development' | 'in_review' | 'delivered' | 'on_hold';
+  status:
+    | 'proposal'
+    | 'in_development'
+    | 'in_review'
+    | 'delivered'
+    | 'on_hold'
+    | 'maintenance'
+    | 'archived';
   clientId: string;
   completionPercentage: number;
   deliveredAt: string | null;
@@ -60,13 +67,27 @@ export interface ListProjectsParams {
   pageSize?: number;
   sortBy?: 'name' | 'createdAt' | 'updatedAt' | 'deliveredAt';
   sortOrder?: 'asc' | 'desc';
-  status?: 'intake' | 'proposal' | 'in_development' | 'in_review' | 'delivered' | 'on_hold';
+  status?:
+    | 'proposal'
+    | 'in_development'
+    | 'in_review'
+    | 'delivered'
+    | 'on_hold'
+    | 'maintenance'
+    | 'archived';
   clientId?: string;
   assignedToId?: string;
 }
 
 export interface UpdateProjectStatusInput {
-  status: 'intake' | 'proposal' | 'in_development' | 'in_review' | 'delivered' | 'on_hold';
+  status:
+    | 'proposal'
+    | 'in_development'
+    | 'in_review'
+    | 'delivered'
+    | 'on_hold'
+    | 'maintenance'
+    | 'archived';
 }
 
 export interface UpdateProjectCompletionInput {

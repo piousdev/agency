@@ -1,11 +1,18 @@
 'use client';
 
+import {
+  IconAlertTriangle,
+  IconArrowDown,
+  IconArrowsUpDown,
+  IconArrowUp,
+  IconMinus,
+} from '@tabler/icons-react';
+import { differenceInDays, format, isPast, isToday } from 'date-fns';
 import { useState } from 'react';
-import { format, isPast, isToday, differenceInDays } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import {
   Table,
   TableBody,
@@ -14,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowDown, ArrowUp, ArrowUpDown, AlertTriangle, Calendar, Minus } from 'lucide-react';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface DeliverableListViewProps {
@@ -26,13 +32,48 @@ type SortDirection = 'asc' | 'desc';
 
 const statusOrder = ['intake', 'proposal', 'in_development', 'in_review', 'delivered', 'on_hold'];
 
+const SortButton = ({
+  field,
+  children,
+  sortField,
+  sortDirection,
+  onSort,
+}: {
+  field: SortField;
+  children: React.ReactNode;
+  sortField: SortField;
+  sortDirection: SortDirection;
+  onSort: (field: SortField) => void;
+}) => {
+  const isActive = sortField === field;
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="-ml-3 h-8 data-[state=open]:bg-accent"
+      onClick={() => onSort(field)}
+    >
+      {children}
+      {isActive ? (
+        sortDirection === 'asc' ? (
+          <IconArrowUp className="ml-2 h-4 w-4" />
+        ) : (
+          <IconArrowDown className="ml-2 h-4 w-4" />
+        )
+      ) : (
+        <IconArrowsUpDown className="ml-2 h-4 w-4 opacity-50" />
+      )}
+    </Button>
+  );
+};
+
 export function DeliverableListView({ projects }: DeliverableListViewProps) {
   const [sortField, setSortField] = useState<SortField>('delivery');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc'));
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(field);
       setSortDirection('asc');
@@ -49,13 +90,12 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
       case 'client':
         comparison = (a.client?.name || '').localeCompare(b.client?.name || '');
         break;
-      case 'delivery':
-        // Sort null dates to the end
-        if (!a.deliveredAt && !b.deliveredAt) comparison = 0;
-        else if (!a.deliveredAt) comparison = 1;
-        else if (!b.deliveredAt) comparison = -1;
-        else comparison = new Date(a.deliveredAt).getTime() - new Date(b.deliveredAt).getTime();
+      case 'delivery': {
+        const aDate = a.deliveredAt ? new Date(a.deliveredAt).getTime() : Infinity;
+        const bDate = b.deliveredAt ? new Date(b.deliveredAt).getTime() : Infinity;
+        comparison = aDate - bDate;
         break;
+      }
       case 'status':
         comparison = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
         break;
@@ -70,60 +110,70 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
     return sortDirection === 'asc' ? comparison : -comparison;
   });
 
-  const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => {
-    const isActive = sortField === field;
-    return (
-      <Button
-        variant="ghost"
-        size="sm"
-        className="-ml-3 h-8 data-[state=open]:bg-accent"
-        onClick={() => handleSort(field)}
-      >
-        {children}
-        {isActive ? (
-          sortDirection === 'asc' ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowDown className="ml-2 h-4 w-4" />
-          )
-        ) : (
-          <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
-        )}
-      </Button>
-    );
-  };
-
-  if (projects.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-        <Calendar className="h-12 w-12 mb-4" />
-        <p>No deliverables found matching your criteria</p>
-      </div>
-    );
-  }
-
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[300px]">
-              <SortButton field="name">Project</SortButton>
+              <SortButton
+                field="name"
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              >
+                Project
+              </SortButton>
             </TableHead>
             <TableHead>
-              <SortButton field="type">Type</SortButton>
+              <SortButton
+                field="type"
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              >
+                Type
+              </SortButton>
             </TableHead>
             <TableHead>
-              <SortButton field="client">Client</SortButton>
+              <SortButton
+                field="client"
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              >
+                Client
+              </SortButton>
             </TableHead>
             <TableHead>
-              <SortButton field="delivery">Delivery Date</SortButton>
+              <SortButton
+                field="delivery"
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              >
+                Delivery Date
+              </SortButton>
             </TableHead>
             <TableHead>
-              <SortButton field="status">Status</SortButton>
+              <SortButton
+                field="status"
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              >
+                Status
+              </SortButton>
             </TableHead>
             <TableHead className="w-[150px]">
-              <SortButton field="progress">Progress</SortButton>
+              <SortButton
+                field="progress"
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              >
+                Progress
+              </SortButton>
             </TableHead>
             <TableHead>Team</TableHead>
           </TableRow>
@@ -136,9 +186,10 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
               !isToday(new Date(project.deliveredAt)) &&
               project.status !== 'delivered';
 
-            const daysOverdue = isOverdue
-              ? differenceInDays(new Date(), new Date(project.deliveredAt!))
-              : 0;
+            const daysOverdue =
+              isOverdue && project.deliveredAt
+                ? differenceInDays(new Date(), new Date(project.deliveredAt))
+                : 0;
 
             const daysUntil =
               project.deliveredAt && !isPast(new Date(project.deliveredAt))
@@ -149,7 +200,9 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
               <TableRow key={project.id} className={isOverdue ? 'bg-destructive/5' : ''}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
-                    {isOverdue && <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />}
+                    {isOverdue && (
+                      <IconAlertTriangle className="h-4 w-4 text-destructive shrink-0" />
+                    )}
                     <span className="truncate max-w-[250px]">{project.name}</span>
                   </div>
                 </TableCell>
@@ -182,7 +235,7 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
                     </div>
                   ) : (
                     <span className="text-muted-foreground flex items-center gap-1">
-                      <Minus className="h-3 w-3" />
+                      <IconMinus className="h-3 w-3" />
                       Unscheduled
                     </span>
                   )}

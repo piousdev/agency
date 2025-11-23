@@ -1,17 +1,17 @@
+import { IconAlertTriangle, IconBuilding, IconCalendar, IconClock } from '@tabler/icons-react';
 import {
-  format,
-  isToday,
-  isTomorrow,
-  isPast,
-  startOfDay,
   addDays,
   differenceInDays,
+  format,
+  isPast,
+  isToday,
+  isTomorrow,
+  startOfDay,
 } from 'date-fns';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { AlertTriangle, Building2, Calendar, CheckCircle2, Clock, Users } from 'lucide-react';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface DeliverableTimelineViewProps {
@@ -40,7 +40,8 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
   const upcoming: Map<string, ProjectWithRelations[]> = new Map();
 
   scheduled.forEach((project) => {
-    const deliveryDate = startOfDay(new Date(project.deliveredAt!));
+    if (!project.deliveredAt) return;
+    const deliveryDate = startOfDay(new Date(project.deliveredAt));
 
     if (isPast(deliveryDate) && !isToday(deliveryDate) && project.status !== 'delivered') {
       overdue.push(project);
@@ -53,7 +54,10 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
       if (!upcoming.has(dateKey)) {
         upcoming.set(dateKey, []);
       }
-      upcoming.get(dateKey)!.push(project);
+      const dateProjects = upcoming.get(dateKey);
+      if (dateProjects) {
+        dateProjects.push(project);
+      }
     }
   });
 
@@ -62,7 +66,11 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
 
   if (overdue.length > 0) {
     // Sort overdue by date (most overdue first)
-    overdue.sort((a, b) => new Date(a.deliveredAt!).getTime() - new Date(b.deliveredAt!).getTime());
+    overdue.sort((a, b) => {
+      const aTime = a.deliveredAt ? new Date(a.deliveredAt).getTime() : 0;
+      const bTime = b.deliveredAt ? new Date(b.deliveredAt).getTime() : 0;
+      return aTime - bTime;
+    });
     groups.push({
       label: 'Overdue',
       date: null,
@@ -102,10 +110,11 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
       label = format(date, 'MMM d, yyyy');
     }
 
+    const dateProjects = upcoming.get(dateKey) ?? [];
     groups.push({
       label,
       date,
-      projects: upcoming.get(dateKey)!,
+      projects: dateProjects,
       variant: 'upcoming',
     });
   });
@@ -122,7 +131,7 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
   if (projects.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-        <Calendar className="h-12 w-12 mb-4" />
+        <IconCalendar className="h-12 w-12 mb-4" />
         <p>No deliverables found matching your criteria</p>
       </div>
     );
@@ -133,31 +142,31 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
       case 'overdue':
         return {
           border: 'border-l-destructive',
-          icon: <AlertTriangle className="h-5 w-5 text-destructive" />,
+          icon: <IconAlertTriangle className="h-5 w-5 text-destructive" />,
           bg: 'bg-destructive/5',
         };
       case 'today':
         return {
           border: 'border-l-orange-500',
-          icon: <Clock className="h-5 w-5 text-orange-500" />,
+          icon: <IconClock className="h-5 w-5 text-orange-500" />,
           bg: 'bg-orange-500/5',
         };
       case 'tomorrow':
         return {
           border: 'border-l-yellow-500',
-          icon: <Calendar className="h-5 w-5 text-yellow-500" />,
+          icon: <IconCalendar className="h-5 w-5 text-yellow-500" />,
           bg: 'bg-yellow-500/5',
         };
       case 'upcoming':
         return {
           border: 'border-l-blue-500',
-          icon: <Calendar className="h-5 w-5 text-blue-500" />,
+          icon: <IconCalendar className="h-5 w-5 text-blue-500" />,
           bg: 'bg-blue-500/5',
         };
       case 'unscheduled':
         return {
           border: 'border-l-muted-foreground',
-          icon: <Calendar className="h-5 w-5 text-muted-foreground" />,
+          icon: <IconCalendar className="h-5 w-5 text-muted-foreground" />,
           bg: 'bg-muted/50',
         };
     }
@@ -212,14 +221,14 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
                           </div>
                           <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
-                              <Building2 className="h-3 w-3" />
+                              <IconBuilding className="h-3 w-3" />
                               {project.client?.name || 'N/A'}
                             </span>
                             {project.deliveredAt && (
                               <span
                                 className={`flex items-center gap-1 ${isOverdue ? 'text-destructive' : ''}`}
                               >
-                                <Calendar className="h-3 w-3" />
+                                <IconCalendar className="h-3 w-3" />
                                 {format(new Date(project.deliveredAt), 'MMM d, yyyy')}
                                 {isOverdue && (
                                   <span className="text-xs">

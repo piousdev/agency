@@ -7,6 +7,7 @@ import deleteRoutes from './delete';
 import internalStatusRoutes from './internal-status';
 import expirationRoutes from './expiration';
 import rolesRoutes from './roles';
+import permissionsRoutes from './permissions';
 import capacityRoutes from './capacity';
 import teamRoutes from './team';
 
@@ -22,6 +23,7 @@ app.route('/', deleteRoutes);
 app.route('/', internalStatusRoutes);
 app.route('/', expirationRoutes);
 app.route('/', rolesRoutes);
+app.route('/', permissionsRoutes);
 app.route('/', capacityRoutes);
 
 export default app;

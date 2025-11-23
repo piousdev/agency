@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import { requireUser } from '@/lib/auth/session';
 import { listClients } from '@/lib/api/clients';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ export default async function NewProjectPage() {
       <div className="mb-8">
         <Link href="/dashboard/projects">
           <Button variant="ghost" size="sm" className="mb-4">
-            <ChevronLeft className="h-4 w-4 mr-1" />
+            <IconChevronLeft className="h-4 w-4 mr-1" />
             Back to Projects
           </Button>
         </Link>

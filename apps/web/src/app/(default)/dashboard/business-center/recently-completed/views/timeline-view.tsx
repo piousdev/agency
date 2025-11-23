@@ -1,7 +1,7 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Building2, CheckCircle2, Users } from 'lucide-react';
+import { IconBuilding, IconCircleCheck, IconUsers } from '@tabler/icons-react';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface CompletedTimelineViewProps {
@@ -33,7 +33,7 @@ export function CompletedTimelineView({ projects }: CompletedTimelineViewProps) 
           <div key={project.id} className="flex gap-4">
             <div className="flex flex-col items-center">
               <div className={`rounded-full p-2 ${isRecent ? 'bg-green-500' : 'bg-muted'}`}>
-                <CheckCircle2
+                <IconCircleCheck
                   className={`h-4 w-4 ${isRecent ? 'text-white' : 'text-muted-foreground'}`}
                 />
               </div>
@@ -66,11 +66,11 @@ export function CompletedTimelineView({ projects }: CompletedTimelineViewProps) 
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <Building2 className="h-4 w-4" />
+                      <IconBuilding className="h-4 w-4" />
                       <span>{project.client?.name || 'N/A'}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
+                      <IconUsers className="h-4 w-4" />
                       <span>
                         {project.assignees && project.assignees.length > 0
                           ? `${project.assignees.length} team ${project.assignees.length === 1 ? 'member' : 'members'}`

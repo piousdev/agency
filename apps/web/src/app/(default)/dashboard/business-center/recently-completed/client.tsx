@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { List, LayoutGrid, ChevronDown } from 'lucide-react';
+import { IconList, IconLayoutGrid, IconChevronDown } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -66,7 +66,7 @@ export function RecentlyCompletedClient({ projects }: RecentlyCompletedClientPro
         className="h-9 gap-2"
         onClick={() => setView('cards')}
       >
-        <LayoutGrid className="h-4 w-4" />
+        <IconLayoutGrid className="h-4 w-4" />
         Cards
       </Button>
       <Button
@@ -75,7 +75,7 @@ export function RecentlyCompletedClient({ projects }: RecentlyCompletedClientPro
         className="h-9 gap-2"
         onClick={() => setView('table')}
       >
-        <List className="h-4 w-4" />
+        <IconList className="h-4 w-4" />
         Table
       </Button>
     </div>
@@ -127,7 +127,7 @@ export function RecentlyCompletedClient({ projects }: RecentlyCompletedClientPro
               </Badge>
             )}
           </span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${timeRangeOpen ? 'rotate-180' : ''}`}
           />
         </CollapsibleTrigger>
@@ -166,7 +166,7 @@ export function RecentlyCompletedClient({ projects }: RecentlyCompletedClientPro
               </Badge>
             )}
           </span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${projectTypeOpen ? 'rotate-180' : ''}`}
           />
         </CollapsibleTrigger>

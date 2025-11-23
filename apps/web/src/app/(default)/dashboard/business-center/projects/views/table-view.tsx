@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { type ColumnDef, type Row } from '@tanstack/react-table';
-import { MoreHorizontal, ExternalLink, Trash2, Users } from 'lucide-react';
+import { type ColumnDef, type Row, type Table } from '@tanstack/react-table';
+import { IconDots, IconExternalLink, IconTrash, IconUsers } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -17,42 +17,60 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { DataTable } from '@/components/data-table';
+import { ProjectBulkActions } from '@/components/business-center/bulk-actions';
 import type { ProjectWithRelations, Project } from '@/lib/api/projects/types';
 
 interface ProjectTableViewProps {
   projects: ProjectWithRelations[];
+  onSuccess?: () => void;
 }
 
 type ProjectStatus = Project['status'];
 
 const statusVariants: Record<ProjectStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  intake: 'secondary',
   proposal: 'outline',
   in_development: 'default',
   in_review: 'default',
   delivered: 'secondary',
   on_hold: 'destructive',
+  maintenance: 'secondary',
+  archived: 'outline',
 };
 
 const statusLabels: Record<ProjectStatus, string> = {
-  intake: 'Intake',
   proposal: 'Proposal',
   in_development: 'In Development',
   in_review: 'In Review',
   delivered: 'Delivered',
   on_hold: 'On Hold',
+  maintenance: 'Maintenance',
+  archived: 'Archived',
 };
 
-export function ProjectTableView({ projects }: ProjectTableViewProps) {
+export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps) {
   const router = useRouter();
   const [orderedProjects, setOrderedProjects] = useState(projects);
 
-  const handleRowOrderChange = (sourceIndex: number, destIndex: number) => {
+  // Sync orderedProjects when projects prop changes (from filtering or after bulk operations)
+  useEffect(() => {
+    setOrderedProjects(projects);
+  }, [projects]);
+
+  const handleRowOrderChange = (newRowIdOrder: string[]) => {
     setOrderedProjects((prev) => {
-      const newOrder = [...prev];
-      const [removed] = newOrder.splice(sourceIndex, 1);
-      if (removed) newOrder.splice(destIndex, 0, removed);
-      return newOrder;
+      // Create a map for O(1) lookup of items by ID
+      const itemMap = new Map(prev.map((item) => [item.id, item]));
+
+      // Reorder items to match the new ID order
+      const reordered = newRowIdOrder
+        .map((id) => itemMap.get(id))
+        .filter((item): item is ProjectWithRelations => item !== undefined);
+
+      // Preserve any items not in the new order (shouldn't happen, but safe)
+      const reorderedIds = new Set(newRowIdOrder);
+      const remaining = prev.filter((item) => !reorderedIds.has(item.id));
+
+      return [...reordered, ...remaining];
     });
   };
 
@@ -200,7 +218,7 @@ export function ProjectTableView({ projects }: ProjectTableViewProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <MoreHorizontal className="h-4 w-4" />
+          <IconDots className="h-4 w-4" />
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
@@ -213,7 +231,7 @@ export function ProjectTableView({ projects }: ProjectTableViewProps) {
             router.push(`/dashboard/business-center/projects/${row.original.id}`);
           }}
         >
-          <ExternalLink className="mr-2 h-4 w-4" />
+          <IconExternalLink className="mr-2 h-4 w-4" />
           View Details
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -222,7 +240,7 @@ export function ProjectTableView({ projects }: ProjectTableViewProps) {
             router.push(`/dashboard/business-center/projects/${row.original.id}/team`);
           }}
         >
-          <Users className="mr-2 h-4 w-4" />
+          <IconUsers className="mr-2 h-4 w-4" />
           Manage Team
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -233,25 +251,15 @@ export function ProjectTableView({ projects }: ProjectTableViewProps) {
             // TODO: Implement archive/delete
           }}
         >
-          <Trash2 className="mr-2 h-4 w-4" />
+          <IconTrash className="mr-2 h-4 w-4" />
           Archive Project
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 
-  const renderBulkActions = () => (
-    <>
-      <Button variant="outline" size="sm">
-        Change Status
-      </Button>
-      <Button variant="outline" size="sm">
-        Assign Team
-      </Button>
-      <Button variant="destructive" size="sm">
-        Archive Selected
-      </Button>
-    </>
+  const renderBulkActions = (table: Table<ProjectWithRelations>) => (
+    <ProjectBulkActions table={table} onSuccess={onSuccess} />
   );
 
   if (orderedProjects.length === 0) {

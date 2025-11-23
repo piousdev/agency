@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react';
 import type { TeamMember } from '@/lib/api/users/types';
 
 interface AssignmentDialogProps {
@@ -100,7 +100,7 @@ export function AssignmentDialog({
               variant="default"
               className="border-yellow-500/50 bg-yellow-50 dark:bg-yellow-950"
             >
-              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <IconAlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800 dark:text-yellow-200">
                 {selectedMember.status === 'at_capacity'
                   ? `${selectedMember.name} is at capacity (${selectedMember.capacityPercentage}%). Consider this before assigning.`
@@ -115,7 +115,7 @@ export function AssignmentDialog({
             Cancel
           </Button>
           <Button onClick={handleAssign} disabled={!selectedUserId || isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             Assign
           </Button>
         </DialogFooter>

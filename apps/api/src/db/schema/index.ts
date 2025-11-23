@@ -4,21 +4,27 @@ export * from './enums';
 // Export all tables
 export * from './account';
 export * from './activity';
+export * from './checklist';
 export * from './client';
+export * from './client-contact';
 export * from './comment';
 export * from './file';
 export * from './file-upload-tracking';
 export * from './invitation';
+export * from './label';
+export * from './milestone';
 export * from './project';
 export * from './project-assignment';
 export * from './rate-limit';
 export * from './role';
 export * from './role-assignment';
 export * from './session';
+export * from './sprint';
 export * from './ticket';
 export * from './user';
 export * from './user-to-client';
 export * from './verification';
+export * from './watcher';
 
 // Export all relations
 export * from './relations';

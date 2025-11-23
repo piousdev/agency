@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -75,7 +75,7 @@ export function Main({ items, groupLabel }: { items: NavigationItem[]; groupLabe
                         <SidebarMenuButton>
                           {item.icon && <item.icon />}
                           <span>{item.title}</span>
-                          <ChevronRight className="ml-auto" />
+                          <IconChevronRight className="ml-auto" />
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
                     </TooltipTrigger>
@@ -116,7 +116,7 @@ export function Main({ items, groupLabel }: { items: NavigationItem[]; groupLabe
                   <SidebarMenuButton tooltip={item.title}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>

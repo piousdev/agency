@@ -6,6 +6,7 @@ import createRoutes from './create';
 import updateRoutes from './update';
 import assignRoutes from './assign';
 import commentsRoutes from './comments';
+import activityRoutes from './activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -16,5 +17,6 @@ app.route('/', createRoutes);
 app.route('/', updateRoutes);
 app.route('/', assignRoutes);
 app.route('/', commentsRoutes);
+app.route('/', activityRoutes);
 
 export default app;

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { IconArrowRight } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -19,7 +19,7 @@ export function CardActionButton({ href, label }: CardActionButtonProps) {
     >
       <Link href={href}>
         {label}
-        <ArrowRight className="h-4 w-4" />
+        <IconArrowRight className="h-4 w-4" />
       </Link>
     </Button>
   );

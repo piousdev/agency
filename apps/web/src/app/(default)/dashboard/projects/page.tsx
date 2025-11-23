@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import {
-  Calendar,
-  CheckCircle2,
-  Clock,
-  MoreHorizontal,
-  Pause,
-  Plus,
-  Users,
-  AlertCircle,
-  Archive,
-  Wrench,
-} from 'lucide-react';
+  IconCalendar,
+  IconCircleCheck,
+  IconClock,
+  IconDots,
+  IconPlayerPause,
+  IconPlus,
+  IconUsers,
+  IconAlertCircle,
+  IconArchive,
+  IconTool,
+} from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -46,43 +46,43 @@ const statusConfig: Record<
   proposal: {
     label: 'Proposal',
     variant: 'secondary',
-    icon: AlertCircle,
+    icon: IconAlertCircle,
     color: 'bg-yellow-500',
   },
   in_development: {
     label: 'In Development',
     variant: 'default',
-    icon: Clock,
+    icon: IconClock,
     color: 'bg-blue-500',
   },
   in_review: {
     label: 'In Review',
     variant: 'secondary',
-    icon: Clock,
+    icon: IconClock,
     color: 'bg-purple-500',
   },
   delivered: {
     label: 'Delivered',
     variant: 'outline',
-    icon: CheckCircle2,
+    icon: IconCircleCheck,
     color: 'bg-green-500',
   },
   on_hold: {
     label: 'On Hold',
     variant: 'destructive',
-    icon: Pause,
+    icon: IconPlayerPause,
     color: 'bg-red-500',
   },
   maintenance: {
     label: 'Maintenance',
     variant: 'outline',
-    icon: Wrench,
+    icon: IconTool,
     color: 'bg-gray-500',
   },
   archived: {
     label: 'Archived',
     variant: 'outline',
-    icon: Archive,
+    icon: IconArchive,
     color: 'bg-slate-500',
   },
 };
@@ -92,7 +92,7 @@ function getStatusConfig(status: string) {
     statusConfig[status] ?? {
       label: status,
       variant: 'outline' as const,
-      icon: Clock,
+      icon: IconClock,
       color: 'bg-gray-500',
     }
   );
@@ -122,7 +122,7 @@ export default async function ProjectsPage() {
         </div>
         <Link href="/dashboard/projects/new">
           <Button className="gap-2">
-            <Plus className="h-4 w-4" />
+            <IconPlus className="h-4 w-4" />
             New Project
           </Button>
         </Link>
@@ -176,7 +176,7 @@ export default async function ProjectsPage() {
                         <p className="text-muted-foreground">No projects found</p>
                         <Link href="/dashboard/projects/new">
                           <Button variant="outline" size="sm">
-                            <Plus className="h-4 w-4 mr-2" />
+                            <IconPlus className="h-4 w-4 mr-2" />
                             Create your first project
                           </Button>
                         </Link>
@@ -204,7 +204,7 @@ export default async function ProjectsPage() {
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <IconUsers className="h-4 w-4 text-muted-foreground" />
                             <span className="text-sm">{project.client?.name ?? 'Unknown'}</span>
                           </div>
                         </TableCell>
@@ -254,14 +254,14 @@ export default async function ProjectsPage() {
                           <div className="space-y-1 text-xs">
                             {project.deliveredAt && (
                               <div className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
+                                <IconCalendar className="h-3 w-3" />
                                 <span>
                                   Due: {new Date(project.deliveredAt).toLocaleDateString()}
                                 </span>
                               </div>
                             )}
                             <div className="flex items-center gap-1 text-muted-foreground">
-                              <Clock className="h-3 w-3" />
+                              <IconClock className="h-3 w-3" />
                               <span>
                                 Updated: {new Date(project.updatedAt).toLocaleDateString()}
                               </span>
@@ -272,7 +272,7 @@ export default async function ProjectsPage() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
+                                <IconDots className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">

@@ -1,9 +1,10 @@
 /**
  * Activity API client for project management
  * Handles activity feed operations for projects
+ * Client-safe - can be used in both Server and Client Components
  */
 
-import { getAuthHeaders, buildApiUrl } from './api-utils';
+import { buildApiUrl, clientFetch } from '../client-utils';
 
 export interface ActivityActor {
   id: string;
@@ -62,11 +63,9 @@ export async function getProjectActivity(
     `/api/projects/${projectId}/activity`,
     params as Record<string, unknown> | undefined
   );
-  const headers = await getAuthHeaders();
 
-  const response = await fetch(url, {
+  const response = await clientFetch(url, {
     method: 'GET',
-    headers,
   });
 
   if (!response.ok) {

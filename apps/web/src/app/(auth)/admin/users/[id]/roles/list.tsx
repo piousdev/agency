@@ -6,7 +6,7 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Calendar, Shield, User, X } from 'lucide-react';
+import { IconCalendar, IconShield, IconUser, IconX } from '@tabler/icons-react';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import {
@@ -98,7 +98,7 @@ export function CurrentRolesList({ userId, roles }: CurrentRolesListProps) {
               >
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-primary" />
+                    <IconShield className="h-4 w-4 text-primary" />
                     <h3 className="font-semibold">{role.name}</h3>
                     <Badge variant="outline" className="ml-2">
                       {role.roleType}
@@ -113,13 +113,13 @@ export function CurrentRolesList({ userId, roles }: CurrentRolesListProps) {
                     <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                       {role.assignedAt && (
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                          <IconCalendar className="h-3 w-3" />
                           <span>Assigned {format(new Date(role.assignedAt), 'MMM d, yyyy')}</span>
                         </div>
                       )}
                       {role.assignedBy && (
                         <div className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
+                          <IconUser className="h-3 w-3" />
                           <span>by {role.assignedBy.name || role.assignedBy.email}</span>
                         </div>
                       )}
@@ -149,7 +149,7 @@ export function CurrentRolesList({ userId, roles }: CurrentRolesListProps) {
                   disabled={isPending}
                   className="ml-4 text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
-                  <X className="h-4 w-4" />
+                  <IconX className="h-4 w-4" />
                   <span className="sr-only">Remove role</span>
                 </Button>
               </div>

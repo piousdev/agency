@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LucideIcon } from 'lucide-react';
+import { type Icon as TablerIcon } from '@tabler/icons-react';
 
 interface BusinessMetricCardProps {
   title: string;
   value: string | number;
   description?: string;
-  icon: LucideIcon;
+  icon: TablerIcon;
   trend?: {
     value: number;
     label: string;

@@ -1,26 +1,31 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
 import {
   DragDropContext,
-  Droppable,
   Draggable,
-  type DropResult,
-  type DroppableProvided,
   type DraggableProvided,
-  type DroppableStateSnapshot,
   type DraggableStateSnapshot,
+  Droppable,
+  type DroppableProvided,
+  type DroppableStateSnapshot,
+  type DropResult,
 } from '@hello-pangea/dnd';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Building2, CalendarClock, Users, GripVertical, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { updateProjectStatusAction } from '@/lib/actions/business-center/projects';
-import type { ProjectWithRelations, Project } from '@/lib/api/projects/types';
+import {
+  IconAlertTriangle,
+  IconCalendar,
+  IconGripVertical,
+  IconLoader2,
+} from '@tabler/icons-react';
+import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { updateProjectStatusAction } from '@/lib/actions/business-center/projects';
+import type { Project, ProjectWithRelations } from '@/lib/api/projects/types';
+import { cn } from '@/lib/utils';
 
 interface ProjectKanbanViewProps {
   projects: ProjectWithRelations[];
@@ -41,14 +46,39 @@ const statusLabels: Record<ProjectStatus, string> = {
 };
 
 const statusColors: Record<ProjectStatus, string> = {
-  proposal: 'bg-muted ring-muted-foreground/20',
-  in_development: 'bg-info/10 ring-info/30',
-  in_review: 'bg-warning/10 ring-warning/30',
-  delivered: 'bg-success/10 ring-success/30',
+  proposal: 'bg-blue-500/10 ring-blue-500/30',
+  in_development: 'bg-amber-500/10 ring-amber-500/30',
+  in_review: 'bg-purple-500/10 ring-purple-500/30',
+  delivered: 'bg-emerald-500/10 ring-emerald-500/30',
   on_hold: 'bg-muted ring-muted-foreground/20',
-  maintenance: 'bg-info/10 ring-info/30',
+  maintenance: 'bg-cyan-500/10 ring-cyan-500/30',
   archived: 'bg-muted ring-muted-foreground/20',
 };
+
+const statusHeaderColors: Record<ProjectStatus, string> = {
+  proposal: 'text-blue-600 dark:text-blue-400',
+  in_development: 'text-amber-600 dark:text-amber-400',
+  in_review: 'text-purple-600 dark:text-purple-400',
+  delivered: 'text-emerald-600 dark:text-emerald-400',
+  on_hold: 'text-muted-foreground',
+  maintenance: 'text-cyan-600 dark:text-cyan-400',
+  archived: 'text-muted-foreground',
+};
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+function getProgressColor(percentage: number): string {
+  if (percentage >= 80) return '[&>div]:bg-emerald-500';
+  if (percentage >= 50) return '[&>div]:bg-amber-500';
+  return '[&>div]:bg-blue-500';
+}
 
 export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanViewProps) {
   const router = useRouter();
@@ -137,7 +167,10 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
               const removed = destCol.splice(idx, 1)[0];
               if (removed) {
                 // Revert status and add back to source
-                const revertedProject = { ...removed, status: oldStatus } as ProjectWithRelations;
+                const revertedProject = {
+                  ...removed,
+                  status: oldStatus,
+                } as ProjectWithRelations;
                 sourceCol.splice(source.index, 0, revertedProject);
               }
             }
@@ -163,9 +196,14 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
         {statuses.map((status) => (
           <div key={status} className="min-w-0">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold">{statusLabels[status]}</h3>
-                <Badge variant="secondary">{projectsByStatus[status].length}</Badge>
+              {/* Column Header */}
+              <div className="flex items-center justify-between px-1">
+                <h3 className={cn('text-sm font-semibold', statusHeaderColors[status])}>
+                  {statusLabels[status]}
+                </h3>
+                <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  {projectsByStatus[status].length}
+                </span>
               </div>
 
               <Droppable droppableId={status}>
@@ -174,17 +212,15 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     className={cn(
-                      'space-y-3 min-h-[200px] rounded-lg p-2 transition-colors',
+                      'space-y-2 min-h-[200px] rounded-lg p-2 transition-colors',
                       snapshot.isDraggingOver && statusColors[status],
                       snapshot.isDraggingOver && 'ring-2'
                     )}
                   >
                     {projectsByStatus[status].length === 0 && !snapshot.isDraggingOver && (
-                      <Card className="border-dashed">
-                        <CardContent className="pt-6 text-center text-sm text-muted-foreground">
-                          No projects
-                        </CardContent>
-                      </Card>
+                      <div className="flex items-center justify-center h-24 rounded-lg border border-dashed border-border/50 text-sm text-muted-foreground">
+                        No projects
+                      </div>
                     )}
                     {projectsByStatus[status].map((project, index) => (
                       <Draggable key={project.id} draggableId={project.id} index={index}>
@@ -196,13 +232,15 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                             project.deliveredAt &&
                             new Date(project.deliveredAt) < new Date() &&
                             project.status !== 'delivered';
+                          const progress = project.completionPercentage || 0;
 
                           return (
-                            <Card
+                            <button
+                              type="button"
                               ref={dragProvided.innerRef}
                               {...dragProvided.draggableProps}
                               className={cn(
-                                'transition-shadow cursor-pointer hover:shadow-md',
+                                'bg-card border rounded-lg p-3 transition-all cursor-pointer hover:shadow-md hover:border-border w-full text-left',
                                 dragSnapshot.isDragging &&
                                   'shadow-lg ring-2 ring-primary/30 cursor-grabbing',
                                 isPending && draggingId === project.id && 'opacity-70'
@@ -211,66 +249,104 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                                 !dragSnapshot.isDragging && handleCardClick(project.id)
                               }
                             >
-                              <CardHeader className="pb-3">
-                                <div className="flex items-start justify-between gap-2">
-                                  <div className="flex items-start gap-2">
-                                    <div
-                                      {...(dragProvided.dragHandleProps ?? {})}
-                                      className="mt-0.5 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      <GripVertical className="h-4 w-4" />
-                                    </div>
-                                    <CardTitle className="text-sm line-clamp-2">
-                                      {project.name}
-                                    </CardTitle>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    {isPending && draggingId === project.id && (
-                                      <Loader2 className="h-3 w-3 animate-spin" />
-                                    )}
-                                    <Badge variant="outline" className="shrink-0 text-xs">
-                                      {project.client?.type === 'creative'
-                                        ? 'Content'
-                                        : project.client?.type || 'N/A'}
-                                    </Badge>
-                                  </div>
+                              {/* Card Header: Progress + Drag Handle */}
+                              <div className="flex items-center justify-between gap-2 mb-2">
+                                <Badge
+                                  variant="secondary"
+                                  className="text-[10px] font-semibold px-1.5 py-0 h-5 tabular-nums"
+                                >
+                                  {progress}%
+                                </Badge>
+                                <div className="flex items-center gap-1">
+                                  {isPending && draggingId === project.id && (
+                                    <IconLoader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                                  )}
+                                  <button
+                                    type="button"
+                                    {...(dragProvided.dragHandleProps ?? {})}
+                                    className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <IconGripVertical className="h-4 w-4" />
+                                  </button>
                                 </div>
-                              </CardHeader>
-                              <CardContent className="space-y-2 text-sm">
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                  <Building2 className="h-3 w-3 shrink-0" />
-                                  <span className="truncate">{project.client?.name || 'N/A'}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                  <CalendarClock className="h-3 w-3 shrink-0" />
-                                  <span className={isOverdue ? 'text-destructive' : ''}>
+                              </div>
+
+                              {/* Title */}
+                              <h4 className="text-sm font-medium leading-snug line-clamp-2 mb-2">
+                                {project.name}
+                              </h4>
+
+                              {/* Progress Bar */}
+                              <Progress
+                                value={progress}
+                                className={cn('h-1 mb-2', getProgressColor(progress))}
+                              />
+
+                              {/* Meta: Client + Date */}
+                              <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                                <span className="truncate max-w-[55%]">
+                                  {project.client?.name || 'No client'}
+                                </span>
+                                <div
+                                  className={cn(
+                                    'flex items-center gap-1 shrink-0',
+                                    isOverdue && 'text-destructive'
+                                  )}
+                                >
+                                  {isOverdue ? (
+                                    <IconAlertTriangle className="h-3 w-3" />
+                                  ) : (
+                                    <IconCalendar className="h-3 w-3" />
+                                  )}
+                                  <span className="tabular-nums">
                                     {project.deliveredAt
                                       ? format(new Date(project.deliveredAt), 'MMM d')
                                       : 'No date'}
-                                    {isOverdue && ' (!)'}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                  <Users className="h-3 w-3 shrink-0" />
-                                  <span>
-                                    {project.assignees && project.assignees.length > 0
-                                      ? `${project.assignees.length} team`
-                                      : 'No team'}
-                                  </span>
-                                </div>
-                                <div className="pt-1">
-                                  <div className="flex justify-between text-xs mb-1">
-                                    <span className="text-muted-foreground">Progress</span>
-                                    <span>{project.completionPercentage || 0}%</span>
+                              </div>
+
+                              {/* Footer: Team Avatars */}
+                              <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                                {project.assignees && project.assignees.length > 0 ? (
+                                  <div className="flex items-center gap-1">
+                                    <div className="flex -space-x-1">
+                                      {project.assignees.slice(0, 3).map((assignee) => (
+                                        <Avatar
+                                          key={assignee.id}
+                                          className="h-5 w-5 border border-background"
+                                        >
+                                          {assignee.image && (
+                                            <AvatarImage
+                                              src={assignee.image}
+                                              alt={assignee.name || ''}
+                                            />
+                                          )}
+                                          <AvatarFallback className="text-[7px] font-medium bg-muted">
+                                            {getInitials(assignee.name || assignee.email || '?')}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                      ))}
+                                      {project.assignees.length > 3 && (
+                                        <Avatar className="h-5 w-5 border border-background">
+                                          <AvatarFallback className="text-[7px] font-medium bg-muted text-muted-foreground">
+                                            +{project.assignees.length - 3}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] text-muted-foreground ml-1">
+                                      {project.assignees.length}
+                                    </span>
                                   </div>
-                                  <Progress
-                                    value={project.completionPercentage || 0}
-                                    className="h-1.5"
-                                  />
-                                </div>
-                              </CardContent>
-                            </Card>
+                                ) : (
+                                  <span className="text-xs text-amber-600 dark:text-amber-500">
+                                    Needs team
+                                  </span>
+                                )}
+                              </div>
+                            </button>
                           );
                         }}
                       </Draggable>

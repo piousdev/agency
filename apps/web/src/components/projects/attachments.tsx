@@ -3,16 +3,16 @@
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import {
-  Paperclip,
-  Download,
-  Trash2,
-  FileText,
-  Image,
-  FileVideo,
-  FileAudio,
-  File,
-  MoreVertical,
-} from 'lucide-react';
+  IconPaperclip,
+  IconDownload,
+  IconTrash,
+  IconFileText,
+  IconPhoto,
+  IconVideo,
+  IconMusic,
+  IconFile,
+  IconDotsVertical,
+} from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -48,12 +48,12 @@ function formatFileSize(bytes: number): string {
 }
 
 function getFileIcon(mimeType: string) {
-  if (mimeType.startsWith('image/')) return Image;
-  if (mimeType.startsWith('video/')) return FileVideo;
-  if (mimeType.startsWith('audio/')) return FileAudio;
+  if (mimeType.startsWith('image/')) return IconPhoto;
+  if (mimeType.startsWith('video/')) return IconVideo;
+  if (mimeType.startsWith('audio/')) return IconMusic;
   if (mimeType.includes('pdf') || mimeType.includes('document') || mimeType.includes('text'))
-    return FileText;
-  return File;
+    return IconFileText;
+  return IconFile;
 }
 
 export function Attachments({ files, currentUserId, onDeleteFile }: AttachmentsProps) {
@@ -72,7 +72,7 @@ export function Attachments({ files, currentUserId, onDeleteFile }: AttachmentsP
     <div className="space-y-4">
       {files.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Paperclip className="h-10 w-10 text-muted-foreground/30" />
+          <IconPaperclip className="h-10 w-10 text-muted-foreground/30" />
           <p className="mt-3 text-sm text-muted-foreground">No attachments yet</p>
           <p className="text-xs text-muted-foreground/70">Files will appear here when uploaded</p>
         </div>
@@ -130,7 +130,7 @@ export function Attachments({ files, currentUserId, onDeleteFile }: AttachmentsP
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Download className="h-4 w-4" />
+                      <IconDownload className="h-4 w-4" />
                     </a>
                   </Button>
 
@@ -143,7 +143,7 @@ export function Attachments({ files, currentUserId, onDeleteFile }: AttachmentsP
                           className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
                           disabled={isDeleting}
                         >
-                          <MoreVertical className="h-4 w-4" />
+                          <IconDotsVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -151,7 +151,7 @@ export function Attachments({ files, currentUserId, onDeleteFile }: AttachmentsP
                           onClick={() => handleDelete(file.id)}
                           className="text-destructive focus:text-destructive"
                         >
-                          <Trash2 className="h-4 w-4 mr-2" />
+                          <IconTrash className="h-4 w-4 mr-2" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>

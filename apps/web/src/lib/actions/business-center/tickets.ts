@@ -2,10 +2,144 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireUser } from '@/lib/auth/session';
-import { updateTicket, assignTicket } from '@/lib/api/tickets';
+import { createTicket, updateTicket, assignTicket } from '@/lib/api/tickets';
 import { withErrorHandling, type ActionResult } from './errors';
+import { createTicketSchema, updateTicketSchema } from '@/lib/schemas';
 
 type TicketStatus = 'open' | 'in_progress' | 'pending_client' | 'resolved' | 'closed';
+
+/**
+ * Create a new ticket
+ */
+export async function createTicketAction(
+  formData: FormData
+): Promise<{ success: boolean; error?: string; ticketId?: string }> {
+  const user = await requireUser();
+  if (!user.isInternal) {
+    return { success: false, error: 'Access denied: Internal team only' };
+  }
+
+  // Parse form data
+  const rawData = {
+    title: formData.get('title') as string,
+    description: formData.get('description') as string,
+    type: (formData.get('type') as string) || 'intake',
+    priority: (formData.get('priority') as string) || 'medium',
+    clientId: formData.get('clientId') as string,
+    projectId: (formData.get('projectId') as string) || undefined,
+    assignedToId: (formData.get('assignedToId') as string) || undefined,
+    dueAt: (formData.get('dueAt') as string) || undefined,
+    contactEmail: (formData.get('contactEmail') as string) || undefined,
+    contactPhone: (formData.get('contactPhone') as string) || undefined,
+    contactName: (formData.get('contactName') as string) || undefined,
+    environment: (formData.get('environment') as string) || undefined,
+    affectedUrl: (formData.get('affectedUrl') as string) || undefined,
+  };
+
+  // Validate with Zod
+  const parsed = createTicketSchema.safeParse(rawData);
+  if (!parsed.success) {
+    const errors = parsed.error.flatten().fieldErrors;
+    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
+    return { success: false, error: firstError };
+  }
+
+  // Create ticket via API
+  const result = await createTicket(parsed.data);
+  if (!result.success) {
+    return { success: false, error: result.error };
+  }
+
+  revalidatePath('/dashboard/business-center');
+  revalidatePath('/dashboard/business-center/intake-queue');
+
+  return { success: true, ticketId: result.data.id };
+}
+
+/**
+ * Update an existing ticket
+ */
+export async function updateTicketFullAction(
+  ticketId: string,
+  formData: FormData
+): Promise<{ success: boolean; error?: string; ticketId?: string }> {
+  const user = await requireUser();
+  if (!user.isInternal) {
+    return { success: false, error: 'Access denied: Internal team only' };
+  }
+
+  // Parse form data
+  const rawData: Record<string, unknown> = {};
+
+  const title = formData.get('title');
+  if (title) rawData.title = title;
+
+  const description = formData.get('description');
+  if (description) rawData.description = description;
+
+  const type = formData.get('type');
+  if (type) rawData.type = type;
+
+  const status = formData.get('status');
+  if (status) rawData.status = status;
+
+  const priority = formData.get('priority');
+  if (priority) rawData.priority = priority;
+
+  const projectId = formData.get('projectId');
+  if (projectId) rawData.projectId = projectId;
+
+  const dueAt = formData.get('dueAt');
+  if (dueAt) rawData.dueAt = dueAt;
+
+  const environment = formData.get('environment');
+  if (environment) rawData.environment = environment;
+
+  const affectedUrl = formData.get('affectedUrl');
+  if (affectedUrl) rawData.affectedUrl = affectedUrl;
+
+  // Validate with Zod
+  const parsed = updateTicketSchema.safeParse(rawData);
+  if (!parsed.success) {
+    const errors = parsed.error.flatten().fieldErrors;
+    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
+    return { success: false, error: firstError };
+  }
+
+  // Update ticket via API
+  const result = await updateTicket(ticketId, parsed.data);
+  if (!result.success) {
+    return { success: false, error: result.message || 'Failed to update ticket' };
+  }
+
+  revalidatePath('/dashboard/business-center');
+  revalidatePath('/dashboard/business-center/intake-queue');
+  revalidatePath(`/dashboard/business-center/intake-queue/${ticketId}`);
+
+  return { success: true, ticketId };
+}
+
+/**
+ * Delete (soft delete) a ticket
+ */
+export async function deleteTicketAction(ticketId: string): Promise<ActionResult> {
+  return withErrorHandling(async () => {
+    const user = await requireUser();
+    if (!user.isInternal) {
+      throw new Error('Access denied: Internal team only');
+    }
+
+    // Soft delete by setting status to closed
+    const result = await updateTicket(ticketId, { status: 'closed' });
+
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to delete ticket');
+    }
+
+    revalidatePath('/dashboard/business-center');
+    revalidatePath('/dashboard/business-center/intake-queue');
+  });
+}
 
 export async function assignTicketAction(ticketId: string, userId: string): Promise<ActionResult> {
   return withErrorHandling(async () => {
