@@ -451,9 +451,10 @@ interface UseActivityFeedOptions {
   entityId: string;
   fetchFn: (
     id: string,
-    params: { limit?: number; offset?: number }
+    params: { limit?: number; offset?: number; types?: ActivityType[] }
   ) => Promise<{ data: Activity[]; pagination: { hasMore: boolean } }>;
   limit?: number;
+  initialTypes?: ActivityType[];
 }
 
 export function useActivityFeed({
@@ -461,18 +462,20 @@ export function useActivityFeed({
   entityId,
   fetchFn,
   limit = 20,
+  initialTypes,
 }: UseActivityFeedOptions) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<ActivityType[] | undefined>(initialTypes);
 
   const loadInitial = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await fetchFn(entityId, { limit, offset: 0 });
+      const result = await fetchFn(entityId, { limit, offset: 0, types: typeFilter });
       setActivities(result.data);
       setHasMore(result.pagination.hasMore);
     } catch (err) {
@@ -480,13 +483,17 @@ export function useActivityFeed({
     } finally {
       setLoading(false);
     }
-  }, [entityId, fetchFn, limit]);
+  }, [entityId, fetchFn, limit, typeFilter]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore) return;
     setLoadingMore(true);
     try {
-      const result = await fetchFn(entityId, { limit, offset: activities.length });
+      const result = await fetchFn(entityId, {
+        limit,
+        offset: activities.length,
+        types: typeFilter,
+      });
       setActivities((prev) => [...prev, ...result.data]);
       setHasMore(result.pagination.hasMore);
     } catch (err) {
@@ -494,7 +501,13 @@ export function useActivityFeed({
     } finally {
       setLoadingMore(false);
     }
-  }, [entityId, fetchFn, limit, activities.length, loadingMore, hasMore]);
+  }, [entityId, fetchFn, limit, activities.length, loadingMore, hasMore, typeFilter]);
+
+  // Reset and reload when filter changes
+  const filterByTypes = useCallback((types: ActivityType[] | undefined) => {
+    setTypeFilter(types);
+    setActivities([]);
+  }, []);
 
   useEffect(() => {
     loadInitial();
@@ -508,5 +521,7 @@ export function useActivityFeed({
     error,
     loadMore,
     refresh: loadInitial,
+    typeFilter,
+    filterByTypes,
   };
 }

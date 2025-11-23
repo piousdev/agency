@@ -149,7 +149,7 @@
 
 - [x] 7.2.1 Create activity API routes (`tickets/activity.ts`, `clients/activity.ts`, `projects/activity.ts`)
 - [x] 7.2.2 Add pagination support for activity feeds
-- [ ] 7.2.3 Add filtering by activity type (API supports `types` param, frontend hook not wired up)
+- [x] 7.2.3 Add filtering by activity type (API and frontend hook both support `types` param)
 
 ## Phase 8: Permission-Aware UI
 

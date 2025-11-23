@@ -23,11 +23,19 @@ export type ActivityType =
   | 'file_uploaded'
   | 'file_deleted'
   | 'priority_changed'
-  | 'due_date_changed';
+  | 'due_date_changed'
+  | 'created'
+  | 'updated'
+  | 'deleted'
+  | 'archived'
+  | 'restored'
+  | 'field_changed';
 
 export interface Activity {
   id: string;
-  projectId: string;
+  projectId?: string;
+  entityType?: 'ticket' | 'project' | 'client';
+  entityId?: string;
   actorId: string;
   type: ActivityType;
   metadata: Record<string, unknown> | null;
@@ -39,17 +47,17 @@ export interface ActivityResponse {
   success: boolean;
   data: Activity[];
   pagination: {
-    page: number;
-    pageSize: number;
-    totalCount: number;
-    totalPages: number;
+    limit: number;
+    offset: number;
+    total: number;
     hasMore: boolean;
   };
 }
 
 export interface ActivityParams {
-  page?: number;
-  pageSize?: number;
+  limit?: number;
+  offset?: number;
+  types?: ActivityType[];
 }
 
 /**
@@ -59,9 +67,21 @@ export async function getProjectActivity(
   projectId: string,
   params?: ActivityParams
 ): Promise<ActivityResponse> {
+  const queryParams: Record<string, string> = {};
+
+  if (params?.limit) {
+    queryParams.limit = String(params.limit);
+  }
+  if (params?.offset) {
+    queryParams.offset = String(params.offset);
+  }
+  if (params?.types?.length) {
+    queryParams.types = params.types.join(',');
+  }
+
   const url = buildApiUrl(
     `/api/projects/${projectId}/activity`,
-    params as Record<string, unknown> | undefined
+    Object.keys(queryParams).length > 0 ? queryParams : undefined
   );
 
   const response = await clientFetch(url, {
