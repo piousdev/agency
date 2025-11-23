@@ -6,6 +6,7 @@ import { db } from '../../db';
 import { client } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { updateClientSchema } from '../../schemas/client';
+import { logEntityChange, EntityTypes } from '../../utils/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -22,6 +23,11 @@ app.patch(
   async (c) => {
     const clientId = c.req.param('id');
     const data = c.req.valid('json');
+    const currentUser = c.get('user');
+
+    if (!currentUser) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
 
     try {
       // Check if client exists
@@ -53,6 +59,16 @@ app.patch(
         .set(updateData)
         .where(eq(client.id, clientId))
         .returning();
+
+      // Log activity for client update
+      await logEntityChange({
+        entityType: EntityTypes.CLIENT,
+        entityId: clientId,
+        actorId: currentUser.id,
+        clientId: clientId,
+        before: existingClient,
+        after: updatedClient,
+      });
 
       return c.json({
         success: true,

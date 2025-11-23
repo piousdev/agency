@@ -6,6 +6,7 @@ import { db } from '../../db';
 import { project } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { updateProjectSchema } from '../../schemas/project';
+import { logEntityChange, EntityTypes } from '../../utils/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -22,6 +23,11 @@ app.patch(
   async (c) => {
     const projectId = c.req.param('id');
     const data = c.req.valid('json');
+    const currentUser = c.get('user');
+
+    if (!currentUser) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
 
     try {
       // Check if project exists
@@ -81,6 +87,16 @@ app.patch(
         assignees: projectWithRelations?.projectAssignments.map((pa) => pa.user) || [],
         projectAssignments: undefined,
       };
+
+      // Log activity for project update
+      await logEntityChange({
+        entityType: EntityTypes.PROJECT,
+        entityId: projectId,
+        actorId: currentUser.id,
+        projectId: projectId,
+        before: existingProject,
+        after: projectWithRelations!,
+      });
 
       return c.json({
         success: true,

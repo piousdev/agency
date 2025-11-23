@@ -46,7 +46,7 @@
 
 - [x] 3.1.1 Create `apps/web/src/app/(default)/dashboard/business-center/intake-queue/new/page.tsx`
 - [x] 3.1.2 Create `createTicketAction` Server Action with permission check
-- [ ] 3.1.3 Add activity logging for ticket creation
+- [x] 3.1.3 Add activity logging for ticket creation (API route logs via `logActivity()`)
 - [x] 3.1.4 Create loading.tsx skeleton for new ticket page
 - [x] 3.1.5 Add "+ New Ticket" button to intake-queue header
 - [ ] 3.1.6 Add "+ Add" buttons to kanban columns (links to /new with prefilled priority)
@@ -56,14 +56,14 @@
 - [x] 3.2.1 Create `apps/web/src/components/business-center/dialogs/edit-ticket-dialog.tsx`
 - [x] 3.2.2 Create `updateTicketAction` Server Action with permission check
 - [ ] 3.2.3 Add optimistic update support
-- [ ] 3.2.4 Add activity logging for ticket updates
+- [x] 3.2.4 Add activity logging for ticket updates (API route logs via `logEntityChange()`)
 
 ### 3.3 Delete Ticket
 
 - [x] 3.3.1 Create `apps/web/src/components/business-center/dialogs/delete-ticket-dialog.tsx`
 - [x] 3.3.2 Create `deleteTicketAction` Server Action with permission check
 - [x] 3.3.3 Add soft delete support (set status to 'closed' + deletedAt timestamp)
-- [ ] 3.3.4 Add activity logging for ticket deletion
+- [x] 3.3.4 Add activity logging for ticket deletion (logged as status change via update API)
 
 ## Phase 4: Project CRUD
 
@@ -71,7 +71,7 @@
 
 - [x] 4.1.1 Create `apps/web/src/app/(default)/dashboard/business-center/projects/new/page.tsx`
 - [x] 4.1.2 Create `createProjectAction` Server Action with permission check
-- [ ] 4.1.3 Add activity logging for project creation
+- [x] 4.1.3 Add activity logging for project creation (API route logs via `logActivity()`)
 - [x] 4.1.4 Create loading.tsx skeleton for new project page
 - [x] 4.1.5 Add "+ New Project" button to projects header
 - [ ] 4.1.6 Add "+ Add" buttons to kanban columns (links to /new with prefilled status)
@@ -81,14 +81,14 @@
 - [x] 4.2.1 Create `apps/web/src/components/business-center/dialogs/edit-project-dialog.tsx`
 - [x] 4.2.2 Create `updateProjectAction` Server Action with permission check (extend existing)
 - [ ] 4.2.3 Add optimistic update support
-- [ ] 4.2.4 Add activity logging for project updates
+- [x] 4.2.4 Add activity logging for project updates (API route logs via `logEntityChange()`)
 
 ### 4.3 Delete Project
 
 - [x] 4.3.1 Create `apps/web/src/components/business-center/dialogs/delete-project-dialog.tsx`
 - [x] 4.3.2 Create `deleteProjectAction` Server Action with permission check
 - [x] 4.3.3 Add soft delete support (set status to 'archived' + deletedAt timestamp)
-- [ ] 4.3.4 Add activity logging for project deletion
+- [x] 4.3.4 Add activity logging for project deletion (logged as status change via update API)
 
 ## Phase 5: Client CRUD
 
@@ -103,13 +103,13 @@
 - [x] 5.2.1 Create `apps/web/src/app/(default)/dashboard/business-center/clients/new/page.tsx`
 - [x] 5.2.2 Create `apps/web/src/lib/actions/business-center/clients.ts`
 - [x] 5.2.3 Create `createClientAction` Server Action with permission check
-- [ ] 5.2.4 Add activity logging for client creation
+- [x] 5.2.4 Add activity logging for client creation (API route logs via `logActivity()`)
 
 ### 5.3 Edit Client (Dialog)
 
 - [x] 5.3.1 Create `apps/web/src/components/business-center/dialogs/edit-client-dialog.tsx`
 - [x] 5.3.2 Create `updateClientAction` Server Action with permission check
-- [ ] 5.3.3 Add activity logging for client updates
+- [x] 5.3.3 Add activity logging for client updates (API route logs via `logEntityChange()`)
 
 ### 5.4 Delete Client
 
@@ -134,7 +134,7 @@
 - [x] 6.2.3 Implement `bulkAssignAction` for tickets and projects
 - [x] 6.2.4 Implement `bulkDeleteAction` with confirmation
 - [x] 6.2.5 Add permission checks to all bulk actions (isInternal checks)
-- [ ] 6.2.6 Add activity logging for bulk operations
+- [x] 6.2.6 Add activity logging for bulk operations (each item logged via individual API calls)
 
 ## Phase 7: Activity Feed
 

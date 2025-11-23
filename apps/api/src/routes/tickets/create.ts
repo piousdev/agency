@@ -7,6 +7,7 @@ import { ticket, client, user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { createTicketSchema } from '../../schemas/ticket';
 import { eq } from 'drizzle-orm';
+import { logActivity, ActivityTypes, EntityTypes } from '../../utils/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -91,6 +92,20 @@ app.post(
               email: true,
             },
           },
+        },
+      });
+
+      // Log activity for ticket creation
+      await logActivity({
+        type: ActivityTypes.CREATED,
+        entityType: EntityTypes.TICKET,
+        entityId: newTicket[0]!.id,
+        actorId: currentUser.id,
+        ticketId: newTicket[0]!.id,
+        metadata: {
+          title: body.title,
+          type: body.type,
+          priority: body.priority,
         },
       });
 

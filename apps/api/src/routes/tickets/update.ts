@@ -6,6 +6,7 @@ import { ticket } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { updateTicketSchema } from '../../schemas/ticket';
 import { eq } from 'drizzle-orm';
+import { logEntityChange, EntityTypes } from '../../utils/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -22,6 +23,11 @@ app.patch(
   async (c) => {
     const ticketId = c.req.param('id');
     const body = c.req.valid('json');
+    const currentUser = c.get('user');
+
+    if (!currentUser) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
 
     try {
       // Check if ticket exists
@@ -66,6 +72,16 @@ app.patch(
             },
           },
         },
+      });
+
+      // Log activity for ticket update
+      await logEntityChange({
+        entityType: EntityTypes.TICKET,
+        entityId: ticketId,
+        actorId: currentUser.id,
+        ticketId: ticketId,
+        before: existingTicket,
+        after: updatedTicket!,
       });
 
       return c.json({

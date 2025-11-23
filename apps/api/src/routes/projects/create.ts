@@ -6,6 +6,7 @@ import { db } from '../../db';
 import { project } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { createProjectSchema } from '../../schemas/project';
+import { logActivity, ActivityTypes, EntityTypes } from '../../utils/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -21,6 +22,11 @@ app.post(
   zValidator('json', createProjectSchema),
   async (c) => {
     const data = c.req.valid('json');
+    const currentUser = c.get('user');
+
+    if (!currentUser) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
 
     try {
       const projectId = nanoid();
@@ -68,6 +74,19 @@ app.post(
         assignees: projectWithRelations?.projectAssignments.map((pa) => pa.user) || [],
         projectAssignments: undefined,
       };
+
+      // Log activity for project creation
+      await logActivity({
+        type: ActivityTypes.CREATED,
+        entityType: EntityTypes.PROJECT,
+        entityId: projectId,
+        actorId: currentUser.id,
+        projectId: projectId,
+        metadata: {
+          name: data.name,
+          status: data.status,
+        },
+      });
 
       return c.json(
         {
