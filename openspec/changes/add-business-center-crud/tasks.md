@@ -140,16 +140,16 @@
 
 ### 7.1 Activity Feed Component
 
-- [ ] 7.1.1 Create `apps/web/src/components/business-center/activity-feed.tsx`
-- [ ] 7.1.2 Add activity feed to ticket detail view
-- [ ] 7.1.3 Add activity feed to project detail view
-- [ ] 7.1.4 Add activity feed to client detail view
+- [x] 7.1.1 Create `apps/web/src/components/business-center/activity-feed.tsx`
+- [x] 7.1.2 Add activity feed to ticket detail view (`intake-queue/[id]/ticket-activity.tsx`)
+- [x] 7.1.3 Add activity feed to project detail view (`projects/[id]/project-activity.tsx`)
+- [x] 7.1.4 Add activity feed to client detail view (`clients/[id]/client-activity.tsx`)
 
 ### 7.2 Activity API
 
-- [ ] 7.2.1 Create `getEntityActivity(entityType, entityId)` API function
-- [ ] 7.2.2 Add pagination support for activity feeds
-- [ ] 7.2.3 Add filtering by activity type
+- [x] 7.2.1 Create activity API routes (`tickets/activity.ts`, `clients/activity.ts`, `projects/activity.ts`)
+- [x] 7.2.2 Add pagination support for activity feeds
+- [x] 7.2.3 Add filtering by activity type
 
 ## Phase 8: Permission-Aware UI
 
