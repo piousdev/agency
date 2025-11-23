@@ -1,27 +1,34 @@
 import { Hono } from 'hono';
 import { db } from '../db/index.js';
 import { sql } from 'drizzle-orm';
+import { requireAuth, requireInternal, type AuthVariables } from '../middleware/auth.js';
 
-const app = new Hono();
+const app = new Hono<{ Variables: AuthVariables }>();
 
-app.get('/test', async (c) => {
+/**
+ * Database connectivity test endpoint
+ *
+ * **Security**: Protected by requireAuth() + requireInternal() middleware
+ * - Only authenticated internal team members can access this endpoint
+ * - Does NOT expose sensitive database version information
+ */
+app.get('/test', requireAuth(), requireInternal(), async (c) => {
   try {
-    // Simple query to test connection
-    const result = await db.execute(
-      sql`SELECT NOW() as current_time, version() as postgres_version`
-    );
+    // Simple query to test connection - only check connectivity, don't expose version
+    const result = await db.execute(sql`SELECT NOW() as current_time`);
 
     return c.json({
       status: 'success',
       message: 'Database connection successful',
-      data: result.rows[0],
+      timestamp: result.rows[0]?.current_time,
     });
   } catch (error) {
+    // Don't expose detailed error messages
+    console.error('Database connection test failed:', error);
     return c.json(
       {
         status: 'error',
         message: 'Database connection failed',
-        error: error instanceof Error ? error.message : 'Unknown error',
       },
       500
     );

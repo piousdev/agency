@@ -23,10 +23,15 @@ app.onError(errorHandler);
 
 // Middleware
 app.use('*', logger());
+// CORS configuration - uses environment variable with fallback for development
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
+  : ['http://localhost:3000'];
+
 app.use(
   '*',
   cors({
-    origin: 'http://localhost:3000',
+    origin: allowedOrigins,
     credentials: true,
   })
 );

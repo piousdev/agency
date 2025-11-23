@@ -47,12 +47,12 @@ const app = new Hono<{ Variables: AuthVariables }>();
  * ```typescript
  * {
  *   success: true;
- *   message: "Invitation created successfully";
+ *   message: "Invitation created successfully. An email will be sent to the recipient.";
  *   invitation: {
  *     id: string;       // Unique invitation ID (inv_...)
  *     email: string;    // Recipient email
  *     expiresAt: Date;  // Expiration timestamp
- *     token: string;    // DEV ONLY - Remove in production
+ *     // Note: Token is NOT exposed in response for security reasons
  *   };
  * }
  * ```
@@ -143,8 +143,8 @@ app.post(
       }
 
       // TODO: Send invitation email via Resend
-      // For now, we'll just return the token in the response (DEV ONLY)
-      console.log('🔗 Invitation link:', `http://localhost:3000/accept-invite/${token}`);
+      // The token is NOT exposed in API responses for security reasons
+      // It will only be sent via email to the intended recipient
 
       // Log successful invitation creation to Sentry
       logAuthEvent(AuthEventType.INVITATION_CREATED, {
@@ -163,12 +163,12 @@ app.post(
       return c.json(
         {
           success: true,
-          message: 'Invitation created successfully',
+          message: 'Invitation created successfully. An email will be sent to the recipient.',
           invitation: {
             id: newInvitation.id,
             email: newInvitation.email,
             expiresAt: newInvitation.expiresAt,
-            token: token, // DEV ONLY - Remove in production
+            // Token is intentionally NOT exposed - sent only via email
           },
         },
         201

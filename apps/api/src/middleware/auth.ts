@@ -66,7 +66,8 @@
  * **Error Handling**:
  * - 401 Unauthorized: No authentication (user not signed in)
  * - 403 Forbidden: Authenticated but insufficient permissions
- * - All errors include descriptive messages for debugging
+ * - Client-facing error messages are generic to prevent information disclosure
+ * - Detailed debugging information is logged to Sentry only (server-side)
  * - All security events logged to Sentry with full context
  *
  * **Performance Considerations**:
@@ -200,7 +201,8 @@ export const requireRole = (...roles: string[]) => {
     const hasRole = roles.some((requiredRole) => userRoleNames.includes(requiredRole));
 
     if (!hasRole) {
-      // Log permission denied to Sentry
+      // Log permission denied to Sentry with full details for debugging
+      // Note: Detailed information is logged server-side only, not exposed to clients
       logSecurityEvent(
         AuthEventType.PERMISSION_DENIED,
         {
@@ -214,8 +216,9 @@ export const requireRole = (...roles: string[]) => {
         'warning'
       );
 
+      // Generic error message - don't reveal required roles to prevent enumeration
       throw new HTTPException(403, {
-        message: `Forbidden - Requires one of the following roles: ${roles.join(', ')}`,
+        message: 'Forbidden - You do not have permission to access this resource',
       });
     }
 
@@ -261,7 +264,8 @@ export const requireClientType = (
     const hasClientType = types.some((requiredType) => clientTypes.includes(requiredType));
 
     if (!hasClientType) {
-      // Log permission denied to Sentry
+      // Log permission denied to Sentry with full details for debugging
+      // Note: Detailed information is logged server-side only, not exposed to clients
       logSecurityEvent(
         AuthEventType.PERMISSION_DENIED,
         {
@@ -275,8 +279,9 @@ export const requireClientType = (
         'warning'
       );
 
+      // Generic error message - don't reveal required client types to prevent enumeration
       throw new HTTPException(403, {
-        message: `Forbidden - Requires client type: ${types.join(' or ')}`,
+        message: 'Forbidden - You do not have permission to access this resource',
       });
     }
 
@@ -338,7 +343,8 @@ export const requirePermission = (...permissions: string[]) => {
     );
 
     if (!hasPermission) {
-      // Log permission denied to Sentry
+      // Log permission denied to Sentry with full details for debugging
+      // Note: Detailed information is logged server-side only, not exposed to clients
       logSecurityEvent(
         AuthEventType.PERMISSION_DENIED,
         {
@@ -352,8 +358,9 @@ export const requirePermission = (...permissions: string[]) => {
         'warning'
       );
 
+      // Generic error message - don't reveal required permissions to prevent enumeration
       throw new HTTPException(403, {
-        message: `Forbidden - Requires one of the following permissions: ${permissions.join(', ')}`,
+        message: 'Forbidden - You do not have permission to access this resource',
       });
     }
 
