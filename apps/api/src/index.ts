@@ -5,6 +5,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { auth } from './lib/auth.js';
 import { initSentry } from './lib/sentry.js';
+import { initializeSocketIO } from './lib/socket.js';
 import { type AuthVariables, authContext } from './middleware/auth.js';
 import { errorHandler } from './middleware/handle-errors.js';
 import clientRoutes from './routes/clients/index.js';
@@ -15,6 +16,12 @@ import projectRoutes from './routes/projects/index.js';
 import roleRoutes from './routes/roles/index.js';
 import ticketRoutes from './routes/tickets/index.js';
 import userRoutes from './routes/users/index.js';
+import labelRoutes from './routes/labels/index.js';
+import milestoneRoutes from './routes/milestones/index.js';
+import notificationRoutes from './routes/notifications/index.js';
+import sprintRoutes from './routes/sprints/index.js';
+import requestRoutes from './routes/requests/index.js';
+import { startAgingCheckCron } from './lib/intake-notifications.js';
 
 // Initialize Sentry for error tracking and monitoring
 initSentry();
@@ -54,6 +61,9 @@ app.get('/', (c) => {
       tickets: '/api/tickets',
       projects: '/api/projects',
       clients: '/api/clients',
+      labels: '/api/labels',
+      notifications: '/api/notifications',
+      requests: '/api/requests',
     },
   });
 });
@@ -72,6 +82,11 @@ app.route('/api/users', userRoutes);
 app.route('/api/roles', roleRoutes);
 app.route('/api/tickets', ticketRoutes);
 app.route('/api/projects', projectRoutes);
+app.route('/api/labels', labelRoutes);
+app.route('/api/milestones', milestoneRoutes);
+app.route('/api/notifications', notificationRoutes);
+app.route('/api/sprints', sprintRoutes);
+app.route('/api/requests', requestRoutes);
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
 
@@ -79,10 +94,17 @@ const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
 if (!process.env.VITEST) {
   console.log(`Hono server starting on http://localhost:${port}`);
 
-  serve({
+  const server = serve({
     fetch: app.fetch,
     port,
   });
+
+  // Initialize Socket.IO with the HTTP server
+  // Cast to satisfy Socket.IO's type requirements (node-server returns compatible type)
+  initializeSocketIO(server as unknown as import('node:http').Server);
+
+  // Start intake aging check cron job (runs every hour)
+  startAgingCheckCron();
 }
 
 export default app;

@@ -4,7 +4,6 @@
  */
 
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
-import type { TicketWithRelations } from '@/lib/api/tickets/types';
 import type { TeamMember } from '@/lib/api/users/types';
 
 /**
@@ -12,19 +11,10 @@ import type { TeamMember } from '@/lib/api/users/types';
  * Defines the complete structure for all data passed from the server to the Business Center
  */
 export interface BusinessCenterData {
-  intakeTickets: TicketWithRelations[];
   activeProjects: ProjectWithRelations[];
   teamMembers: TeamMember[];
   upcomingDeliveries: ProjectWithRelations[];
   recentlyCompleted: ProjectWithRelations[];
-}
-
-/**
- * Intake Queue Component Props
- */
-export interface IntakeQueueProps {
-  tickets: TicketWithRelations[];
-  teamMembers: TeamMember[];
 }
 
 /**

@@ -19,12 +19,16 @@ import {
   IconCircleCheck,
   IconCircleX,
 } from '@tabler/icons-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import type { Client } from '@/lib/api/clients/types';
 import { cn } from '@/lib/utils';
 
 interface ClientsCardsViewProps {
   clients: Client[];
   onClientClick?: (client: Client) => void;
+  selectionMode?: boolean;
+  selectedIds?: string[];
+  onSelectionChange?: (ids: string[]) => void;
 }
 
 const typeConfig = {
@@ -45,16 +49,40 @@ const typeConfig = {
   },
 } as const;
 
-export function ClientsCardsView({ clients, onClientClick }: ClientsCardsViewProps) {
+export function ClientsCardsView({
+  clients,
+  onClientClick,
+  selectionMode = false,
+  selectedIds = [],
+  onSelectionChange,
+}: ClientsCardsViewProps) {
   const baseId = useId();
 
   const handleClientActivate = useCallback(
     (client: Client) => {
+      if (selectionMode) {
+        // In selection mode, toggle selection instead of triggering click
+        const newSelectedIds = selectedIds.includes(client.id)
+          ? selectedIds.filter((id) => id !== client.id)
+          : [...selectedIds, client.id];
+        onSelectionChange?.(newSelectedIds);
+        return;
+      }
       if (onClientClick) {
         onClientClick(client);
       }
     },
-    [onClientClick]
+    [onClientClick, selectionMode, selectedIds, onSelectionChange]
+  );
+
+  const handleCheckboxChange = useCallback(
+    (clientId: string, checked: boolean) => {
+      const newSelectedIds = checked
+        ? [...selectedIds, clientId]
+        : selectedIds.filter((id) => id !== clientId);
+      onSelectionChange?.(newSelectedIds);
+    },
+    [selectedIds, onSelectionChange]
   );
 
   if (clients.length === 0) {
@@ -94,19 +122,32 @@ export function ClientsCardsView({ clients, onClientClick }: ClientsCardsViewPro
               {/* Header: Type Badge + Status */}
               <MotionCardHeader className="pb-4">
                 <div className="flex items-center justify-between gap-3 mb-3">
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      'text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 h-auto',
-                      type.color
+                  <div className="flex items-center gap-2">
+                    {selectionMode && (
+                      <Checkbox
+                        checked={selectedIds.includes(client.id)}
+                        onCheckedChange={(checked) =>
+                          handleCheckboxChange(client.id, checked === true)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={`Select ${client.name}`}
+                        className="h-4 w-4"
+                      />
                     )}
-                  >
-                    <span
-                      className={cn('w-1.5 h-1.5 rounded-full mr-1.5', type.dot)}
-                      aria-hidden="true"
-                    />
-                    {type.label}
-                  </Badge>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        'text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 h-auto',
+                        type.color
+                      )}
+                    >
+                      <span
+                        className={cn('w-1.5 h-1.5 rounded-full mr-1.5', type.dot)}
+                        aria-hidden="true"
+                      />
+                      {type.label}
+                    </Badge>
+                  </div>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex items-center gap-1">

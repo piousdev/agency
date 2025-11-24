@@ -2,7 +2,6 @@ import {
   IconCalendar,
   IconCircleCheck,
   IconCode,
-  IconInbox,
   IconPalette,
   IconUsers,
 } from '@tabler/icons-react';
@@ -13,7 +12,6 @@ import type { TeamMember } from '@/lib/api/users/types';
 import { ActiveWorkContent } from './active-work-content';
 import { ActiveWorkSoftware } from './active-work-software';
 import { DeliveryCalendar } from './delivery-calendar';
-import { IntakeQueue } from './intake-queue';
 import { RecentlyCompleted } from './recently-completed';
 import { TeamCapacity } from './team-capacity';
 
@@ -22,7 +20,6 @@ import { TeamCapacity } from './team-capacity';
  * Defines the structure for all data passed from the server
  */
 export interface BusinessCenterData {
-  intakeTickets: TicketWithRelations[];
   activeProjects: ProjectWithRelations[];
   teamMembers: TeamMember[];
   upcomingDeliveries: ProjectWithRelations[];
@@ -62,25 +59,9 @@ export function BusinessCenter({ data }: BusinessCenterProps) {
         </div>
       </div>
 
-      {/* 6-Section Grid Layout */}
+      {/* 5-Section Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {/* Section 1: Intake Queue */}
-        <Card className="xl:col-span-1">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <IconInbox className="h-5 w-5 text-info" />
-              <CardTitle>Intake Queue</CardTitle>
-            </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              New client requests awaiting assignment
-            </p>
-          </CardHeader>
-          <CardContent>
-            <IntakeQueue tickets={data.intakeTickets} teamMembers={data.teamMembers} />
-          </CardContent>
-        </Card>
-
-        {/* Section 2: Active Work - Content */}
+        {/* Section 1: Active Work - Content */}
         <Card className="xl:col-span-1">
           <CardHeader>
             <div className="flex items-center gap-2">

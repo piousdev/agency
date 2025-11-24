@@ -142,3 +142,28 @@ export const labelScopeEnum = pgEnum('label_scope', [
   'project', // Project-specific labels
   'ticket', // Ticket-specific labels
 ]);
+
+// ============================================
+// Intake Request Enums
+// ============================================
+export const requestTypeEnum = pgEnum('request_type', [
+  'bug', // Bug report
+  'feature', // New feature request
+  'enhancement', // Enhancement to existing feature
+  'change_request', // Change to existing functionality
+  'support', // Support request
+  'other', // Other type
+]);
+
+export const requestStageEnum = pgEnum('request_stage', [
+  'in_treatment', // Initial triage by PM
+  'on_hold', // Awaiting information/decision
+  'estimation', // Story point estimation by team
+  'ready', // Estimated, awaiting conversion
+]);
+
+export const confidenceEnum = pgEnum('confidence_level', [
+  'low', // Low confidence in estimate
+  'medium', // Medium confidence
+  'high', // High confidence
+]);

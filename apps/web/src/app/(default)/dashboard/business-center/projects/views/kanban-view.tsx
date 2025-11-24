@@ -15,8 +15,10 @@ import {
   IconCalendar,
   IconGripVertical,
   IconLoader2,
+  IconPlus,
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
@@ -198,12 +200,21 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
             <div className="space-y-3">
               {/* Column Header */}
               <div className="flex items-center justify-between px-1">
-                <h3 className={cn('text-sm font-semibold', statusHeaderColors[status])}>
-                  {statusLabels[status]}
-                </h3>
-                <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                  {projectsByStatus[status].length}
-                </span>
+                <div className="flex items-center gap-2">
+                  <h3 className={cn('text-sm font-semibold', statusHeaderColors[status])}>
+                    {statusLabels[status]}
+                  </h3>
+                  <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                    {projectsByStatus[status].length}
+                  </span>
+                </div>
+                <Link
+                  href={`/dashboard/business-center/projects/new?status=${status}`}
+                  className="flex items-center justify-center h-6 w-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  title={`Add ${statusLabels[status]} project`}
+                >
+                  <IconPlus className="h-4 w-4" />
+                </Link>
               </div>
 
               <Droppable droppableId={status}>

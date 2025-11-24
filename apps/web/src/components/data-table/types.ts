@@ -110,8 +110,10 @@ export interface DataTableProps<TData> {
   renderRowActions?: (row: Row<TData>) => React.ReactNode;
   /** Render function for bulk actions (shown when rows selected) */
   renderBulkActions?: (table: Table<TData>) => React.ReactNode;
-  /** Custom toolbar content */
+  /** Custom toolbar content (left side) */
   toolbarContent?: React.ReactNode;
+  /** Custom toolbar right content (next to Columns button) */
+  toolbarRightContent?: React.ReactNode;
   /** Table ID for accessibility */
   tableId?: string;
   /** Table caption for accessibility */

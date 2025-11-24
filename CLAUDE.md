@@ -130,6 +130,56 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
 
+CRITICAL RULE - Component Placement (NEVER in app/):
+Before creating ANY client components, forms, or UI elements:
+
+1. **NEVER** place components in the `app/` directory
+2. **NEVER** create `components/` folders inside `app/` routes
+3. **NEVER** create `client.tsx` files in `app/` routes
+4. **ONLY** `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx` belong in `app/`
+
+**The Pattern**:
+
+```
+App Route:       app/(default)/dashboard/{section}/{feature}/page.tsx
+Components:      src/components/dashboard/{section}/{feature}/*.tsx
+```
+
+**Examples**:
+| Route | Components Location |
+|-------|---------------------|
+| `app/.../intake/page.tsx` | `components/dashboard/business-center/intake/` |
+| `app/.../projects/page.tsx` | `components/dashboard/business-center/projects/` |
+| `app/.../overview/page.tsx` | `components/dashboard/overview/` |
+
+**❌ WRONG (NEVER do this)**:
+
+```
+app/.../intake/client.tsx           # ❌ WRONG
+app/.../intake/components/          # ❌ WRONG
+app/.../intake/request-card.tsx     # ❌ WRONG
+```
+
+**✅ CORRECT**:
+
+```
+app/.../intake/page.tsx                              # ✅ Only page.tsx in app/
+components/dashboard/business-center/intake/         # ✅ All components here
+├── intake-client.tsx
+├── request-card.tsx
+└── index.ts
+```
+
+**Trigger this rule when**:
+
+- Creating new pages or features
+- Adding client components to a route
+- User asks to "add a component" to a page
+
+**If uncertain**: ASK the user, do NOT assume.
+
+**Reference**: See `apps/web/ARCHITECTURE.md` → "Component Directory Structure (Critical)" for complete rules.
+
 CRITICAL RULE - File Naming Conventions:
 Before creating ANY new files or components:
 

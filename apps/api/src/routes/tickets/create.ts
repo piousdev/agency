@@ -101,7 +101,6 @@ app.post(
         entityType: EntityTypes.TICKET,
         entityId: newTicket[0]!.id,
         actorId: currentUser.id,
-        ticketId: newTicket[0]!.id,
         metadata: {
           title: body.title,
           type: body.type,

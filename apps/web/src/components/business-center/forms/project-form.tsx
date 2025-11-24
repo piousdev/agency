@@ -38,6 +38,7 @@ interface ProjectFormProps {
   clients: ClientOption[];
   mode: 'create' | 'edit';
   redirectPath?: string;
+  defaultStatus?: string;
 }
 
 const initialState: ProjectActionState = {
@@ -67,12 +68,18 @@ function SectionHeader({
   );
 }
 
-export function ProjectForm({ project, clients, mode, redirectPath }: ProjectFormProps) {
+export function ProjectForm({
+  project,
+  clients,
+  mode,
+  redirectPath,
+  defaultStatus,
+}: ProjectFormProps) {
   const router = useRouter();
 
   // Controlled state for selects (using string type for compatibility with Select components)
   const [clientId, setClientId] = useState(project?.clientId ?? '');
-  const [status, setStatus] = useState<string>(project?.status ?? 'proposal');
+  const [status, setStatus] = useState<string>(project?.status ?? defaultStatus ?? 'proposal');
   const [priority, setPriority] = useState<string>(project?.priority ?? 'medium');
   const [completion, setCompletion] = useState([project?.completionPercentage ?? 0]);
 

@@ -15,6 +15,16 @@ export { getTicket } from './get';
 export { listTickets } from './list';
 export { updateTicket } from './update';
 
+// Comment operations
+export { getTicketComments, createTicketComment } from './comments';
+export type {
+  Comment,
+  CommentAuthor,
+  CommentsResponse,
+  CommentResponse,
+  CreateCommentInput,
+} from './comments';
+
 // Helper utilities (exported for testing/advanced use)
 export { buildApiUrl, getAuthHeaders } from './api-utils';
 

@@ -13,8 +13,10 @@ export * from './file-upload-tracking';
 export * from './invitation';
 export * from './label';
 export * from './milestone';
+export * from './notification';
 export * from './project';
 export * from './project-assignment';
+export * from './request';
 export * from './rate-limit';
 export * from './role';
 export * from './role-assignment';
@@ -25,6 +27,7 @@ export * from './user';
 export * from './user-to-client';
 export * from './verification';
 export * from './watcher';
+export * from './dashboard-preferences';
 
 // Export all relations
 export * from './relations';

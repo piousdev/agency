@@ -31,6 +31,7 @@ interface DataTableToolbarProps<TData> {
   enableReset?: boolean;
   onReset?: () => void;
   children?: React.ReactNode;
+  rightContent?: React.ReactNode;
   className?: string;
 }
 
@@ -43,6 +44,7 @@ export function DataTableToolbar<TData>({
   enableReset = true,
   onReset,
   children,
+  rightContent,
   className,
 }: DataTableToolbarProps<TData>) {
   const [searchValue, setSearchValue] = useState(globalFilter);
@@ -71,8 +73,9 @@ export function DataTableToolbar<TData>({
   const activeFiltersCount = table.getState().columnFilters.length;
 
   return (
-    <div className={cn('flex flex-wrap items-center justify-between gap-2', className)}>
-      <div className="flex flex-1 flex-wrap items-center gap-2">
+    <div className={cn('flex items-center justify-between gap-2', className)}>
+      {/* Left side: Search and filters */}
+      <div className="flex flex-wrap items-center gap-2">
         {/* Global Search */}
         {enableGlobalFilter && (
           <div className="relative">
@@ -121,8 +124,8 @@ export function DataTableToolbar<TData>({
         )}
       </div>
 
+      {/* Right side: Column visibility and custom right content */}
       <div className="flex items-center gap-2">
-        {/* Column visibility toggle */}
         {enableColumnVisibility && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -154,6 +157,7 @@ export function DataTableToolbar<TData>({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
+        {rightContent}
       </div>
     </div>
   );

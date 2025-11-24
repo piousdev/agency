@@ -66,6 +66,7 @@ describe('Business Center Actions', () => {
         description: 'Test Description',
         type: 'intake',
         priority: 'high',
+        source: 'web_form',
       });
       expect(revalidatePath).toHaveBeenCalledWith('/dashboard/business-center');
     });

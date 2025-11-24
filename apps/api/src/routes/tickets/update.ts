@@ -75,14 +75,15 @@ app.patch(
       });
 
       // Log activity for ticket update
-      await logEntityChange({
-        entityType: EntityTypes.TICKET,
-        entityId: ticketId,
-        actorId: currentUser.id,
-        ticketId: ticketId,
-        before: existingTicket,
-        after: updatedTicket!,
-      });
+      await logEntityChange(
+        {
+          entityType: EntityTypes.TICKET,
+          entityId: ticketId,
+          actorId: currentUser.id,
+        },
+        existingTicket,
+        updatedTicket!
+      );
 
       return c.json({
         success: true,

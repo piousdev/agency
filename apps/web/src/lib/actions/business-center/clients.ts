@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireUser } from '@/lib/auth/session';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createClient, updateClient } from '@/lib/api/clients';
 import { withErrorHandling, type ActionResult } from './errors';
 import { createClientSchema, updateClientSchema } from '@/lib/schemas';
@@ -12,9 +12,10 @@ import { createClientSchema, updateClientSchema } from '@/lib/schemas';
 export async function createClientAction(
   formData: FormData
 ): Promise<{ success: boolean; error?: string; clientId?: string }> {
-  const user = await requireUser();
-  if (!user.isInternal) {
-    return { success: false, error: 'Access denied: Internal team only' };
+  try {
+    await requirePermission(Permissions.CLIENT_CREATE);
+  } catch {
+    return { success: false, error: "You don't have permission to create clients" };
   }
 
   // Parse form data
@@ -62,9 +63,10 @@ export async function updateClientFullAction(
   clientId: string,
   formData: FormData
 ): Promise<{ success: boolean; error?: string; clientId?: string }> {
-  const user = await requireUser();
-  if (!user.isInternal) {
-    return { success: false, error: 'Access denied: Internal team only' };
+  try {
+    await requirePermission(Permissions.CLIENT_EDIT);
+  } catch {
+    return { success: false, error: "You don't have permission to edit clients" };
   }
 
   // Parse form data - only include fields that are present
@@ -127,10 +129,7 @@ export async function updateClientFullAction(
  */
 export async function deactivateClientAction(clientId: string): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.CLIENT_DELETE);
 
     // Soft delete by setting active to false
     const result = await updateClient(clientId, { active: false });

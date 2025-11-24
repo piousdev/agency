@@ -31,8 +31,12 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useAuth } from './use-auth';
-import type { Permission } from '@/lib/auth/permissions';
-import { DefaultRolePermissions } from '@/lib/auth/permissions';
+import type { Permission } from '@/lib/auth/permissions-constants';
+import { DefaultRolePermissions, Permissions } from '@/lib/auth/permissions-constants';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+// Re-export for convenience in client components
+export { Permissions, type Permission } from '@/lib/auth/permissions-constants';
 
 interface UsePermissionsReturn {
   /**
@@ -177,6 +181,56 @@ export function usePermissions(): UsePermissionsReturn {
 }
 
 /**
+ * Permission label mapping for user-friendly messages
+ */
+const PermissionLabels: Record<string, string> = {
+  'ticket:create': 'create tickets',
+  'ticket:edit': 'edit tickets',
+  'ticket:delete': 'delete tickets',
+  'ticket:assign': 'assign tickets',
+  'ticket:view': 'view tickets',
+  'project:create': 'create projects',
+  'project:edit': 'edit projects',
+  'project:delete': 'delete projects',
+  'project:assign': 'assign projects',
+  'project:view': 'view projects',
+  'client:create': 'create clients',
+  'client:edit': 'edit clients',
+  'client:delete': 'delete clients',
+  'client:view': 'view clients',
+  'bulk:operations': 'perform bulk operations',
+  'admin:users': 'manage users',
+  'admin:roles': 'manage roles',
+};
+
+/**
+ * Get a user-friendly label for a permission
+ */
+function getPermissionLabel(permission: Permission): string {
+  return PermissionLabels[permission] || permission;
+}
+
+interface PermissionGateProps {
+  /** Single permission to check */
+  permission?: Permission;
+  /** Multiple permissions to check */
+  permissions?: Permission[];
+  /** Mode for multiple permissions: 'all' requires all, 'any' requires at least one */
+  mode?: 'all' | 'any';
+  /** Fallback content when permission is denied (for 'hide' behavior) */
+  fallback?: React.ReactNode;
+  /**
+   * Behavior when permission is denied:
+   * - 'hide': Hide the content entirely (show fallback if provided)
+   * - 'disable': Show content in disabled state with tooltip
+   */
+  behavior?: 'hide' | 'disable';
+  /** Custom tooltip message when disabled (overrides default) */
+  disabledTooltip?: string;
+  children: React.ReactNode;
+}
+
+/**
  * PermissionGate Component
  *
  * Conditionally renders children based on permissions.
@@ -184,10 +238,17 @@ export function usePermissions(): UsePermissionsReturn {
  *
  * Usage:
  * ```tsx
+ * // Hide content when permission is missing
  * <PermissionGate permission={Permissions.PROJECT_CREATE}>
  *   <CreateProjectButton />
  * </PermissionGate>
  *
+ * // Show disabled state with tooltip when permission is missing
+ * <PermissionGate permission={Permissions.PROJECT_CREATE} behavior="disable">
+ *   <Button>Create Project</Button>
+ * </PermissionGate>
+ *
+ * // Multiple permissions with 'any' mode
  * <PermissionGate permissions={[Permissions.PROJECT_EDIT, Permissions.PROJECT_DELETE]} mode="any">
  *   <ProjectActions />
  * </PermissionGate>
@@ -198,36 +259,56 @@ export function PermissionGate({
   permissions: requiredPermissions,
   mode = 'all',
   fallback = null,
+  behavior = 'hide',
+  disabledTooltip,
   children,
-}: {
-  /** Single permission to check */
-  permission?: Permission;
-  /** Multiple permissions to check */
-  permissions?: Permission[];
-  /** Mode for multiple permissions: 'all' requires all, 'any' requires at least one */
-  mode?: 'all' | 'any';
-  /** Fallback content when permission is denied */
-  fallback?: React.ReactNode;
-  children: React.ReactNode;
-}) {
+}: PermissionGateProps) {
   const { can, canAll, canAny, isLoading } = usePermissions();
 
   if (isLoading) {
     return null;
   }
 
-  // Single permission check
+  // Determine if user has permission
+  let hasPermission = true;
+
   if (permission) {
-    return can(permission) ? <>{children}</> : <>{fallback}</>;
+    hasPermission = can(permission);
+  } else if (requiredPermissions && requiredPermissions.length > 0) {
+    hasPermission = mode === 'all' ? canAll(requiredPermissions) : canAny(requiredPermissions);
   }
 
-  // Multiple permissions check
-  if (requiredPermissions && requiredPermissions.length > 0) {
-    const hasPermission =
-      mode === 'all' ? canAll(requiredPermissions) : canAny(requiredPermissions);
-    return hasPermission ? <>{children}</> : <>{fallback}</>;
+  // User has permission - render normally
+  if (hasPermission) {
+    return <>{children}</>;
   }
 
-  // No permissions specified, render children
-  return <>{children}</>;
+  // User lacks permission - handle based on behavior
+  if (behavior === 'hide') {
+    return <>{fallback}</>;
+  }
+
+  // 'disable' behavior - wrap children in disabled state with tooltip
+  const tooltipMessage =
+    disabledTooltip ||
+    (permission
+      ? `You don't have permission to ${getPermissionLabel(permission)}`
+      : requiredPermissions && requiredPermissions.length > 0
+        ? `You need permission to ${requiredPermissions.map(getPermissionLabel).join(mode === 'all' ? ' and ' : ' or ')}`
+        : 'Permission denied');
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex cursor-not-allowed">
+            <span className="pointer-events-none opacity-50">{children}</span>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltipMessage}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
 }

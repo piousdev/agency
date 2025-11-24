@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireUser } from '@/lib/auth/session';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createTicket, updateTicket, assignTicket } from '@/lib/api/tickets';
 import { withErrorHandling, type ActionResult } from './errors';
 import { createTicketSchema, updateTicketSchema } from '@/lib/schemas';
@@ -14,9 +14,10 @@ type TicketStatus = 'open' | 'in_progress' | 'pending_client' | 'resolved' | 'cl
 export async function createTicketAction(
   formData: FormData
 ): Promise<{ success: boolean; error?: string; ticketId?: string }> {
-  const user = await requireUser();
-  if (!user.isInternal) {
-    return { success: false, error: 'Access denied: Internal team only' };
+  try {
+    await requirePermission(Permissions.TICKET_CREATE);
+  } catch {
+    return { success: false, error: "You don't have permission to create tickets" };
   }
 
   // Parse form data
@@ -63,9 +64,10 @@ export async function updateTicketFullAction(
   ticketId: string,
   formData: FormData
 ): Promise<{ success: boolean; error?: string; ticketId?: string }> {
-  const user = await requireUser();
-  if (!user.isInternal) {
-    return { success: false, error: 'Access denied: Internal team only' };
+  try {
+    await requirePermission(Permissions.TICKET_EDIT);
+  } catch {
+    return { success: false, error: "You don't have permission to edit tickets" };
   }
 
   // Parse form data
@@ -124,10 +126,7 @@ export async function updateTicketFullAction(
  */
 export async function deleteTicketAction(ticketId: string): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.TICKET_DELETE);
 
     // Soft delete by setting status to closed
     const result = await updateTicket(ticketId, { status: 'closed' });
@@ -143,10 +142,7 @@ export async function deleteTicketAction(ticketId: string): Promise<ActionResult
 
 export async function assignTicketAction(ticketId: string, userId: string): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.TICKET_ASSIGN);
 
     // Assign ticket to user
     const assignResult = await assignTicket(ticketId, { assignedToId: userId });
@@ -170,10 +166,7 @@ export async function updateTicketStatusAction(
   status: TicketStatus
 ): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.TICKET_EDIT);
 
     const result = await updateTicket(ticketId, { status });
 
@@ -193,10 +186,7 @@ export async function updateTicketPriorityAction(
   priority: TicketPriority
 ): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.TICKET_EDIT);
 
     const result = await updateTicket(ticketId, { priority });
 
@@ -215,10 +205,7 @@ export async function addTicketCommentAction(
   isInternal: boolean = false
 ): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.TICKET_EDIT);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/tickets/${ticketId}/comments`,

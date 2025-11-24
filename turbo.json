@@ -45,12 +45,13 @@
         "REDIS_TOKEN",
         "ADMIN_EMAIL",
         "ADMIN_PASSWORD",
-        "ADMIN_NAME"
+        "ADMIN_NAME",
+        "CORS_ORIGIN"
       ]
     },
     "lint": {
       "dependsOn": ["^lint"],
-      "env": ["VITEST"]
+      "env": ["VITEST", "CORS_ORIGIN", "NEXT_PUBLIC_APP_URL"]
     },
     "test": {
       "outputs": ["coverage/**", "node_modules/.cache/vitest/**"],

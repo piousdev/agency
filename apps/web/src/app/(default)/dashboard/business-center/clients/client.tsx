@@ -17,6 +17,7 @@ import { BusinessCenterHeader } from '../components/header';
 import { ClientsTableView } from './views/table-view';
 import { ClientsCardsView } from './views/cards-view';
 import { ClientsKanbanView } from './views/kanban-view';
+import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
 import type { Client } from '@/lib/api/clients/types';
 import { clientTypeOptions } from '@/lib/schemas';
 
@@ -204,12 +205,14 @@ export function ClientsClient({ clients, allClients }: ClientsClientProps) {
         activeFilterCount={activeFiltersCount}
         onExport={handleExport}
         primaryAction={
-          <Button asChild>
-            <Link href="/dashboard/business-center/clients/new">
-              <IconPlus className="mr-2 h-4 w-4" />
-              New Client
-            </Link>
-          </Button>
+          <PermissionGate permission={Permissions.CLIENT_CREATE} behavior="disable">
+            <Button asChild>
+              <Link href="/dashboard/business-center/clients/new">
+                <IconPlus className="mr-2 h-4 w-4" />
+                New Client
+              </Link>
+            </Button>
+          </PermissionGate>
         }
       />
 

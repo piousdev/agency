@@ -10,7 +10,6 @@ import type { BusinessCenterData } from '../types';
 
 // Mock empty data for testing
 const mockEmptyData: BusinessCenterData = {
-  intakeTickets: [],
   activeProjects: [],
   teamMembers: [],
   upcomingDeliveries: [],
@@ -23,10 +22,9 @@ describe('BusinessCenter', () => {
     expect(screen.getByText('Business Center')).toBeInTheDocument();
   });
 
-  it('should render all 6 section titles', () => {
+  it('should render all 5 section titles', () => {
     render(<BusinessCenter data={mockEmptyData} />);
 
-    expect(screen.getByText('Intake Queue')).toBeInTheDocument();
     expect(screen.getByText('Active Work - Content')).toBeInTheDocument();
     expect(screen.getByText('Active Work - Software')).toBeInTheDocument();
     expect(screen.getByText('Team Capacity')).toBeInTheDocument();
@@ -37,7 +35,6 @@ describe('BusinessCenter', () => {
   it('should display empty states when no data', () => {
     render(<BusinessCenter data={mockEmptyData} />);
 
-    expect(screen.getByText('No pending intake requests')).toBeInTheDocument();
     expect(screen.getByText('No active content projects')).toBeInTheDocument();
     expect(screen.getByText('No active software projects')).toBeInTheDocument();
     expect(screen.getByText('No team members')).toBeInTheDocument();

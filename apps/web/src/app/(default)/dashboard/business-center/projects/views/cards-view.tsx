@@ -15,12 +15,16 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { IconAlertTriangle, IconClipboardList, IconCalendar, IconUsers } from '@tabler/icons-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import { cn } from '@/lib/utils';
 
 interface ProjectCardsViewProps {
   projects: ProjectWithRelations[];
   onProjectClick?: (projectId: string) => void;
+  selectionMode?: boolean;
+  selectedIds?: string[];
+  onSelectionChange?: (ids: string[]) => void;
 }
 
 const statusConfig = {
@@ -82,19 +86,43 @@ function getProgressTextColor(percentage: number): string {
   return 'text-blue-600';
 }
 
-export function ProjectCardsView({ projects, onProjectClick }: ProjectCardsViewProps) {
+export function ProjectCardsView({
+  projects,
+  onProjectClick,
+  selectionMode = false,
+  selectedIds = [],
+  onSelectionChange,
+}: ProjectCardsViewProps) {
   const router = useRouter();
   const baseId = useId();
 
   const handleProjectActivate = useCallback(
     (projectId: string) => {
+      if (selectionMode) {
+        // In selection mode, toggle selection instead of navigating
+        const newSelectedIds = selectedIds.includes(projectId)
+          ? selectedIds.filter((id) => id !== projectId)
+          : [...selectedIds, projectId];
+        onSelectionChange?.(newSelectedIds);
+        return;
+      }
       if (onProjectClick) {
         onProjectClick(projectId);
       } else {
         router.push(`/dashboard/business-center/projects/${projectId}`);
       }
     },
-    [onProjectClick, router]
+    [onProjectClick, router, selectionMode, selectedIds, onSelectionChange]
+  );
+
+  const handleCheckboxChange = useCallback(
+    (projectId: string, checked: boolean) => {
+      const newSelectedIds = checked
+        ? [...selectedIds, projectId]
+        : selectedIds.filter((id) => id !== projectId);
+      onSelectionChange?.(newSelectedIds);
+    },
+    [selectedIds, onSelectionChange]
   );
 
   if (projects.length === 0) {
@@ -141,19 +169,32 @@ export function ProjectCardsView({ projects, onProjectClick }: ProjectCardsViewP
               {/* Header: Status Badge + Title */}
               <MotionCardHeader className="pb-4">
                 <div className="flex items-center justify-between gap-3 mb-2">
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      'text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 h-auto',
-                      status.color
+                  <div className="flex items-center gap-2">
+                    {selectionMode && (
+                      <Checkbox
+                        checked={selectedIds.includes(project.id)}
+                        onCheckedChange={(checked) =>
+                          handleCheckboxChange(project.id, checked === true)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={`Select ${project.name}`}
+                        className="h-4 w-4"
+                      />
                     )}
-                  >
-                    <span
-                      className={cn('w-1.5 h-1.5 rounded-full mr-1.5', status.dot)}
-                      aria-hidden="true"
-                    />
-                    {status.label}
-                  </Badge>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        'text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 h-auto',
+                        status.color
+                      )}
+                    >
+                      <span
+                        className={cn('w-1.5 h-1.5 rounded-full mr-1.5', status.dot)}
+                        aria-hidden="true"
+                      />
+                      {status.label}
+                    </Badge>
+                  </div>
                   {/* Progress indicator */}
                   <span
                     className={cn('text-sm font-bold tabular-nums', getProgressTextColor(progress))}

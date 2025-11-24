@@ -327,18 +327,23 @@ export const businessCenterNavigation: NavigationItem = {
   items: [
     {
       title: 'Overview',
-      description: 'Central hub for daily operations and overview',
+      description: 'Customizable role-based dashboard',
       url: '/dashboard/business-center',
     },
     {
-      title: 'Intake Queue',
-      description: 'Manage incoming client requests',
-      url: '/dashboard/business-center/intake-queue',
+      title: 'Intake',
+      description: 'Manage incoming client requests through the intake pipeline',
+      url: '/dashboard/business-center/intake',
     },
     {
       title: 'Projects',
       description: 'Manage all projects with filters for content and software',
       url: '/dashboard/business-center/projects',
+    },
+    {
+      title: 'Sprints',
+      description: 'Manage sprints across all projects',
+      url: '/dashboard/business-center/sprints',
     },
     {
       title: 'Clients',

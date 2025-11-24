@@ -89,14 +89,16 @@ app.patch(
       };
 
       // Log activity for project update
-      await logEntityChange({
-        entityType: EntityTypes.PROJECT,
-        entityId: projectId,
-        actorId: currentUser.id,
-        projectId: projectId,
-        before: existingProject,
-        after: projectWithRelations!,
-      });
+      await logEntityChange(
+        {
+          entityType: EntityTypes.PROJECT,
+          entityId: projectId,
+          actorId: currentUser.id,
+          projectId: projectId,
+        },
+        existingProject,
+        projectWithRelations!
+      );
 
       return c.json({
         success: true,

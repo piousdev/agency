@@ -51,7 +51,6 @@ app.post(
         entityType: EntityTypes.CLIENT,
         entityId: clientId,
         actorId: currentUser.id,
-        clientId: clientId,
         metadata: {
           name: data.name,
           type: data.type,

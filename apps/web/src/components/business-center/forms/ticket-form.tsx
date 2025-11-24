@@ -50,6 +50,7 @@ interface TicketFormProps {
   users: UserOption[];
   mode: 'create' | 'edit';
   redirectPath?: string;
+  defaultPriority?: string;
   onSubmit: (
     formData: FormData
   ) => Promise<{ success: boolean; error?: string; ticketId?: string }>;
@@ -83,6 +84,7 @@ export function TicketForm({
   users,
   mode,
   redirectPath,
+  defaultPriority,
   onSubmit,
 }: TicketFormProps) {
   const router = useRouter();
@@ -95,7 +97,7 @@ export function TicketForm({
   const [assignedToId, setAssignedToId] = useState(ticket?.assignedToId ?? '');
   const [type, setType] = useState<string>(ticket?.type ?? 'intake');
   const [status, setStatus] = useState<string>(ticket?.status ?? 'open');
-  const [priority, setPriority] = useState<string>(ticket?.priority ?? 'medium');
+  const [priority, setPriority] = useState<string>(ticket?.priority ?? defaultPriority ?? 'medium');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

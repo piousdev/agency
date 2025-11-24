@@ -19,8 +19,7 @@ test.describe('Business Center', () => {
     // Check main heading
     await expect(page.getByRole('heading', { name: 'Business Center' })).toBeVisible();
 
-    // Check all section titles are present
-    await expect(page.getByText('Intake Queue')).toBeVisible();
+    // Check all section titles are present (5 sections after Intake Queue refactoring)
     await expect(page.getByText('Active Work - Content')).toBeVisible();
     await expect(page.getByText('Active Work - Software')).toBeVisible();
     await expect(page.getByText('Team Capacity')).toBeVisible();
@@ -32,7 +31,6 @@ test.describe('Business Center', () => {
     await page.waitForLoadState('networkidle');
 
     // Check for empty state messages
-    await expect(page.getByText('No pending intake requests')).toBeVisible();
     await expect(page.getByText('No active content projects')).toBeVisible();
     await expect(page.getByText('No active software projects')).toBeVisible();
   });
@@ -54,23 +52,8 @@ test.describe('Business Center', () => {
   });
 });
 
-test.describe('Business Center - Intake Queue', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/dashboard/business-center');
-    await page.waitForLoadState('networkidle');
-  });
-
-  test('should display intake tickets in table', async ({ page }) => {
-    // TODO: Add test data setup
-    // Check if table is visible with tickets
-  });
-
-  test('should open assign modal when clicking Assign button', async ({ page }) => {
-    // TODO: Add test data setup and implement
-    // Click Assign button
-    // Expect modal to be visible
-  });
-});
+// Note: Intake Pipeline tests will be added when the new implementation is complete
+// See: /dashboard/business-center/intake
 
 test.describe('Business Center - Team Capacity', () => {
   test.beforeEach(async ({ page }) => {

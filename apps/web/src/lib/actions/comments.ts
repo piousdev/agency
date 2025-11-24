@@ -6,6 +6,7 @@ import {
   updateComment as apiUpdateComment,
   deleteComment as apiDeleteComment,
 } from '@/lib/api/projects';
+import { createTicketComment } from '@/lib/api/tickets';
 
 export async function createCommentAction(projectId: string, content: string, isInternal: boolean) {
   try {
@@ -50,5 +51,50 @@ export async function deleteFileAction(projectId: string, fileId: string) {
   } catch (error) {
     console.error('Failed to delete file:', error);
     return { success: false, error: 'Failed to delete file' };
+  }
+}
+
+/**
+ * Create a comment on a ticket
+ */
+export async function createTicketCommentAction(
+  ticketId: string,
+  content: string,
+  isInternal = false
+) {
+  try {
+    const result = await createTicketComment(ticketId, { content, isInternal });
+    revalidatePath(`/dashboard/business-center/intake-queue`);
+    revalidatePath(`/dashboard/business-center`);
+    return { success: true, data: result };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to create comment';
+    console.error('Failed to create ticket comment:', message, error);
+    return { success: false, error: message };
+  }
+}
+
+/**
+ * Quick reply action - creates a comment on either a ticket or project
+ */
+export async function quickReplyAction(
+  entityType: 'ticket' | 'project',
+  entityId: string,
+  content: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    if (entityType === 'ticket') {
+      await createTicketComment(entityId, { content, isInternal: false });
+      revalidatePath(`/dashboard/business-center/intake-queue`);
+    } else {
+      await apiCreateComment(entityId, { content, isInternal: false });
+      revalidatePath(`/dashboard/business-center/projects/${entityId}`);
+    }
+    revalidatePath(`/dashboard/business-center`);
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to send reply';
+    console.error('Failed to send quick reply:', message, error);
+    return { success: false, error: message };
   }
 }

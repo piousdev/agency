@@ -15,8 +15,8 @@ interface ProjectActivityProps {
 export function ProjectActivity({ projectId }: ProjectActivityProps) {
   const fetchFn = useCallback(async (id: string, params: { limit?: number; offset?: number }) => {
     const response = await getProjectActivity(id, {
-      pageSize: params.limit,
-      page: params.offset ? Math.floor(params.offset / (params.limit || 20)) + 1 : 1,
+      limit: params.limit,
+      offset: params.offset,
     });
     // Transform the response to match the Activity type
     const activities: Activity[] = response.data.map((item) => ({

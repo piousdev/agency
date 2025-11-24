@@ -39,7 +39,7 @@ interface ActivityConfig {
   getMessage: (metadata: Record<string, unknown> | null) => string;
 }
 
-const activityConfig: Record<ActivityType, ActivityConfig> = {
+const activityConfig: Partial<Record<ActivityType, ActivityConfig>> = {
   project_created: {
     icon: IconPlus,
     color: 'text-emerald-500',
@@ -157,6 +157,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
       <div className="space-y-6">
         {activities.map((activity) => {
           const config = activityConfig[activity.type];
+          if (!config) return null;
           const Icon = config.icon;
           const message = config.getMessage(activity.metadata);
 

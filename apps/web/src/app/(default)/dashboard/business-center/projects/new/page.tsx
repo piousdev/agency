@@ -17,7 +17,23 @@ export const metadata = {
   description: 'Create a new project',
 };
 
-export default async function NewProjectPage() {
+interface PageProps {
+  searchParams: Promise<{ status?: string }>;
+}
+
+const validStatuses = [
+  'proposal',
+  'in_development',
+  'in_review',
+  'delivered',
+  'on_hold',
+  'maintenance',
+  'archived',
+];
+
+export default async function NewProjectPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const defaultStatus = validStatuses.includes(params.status || '') ? params.status : undefined;
   // Server-side authentication
   const user = await requireUser();
 
@@ -54,6 +70,7 @@ export default async function NewProjectPage() {
       <ProjectForm
         clients={clients}
         mode="create"
+        defaultStatus={defaultStatus}
         redirectPath="/dashboard/business-center/projects"
       />
     </div>

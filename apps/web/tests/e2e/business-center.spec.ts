@@ -3,9 +3,10 @@
  *
  * Tests the complete Business Center feature including:
  * - Access control (internal users only)
- * - Intake flow (create → assign)
  * - Project assignment
  * - Capacity updates
+ *
+ * Note: Intake Pipeline tests are in a separate spec file
  */
 
 import { test, expect } from '@playwright/test';
@@ -34,77 +35,6 @@ test.describe('Business Center', () => {
 
       // Should see Business Center heading
       await expect(page.getByRole('heading', { name: /business center/i })).toBeVisible();
-    });
-  });
-
-  test.describe('Intake Flow', () => {
-    test('should create a new intake ticket', async ({ page }) => {
-      // Navigate to Business Center
-      await page.goto('/dashboard/business-center');
-
-      // Click "New Request" button in Intake Queue section
-      await page.getByRole('button', { name: /new request/i }).click();
-
-      // Fill out intake form
-      await page.getByLabel(/client/i).selectOption({ index: 1 }); // Select first client
-      await page.getByLabel(/title/i).fill('Test Intake Request');
-      await page.getByLabel(/description/i).fill('This is a test intake request for E2E testing');
-      await page.getByLabel(/priority/i).selectOption('medium');
-
-      // Submit form
-      await page.getByRole('button', { name: /create request/i }).click();
-
-      // Should see success message
-      await expect(page.getByText(/created successfully/i)).toBeVisible();
-
-      // Should see new ticket in Intake Queue
-      await expect(page.getByText('Test Intake Request')).toBeVisible();
-    });
-
-    test('should assign intake ticket to team member', async ({ page }) => {
-      // Navigate to Business Center
-      await page.goto('/dashboard/business-center');
-
-      // Assume there's an existing unassigned ticket
-      // Click on first ticket in queue
-      const firstTicket = page.locator('[data-testid="intake-ticket"]').first();
-      await firstTicket.click();
-
-      // Detail modal should open
-      await expect(page.getByRole('dialog')).toBeVisible();
-
-      // Click assign button
-      await page.getByRole('button', { name: /assign/i }).click();
-
-      // Select team member
-      await page.locator('[data-testid="team-member-option"]').first().click();
-
-      // Confirm assignment
-      await page.getByRole('button', { name: /confirm/i }).click();
-
-      // Should see success message
-      await expect(page.getByText(/assigned successfully/i)).toBeVisible();
-
-      // Ticket should now show assignee
-      await expect(firstTicket.getByText(/assigned to/i)).toBeVisible();
-    });
-
-    test('should show capacity warning when assigning to overloaded member', async ({ page }) => {
-      // Navigate to Business Center
-      await page.goto('/dashboard/business-center');
-
-      // Click on a ticket
-      await page.locator('[data-testid="intake-ticket"]').first().click();
-
-      // Click assign button
-      await page.getByRole('button', { name: /assign/i }).click();
-
-      // Select a team member at or above 100% capacity
-      await page.locator('[data-testid="overloaded-member"]').first().click();
-
-      // Should see capacity warning
-      await expect(page.getByText(/at or above 100% capacity/i)).toBeVisible();
-      await expect(page.getByText(/capacity warning/i)).toBeVisible();
     });
   });
 
@@ -269,37 +199,6 @@ test.describe('Business Center', () => {
           completedProjects.first().locator('[data-testid="completion-date"]')
         ).toBeVisible();
       }
-    });
-  });
-
-  test.describe('Integration Flow', () => {
-    test('should complete full intake-to-project workflow', async ({ page }) => {
-      // 1. Create intake ticket
-      await page.goto('/dashboard/business-center');
-      await page.getByRole('button', { name: /new request/i }).click();
-      await page.getByLabel(/client/i).selectOption({ index: 1 });
-      await page.getByLabel(/title/i).fill('E2E Integration Test Project');
-      await page.getByLabel(/description/i).fill('Full workflow test');
-      await page.getByLabel(/priority/i).selectOption('high');
-      await page.getByRole('button', { name: /create request/i }).click();
-
-      // 2. Assign to team member
-      await page.getByText('E2E Integration Test Project').click();
-      await page.getByRole('button', { name: /assign/i }).click();
-      await page.locator('[data-testid="team-member-option"]').first().click();
-      await page.getByRole('button', { name: /confirm/i }).click();
-
-      // 3. Verify assignment succeeded
-      await expect(page.getByText(/assigned successfully/i)).toBeVisible();
-
-      // 4. Update capacity
-      await page.locator('[data-testid="team-capacity-section"]').scrollIntoViewIfNeeded();
-      await page.locator('[data-testid="update-capacity-button"]').first().click();
-      await page.getByLabel(/capacity percentage/i).fill('80');
-      await page.getByRole('button', { name: /update/i }).click();
-
-      // 5. Verify workflow completed
-      await expect(page.getByText(/capacity updated/i)).toBeVisible();
     });
   });
 });

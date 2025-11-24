@@ -6,7 +6,7 @@ import { user } from './user';
  * Entity type for activity tracking
  * Allows unified activity logging across different entities
  */
-export const entityTypeEnum = pgEnum('entity_type', ['project', 'ticket', 'client']);
+export const entityTypeEnum = pgEnum('entity_type', ['project', 'ticket', 'client', 'label']);
 
 /**
  * Activity types for audit trail

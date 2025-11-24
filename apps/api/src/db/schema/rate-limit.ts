@@ -1,4 +1,4 @@
-import { pgTable, text, integer, bigint } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, bigint, index } from 'drizzle-orm/pg-core';
 
 /**
  * Rate Limit Table
@@ -17,9 +17,16 @@ import { pgTable, text, integer, bigint } from 'drizzle-orm/pg-core';
  * - count: Number of requests made within the current window
  * - lastRequest: Timestamp of the last request (in milliseconds since epoch)
  */
-export const rateLimit = pgTable('rate_limit', {
-  id: text('id').primaryKey(),
-  key: text('key'),
-  count: integer('count'),
-  lastRequest: bigint('last_request', { mode: 'number' }),
-});
+export const rateLimit = pgTable(
+  'rate_limit',
+  {
+    id: text('id').primaryKey(),
+    key: text('key'),
+    count: integer('count'),
+    lastRequest: bigint('last_request', { mode: 'number' }),
+  },
+  (table) => [
+    // Index for fast lookups by rate limit key (IP + endpoint)
+    index('rate_limit_key_idx').on(table.key),
+  ]
+);

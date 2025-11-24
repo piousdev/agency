@@ -12,3 +12,8 @@ export { StatusSelect, type ProjectStatus, type TicketStatus } from './status-se
 export { ProjectForm } from './project-form';
 export { TicketForm } from './ticket-form';
 export { ClientForm } from './client-form';
+export { LabelForm } from './label-form';
+
+// Label components
+export { LabelBadge } from './label-badge';
+export { LabelSelect, type LabelOption } from './label-select';

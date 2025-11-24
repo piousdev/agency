@@ -19,6 +19,9 @@ import { ticket, ticketActivity } from './ticket';
 import { user } from './user';
 import { userToClient } from './user-to-client';
 import { projectWatcher, ticketWatcher } from './watcher';
+import { userDashboardPreferences, widgetConfiguration } from './dashboard-preferences';
+import { notification } from './notification';
+import { request, requestAttachment, requestHistory } from './request';
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -40,6 +43,17 @@ export const userRelations = relations(user, ({ many }) => ({
   ticketWatching: many(ticketWatcher),
   completedChecklistItems: many(checklistItem, { relationName: 'completedBy' }),
   assignedChecklistItems: many(checklistItem, { relationName: 'assignedChecklistItems' }),
+  // Dashboard preferences
+  dashboardPreferences: many(userDashboardPreferences),
+  widgetConfigurations: many(widgetConfiguration),
+  // Notifications
+  receivedNotifications: many(notification, { relationName: 'notificationRecipient' }),
+  sentNotifications: many(notification, { relationName: 'notificationSender' }),
+  // Intake requests
+  submittedRequests: many(request, { relationName: 'requesterRequests' }),
+  assignedRequests: many(request, { relationName: 'assignedPmRequests' }),
+  estimatedRequests: many(request, { relationName: 'estimatorRequests' }),
+  requestHistoryActions: many(requestHistory, { relationName: 'requestHistoryActor' }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -63,6 +77,8 @@ export const clientRelations = relations(client, ({ many }) => ({
   invitations: many(invitation),
   // New relation for multiple contacts
   contacts: many(clientContact),
+  // Intake requests
+  requests: many(request),
 }));
 
 export const userToClientRelations = relations(userToClient, ({ one }) => ({
@@ -97,6 +113,8 @@ export const projectRelations = relations(project, ({ one, many }) => ({
   watchers: many(projectWatcher),
   labels: many(projectLabel),
   checklists: many(checklist, { relationName: 'projectChecklists' }),
+  // Intake requests related to this project
+  relatedRequests: many(request),
 }));
 
 export const ticketRelations = relations(ticket, ({ one, many }) => ({
@@ -346,5 +364,92 @@ export const checklistItemRelations = relations(checklistItem, ({ one }) => ({
     fields: [checklistItem.assigneeId],
     references: [user.id],
     relationName: 'assignedChecklistItems',
+  }),
+}));
+
+// Dashboard preferences relations
+export const userDashboardPreferencesRelations = relations(userDashboardPreferences, ({ one }) => ({
+  user: one(user, {
+    fields: [userDashboardPreferences.userId],
+    references: [user.id],
+  }),
+}));
+
+export const widgetConfigurationRelations = relations(widgetConfiguration, ({ one }) => ({
+  user: one(user, {
+    fields: [widgetConfiguration.userId],
+    references: [user.id],
+  }),
+}));
+
+// Notification relations
+export const notificationRelations = relations(notification, ({ one }) => ({
+  recipient: one(user, {
+    fields: [notification.recipientId],
+    references: [user.id],
+    relationName: 'notificationRecipient',
+  }),
+  sender: one(user, {
+    fields: [notification.senderId],
+    references: [user.id],
+    relationName: 'notificationSender',
+  }),
+}));
+
+// ============================================
+// Intake Request relations
+// ============================================
+
+// Request relations
+export const requestRelations = relations(request, ({ one, many }) => ({
+  requester: one(user, {
+    fields: [request.requesterId],
+    references: [user.id],
+    relationName: 'requesterRequests',
+  }),
+  assignedPm: one(user, {
+    fields: [request.assignedPmId],
+    references: [user.id],
+    relationName: 'assignedPmRequests',
+  }),
+  estimator: one(user, {
+    fields: [request.estimatorId],
+    references: [user.id],
+    relationName: 'estimatorRequests',
+  }),
+  client: one(client, {
+    fields: [request.clientId],
+    references: [client.id],
+  }),
+  relatedProject: one(project, {
+    fields: [request.relatedProjectId],
+    references: [project.id],
+  }),
+  attachments: many(requestAttachment),
+  history: many(requestHistory),
+}));
+
+// Request Attachment relations
+export const requestAttachmentRelations = relations(requestAttachment, ({ one }) => ({
+  request: one(request, {
+    fields: [requestAttachment.requestId],
+    references: [request.id],
+  }),
+  file: one(file, {
+    fields: [requestAttachment.fileId],
+    references: [file.id],
+  }),
+}));
+
+// Request History relations
+export const requestHistoryRelations = relations(requestHistory, ({ one }) => ({
+  request: one(request, {
+    fields: [requestHistory.requestId],
+    references: [request.id],
+  }),
+  actor: one(user, {
+    fields: [requestHistory.actorId],
+    references: [user.id],
+    relationName: 'requestHistoryActor',
   }),
 }));

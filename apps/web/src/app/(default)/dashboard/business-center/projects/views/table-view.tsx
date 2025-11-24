@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DataTable } from '@/components/data-table';
 import { ProjectBulkActions } from '@/components/business-center/bulk-actions';
+import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
 import type { ProjectWithRelations, Project } from '@/lib/api/projects/types';
 
 interface ProjectTableViewProps {
@@ -234,32 +235,38 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
           <IconExternalLink className="mr-2 h-4 w-4" />
           View Details
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(`/dashboard/business-center/projects/${row.original.id}/team`);
-          }}
-        >
-          <IconUsers className="mr-2 h-4 w-4" />
-          Manage Team
-        </DropdownMenuItem>
+        <PermissionGate permission={Permissions.PROJECT_ASSIGN}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/dashboard/business-center/projects/${row.original.id}/team`);
+            }}
+          >
+            <IconUsers className="mr-2 h-4 w-4" />
+            Manage Team
+          </DropdownMenuItem>
+        </PermissionGate>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
-          onClick={(e) => {
-            e.stopPropagation();
-            // TODO: Implement archive/delete
-          }}
-        >
-          <IconTrash className="mr-2 h-4 w-4" />
-          Archive Project
-        </DropdownMenuItem>
+        <PermissionGate permission={Permissions.PROJECT_DELETE}>
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onClick={(e) => {
+              e.stopPropagation();
+              // TODO: Implement archive/delete
+            }}
+          >
+            <IconTrash className="mr-2 h-4 w-4" />
+            Archive Project
+          </DropdownMenuItem>
+        </PermissionGate>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 
   const renderBulkActions = (table: Table<ProjectWithRelations>) => (
-    <ProjectBulkActions table={table} onSuccess={onSuccess} />
+    <PermissionGate permission={Permissions.BULK_OPERATIONS}>
+      <ProjectBulkActions table={table} onSuccess={onSuccess} />
+    </PermissionGate>
   );
 
   if (orderedProjects.length === 0) {

@@ -222,4 +222,5 @@ export const EntityTypes = {
   PROJECT: 'project' as const,
   TICKET: 'ticket' as const,
   CLIENT: 'client' as const,
+  LABEL: 'label' as const,
 } as const;

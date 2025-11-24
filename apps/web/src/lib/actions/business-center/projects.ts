@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireUser } from '@/lib/auth/session';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import {
   createProject,
   updateProject,
@@ -26,10 +26,7 @@ export async function updateProjectStatusAction(
   status: ProjectStatus
 ): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.PROJECT_EDIT);
 
     const result = await updateProjectStatus(projectId, { status });
 
@@ -47,10 +44,7 @@ export async function assignProjectMemberAction(
   userId: string
 ): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.PROJECT_ASSIGN);
 
     const result = await assignProject(projectId, { userIds: [userId] });
 
@@ -69,10 +63,7 @@ export async function removeProjectMemberAction(
   userId: string
 ): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.PROJECT_ASSIGN);
 
     const result = await removeProjectAssignment(projectId, { userId });
 
@@ -92,9 +83,10 @@ export async function removeProjectMemberAction(
 export async function createProjectAction(
   formData: FormData
 ): Promise<{ success: boolean; error?: string; projectId?: string }> {
-  const user = await requireUser();
-  if (!user.isInternal) {
-    return { success: false, error: 'Access denied: Internal team only' };
+  try {
+    await requirePermission(Permissions.PROJECT_CREATE);
+  } catch {
+    return { success: false, error: "You don't have permission to create projects" };
   }
 
   // Parse form data
@@ -146,9 +138,10 @@ export async function updateProjectFullAction(
   projectId: string,
   formData: FormData
 ): Promise<{ success: boolean; error?: string; projectId?: string }> {
-  const user = await requireUser();
-  if (!user.isInternal) {
-    return { success: false, error: 'Access denied: Internal team only' };
+  try {
+    await requirePermission(Permissions.PROJECT_EDIT);
+  } catch {
+    return { success: false, error: "You don't have permission to edit projects" };
   }
 
   // Parse form data - only include fields that are present
@@ -218,10 +211,7 @@ export async function updateProjectFullAction(
  */
 export async function deleteProjectAction(projectId: string): Promise<ActionResult> {
   return withErrorHandling(async () => {
-    const user = await requireUser();
-    if (!user.isInternal) {
-      throw new Error('Access denied: Internal team only');
-    }
+    await requirePermission(Permissions.PROJECT_DELETE);
 
     // Soft delete by setting status to archived
     const result = await updateProjectStatus(projectId, { status: 'archived' });

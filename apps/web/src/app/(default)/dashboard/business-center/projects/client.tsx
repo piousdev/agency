@@ -18,6 +18,7 @@ import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ViewSwitcher, type ViewMode } from '@/components/business-center/view-switcher';
+import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import type { TeamMember } from '@/lib/api/users/types';
 import { ProjectTableView } from './views/table-view';
@@ -305,12 +306,14 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
         activeFilterCount={activeFiltersCount}
         onExport={handleExport}
         primaryAction={
-          <Button asChild>
-            <Link href="/dashboard/business-center/projects/new">
-              <IconPlus className="mr-2 h-4 w-4" />
-              New Project
-            </Link>
-          </Button>
+          <PermissionGate permission={Permissions.PROJECT_CREATE} behavior="disable">
+            <Button asChild>
+              <Link href="/dashboard/business-center/projects/new">
+                <IconPlus className="mr-2 h-4 w-4" />
+                New Project
+              </Link>
+            </Button>
+          </PermissionGate>
         }
       />
 

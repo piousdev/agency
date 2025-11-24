@@ -61,14 +61,15 @@ app.patch(
         .returning();
 
       // Log activity for client update
-      await logEntityChange({
-        entityType: EntityTypes.CLIENT,
-        entityId: clientId,
-        actorId: currentUser.id,
-        clientId: clientId,
-        before: existingClient,
-        after: updatedClient,
-      });
+      await logEntityChange(
+        {
+          entityType: EntityTypes.CLIENT,
+          entityId: clientId,
+          actorId: currentUser.id,
+        },
+        existingClient,
+        updatedClient!
+      );
 
       return c.json({
         success: true,

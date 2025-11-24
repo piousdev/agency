@@ -56,6 +56,87 @@ This Next.js application follows a **Server-First Architecture** to maximize per
 
 ## File Structure & Separation of Concerns (SOC)
 
+### Component Directory Structure (Critical)
+
+**Rule**: Components must be placed in `src/components/` and the directory structure should mirror the app route structure.
+
+**Pattern**:
+
+```
+App Route:       app/(default)/dashboard/{section}/{feature}/
+Components:      components/dashboard/{section}/{feature}/
+```
+
+**Examples**:
+
+| App Route                                                   | Component Location                               |
+| ----------------------------------------------------------- | ------------------------------------------------ |
+| `app/(default)/dashboard/overview/page.tsx`                 | `components/dashboard/overview/`                 |
+| `app/(default)/dashboard/business-center/intake/page.tsx`   | `components/dashboard/business-center/intake/`   |
+| `app/(default)/dashboard/business-center/projects/page.tsx` | `components/dashboard/business-center/projects/` |
+| `app/(default)/dashboard/changelog/page.tsx`                | `components/changelog/`                          |
+
+**What Goes Where**:
+
+| Location                        | Contents                                       |
+| ------------------------------- | ---------------------------------------------- |
+| `app/**/page.tsx`               | **ONLY** page.tsx Server Components            |
+| `app/**/actions.ts`             | Server Actions for that route                  |
+| `app/**/layout.tsx`             | Layout components (if needed)                  |
+| `components/dashboard/**/*.tsx` | ALL client components, forms, cards, dialogs   |
+| `components/ui/*.tsx`           | Reusable shadcn/ui components                  |
+| `lib/`                          | Utilities, hooks, stores, schemas, API clients |
+
+**✅ Correct Pattern**:
+
+```
+apps/web/src/
+├── app/(default)/dashboard/business-center/intake/
+│   ├── page.tsx                    # Server Component ONLY
+│   ├── [id]/
+│   │   ├── page.tsx                # Server Component ONLY
+│   │   ├── estimate/page.tsx       # Server Component ONLY
+│   │   └── convert/page.tsx        # Server Component ONLY
+│   └── new/page.tsx                # Server Component ONLY
+│
+├── components/dashboard/business-center/intake/
+│   ├── intake-client.tsx           # Main client component
+│   ├── request-card.tsx            # Card component
+│   ├── request-detail-client.tsx   # Detail view client
+│   ├── request-form-client.tsx     # New request form
+│   ├── estimation-form.tsx         # Estimation form
+│   ├── routing-form.tsx            # Convert routing form
+│   ├── filter-sidebar.tsx          # Filter UI
+│   ├── bulk-actions-bar.tsx        # Bulk actions
+│   └── index.ts                    # Barrel exports
+```
+
+**❌ NEVER Do This**:
+
+```
+apps/web/src/app/(default)/dashboard/business-center/intake/
+├── page.tsx
+├── client.tsx              # ❌ WRONG - should be in components/
+├── components/             # ❌ WRONG - components folder in app/
+│   ├── request-card.tsx    # ❌ WRONG - should be in components/dashboard/
+│   └── filter.tsx          # ❌ WRONG - should be in components/dashboard/
+```
+
+**Rationale**:
+
+- **Separation of Concerns**: Keep routing (app/) separate from UI components (components/)
+- **Reusability**: Components in `components/` can be easily shared
+- **Maintainability**: Clear ownership and easier refactoring
+- **Discoverability**: Predictable location for components
+
+**Import Pattern**:
+
+```typescript
+// In page.tsx (Server Component)
+import { IntakeClient } from '@/components/dashboard/business-center/intake/intake-client';
+import { EstimationForm } from '@/components/dashboard/business-center/intake/estimation-form';
+```
+
 ### File Naming Conventions
 
 All source files must follow strict naming conventions for consistency and clarity.

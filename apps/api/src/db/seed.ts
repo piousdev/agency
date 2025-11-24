@@ -5,9 +5,92 @@
 
 import 'dotenv/config';
 import { db } from './index.js';
-import { client, user, ticket, project, projectAssignment, userToClient } from './schema/index.js';
+import {
+  client,
+  user,
+  ticket,
+  project,
+  projectAssignment,
+  userToClient,
+  role,
+  roleAssignment,
+  sprint,
+  request,
+  requestHistory,
+} from './schema/index.js';
 import { eq, ne } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
+
+/**
+ * Default Role Permissions
+ * Converted from apps/web/src/lib/auth/permissions.ts for seeding
+ */
+const Permissions = {
+  // Ticket permissions
+  TICKET_CREATE: 'ticket:create',
+  TICKET_EDIT: 'ticket:edit',
+  TICKET_DELETE: 'ticket:delete',
+  TICKET_ASSIGN: 'ticket:assign',
+  TICKET_VIEW: 'ticket:view',
+  // Project permissions
+  PROJECT_CREATE: 'project:create',
+  PROJECT_EDIT: 'project:edit',
+  PROJECT_DELETE: 'project:delete',
+  PROJECT_ASSIGN: 'project:assign',
+  PROJECT_VIEW: 'project:view',
+  // Client permissions
+  CLIENT_CREATE: 'client:create',
+  CLIENT_EDIT: 'client:edit',
+  CLIENT_DELETE: 'client:delete',
+  CLIENT_VIEW: 'client:view',
+  // Bulk operations
+  BULK_OPERATIONS: 'bulk:operations',
+  // Admin permissions
+  ADMIN_USERS: 'admin:users',
+  ADMIN_ROLES: 'admin:roles',
+} as const;
+
+const allPermissions = Object.values(Permissions);
+
+const editorPermissions = [
+  Permissions.TICKET_CREATE,
+  Permissions.TICKET_EDIT,
+  Permissions.TICKET_ASSIGN,
+  Permissions.TICKET_VIEW,
+  Permissions.PROJECT_CREATE,
+  Permissions.PROJECT_EDIT,
+  Permissions.PROJECT_ASSIGN,
+  Permissions.PROJECT_VIEW,
+  Permissions.CLIENT_CREATE,
+  Permissions.CLIENT_EDIT,
+  Permissions.CLIENT_VIEW,
+  Permissions.BULK_OPERATIONS,
+];
+
+const viewerPermissions = [
+  Permissions.TICKET_VIEW,
+  Permissions.PROJECT_VIEW,
+  Permissions.CLIENT_VIEW,
+];
+
+const clientPermissions = [
+  Permissions.TICKET_CREATE,
+  Permissions.TICKET_VIEW,
+  Permissions.PROJECT_VIEW,
+];
+
+/**
+ * Convert permission array to Record<string, boolean>
+ */
+function permissionsToRecord(perms: string[]): Record<string, boolean> {
+  return perms.reduce(
+    (acc, perm) => {
+      acc[perm] = true;
+      return acc;
+    },
+    {} as Record<string, boolean>
+  );
+}
 
 /**
  * Seed configuration
@@ -48,11 +131,14 @@ async function clearData() {
 
   const adminEmail = process.env.ADMIN_EMAIL;
 
+  await db.delete(requestHistory);
+  await db.delete(request);
   await db.delete(projectAssignment);
   await db.delete(ticket);
   await db.delete(project);
   await db.delete(userToClient);
   await db.delete(client);
+  await db.delete(roleAssignment);
 
   // Delete all users EXCEPT the admin
   if (adminEmail) {
@@ -62,6 +148,122 @@ async function clearData() {
     await db.delete(user);
     console.log('⚠️  Warning: No ADMIN_EMAIL found, deleted all users\n');
   }
+}
+
+/**
+ * Seed Default Roles
+ */
+async function seedRoles() {
+  console.log('🎭 Seeding roles...');
+
+  // Clear existing roles first
+  await db.delete(role);
+
+  const defaultRoles = [
+    {
+      id: nanoid(),
+      name: 'admin',
+      description: 'Full system access with all permissions',
+      permissions: permissionsToRecord(allPermissions),
+      roleType: 'internal',
+    },
+    {
+      id: nanoid(),
+      name: 'editor',
+      description: 'Can create, edit, and manage tickets, projects, and clients',
+      permissions: permissionsToRecord(editorPermissions),
+      roleType: 'internal',
+    },
+    {
+      id: nanoid(),
+      name: 'viewer',
+      description: 'Read-only access to tickets, projects, and clients',
+      permissions: permissionsToRecord(viewerPermissions),
+      roleType: 'internal',
+    },
+    {
+      id: nanoid(),
+      name: 'client',
+      description: 'Client user with limited access to own tickets and projects',
+      permissions: permissionsToRecord(clientPermissions),
+      roleType: 'client',
+    },
+  ];
+
+  const createdRoles: Record<string, string> = {};
+
+  for (const roleData of defaultRoles) {
+    const [newRole] = await db.insert(role).values(roleData).returning();
+    if (newRole) {
+      createdRoles[roleData.name] = newRole.id;
+    }
+  }
+
+  console.log(
+    `✅ Created ${Object.keys(createdRoles).length} default roles (admin, editor, viewer, client)\n`
+  );
+
+  return createdRoles;
+}
+
+/**
+ * Seed Role Assignments
+ */
+async function seedRoleAssignments(
+  internalUsers: any[],
+  clientUsers: any[],
+  roles: Record<string, string>
+) {
+  console.log('🔐 Seeding role assignments...');
+
+  let assignmentCount = 0;
+
+  // Assign editor role to all internal users
+  const editorRoleId = roles['editor'];
+  if (editorRoleId) {
+    for (const internalUser of internalUsers) {
+      await db.insert(roleAssignment).values({
+        id: nanoid(),
+        userId: internalUser.id,
+        roleId: editorRoleId,
+        assignedAt: new Date(),
+      });
+      assignmentCount++;
+    }
+  }
+
+  // Assign client role to all client users
+  const clientRoleId = roles['client'];
+  if (clientRoleId) {
+    for (const clientUser of clientUsers) {
+      await db.insert(roleAssignment).values({
+        id: nanoid(),
+        userId: clientUser.id,
+        roleId: clientRoleId,
+        assignedAt: new Date(),
+      });
+      assignmentCount++;
+    }
+  }
+
+  // Assign admin role to the admin user if exists
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminRoleId = roles['admin'];
+  if (adminEmail && adminRoleId) {
+    const [adminUser] = await db.select().from(user).where(eq(user.email, adminEmail));
+    if (adminUser) {
+      await db.insert(roleAssignment).values({
+        id: nanoid(),
+        userId: adminUser.id,
+        roleId: adminRoleId,
+        assignedAt: new Date(),
+      });
+      assignmentCount++;
+      console.log(`   → Assigned admin role to ${adminEmail}`);
+    }
+  }
+
+  console.log(`✅ Created ${assignmentCount} role assignments\n`);
 }
 
 /**
@@ -659,6 +861,437 @@ async function seedProjectAssignments(projects: any[], internalUsers: any[]) {
 }
 
 /**
+ * Seed Sprints for active projects
+ */
+async function seedSprints(projects: any[]) {
+  console.log('🏃 Seeding sprints...');
+
+  const sprints: any[] = [];
+  const now = new Date();
+
+  // Get active software projects for sprints (in_development status)
+  const activeProjects = projects.filter(
+    (p) => p.status === 'in_development' || p.status === 'in_review'
+  );
+
+  const sprintGoals = [
+    'Complete MVP features and basic UI',
+    'Implement user authentication and authorization',
+    'Add reporting and analytics features',
+    'Performance optimization and bug fixes',
+    'Integration testing and documentation',
+    'UI/UX improvements and accessibility',
+    'API endpoints and data validation',
+    'Mobile responsiveness and cross-browser testing',
+  ];
+
+  for (const proj of activeProjects.slice(0, 8)) {
+    // Create past completed sprints
+    for (let i = 1; i <= 3; i++) {
+      const startDate = new Date(now.getTime() - (4 - i) * 14 * 24 * 60 * 60 * 1000);
+      const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000);
+      const plannedPoints = 20 + Math.floor(Math.random() * 15);
+      const completedPoints = plannedPoints - Math.floor(Math.random() * 5);
+
+      const [newSprint] = await db
+        .insert(sprint)
+        .values({
+          id: nanoid(),
+          projectId: proj.id,
+          name: `Sprint ${i}`,
+          goal: sprintGoals[(i - 1) % sprintGoals.length],
+          status: 'completed',
+          startDate,
+          endDate,
+          plannedPoints,
+          completedPoints,
+          sprintNumber: i,
+          createdAt: startDate,
+          updatedAt: endDate,
+        })
+        .returning();
+
+      if (newSprint) sprints.push(newSprint);
+    }
+
+    // Create current active sprint
+    const activeStartDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const activeEndDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const plannedPoints = 25 + Math.floor(Math.random() * 10);
+    const completedPoints = Math.floor(plannedPoints * (0.4 + Math.random() * 0.3));
+
+    const [activeSprint] = await db
+      .insert(sprint)
+      .values({
+        id: nanoid(),
+        projectId: proj.id,
+        name: `Sprint 4`,
+        goal: sprintGoals[3],
+        status: 'active',
+        startDate: activeStartDate,
+        endDate: activeEndDate,
+        plannedPoints,
+        completedPoints,
+        sprintNumber: 4,
+        createdAt: activeStartDate,
+        updatedAt: now,
+      })
+      .returning();
+
+    if (activeSprint) sprints.push(activeSprint);
+
+    // Create upcoming planning sprint
+    const planningStartDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const planningEndDate = new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000);
+
+    const [planningSprint] = await db
+      .insert(sprint)
+      .values({
+        id: nanoid(),
+        projectId: proj.id,
+        name: `Sprint 5`,
+        goal: sprintGoals[4],
+        status: 'planning',
+        startDate: planningStartDate,
+        endDate: planningEndDate,
+        plannedPoints: 0,
+        completedPoints: 0,
+        sprintNumber: 5,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+
+    if (planningSprint) sprints.push(planningSprint);
+  }
+
+  console.log(`✅ Created ${sprints.length} sprints\n`);
+  return sprints;
+}
+
+/**
+ * Seed Requests (Intake Pipeline)
+ */
+async function seedRequests(clients: any[], internalUsers: any[]) {
+  console.log('📋 Seeding intake requests...');
+
+  const requests: any[] = [];
+  const now = new Date();
+
+  const requestTitles = {
+    feature: [
+      'Add dark mode support across the application',
+      'Implement real-time notifications for project updates',
+      'Create custom dashboard widgets for analytics',
+      'Add bulk export functionality for reports',
+      'Integrate Slack workspace for team notifications',
+      'Implement SSO authentication via SAML',
+      'Add multi-language support (i18n)',
+      'Create API documentation portal',
+    ],
+    bug: [
+      'Login page crashes on mobile Safari',
+      'Data not saving correctly in project settings',
+      'Email notifications sent multiple times',
+      'Search results show incorrect pagination',
+      'File upload fails for files over 10MB',
+      'Dashboard charts not loading on Firefox',
+    ],
+    enhancement: [
+      'Improve loading performance on dashboard',
+      'Optimize image compression for uploads',
+      'Enhance search functionality with filters',
+      'Refactor notification system for better reliability',
+      'Upgrade dependencies to latest versions',
+    ],
+    change_request: [
+      'Update branding colors per new guidelines',
+      'Modify user permissions structure',
+      'Change default sort order in project list',
+      'Update email templates with new design',
+    ],
+    support: [
+      'Need help configuring webhook integrations',
+      'Training request for new team members',
+      'Questions about API rate limiting policies',
+    ],
+  };
+
+  const priorities = ['low', 'medium', 'high', 'critical'] as const;
+  const stages = ['in_treatment', 'on_hold', 'estimation', 'ready'] as const;
+  const confidences = ['low', 'medium', 'high'] as const;
+  const storyPoints = [1, 2, 3, 5, 8, 13, 21];
+
+  let requestNumber = 1;
+
+  // Helper to create a request
+  const createRequest = async (config: {
+    title: string;
+    type: 'feature' | 'bug' | 'enhancement' | 'change_request' | 'support' | 'other';
+    stage: (typeof stages)[number];
+    priority: (typeof priorities)[number];
+    client: any;
+    requester: any;
+    assignedPm?: any;
+    estimator?: any;
+    daysAgo: number;
+    stageHours?: number;
+    estimated?: boolean;
+    onHold?: boolean;
+  }) => {
+    const createdAt = new Date(now.getTime() - config.daysAgo * 24 * 60 * 60 * 1000);
+    const stageEnteredAt = config.stageHours
+      ? new Date(now.getTime() - config.stageHours * 60 * 60 * 1000)
+      : createdAt;
+
+    const requestId = nanoid();
+    const reqNum = `REQ-${String(requestNumber++).padStart(4, '0')}`;
+
+    const requestData: any = {
+      id: requestId,
+      requestNumber: reqNum,
+      title: config.title,
+      description: `This is a detailed description for: ${config.title}. It includes all necessary context and requirements for the team to understand and process this request effectively.`,
+      type: config.type,
+      stage: config.stage,
+      priority: config.priority,
+      stageEnteredAt,
+      businessJustification:
+        config.type === 'feature'
+          ? 'This will improve user experience and increase customer satisfaction.'
+          : null,
+      desiredDeliveryDate:
+        config.stage === 'ready' ? new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000) : null,
+      stepsToReproduce:
+        config.type === 'bug'
+          ? '1. Navigate to the page\\n2. Click on the button\\n3. Observe the error'
+          : null,
+      dependencies:
+        Math.random() > 0.7 ? 'Depends on completion of authentication system update' : null,
+      additionalNotes:
+        Math.random() > 0.5
+          ? 'Additional context: This is a high-visibility request from the client.'
+          : null,
+      requesterId: config.requester.id,
+      assignedPmId: config.assignedPm?.id || null,
+      estimatorId: config.estimator?.id || null,
+      clientId: config.client.id,
+      tags:
+        config.type === 'bug'
+          ? ['bug', 'urgent']
+          : config.type === 'feature'
+            ? ['feature', 'enhancement']
+            : [],
+      createdAt,
+      updatedAt: now,
+    };
+
+    // Add estimation data if estimated
+    if (config.estimated || config.stage === 'ready') {
+      requestData.storyPoints = storyPoints[Math.floor(Math.random() * storyPoints.length)];
+      requestData.confidence = confidences[Math.floor(Math.random() * confidences.length)];
+      requestData.estimationNotes =
+        'Estimation based on similar previous work. Consider complexity of integration points.';
+      requestData.estimatedAt = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+    }
+
+    // Add hold data if on hold
+    if (config.onHold || config.stage === 'on_hold') {
+      requestData.holdReason = 'Awaiting additional information from client';
+      requestData.holdStartedAt = stageEnteredAt;
+    }
+
+    const [newRequest] = await db.insert(request).values(requestData).returning();
+
+    // Create history entry for creation
+    if (newRequest) {
+      await db.insert(requestHistory).values({
+        id: nanoid(),
+        requestId: newRequest.id,
+        actorId: config.requester.id,
+        action: 'created',
+        metadata: { description: 'Request created' },
+        createdAt,
+      });
+
+      // Add stage change history if not in initial stage
+      if (config.stage !== 'in_treatment') {
+        await db.insert(requestHistory).values({
+          id: nanoid(),
+          requestId: newRequest.id,
+          actorId: config.assignedPm?.id || config.requester.id,
+          action: 'stage_changed',
+          metadata: { oldStage: 'in_treatment', newStage: config.stage },
+          createdAt: stageEnteredAt,
+        });
+      }
+
+      requests.push(newRequest);
+    }
+  };
+
+  // STAGE 1: In Treatment (New requests, some aging)
+  // 3 fresh requests (< 24 hours)
+  for (let i = 0; i < 3; i++) {
+    const titles = requestTitles.feature;
+    await createRequest({
+      title: titles[i % titles.length]!,
+      type: 'feature',
+      stage: 'in_treatment',
+      priority: priorities[i % priorities.length]!,
+      client: clients[i % clients.length]!,
+      requester: internalUsers[i % internalUsers.length]!,
+      daysAgo: 0,
+      stageHours: Math.floor(Math.random() * 12),
+    });
+  }
+
+  // 2 requests approaching threshold (24-36 hours)
+  for (let i = 0; i < 2; i++) {
+    const titles = requestTitles.bug;
+    await createRequest({
+      title: titles[i % titles.length]!,
+      type: 'bug',
+      stage: 'in_treatment',
+      priority: 'high',
+      client: clients[(i + 1) % clients.length]!,
+      requester: internalUsers[(i + 1) % internalUsers.length]!,
+      assignedPm: internalUsers[0],
+      daysAgo: 1,
+      stageHours: 30,
+    });
+  }
+
+  // 2 aging requests (> 48 hours - critical threshold)
+  for (let i = 0; i < 2; i++) {
+    const titles = requestTitles.enhancement;
+    await createRequest({
+      title: titles[i % titles.length]!,
+      type: 'enhancement',
+      stage: 'in_treatment',
+      priority: 'critical',
+      client: clients[(i + 2) % clients.length]!,
+      requester: internalUsers[(i + 2) % internalUsers.length]!,
+      assignedPm: internalUsers[1],
+      daysAgo: 3,
+      stageHours: 60,
+    });
+  }
+
+  // STAGE 2: On Hold (Waiting for info)
+  // 2 recent holds
+  for (let i = 0; i < 2; i++) {
+    const titles = requestTitles.change_request;
+    await createRequest({
+      title: titles[i % titles.length]!,
+      type: 'change_request',
+      stage: 'on_hold',
+      priority: 'medium',
+      client: clients[i % clients.length]!,
+      requester: internalUsers[i % internalUsers.length]!,
+      assignedPm: internalUsers[0],
+      daysAgo: 2,
+      stageHours: 24,
+      onHold: true,
+    });
+  }
+
+  // 1 aging hold (> 7 days)
+  await createRequest({
+    title: requestTitles.support[0]!,
+    type: 'support',
+    stage: 'on_hold',
+    priority: 'low',
+    client: clients[0]!,
+    requester: internalUsers[0]!,
+    assignedPm: internalUsers[1],
+    daysAgo: 10,
+    stageHours: 200,
+    onHold: true,
+  });
+
+  // STAGE 3: Estimation (Awaiting story points)
+  // 3 fresh estimation requests
+  for (let i = 0; i < 3; i++) {
+    const titles = requestTitles.feature;
+    await createRequest({
+      title: titles[(i + 3) % titles.length]!,
+      type: 'feature',
+      stage: 'estimation',
+      priority: priorities[(i + 1) % priorities.length]!,
+      client: clients[(i + 1) % clients.length]!,
+      requester: internalUsers[i % internalUsers.length]!,
+      assignedPm: internalUsers[0],
+      estimator: internalUsers[(i + 1) % internalUsers.length],
+      daysAgo: 1,
+      stageHours: 8,
+    });
+  }
+
+  // 2 aging estimation (> 24 hours)
+  for (let i = 0; i < 2; i++) {
+    const titles = requestTitles.enhancement;
+    await createRequest({
+      title: titles[(i + 2) % titles.length]!,
+      type: 'enhancement',
+      stage: 'estimation',
+      priority: 'high',
+      client: clients[(i + 2) % clients.length]!,
+      requester: internalUsers[(i + 1) % internalUsers.length]!,
+      assignedPm: internalUsers[1],
+      estimator: internalUsers[(i + 2) % internalUsers.length],
+      daysAgo: 2,
+      stageHours: 30,
+    });
+  }
+
+  // STAGE 4: Ready (Estimated, awaiting conversion)
+  // 4 ready requests with various story points
+  for (let i = 0; i < 4; i++) {
+    const titles = requestTitles.feature;
+    await createRequest({
+      title: titles[(i + 4) % titles.length]!,
+      type: i < 2 ? 'feature' : 'enhancement',
+      stage: 'ready',
+      priority: priorities[i % priorities.length]!,
+      client: clients[i % clients.length]!,
+      requester: internalUsers[i % internalUsers.length]!,
+      assignedPm: internalUsers[0],
+      estimator: internalUsers[1],
+      daysAgo: 1,
+      stageHours: 4,
+      estimated: true,
+    });
+  }
+
+  // 2 aging ready requests (> 12 hours)
+  for (let i = 0; i < 2; i++) {
+    const titles = requestTitles.bug;
+    await createRequest({
+      title: titles[(i + 3) % titles.length]!,
+      type: 'bug',
+      stage: 'ready',
+      priority: 'critical',
+      client: clients[(i + 1) % clients.length]!,
+      requester: internalUsers[(i + 1) % internalUsers.length]!,
+      assignedPm: internalUsers[1],
+      estimator: internalUsers[0],
+      daysAgo: 1,
+      stageHours: 18,
+      estimated: true,
+    });
+  }
+
+  console.log(`✅ Created ${requests.length} intake requests\n`);
+  console.log('   → In Treatment: 7 requests (3 fresh, 2 approaching, 2 aging)');
+  console.log('   → On Hold: 3 requests (2 recent, 1 aging)');
+  console.log('   → Estimation: 5 requests (3 fresh, 2 aging)');
+  console.log('   → Ready: 6 requests (4 fresh, 2 aging)');
+
+  return requests;
+}
+
+/**
  * Main seed function
  */
 async function seed() {
@@ -668,6 +1301,9 @@ async function seed() {
     // Clear existing data
     await clearData();
 
+    // Seed roles first (needed for role assignments)
+    const roles = await seedRoles();
+
     // Seed data
     const { internalUsers, clientUsers } = await seedUsers();
     const { creativeClients, softwareClients, fullServiceClients } = await seedClients(clientUsers);
@@ -676,6 +1312,11 @@ async function seed() {
     await seedTickets(allClients, internalUsers);
     const projects = await seedProjects(allClients, internalUsers);
     await seedProjectAssignments(projects, internalUsers);
+    const sprints = await seedSprints(projects);
+    const intakeRequests = await seedRequests(allClients, internalUsers);
+
+    // Seed role assignments (after users are created)
+    await seedRoleAssignments(internalUsers, clientUsers, roles);
 
     console.log('✅ Seed completed successfully!\n');
     console.log('📊 Summary:');
@@ -688,14 +1329,21 @@ async function seed() {
       `   - ${SEED_CONFIG.intakeTicketsUnassigned + SEED_CONFIG.intakeTicketsAssigned} tickets`
     );
     console.log(`   - ${projects.length} projects (various stages)`);
+    console.log(`   - ${sprints.length} sprints (completed, active, planning)`);
+    console.log(`   - ${intakeRequests.length} intake pipeline requests (all stages)`);
+    console.log(`   - 4 default roles (admin, editor, viewer, client)`);
     console.log(`   - Team capacity: 50%, 75%, 85%, 100%, 120%, 150%\n`);
 
     console.log('🎯 Business Center is ready for testing!');
+    console.log(
+      '   → Intake Pipeline: Requests in all 4 stages (treatment, hold, estimation, ready)'
+    );
     console.log('   → Intake Queue: Unassigned tickets');
     console.log('   → Active Work: Projects in all stages');
     console.log('   → Team Capacity: Various load levels');
     console.log('   → Delivery Calendar: Upcoming deliveries');
-    console.log('   → Recently Completed: Last 14 days\n');
+    console.log('   → Recently Completed: Last 14 days');
+    console.log('   → Role-based Access: Admin, Editor, Viewer, Client roles\n');
   } catch (error) {
     console.error('❌ Seed failed:', error);
     throw error;

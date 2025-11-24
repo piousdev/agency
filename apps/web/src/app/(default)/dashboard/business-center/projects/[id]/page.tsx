@@ -13,6 +13,7 @@ import {
 } from '@tabler/icons-react';
 import { requireUser } from '@/lib/auth/session';
 import { getProject } from '@/lib/api/projects';
+import { listMilestones } from '@/lib/api/milestones';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ import { Separator } from '@/components/ui/separator';
 import { projectStatusOptions } from '@/lib/schemas/project';
 import { DetailPageHeader } from '../../components/header';
 import { ProjectActivity } from './project-activity';
+import { MilestoneList } from '@/components/business-center/milestone-list';
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
@@ -52,6 +54,10 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
   } catch {
     notFound();
   }
+
+  // Fetch milestones for this project
+  const milestonesResponse = await listMilestones(id);
+  const milestones = milestonesResponse.success ? milestonesResponse.data : [];
 
   const statusLabel =
     projectStatusOptions.find((s) => s.value === project.status)?.label ?? project.status;
@@ -108,6 +114,9 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
               </CardContent>
             </Card>
           )}
+
+          {/* Milestones */}
+          <MilestoneList milestones={milestones} projectId={id} canEdit={user.isInternal} />
 
           {/* URLs */}
           <Card>

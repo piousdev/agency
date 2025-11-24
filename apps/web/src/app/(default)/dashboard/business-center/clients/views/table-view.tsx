@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DataTable } from '@/components/data-table';
 import { ClientBulkActions } from '@/components/business-center/bulk-actions';
+import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
 import type { Client } from '@/lib/api/clients/types';
 import { clientTypeOptions } from '@/lib/schemas';
 
@@ -213,32 +214,38 @@ export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: Clien
             View Details
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit(row.original);
-          }}
-        >
-          <IconPencil className="mr-2 h-4 w-4" />
-          Edit
-        </DropdownMenuItem>
+        <PermissionGate permission={Permissions.CLIENT_EDIT}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(row.original);
+            }}
+          >
+            <IconPencil className="mr-2 h-4 w-4" />
+            Edit
+          </DropdownMenuItem>
+        </PermissionGate>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(row.original);
-          }}
-        >
-          <IconTrash className="mr-2 h-4 w-4" />
-          {row.original.active ? 'Deactivate' : 'Delete'}
-        </DropdownMenuItem>
+        <PermissionGate permission={Permissions.CLIENT_DELETE}>
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(row.original);
+            }}
+          >
+            <IconTrash className="mr-2 h-4 w-4" />
+            {row.original.active ? 'Deactivate' : 'Delete'}
+          </DropdownMenuItem>
+        </PermissionGate>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 
   const renderBulkActions = (table: Table<Client>) => (
-    <ClientBulkActions table={table} onSuccess={onSuccess} />
+    <PermissionGate permission={Permissions.BULK_OPERATIONS}>
+      <ClientBulkActions table={table} onSuccess={onSuccess} />
+    </PermissionGate>
   );
 
   if (orderedClients.length === 0) {

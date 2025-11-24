@@ -74,6 +74,7 @@ export function DataTable<TData>({
   renderRowActions,
   renderBulkActions,
   toolbarContent,
+  toolbarRightContent,
   tableId,
   tableCaption,
   className,
@@ -729,6 +730,7 @@ export function DataTable<TData>({
         enableGlobalFilter={defaultConfig.enableGlobalFilter}
         enableColumnVisibility={defaultConfig.enableColumnVisibility}
         onReset={resetAllState}
+        rightContent={toolbarRightContent}
       >
         {toolbarContent}
       </DataTableToolbar>

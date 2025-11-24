@@ -12,11 +12,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { deactivateClientAction } from '@/lib/actions/business-center/clients';
-import { IconLoader2, IconAlertCircle, IconUserOff } from '@tabler/icons-react';
+import { IconLoader2, IconAlertCircle, IconUserOff, IconAlertTriangle } from '@tabler/icons-react';
 
 interface DeleteClientDialogProps {
   clientId: string;
   clientName: string;
+  projectCount?: number;
+  ticketCount?: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
@@ -25,10 +27,13 @@ interface DeleteClientDialogProps {
 export function DeleteClientDialog({
   clientId,
   clientName,
+  projectCount = 0,
+  ticketCount = 0,
   open,
   onOpenChange,
   onSuccess,
 }: DeleteClientDialogProps) {
+  const hasAssociations = projectCount > 0 || ticketCount > 0;
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,11 +70,36 @@ export function DeleteClientDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="py-4">
+        <div className="py-4 space-y-4">
           <p className="text-sm">
             <span className="font-medium">{clientName}</span> will be marked as inactive.
           </p>
-          <p className="text-muted-foreground mt-2 text-sm">
+
+          {/* Cascade Warning */}
+          {hasAssociations && (
+            <Alert className="border-amber-500/50 bg-amber-50 dark:bg-amber-950/20">
+              <IconAlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800 dark:text-amber-200">
+                <p className="font-medium mb-1">This client has associated records:</p>
+                <ul className="text-sm space-y-1 ml-4 list-disc">
+                  {projectCount > 0 && (
+                    <li>
+                      {projectCount} project{projectCount !== 1 ? 's' : ''} will remain linked to
+                      this client
+                    </li>
+                  )}
+                  {ticketCount > 0 && (
+                    <li>
+                      {ticketCount} ticket{ticketCount !== 1 ? 's' : ''} will remain linked to this
+                      client
+                    </li>
+                  )}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <p className="text-muted-foreground text-sm">
             Inactive clients are hidden from project and ticket selectors. You can reactivate them
             at any time by editing the client.
           </p>
