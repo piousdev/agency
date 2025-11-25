@@ -21,6 +21,7 @@ import milestoneRoutes from './routes/milestones/index.js';
 import notificationRoutes from './routes/notifications/index.js';
 import sprintRoutes from './routes/sprints/index.js';
 import requestRoutes from './routes/requests/index.js';
+import dashboardPreferencesRoutes from './routes/dashboard-preferences/index.js';
 import { startAgingCheckCron } from './lib/intake-notifications.js';
 
 // Initialize Sentry for error tracking and monitoring
@@ -87,6 +88,7 @@ app.route('/api/milestones', milestoneRoutes);
 app.route('/api/notifications', notificationRoutes);
 app.route('/api/sprints', sprintRoutes);
 app.route('/api/requests', requestRoutes);
+app.route('/api/dashboard-preferences', dashboardPreferencesRoutes);
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
 

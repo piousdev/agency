@@ -1,5 +1,5 @@
-import { WidgetGridSkeleton } from '@/components/dashboard/business-center/overview/shared/widget-skeleton';
 import { Skeleton } from '@/components/ui/skeleton';
+import { WidgetGridSkeleton } from '@/components/dashboard/business-center/overview/shared/components/widget-skeleton';
 
 /**
  * Loading skeleton for the Business Center dashboard
@@ -21,7 +21,25 @@ export default function BusinessCenterLoading() {
       </div>
 
       {/* Widget Grid Skeleton */}
-      <WidgetGridSkeleton count={6} />
+      <WidgetGridSkeleton
+        widgetTypes={[
+          'my-work-today',
+          'current-sprint',
+          'organization-health',
+          'team-status',
+          'upcoming-deadlines',
+          'recent-activity',
+          'blockers',
+          'communication-hub',
+          'critical-alerts',
+          'financial-snapshot',
+          'risk-indicators',
+          'organization-health',
+          'team-status',
+          'upcoming-deadlines',
+          'recent-activity',
+        ]}
+      />
     </div>
   );
 }

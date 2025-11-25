@@ -82,7 +82,7 @@ apps/web/
 │   │
 │   ├── lib/                     # Utilities
 │   │   ├── auth-client.ts       # BetterAuth client
-│   │   └── utils.ts             # Helper functions
+│   │   └── utils.tsx             # Helper functions
 │   │
 │   └── styles/                  # Additional styles (if needed)
 │

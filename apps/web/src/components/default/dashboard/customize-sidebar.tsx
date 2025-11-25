@@ -23,7 +23,7 @@ type SidebarSection = {
 };
 
 const DEFAULT_SECTIONS: SidebarSection[] = [
-  { id: 'work-management', title: 'Work Management', visible: true, order: 0 },
+  { id: 'business-center', title: 'Business Center', visible: true, order: 0 },
   { id: 'client-service', title: 'Client & Service', visible: true, order: 1 },
   { id: 'collaboration', title: 'Collaboration', visible: true, order: 2 },
   { id: 'insights-admin', title: 'Insights & Admin', visible: true, order: 3 },

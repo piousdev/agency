@@ -45,7 +45,7 @@ import {
   servicesNavigation,
   settingsNavigation,
   tasksNavigation,
-  workManagementGroup,
+  businessCenterGroup,
   businessCenterNavigation,
 } from './navigation';
 
@@ -53,7 +53,7 @@ import {
  * Add icons to navigation items
  */
 
-// Work Management icons
+// Business Center icons
 const businessCenterWithIcons: NavigationItem = {
   ...businessCenterNavigation,
   icon: IconBriefcase,
@@ -135,8 +135,8 @@ const changelogWithIcons: NavigationItem = {
 /**
  * Navigation groups with icons
  */
-export const workManagementGroupWithIcons: NavigationGroup = {
-  ...workManagementGroup,
+export const businessCenterGroupWithIcons: NavigationGroup = {
+  ...businessCenterGroup,
   items: [businessCenterWithIcons, projectsWithIcons, tasksWithIcons, issuesWithIcons],
 };
 
@@ -174,7 +174,7 @@ export const generalGroupWithIcons: NavigationGroup = {
  * Complete sidebar navigation with icons
  */
 export const sidebarNavigationWithIcons: NavigationGroup[] = [
-  workManagementGroupWithIcons,
+  businessCenterGroupWithIcons,
   clientManagementGroupWithIcons,
   serviceManagementGroupWithIcons,
   collaborationContentGroupWithIcons,

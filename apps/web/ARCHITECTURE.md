@@ -204,7 +204,7 @@ useAuthHook.ts             # Use kebab-case, not camelCase
 
 ```
 validate-password.ts       # Verb-based (validates passwords)
-api-utils.ts               # Noun-based (collection of utilities)
+api-utils.tsx               # Noun-based (collection of utilities)
 format-date.ts             # Verb-based (formats dates)
 templates.ts               # Noun-based (email templates)
 ```
@@ -213,8 +213,8 @@ templates.ts               # Noun-based (email templates)
 
 ```
 password-validation.ts     # Use validate-password.ts (verb-based)
-helpers.ts                 # Too generic, use api-utils.ts or specific name
-date-formatter-utils.ts    # Redundant, use format-date.ts
+helpers.ts                 # Too generic, use api-utils.tsx or specific name
+date-formatter-utils.tsx    # Redundant, use format-date.ts
 ```
 
 #### Action Files (`actions.ts`)

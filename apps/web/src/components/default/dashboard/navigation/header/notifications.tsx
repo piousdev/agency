@@ -73,6 +73,18 @@ function formatTimeAgo(date: Date): string {
   return `${days}d ago`;
 }
 
+function TimeAgo({ date }: { date: Date }) {
+  const [timeAgo, setTimeAgo] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setTimeAgo(formatTimeAgo(date));
+  }, [date]);
+
+  if (!timeAgo) return null;
+
+  return <>{timeAgo}</>;
+}
+
 export function Notifications() {
   const [notifications, setNotifications] = React.useState<Notification[]>(mockNotifications);
   const [filter, setFilter] = React.useState<'all' | 'unread'>('all');
@@ -184,7 +196,7 @@ export function Notifications() {
                     <p className="text-sm font-medium leading-none">{notification.title}</p>
                     <p className="text-sm text-muted-foreground">{notification.message}</p>
                     <p className="text-xs text-muted-foreground">
-                      {formatTimeAgo(notification.timestamp)}
+                      <TimeAgo date={notification.timestamp} />
                     </p>
                   </div>
                   <div className="flex shrink-0 items-start gap-1 opacity-0 transition-opacity group-hover:opacity-100">

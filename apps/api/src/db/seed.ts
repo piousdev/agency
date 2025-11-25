@@ -17,7 +17,9 @@ import {
   sprint,
   request,
   requestHistory,
+  userDashboardPreferences,
 } from './schema/index.js';
+import type { WidgetLayout } from './schema/dashboard-preferences.js';
 import { eq, ne } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 
@@ -139,6 +141,7 @@ async function clearData() {
   await db.delete(userToClient);
   await db.delete(client);
   await db.delete(roleAssignment);
+  await db.delete(userDashboardPreferences);
 
   // Delete all users EXCEPT the admin
   if (adminEmail) {
@@ -502,6 +505,14 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
     'Product photography',
   ];
 
+  // Get admin user to assign tickets to them
+  const adminEmail = process.env.ADMIN_EMAIL;
+  let adminUser = null;
+  if (adminEmail) {
+    const [foundAdmin] = await db.select().from(user).where(eq(user.email, adminEmail));
+    adminUser = foundAdmin;
+  }
+
   // Unassigned intake tickets
   for (let i = 0; i < SEED_CONFIG.intakeTicketsUnassigned; i++) {
     const ticketTitle = ticketTitles[i % ticketTitles.length]!;
@@ -553,8 +564,58 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
     if (newTicket) tickets.push(newTicket);
   }
 
+  // Create tickets assigned to admin user with due dates (for "My Work Today" and "Upcoming Deadlines")
+  if (adminUser) {
+    const adminTaskTitles = [
+      'Review Q4 marketing strategy',
+      'Finalize client proposal',
+      'Update project documentation',
+      'Code review for feature branch',
+      'Prepare weekly status report',
+      'Sprint planning meeting prep',
+      'Client feedback implementation',
+      'Bug fix: Login page issue',
+    ];
+
+    const dueDates = [
+      new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // Tomorrow
+      new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days
+      new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days
+      new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days
+      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week
+      new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days
+      new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2 weeks
+      null, // No due date
+    ];
+
+    console.log(`   → Creating tasks assigned to admin: ${adminEmail}`);
+
+    for (let i = 0; i < adminTaskTitles.length; i++) {
+      const status = i < 3 ? 'in_progress' : 'open';
+      const [newTicket] = await db
+        .insert(ticket)
+        .values({
+          id: nanoid(),
+          title: adminTaskTitles[i]!,
+          description: `Admin task: ${adminTaskTitles[i]}. This task needs attention.`,
+          type: 'task',
+          status,
+          priority: priorities[i % priorities.length] as 'low' | 'medium' | 'high' | 'critical',
+          clientId: clients[i % clients.length]!.id,
+          assignedToId: adminUser.id,
+          createdById: adminUser.id,
+          dueAt: dueDates[i] ?? null,
+          createdAt: new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(),
+        })
+        .returning();
+
+      if (newTicket) tickets.push(newTicket);
+    }
+  }
+
   console.log(
-    `✅ Created ${tickets.length} tickets (${SEED_CONFIG.intakeTicketsUnassigned} unassigned, ${SEED_CONFIG.intakeTicketsAssigned} assigned)\n`
+    `✅ Created ${tickets.length} tickets (${SEED_CONFIG.intakeTicketsUnassigned} unassigned, ${SEED_CONFIG.intakeTicketsAssigned} assigned${adminUser ? ', 8 admin tasks' : ''})\n`
   );
 
   return tickets;
@@ -1292,6 +1353,108 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
 }
 
 /**
+ * Default dashboard layouts by role
+ */
+const DEFAULT_LAYOUTS: Record<string, WidgetLayout[]> = {
+  developer: [
+    { id: 'my-work-today', type: 'my-work-today', size: 'large', position: 0, visible: true },
+    { id: 'current-sprint', type: 'current-sprint', size: 'medium', position: 1, visible: true },
+    { id: 'blockers', type: 'blockers', size: 'medium', position: 2, visible: true },
+    {
+      id: 'upcoming-deadlines',
+      type: 'upcoming-deadlines',
+      size: 'medium',
+      position: 3,
+      visible: true,
+    },
+    { id: 'recent-activity', type: 'recent-activity', size: 'medium', position: 4, visible: true },
+  ],
+  admin: [
+    { id: 'org-health', type: 'organization-health', size: 'medium', position: 0, visible: true },
+    { id: 'critical-alerts', type: 'critical-alerts', size: 'medium', position: 1, visible: true },
+    { id: 'team-status', type: 'team-status', size: 'medium', position: 2, visible: true },
+    {
+      id: 'upcoming-deadlines',
+      type: 'upcoming-deadlines',
+      size: 'medium',
+      position: 3,
+      visible: true,
+    },
+    { id: 'recent-activity', type: 'recent-activity', size: 'medium', position: 4, visible: true },
+    {
+      id: 'financial-snapshot',
+      type: 'financial-snapshot',
+      size: 'medium',
+      position: 5,
+      visible: true,
+    },
+  ],
+  client: [
+    {
+      id: 'upcoming-deadlines',
+      type: 'upcoming-deadlines',
+      size: 'medium',
+      position: 0,
+      visible: true,
+    },
+    {
+      id: 'financial-snapshot',
+      type: 'financial-snapshot',
+      size: 'medium',
+      position: 1,
+      visible: true,
+    },
+    { id: 'recent-activity', type: 'recent-activity', size: 'medium', position: 2, visible: true },
+  ],
+};
+
+/**
+ * Seed Dashboard Preferences
+ */
+async function seedDashboardPreferences(internalUsers: any[], clientUsers: any[]) {
+  console.log('📊 Seeding dashboard preferences...');
+
+  let prefsCount = 0;
+
+  // Seed preferences for internal users (developer layout)
+  for (const internalUser of internalUsers) {
+    await db.insert(userDashboardPreferences).values({
+      userId: internalUser.id,
+      layout: DEFAULT_LAYOUTS.developer,
+      collapsedWidgets: [],
+    });
+    prefsCount++;
+  }
+
+  // Seed preferences for client users (client layout)
+  for (const clientUser of clientUsers) {
+    await db.insert(userDashboardPreferences).values({
+      userId: clientUser.id,
+      layout: DEFAULT_LAYOUTS.client,
+      collapsedWidgets: [],
+    });
+    prefsCount++;
+  }
+
+  // Seed admin preferences for admin user if exists
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (adminEmail) {
+    const [adminUser] = await db.select().from(user).where(eq(user.email, adminEmail));
+    if (adminUser) {
+      await db.insert(userDashboardPreferences).values({
+        userId: adminUser.id,
+        layout: DEFAULT_LAYOUTS.admin,
+        collapsedWidgets: [],
+      });
+      prefsCount++;
+      console.log(`   → Seeded admin dashboard preferences for ${adminEmail}`);
+    }
+  }
+
+  console.log(`✅ Created ${prefsCount} dashboard preferences\n`);
+}
+
+/**
  * Main seed function
  */
 async function seed() {
@@ -1314,6 +1477,7 @@ async function seed() {
     await seedProjectAssignments(projects, internalUsers);
     const sprints = await seedSprints(projects);
     const intakeRequests = await seedRequests(allClients, internalUsers);
+    await seedDashboardPreferences(internalUsers, clientUsers);
 
     // Seed role assignments (after users are created)
     await seedRoleAssignments(internalUsers, clientUsers, roles);
@@ -1331,6 +1495,9 @@ async function seed() {
     console.log(`   - ${projects.length} projects (various stages)`);
     console.log(`   - ${sprints.length} sprints (completed, active, planning)`);
     console.log(`   - ${intakeRequests.length} intake pipeline requests (all stages)`);
+    console.log(
+      `   - ${internalUsers.length + clientUsers.length + 1} dashboard preferences (per-user)`
+    );
     console.log(`   - 4 default roles (admin, editor, viewer, client)`);
     console.log(`   - Team capacity: 50%, 75%, 85%, 100%, 120%, 150%\n`);
 

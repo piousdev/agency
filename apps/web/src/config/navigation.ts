@@ -316,10 +316,10 @@ export const userMenuGroups = {
 // ============================================================================
 
 /**
- * WORK MANAGEMENT GROUP
+ * BUSINESS CENTER GROUP
  */
 
-// Work Section
+// Business Center Section
 export const businessCenterNavigation: NavigationItem = {
   title: 'Business Center',
   description: 'Central hub for daily operations and overview',
@@ -517,9 +517,9 @@ export const tasksNavigation: NavigationItem = {
   ],
 };
 
-// Work Management Group
-export const workManagementGroup: NavigationGroup = {
-  title: 'Work Management',
+// Business Center Group
+export const businessCenterGroup: NavigationGroup = {
+  title: 'Business Center',
   items: [businessCenterNavigation, projectsNavigation, tasksNavigation, issuesNavigation],
 };
 
@@ -990,7 +990,7 @@ export const generalGroup: NavigationGroup = {
  * Complete sidebar navigation structure organized by groups
  */
 export const sidebarNavigation: NavigationGroup[] = [
-  workManagementGroup,
+  businessCenterGroup,
   clientManagementGroup,
   serviceManagementGroup,
   collaborationContentGroup,

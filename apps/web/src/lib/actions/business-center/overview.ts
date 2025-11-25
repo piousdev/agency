@@ -1,18 +1,24 @@
 'use server';
 
 /**
- * Overview Dashboard Server Actions
- * Aggregates data from various APIs for the dashboard widgets
+ * Overview Dashboard Data Fetching
+ * Optimized for Next.js 16 with Cache Components
+ *
+ * Note: Most functions cannot use 'use cache' because they depend on
+ * authenticated API calls that internally use headers()/cookies().
+ * Caching should be added after API clients are refactored to accept
+ * auth headers as parameters.
  */
 
-import { cookies } from 'next/headers';
+import { cacheLife, cacheTag } from 'next/cache';
+import { headers } from 'next/headers';
 import { listTickets } from '@/lib/api/tickets/list';
 import { listSprints } from '@/lib/api/sprints';
 import type { TicketWithRelations, TicketStatus, TicketPriority } from '@/lib/api/tickets/types';
 import type { SprintWithProject } from '@/lib/api/sprints/types';
 
 // ============================================================================
-// Types for Overview Dashboard
+// Types
 // ============================================================================
 
 export interface MyWorkTask {
@@ -147,44 +153,41 @@ export interface OverviewData {
 // Auth Helper
 // ============================================================================
 
-async function getAuthHeaders(): Promise<HeadersInit> {
-  const cookieStore = await cookies();
-  const sessionToken =
-    cookieStore.get('better-auth.session_token')?.value ||
-    cookieStore.get('__Secure-better-auth.session_token')?.value;
-
-  return {
-    'Content-Type': 'application/json',
-    Cookie: sessionToken ? `better-auth.session_token=${sessionToken}` : '',
-  };
+async function getAuthToken(): Promise<string | undefined> {
+  const headersList = await headers();
+  const cookie = headersList.get('cookie') || '';
+  const match = cookie.match(/better-auth\.session_token=([^;]+)/);
+  return match?.[1];
 }
 
 // ============================================================================
-// Data Fetching Functions
+// Data Fetchers
 // ============================================================================
 
 /**
- * Get user's assigned tasks for "My Work Today" widget
+ * Get user's assigned tasks
+ * Cannot use 'use cache' - listTickets internally uses cookies()
  */
 export async function getMyWorkToday(userId: string): Promise<MyWorkTask[]> {
   try {
-    const response = await listTickets({
-      assignedToId: userId,
-      status: 'open' as TicketStatus,
-      pageSize: 10,
-      sortBy: 'priority',
-      sortOrder: 'desc',
-    });
+    const [openTickets, inProgressTickets] = await Promise.all([
+      listTickets({
+        assignedToId: userId,
+        status: 'open' as TicketStatus,
+        pageSize: 10,
+        sortBy: 'priority',
+        sortOrder: 'desc',
+      }),
+      listTickets({
+        assignedToId: userId,
+        status: 'in_progress' as TicketStatus,
+        pageSize: 10,
+        sortBy: 'updatedAt',
+        sortOrder: 'desc',
+      }),
+    ]);
 
-    const inProgressResponse = await listTickets({
-      assignedToId: userId,
-      status: 'in_progress' as TicketStatus,
-      pageSize: 10,
-      sortBy: 'updatedAt',
-      sortOrder: 'desc',
-    });
-
-    const allTickets = [...response.data, ...inProgressResponse.data];
+    const allTickets = [...openTickets.data, ...inProgressTickets.data];
 
     return allTickets.slice(0, 10).map((ticket: TicketWithRelations) => ({
       id: ticket.id,
@@ -192,7 +195,7 @@ export async function getMyWorkToday(userId: string): Promise<MyWorkTask[]> {
       priority: ticket.priority,
       status: ticket.status,
       dueAt: ticket.dueAt,
-      projectName: ticket.project?.name || null,
+      projectName: ticket.project?.name ?? null,
       ticketNumber: ticket.ticketNumber,
       isBlocked: ticket.slaStatus === 'breached',
       estimatedTime: ticket.estimatedTime,
@@ -204,7 +207,8 @@ export async function getMyWorkToday(userId: string): Promise<MyWorkTask[]> {
 }
 
 /**
- * Get current/active sprint data
+ * Get current sprint
+ * Cannot use 'use cache' - listSprints internally uses cookies()
  */
 export async function getCurrentSprint(): Promise<SprintData | null> {
   try {
@@ -216,15 +220,12 @@ export async function getCurrentSprint(): Promise<SprintData | null> {
 
     const sprint = response.data[0] as SprintWithProject;
 
-    // Calculate days remaining
     const now = new Date();
     const endDate = sprint.endDate ? new Date(sprint.endDate) : null;
     const daysRemaining = endDate
       ? Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
       : 0;
 
-    // Note: Task counts would need additional API calls or aggregation
-    // For now, using points as a proxy
     const totalTasks = sprint.plannedPoints;
     const completedTasks = sprint.completedPoints;
     const inProgressTasks = Math.floor((totalTasks - completedTasks) * 0.3);
@@ -233,7 +234,7 @@ export async function getCurrentSprint(): Promise<SprintData | null> {
     return {
       id: sprint.id,
       name: sprint.name,
-      projectName: sprint.project?.name || 'Unknown Project',
+      projectName: sprint.project?.name ?? 'Unknown Project',
       startDate: sprint.startDate,
       endDate: sprint.endDate,
       totalTasks,
@@ -251,28 +252,28 @@ export async function getCurrentSprint(): Promise<SprintData | null> {
 }
 
 /**
- * Get blocked tasks/blockers
+ * Get blocked tasks
+ * Cannot use 'use cache' - listTickets internally uses cookies()
  */
 export async function getBlockers(): Promise<BlockerItem[]> {
   try {
-    // Fetch tickets with critical/high priority that are blocked
-    const response = await listTickets({
-      priority: 'critical',
-      pageSize: 10,
-      sortBy: 'updatedAt',
-      sortOrder: 'desc',
-    });
+    const [criticalTickets, highPriorityTickets] = await Promise.all([
+      listTickets({
+        priority: 'critical',
+        pageSize: 10,
+        sortBy: 'updatedAt',
+        sortOrder: 'desc',
+      }),
+      listTickets({
+        priority: 'high',
+        pageSize: 10,
+        sortBy: 'updatedAt',
+        sortOrder: 'desc',
+      }),
+    ]);
 
-    const highPriorityResponse = await listTickets({
-      priority: 'high',
-      pageSize: 10,
-      sortBy: 'updatedAt',
-      sortOrder: 'desc',
-    });
+    const allTickets = [...criticalTickets.data, ...highPriorityTickets.data];
 
-    const allTickets = [...response.data, ...highPriorityResponse.data];
-
-    // Filter for tickets that appear to be blocked (breached SLA or pending)
     const blockedTickets = allTickets.filter(
       (t) => t.slaStatus === 'breached' || t.status === 'pending_client'
     );
@@ -288,7 +289,7 @@ export async function getBlockers(): Promise<BlockerItem[]> {
         id: ticket.id,
         title: ticket.title,
         severity: ticket.priority === 'critical' ? 'critical' : 'high',
-        projectName: ticket.project?.name || 'No Project',
+        projectName: ticket.project?.name ?? 'No Project',
         daysBlocked,
         assignee: ticket.assignedTo?.name,
         reason: ticket.status === 'pending_client' ? 'Waiting for client' : 'SLA breached',
@@ -302,6 +303,7 @@ export async function getBlockers(): Promise<BlockerItem[]> {
 
 /**
  * Get upcoming deadlines
+ * Cannot use 'use cache' - listTickets internally uses cookies()
  */
 export async function getUpcomingDeadlines(): Promise<DeadlineItem[]> {
   try {
@@ -311,7 +313,6 @@ export async function getUpcomingDeadlines(): Promise<DeadlineItem[]> {
       sortOrder: 'desc',
     });
 
-    // Filter tickets with due dates and sort by due date
     const ticketsWithDueDates = response.data
       .filter((t: TicketWithRelations) => t.dueAt)
       .sort(
@@ -324,7 +325,7 @@ export async function getUpcomingDeadlines(): Promise<DeadlineItem[]> {
       title: ticket.title,
       dueDate: ticket.dueAt!,
       type: 'task' as const,
-      projectName: ticket.project?.name || null,
+      projectName: ticket.project?.name ?? null,
       priority: ticket.priority,
     }));
   } catch (error) {
@@ -334,12 +335,11 @@ export async function getUpcomingDeadlines(): Promise<DeadlineItem[]> {
 }
 
 /**
- * Get recent activity across all entities
- * Note: This would ideally use a dedicated activity API
+ * Get recent activity
+ * Cannot use 'use cache' - listTickets internally uses cookies()
  */
 export async function getRecentActivity(): Promise<ActivityItem[]> {
   try {
-    // For now, we'll derive activity from recent tickets
     const response = await listTickets({
       pageSize: 10,
       sortBy: 'updatedAt',
@@ -365,14 +365,19 @@ export async function getRecentActivity(): Promise<ActivityItem[]> {
 }
 
 /**
- * Get team status (would require team/capacity API)
- * For now returns mock data structure
+ * Get team status
+ * Cannot use 'use cache' - fetch requires auth headers
  */
 export async function getTeamStatus(): Promise<TeamMember[]> {
   try {
-    const authHeaders = await getAuthHeaders();
+    const headersList = await headers();
+    const cookie = headersList.get('cookie') || '';
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/team`, {
-      headers: authHeaders,
+      headers: {
+        'Content-Type': 'application/json',
+        cookie,
+      },
       cache: 'no-store',
     });
 
@@ -389,7 +394,7 @@ export async function getTeamStatus(): Promise<TeamMember[]> {
     return result.data.slice(0, 6).map((member: Record<string, unknown>) => ({
       id: member.id as string,
       name: member.name as string,
-      image: (member.image as string) || null,
+      image: (member.image as string) ?? null,
       status: 'available' as const,
       activeTasks: 0,
       completedToday: 0,
@@ -402,18 +407,19 @@ export async function getTeamStatus(): Promise<TeamMember[]> {
 
 /**
  * Get organization health metrics
- * Aggregates various metrics for the org health widget
+ * Cannot use 'use cache' - listTickets internally uses cookies()
  */
 export async function getOrganizationHealth(): Promise<OrganizationMetric[]> {
   try {
-    // Fetch ticket counts for metrics
-    const openTickets = await listTickets({ status: 'open', pageSize: 1 });
-    const resolvedTickets = await listTickets({ status: 'resolved', pageSize: 1 });
-    const criticalTickets = await listTickets({ priority: 'critical', pageSize: 1 });
+    const [openTickets, resolvedTickets, criticalTickets] = await Promise.all([
+      listTickets({ status: 'open', pageSize: 1 }),
+      listTickets({ status: 'resolved', pageSize: 1 }),
+      listTickets({ priority: 'critical', pageSize: 1 }),
+    ]);
 
-    const totalOpen = openTickets.pagination?.totalCount || 0;
-    const totalResolved = resolvedTickets.pagination?.totalCount || 0;
-    const totalCritical = criticalTickets.pagination?.totalCount || 0;
+    const totalOpen = openTickets.pagination?.totalCount ?? 0;
+    const totalResolved = resolvedTickets.pagination?.totalCount ?? 0;
+    const totalCritical = criticalTickets.pagination?.totalCount ?? 0;
 
     return [
       {
@@ -456,14 +462,16 @@ export async function getOrganizationHealth(): Promise<OrganizationMetric[]> {
 }
 
 /**
- * Get financial snapshot data
- * Shows revenue, invoices, and budget metrics
- * Note: When a real invoicing/billing API exists, this would fetch from there
+ * Get financial snapshot
+ * Can use 'use cache' - no external API calls, pure mock data
  */
 export async function getFinancialSnapshot(): Promise<FinancialSnapshot | null> {
+  'use cache';
+  cacheLife('days');
+  cacheTag('financial-snapshot');
+
   try {
-    // For now, return placeholder data structure
-    // This would be replaced with actual API calls to billing/invoicing service
+    // TODO: Replace with actual API when billing service exists
     return {
       revenue: {
         id: 'revenue',
@@ -507,14 +515,16 @@ export async function getFinancialSnapshot(): Promise<FinancialSnapshot | null> 
 }
 
 /**
- * Get risk summary data
- * Shows project risks by severity and category
- * Note: When a real risk assessment API exists, this would fetch from there
+ * Get risk summary
+ * Can use 'use cache' - no external API calls, pure mock data
  */
 export async function getRiskSummary(): Promise<RiskSummary | null> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag('risk-summary');
+
   try {
-    // For now, return placeholder data structure
-    // This would be replaced with actual API calls to risk assessment service
+    // TODO: Replace with actual API when risk assessment service exists
     const risks: RiskIndicator[] = [
       {
         id: 'risk-1',
@@ -564,12 +574,15 @@ export async function getRiskSummary(): Promise<RiskSummary | null> {
   }
 }
 
+// ============================================================================
+// Main Aggregator
+// ============================================================================
+
 /**
- * Main function to fetch all overview data
- * Can be called from the page server component
+ * Aggregate all overview data
+ * All fetches run in parallel for optimal performance
  */
 export async function getOverviewData(userId: string): Promise<OverviewData> {
-  // Fetch all data in parallel for better performance
   const [
     myWork,
     sprint,

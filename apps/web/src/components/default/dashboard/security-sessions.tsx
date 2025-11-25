@@ -157,7 +157,7 @@ export function SessionsManager() {
                   <span>•</span>
                   <span>{session.ip}</span>
                   <span>•</span>
-                  <span>{formatLastActive(session.lastActive)}</span>
+                  <span suppressHydrationWarning>{formatLastActive(session.lastActive)}</span>
                 </div>
               </div>
 

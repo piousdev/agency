@@ -17,6 +17,13 @@ import {
   type WidgetSize,
 } from '../dashboard-store';
 
+// Mock the server actions
+vi.mock('@/lib/actions/business-center/dashboard-preferences', () => ({
+  fetchDashboardPreferences: vi.fn().mockResolvedValue({ success: false }),
+  saveDashboardPreferences: vi.fn().mockResolvedValue({ success: true }),
+  resetToDefaultPreferences: vi.fn().mockResolvedValue({ success: false }),
+}));
+
 // Mock localStorage
 const mockLocalStorage = (() => {
   let store: Record<string, string> = {};
@@ -39,7 +46,7 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 describe('Dashboard Store', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     // Fully reset store state before each test
     useDashboardStore.setState({
       layout: [],
@@ -47,9 +54,9 @@ describe('Dashboard Store', () => {
       collapsedWidgets: [],
       widgetConfigs: {},
     });
-    // Then apply default layout
+    // Then apply default layout (now async)
     const { resetToDefault } = useDashboardStore.getState();
-    resetToDefault('developer');
+    await resetToDefault('developer');
     mockLocalStorage.clear();
   });
 
@@ -82,7 +89,7 @@ describe('Dashboard Store', () => {
     it('should update the layout', () => {
       const { setLayout } = useDashboardStore.getState();
       const newLayout: WidgetLayout[] = [
-        { id: 'test-1', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'test-1', type: 'organization-health', size: 'large', position: 0, visible: true },
         { id: 'test-2', type: 'my-work-today', size: 'medium', position: 1, visible: true },
       ];
 
@@ -116,7 +123,7 @@ describe('Dashboard Store', () => {
     it('should move widget from one position to another', () => {
       const { setLayout, reorderWidgets } = useDashboardStore.getState();
       const initialLayout: WidgetLayout[] = [
-        { id: 'a', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'a', type: 'organization-health', size: 'large', position: 0, visible: true },
         { id: 'b', type: 'my-work-today', size: 'medium', position: 1, visible: true },
         { id: 'c', type: 'blockers', size: 'small', position: 2, visible: true },
       ];
@@ -138,7 +145,7 @@ describe('Dashboard Store', () => {
     it('should update position values after reorder', () => {
       const { setLayout, reorderWidgets } = useDashboardStore.getState();
       const initialLayout: WidgetLayout[] = [
-        { id: 'a', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'a', type: 'organization-health', size: 'large', position: 0, visible: true },
         { id: 'b', type: 'my-work-today', size: 'medium', position: 1, visible: true },
         { id: 'c', type: 'blockers', size: 'small', position: 2, visible: true },
       ];
@@ -160,7 +167,7 @@ describe('Dashboard Store', () => {
     it('should handle same index reorder (no change)', () => {
       const { setLayout, reorderWidgets } = useDashboardStore.getState();
       const initialLayout: WidgetLayout[] = [
-        { id: 'a', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'a', type: 'organization-health', size: 'large', position: 0, visible: true },
         { id: 'b', type: 'my-work-today', size: 'medium', position: 1, visible: true },
       ];
 
@@ -246,7 +253,7 @@ describe('Dashboard Store', () => {
     it('should hide a visible widget', () => {
       const { setLayout, toggleWidgetVisibility } = useDashboardStore.getState();
       const layout: WidgetLayout[] = [
-        { id: 'test', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'test', type: 'organization-health', size: 'large', position: 0, visible: true },
       ];
 
       act(() => {
@@ -261,7 +268,7 @@ describe('Dashboard Store', () => {
     it('should show a hidden widget', () => {
       const { setLayout, toggleWidgetVisibility } = useDashboardStore.getState();
       const layout: WidgetLayout[] = [
-        { id: 'test', type: 'quick-actions', size: 'large', position: 0, visible: false },
+        { id: 'test', type: 'organization-health', size: 'large', position: 0, visible: false },
       ];
 
       act(() => {
@@ -302,7 +309,7 @@ describe('Dashboard Store', () => {
     it('should update position to end of layout', () => {
       const { setLayout, addWidget } = useDashboardStore.getState();
       const initialLayout: WidgetLayout[] = [
-        { id: 'existing', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'existing', type: 'organization-health', size: 'large', position: 0, visible: true },
       ];
 
       act(() => {
@@ -330,7 +337,7 @@ describe('Dashboard Store', () => {
     it('should remove a widget from the layout', () => {
       const { setLayout, removeWidget } = useDashboardStore.getState();
       const layout: WidgetLayout[] = [
-        { id: 'keep', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'keep', type: 'organization-health', size: 'large', position: 0, visible: true },
         { id: 'remove', type: 'blockers', size: 'medium', position: 1, visible: true },
       ];
 
@@ -347,7 +354,7 @@ describe('Dashboard Store', () => {
     it('should update positions after removal', () => {
       const { setLayout, removeWidget } = useDashboardStore.getState();
       const layout: WidgetLayout[] = [
-        { id: 'a', type: 'quick-actions', size: 'large', position: 0, visible: true },
+        { id: 'a', type: 'organization-health', size: 'large', position: 0, visible: true },
         { id: 'b', type: 'blockers', size: 'medium', position: 1, visible: true },
         { id: 'c', type: 'my-work-today', size: 'small', position: 2, visible: true },
       ];
@@ -364,11 +371,11 @@ describe('Dashboard Store', () => {
   });
 
   describe('resetToDefault', () => {
-    it('should reset to admin layout', () => {
-      const { resetToDefault } = useDashboardStore.getState();
+    it('should reset to admin layout via getDefaultLayoutForRole', () => {
+      const { getDefaultLayoutForRole, setLayout } = useDashboardStore.getState();
 
       act(() => {
-        resetToDefault('admin');
+        setLayout(getDefaultLayoutForRole('admin'));
       });
 
       const { layout } = useDashboardStore.getState();
@@ -377,24 +384,24 @@ describe('Dashboard Store', () => {
       expect(layout.some((w) => w.type === 'critical-alerts')).toBe(true);
     });
 
-    it('should reset to developer layout', () => {
+    it('should reset to developer layout', async () => {
       const { resetToDefault } = useDashboardStore.getState();
 
-      act(() => {
-        resetToDefault('developer');
+      await act(async () => {
+        await resetToDefault();
       });
 
       const { layout } = useDashboardStore.getState();
-      // Developer layout should have my-work-today, current-sprint, blockers
+      // Developer layout should have my-work-today, current-sprint, blockers (fallback when server fails)
       expect(layout.some((w) => w.type === 'my-work-today')).toBe(true);
       expect(layout.some((w) => w.type === 'blockers')).toBe(true);
     });
 
-    it('should reset to client layout', () => {
-      const { resetToDefault } = useDashboardStore.getState();
+    it('should reset to client layout via getDefaultLayoutForRole', () => {
+      const { getDefaultLayoutForRole, setLayout } = useDashboardStore.getState();
 
       act(() => {
-        resetToDefault('client');
+        setLayout(getDefaultLayoutForRole('client'));
       });
 
       const { layout } = useDashboardStore.getState();
@@ -403,39 +410,45 @@ describe('Dashboard Store', () => {
       expect(layout.some((w) => w.type === 'organization-health')).toBe(false);
     });
 
-    it('should clear collapsedWidgets on reset', () => {
+    it('should clear collapsedWidgets on reset', async () => {
       const { toggleWidgetCollapse, resetToDefault } = useDashboardStore.getState();
 
       act(() => {
         toggleWidgetCollapse('some-widget');
-        resetToDefault('developer');
+      });
+
+      await act(async () => {
+        await resetToDefault();
       });
 
       const { collapsedWidgets } = useDashboardStore.getState();
       expect(collapsedWidgets).toEqual([]);
     });
 
-    it('should clear widgetConfigs on reset', () => {
+    it('should clear widgetConfigs on reset', async () => {
       const { setWidgetConfig, resetToDefault } = useDashboardStore.getState();
 
       act(() => {
         setWidgetConfig('some-widget', { test: true });
-        resetToDefault('developer');
+      });
+
+      await act(async () => {
+        await resetToDefault();
       });
 
       const { widgetConfigs } = useDashboardStore.getState();
       expect(widgetConfigs).toEqual({});
     });
 
-    it('should fallback to developer layout for unknown role', () => {
+    it('should fallback to developer layout when server fails', async () => {
       const { resetToDefault } = useDashboardStore.getState();
 
-      act(() => {
-        resetToDefault('unknown-role');
+      await act(async () => {
+        await resetToDefault();
       });
 
       const { layout } = useDashboardStore.getState();
-      // Should get developer layout as fallback
+      // Should get developer layout as fallback when server returns failure
       expect(layout.some((w) => w.type === 'my-work-today')).toBe(true);
     });
   });
@@ -543,7 +556,7 @@ describe('Dashboard Store', () => {
 });
 
 describe('Selector Hooks', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     // Fully reset store state before each test
     useDashboardStore.setState({
       layout: [],
@@ -552,7 +565,7 @@ describe('Selector Hooks', () => {
       widgetConfigs: {},
     });
     const { resetToDefault } = useDashboardStore.getState();
-    resetToDefault('developer');
+    await resetToDefault('developer');
   });
 
   describe('useEditMode', () => {

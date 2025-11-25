@@ -113,7 +113,7 @@ apps/web/
 │           ├── content.tsx                   # Main content area
 │           ├── table-of-contents.tsx         # Right sidebar TOC
 │           ├── types.ts                      # TypeScript types
-│           └── utils.ts                      # Server-side utilities
+│           └── utils.tsx                      # Server-side utilities
 │
 ├── content/
 │   └── changelog/
@@ -180,7 +180,7 @@ Root:
    - `components/changelog/content.tsx` - Main MDX content area
    - `components/changelog/table-of-contents.tsx` - Right TOC
    - `components/changelog/types.ts` - TypeScript interfaces
-   - `components/changelog/utils.ts` - Content loading utilities
+   - `components/changelog/utils.tsx` - Content loading utilities
 
 ### Phase 4: Navigation Integration
 

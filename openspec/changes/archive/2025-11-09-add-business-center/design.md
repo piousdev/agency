@@ -6,7 +6,7 @@ The Business Center is Skyll's internal operational hub for managing work intake
 
 ### Background
 
-- **Current State**: No centralized work management system; tracking is manual/fragmented
+- **Current State**: No centralized business center; tracking is manual/fragmented
 - **Users**: Internal team members only (5-15 users initially, scale to 50+)
 - **Workload**: ~10-30 concurrent projects, ~5-20 intake requests/week
 - **Existing Infrastructure**: Hono API, Next.js App Router, PostgreSQL with Drizzle ORM, Better-Auth

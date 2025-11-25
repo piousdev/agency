@@ -1,6 +1,6 @@
 import type React from 'react';
 import { DefaultHeader } from '@/components/default/dashboard/navigation/header';
-import { DefaultSidebar } from '@/components/default/dashboard/sidebar';
+import { SidebarWrapper } from '@/components/default/dashboard/sidebar-wrapper';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 /**
@@ -17,7 +17,7 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
         } as React.CSSProperties
       }
     >
-      <DefaultSidebar variant="inset" />
+      <SidebarWrapper variant="inset" />
       <SidebarInset>
         <DefaultHeader />
         <div className="m-4">{children}</div>

@@ -9,4 +9,6 @@ export * from './tickets';
 export * from './projects';
 export * from './clients';
 export * from './capacity';
+export * from './requests';
+export * from './dashboard-preferences';
 export * from './errors';
