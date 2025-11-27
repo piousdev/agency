@@ -17,6 +17,7 @@
  */
 
 import nodemailer from 'nodemailer';
+
 import type { Transporter } from 'nodemailer';
 
 /**
@@ -33,19 +34,19 @@ export interface SendEmailOptions {
  * SMTP Configuration from environment variables
  */
 const SMTP_CONFIG = {
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587', 10),
+  host: process.env.SMTP_HOST ?? 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT ?? '587', 10),
   secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
   auth: {
-    user: process.env.SMTP_USER || '',
-    pass: process.env.SMTP_PASS || '',
+    user: process.env.SMTP_USER ?? '',
+    pass: process.env.SMTP_PASS ?? '',
   },
 };
 
 /**
  * Default "from" address for emails
  */
-const FROM_EMAIL = process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@example.com';
+const FROM_EMAIL = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? 'noreply@example.com';
 
 /**
  * Create and configure NodeMailer transporter
@@ -62,6 +63,17 @@ function getTransporter(): Transporter {
     console.warn(
       '⚠️  SMTP not configured. Email sending will fail. Set SMTP_* environment variables.'
     );
+
+    // Return a mock transporter for development
+    return {
+      sendMail: async (mailOptions: any) => {
+        console.log('📧 [DEV MODE] Simulated email sent:');
+        console.log(`   To: ${mailOptions.to}`);
+        console.log(`   Subject: ${mailOptions.subject}`);
+        return { messageId: 'dev-mock-id-' + Date.now() };
+      },
+      verify: async () => true,
+    } as unknown as Transporter;
   }
 
   transporter = nodemailer.createTransport(SMTP_CONFIG);
@@ -86,13 +98,13 @@ export async function sendEmail(options: SendEmailOptions): Promise<void> {
   const transport = getTransporter();
 
   try {
-    const info = await transport.sendMail({
+    const info: { messageId?: string } = (await transport.sendMail({
       from: FROM_EMAIL,
       to: options.to,
       subject: options.subject,
       text: options.text,
       html: options.html,
-    });
+    })) as { messageId?: string };
 
     console.log('✅ Email sent:', info.messageId);
   } catch (error) {

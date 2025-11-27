@@ -12,6 +12,7 @@
 'use client';
 
 import Link from 'next/link';
+
 import { UserMenuSkeleton } from '@/components/auth/user-menu-skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -50,9 +51,9 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative size-8 rounded-full">
           <Avatar className="size-8">
-            <AvatarImage src={user.image ?? undefined} alt={user.name ?? ''} />
+            <AvatarImage src={user.image ?? undefined} alt={user.name} />
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {user.name?.[0]?.toUpperCase() ?? user.email?.[0]?.toUpperCase() ?? 'U'}
+              {user.name[0]?.toUpperCase() ?? user.email[0]?.toUpperCase() ?? 'U'}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -69,10 +70,11 @@ export function UserMenu() {
         {/* Profile Group */}
         <DropdownMenuGroup>
           {userMenuGroupsWithIcons.profile.map((item) => {
-            const Icon = item.icon!;
+            if (!item.icon || !item.url) return null;
+            const Icon = item.icon;
             return (
               <DropdownMenuItem key={item.title} asChild>
-                <Link href={item.url!} className="cursor-pointer">
+                <Link href={item.url} className="cursor-pointer">
                   <Icon className="mr-2 h-4 w-4" />
                   {item.title}
                 </Link>
@@ -85,10 +87,11 @@ export function UserMenu() {
         {/* Settings Group */}
         <DropdownMenuGroup>
           {userMenuGroupsWithIcons.settings.map((item) => {
-            const Icon = item.icon!;
+            if (!item.icon || !item.url) return null;
+            const Icon = item.icon;
             return (
               <DropdownMenuItem key={item.title} asChild>
-                <Link href={item.url!} className="cursor-pointer">
+                <Link href={item.url} className="cursor-pointer">
                   <Icon className="mr-2 h-4 w-4" />
                   {item.title}
                 </Link>
@@ -101,10 +104,11 @@ export function UserMenu() {
         {/* Developer Group */}
         <DropdownMenuGroup>
           {userMenuGroupsWithIcons.developer.map((item) => {
-            const Icon = item.icon!;
+            if (!item.icon || !item.url) return null;
+            const Icon = item.icon;
             return (
               <DropdownMenuItem key={item.title} asChild>
-                <Link href={item.url!} className="cursor-pointer">
+                <Link href={item.url} className="cursor-pointer">
                   <Icon className="mr-2 h-4 w-4" />
                   {item.title}
                 </Link>
@@ -117,10 +121,11 @@ export function UserMenu() {
         {/* Security Group */}
         <DropdownMenuGroup>
           {userMenuGroupsWithIcons.security.map((item) => {
-            const Icon = item.icon!;
+            if (!item.icon || !item.url) return null;
+            const Icon = item.icon;
             return (
               <DropdownMenuItem key={item.title} asChild>
-                <Link href={item.url!} className="cursor-pointer">
+                <Link href={item.url} className="cursor-pointer">
                   <Icon className="mr-2 h-4 w-4" />
                   {item.title}
                 </Link>
@@ -133,10 +138,11 @@ export function UserMenu() {
         {/* Workspace Group */}
         <DropdownMenuGroup>
           {userMenuGroupsWithIcons.workspace.map((item) => {
-            const Icon = item.icon!;
+            if (!item.icon || !item.url) return null;
+            const Icon = item.icon;
             return (
               <DropdownMenuItem key={item.title} asChild>
-                <Link href={item.url!} className="cursor-pointer">
+                <Link href={item.url} className="cursor-pointer">
                   <Icon className="mr-2 h-4 w-4" />
                   {item.title}
                 </Link>
@@ -149,10 +155,11 @@ export function UserMenu() {
         {/* Support Group */}
         <DropdownMenuGroup>
           {userMenuGroupsWithIcons.support.map((item) => {
-            const Icon = item.icon!;
+            if (!item.icon || !item.url) return null;
+            const Icon = item.icon;
             return (
               <DropdownMenuItem key={item.title} asChild>
-                <Link href={item.url!} className="cursor-pointer">
+                <Link href={item.url} className="cursor-pointer">
                   <Icon className="mr-2 h-4 w-4" />
                   {item.title}
                 </Link>
@@ -164,7 +171,8 @@ export function UserMenu() {
 
         {/* Logout */}
         {userMenuGroupsWithIcons.signout.map((item) => {
-          const Icon = item.icon!;
+          if (!item.icon) return null;
+          const Icon = item.icon;
           return (
             <DropdownMenuItem
               key={item.title}

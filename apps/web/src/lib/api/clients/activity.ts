@@ -17,11 +17,11 @@ export interface ActivityMetadata {
   field?: string;
   oldValue?: string | number | boolean | null;
   newValue?: string | number | boolean | null;
-  changes?: Array<{
+  changes?: {
     field: string;
     oldValue: unknown;
     newValue: unknown;
-  }>;
+  }[];
   affectedIds?: string[];
   affectedCount?: number;
   description?: string;
@@ -99,5 +99,5 @@ export async function getClientActivity(
     throw new Error(`Failed to fetch client activity: ${response.statusText}`);
   }
 
-  return response.json();
+  return response.json() as Promise<ActivityResponse>;
 }

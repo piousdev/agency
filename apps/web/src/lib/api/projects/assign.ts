@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { AssignProjectInput, ProjectResponse, RemoveProjectAssignmentInput } from './types';
 
 /**
@@ -23,7 +24,7 @@ export async function assignProject(
     const authHeaders = await getAuthHeaders();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/assign`,
+      `${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}/assign`,
       {
         method: 'PATCH',
         headers: authHeaders,
@@ -31,10 +32,14 @@ export async function assignProject(
       }
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as { message?: string; data?: ProjectResponse['data'] };
 
     if (!response.ok) {
-      return { success: false, error: result.message || 'Failed to assign project' };
+      return { success: false, error: result.message ?? 'Failed to assign project' };
+    }
+
+    if (!result.data) {
+      return { success: false, error: 'No data returned from server' };
     }
 
     return { success: true, data: result.data };
@@ -62,7 +67,7 @@ export async function removeProjectAssignment(
   const authHeaders = await getAuthHeaders();
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/assign`,
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}/assign`,
     {
       method: 'DELETE',
       headers: authHeaders,
@@ -70,11 +75,11 @@ export async function removeProjectAssignment(
     }
   );
 
-  const result = await response.json();
+  const result = (await response.json()) as { message?: string } & Partial<ProjectResponse>;
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to remove project assignment');
+    throw new Error(result.message ?? 'Failed to remove project assignment');
   }
 
-  return result;
+  return result as ProjectResponse;
 }

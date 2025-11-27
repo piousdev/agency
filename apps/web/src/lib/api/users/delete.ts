@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { ApiResponse } from './types';
 
 /**
@@ -16,15 +17,15 @@ import type { ApiResponse } from './types';
 export async function deleteUser(userId: string): Promise<ApiResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/${userId}`, {
     method: 'DELETE',
     headers: authHeaders,
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to delete user');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to delete user');
   }
 
-  return response.json();
+  return (await response.json()) as ApiResponse;
 }

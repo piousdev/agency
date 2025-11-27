@@ -1,12 +1,14 @@
 # Sentry Integration Test Results
 
-**Test Date**: 2025-11-08
-**Environment**: Development (localhost:3000)
+**Test Date**: 2025-11-08 **Environment**: Development (localhost:3000)
 **Status**: ⚠️ Partially Working - Configuration Required
 
 ## Summary
 
-The Sentry integration has been installed and configured correctly, but **environment variables are missing**, preventing errors from being sent to Sentry. The test infrastructure is working properly and ready to validate the integration once the DSN is configured.
+The Sentry integration has been installed and configured correctly, but
+**environment variables are missing**, preventing errors from being sent to
+Sentry. The test infrastructure is working properly and ready to validate the
+integration once the DSN is configured.
 
 ---
 
@@ -106,7 +108,8 @@ The Sentry integration has been installed and configured correctly, but **enviro
 1. Go to [sentry.io](https://sentry.io)
 2. Sign in or create an account
 3. Create a new project (or use existing)
-4. Navigate to: **Settings** → **Projects** → **[Your Project]** → **Client Keys (DSN)**
+4. Navigate to: **Settings** → **Projects** → **[Your Project]** → **Client Keys
+   (DSN)**
 5. Copy the DSN (format: `https://xxxxx@oxxxxx.ingest.sentry.io/xxxxxx`)
 
 ### 2. Configure Environment Variables
@@ -236,7 +239,8 @@ pnpm dev
 1. **Immediate**: Configure Sentry DSN in `.env.local`
 2. **Immediate**: Restart dev server
 3. **Test**: Visit `/sentry-test` and verify errors are captured
-4. **Optional**: Enable `SENTRY_SEND_IN_DEV=true` to see events in Sentry dashboard
+4. **Optional**: Enable `SENTRY_SEND_IN_DEV=true` to see events in Sentry
+   dashboard
 5. **Before Production**: Delete test files (see cleanup section below)
 
 ---
@@ -256,7 +260,8 @@ rm apps/web/SENTRY-TEST-RESULTS.md
 
 ## Additional Notes
 
-- **Privacy**: Session replay is configured with `maskAllText: true` and `blockAllMedia: true`
+- **Privacy**: Session replay is configured with `maskAllText: true` and
+  `blockAllMedia: true`
 - **Performance**: Sample rates are set to 10% to reduce costs in production
 - **Filtering**: Common browser extension errors are ignored
 - **Ad-blockers**: Tunnel route at `/monitoring` helps bypass ad-blockers

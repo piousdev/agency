@@ -8,6 +8,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+
 import {
   assignRole,
   deleteUser,
@@ -27,11 +28,11 @@ import {
 /**
  * Action state type for forms
  */
-export type ActionState = {
+export interface ActionState {
   success?: boolean;
   message?: string;
   errors?: Record<string, string[]>;
-};
+}
 
 /**
  * Update user details
@@ -58,7 +59,7 @@ export async function updateUserAction(
     if (!validation.success) {
       return {
         success: false,
-        errors: validation.error.flatten().fieldErrors,
+        message: validation.error.issues[0]?.message ?? 'Validation failed',
       };
     }
 
@@ -122,7 +123,7 @@ export async function toggleInternalStatusAction(
     if (!validation.success) {
       return {
         success: false,
-        errors: validation.error.flatten().fieldErrors,
+        message: validation.error.issues[0]?.message ?? 'Validation failed',
       };
     }
 
@@ -163,7 +164,7 @@ export async function extendExpirationAction(
     if (!validation.success) {
       return {
         success: false,
-        errors: validation.error.flatten().fieldErrors,
+        message: validation.error.issues[0]?.message ?? 'Validation failed',
       };
     }
 
@@ -204,7 +205,7 @@ export async function assignRoleAction(
     if (!validation.success) {
       return {
         success: false,
-        errors: validation.error.flatten().fieldErrors,
+        message: validation.error.issues[0]?.message ?? 'Validation failed',
       };
     }
 

@@ -2,9 +2,11 @@
 
 ## Why
 
-During initial codebase audit, several critical gaps were identified that prevent proper testing and production deployment:
+During initial codebase audit, several critical gaps were identified that
+prevent proper testing and production deployment:
 
-- Playwright E2E tests are incorrectly configured to run with Vitest, causing test failures
+- Playwright E2E tests are incorrectly configured to run with Vitest, causing
+  test failures
 - API integration tests fail due to missing SMTP mock configuration
 - No health check endpoints for monitoring and deployment validation
 - Environment variable documentation is incomplete

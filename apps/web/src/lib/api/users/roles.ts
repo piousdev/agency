@@ -4,6 +4,7 @@
  */
 
 import { buildApiUrl, getAuthHeaders } from './api-utils';
+
 import type {
   ApiResponse,
   AssignRoleInput,
@@ -23,7 +24,7 @@ export async function assignRole(userId: string, data: AssignRoleInput): Promise
   const authHeaders = await getAuthHeaders();
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/assign-role`,
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/${userId}/assign-role`,
     {
       method: 'POST',
       headers: authHeaders,
@@ -32,11 +33,11 @@ export async function assignRole(userId: string, data: AssignRoleInput): Promise
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to assign role');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to assign role');
   }
 
-  return response.json();
+  return (await response.json()) as PaginatedRolesResponse;
 }
 
 /**
@@ -51,7 +52,7 @@ export async function removeRole(userId: string, roleId: string): Promise<ApiRes
   const authHeaders = await getAuthHeaders();
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/roles/${roleId}`,
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/${userId}/roles/${roleId}`,
     {
       method: 'DELETE',
       headers: authHeaders,
@@ -59,11 +60,11 @@ export async function removeRole(userId: string, roleId: string): Promise<ApiRes
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to remove role');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to remove role');
   }
 
-  return response.json();
+  return (await response.json()) as PaginatedRolesResponse;
 }
 
 /**
@@ -83,9 +84,9 @@ export async function listRoles(params: ListRolesParams = {}): Promise<Paginated
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch roles');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to fetch roles');
   }
 
-  return response.json();
+  return (await response.json()) as PaginatedRolesResponse;
 }

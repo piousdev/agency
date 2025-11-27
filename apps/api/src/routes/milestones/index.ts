@@ -4,11 +4,12 @@
  */
 
 import { Hono } from 'hono';
-import listRoutes from './list.js';
-import getRoutes from './get.js';
+
 import createRoutes from './create.js';
-import updateRoutes from './update.js';
 import deleteRoutes from './delete.js';
+import getRoutes from './get.js';
+import listRoutes from './list.js';
+import updateRoutes from './update.js';
 
 const app = new Hono();
 

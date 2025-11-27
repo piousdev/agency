@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { project } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -50,14 +51,14 @@ app.patch(
       if (data.status !== undefined) updateData.status = data.status;
       if (data.completionPercentage !== undefined)
         updateData.completionPercentage = data.completionPercentage;
-      if (data.repositoryUrl !== undefined) updateData.repositoryUrl = data.repositoryUrl || null;
-      if (data.productionUrl !== undefined) updateData.productionUrl = data.productionUrl || null;
-      if (data.stagingUrl !== undefined) updateData.stagingUrl = data.stagingUrl || null;
-      if (data.notes !== undefined) updateData.notes = data.notes;
+      if (data.repositoryUrl !== undefined) updateData.repositoryUrl = data.repositoryUrl !== '' ? data.repositoryUrl : null;
+      if (data.productionUrl !== undefined) updateData.productionUrl = data.productionUrl !== '' ? data.productionUrl : null;
+      if (data.stagingUrl !== undefined) updateData.stagingUrl = data.stagingUrl !== '' ? data.stagingUrl : null;
+      if (data.notes !== undefined) updateData.notes = data.notes !== '' ? data.notes : null;
       if (data.startedAt !== undefined)
-        updateData.startedAt = data.startedAt ? new Date(data.startedAt) : null;
+        updateData.startedAt = data.startedAt !== '' ? new Date(data.startedAt) : null;
       if (data.deliveredAt !== undefined)
-        updateData.deliveredAt = data.deliveredAt ? new Date(data.deliveredAt) : null;
+        updateData.deliveredAt = data.deliveredAt !== '' ? new Date(data.deliveredAt) : null;
 
       // Update the project
       await db.update(project).set(updateData).where(eq(project.id, projectId));
@@ -84,21 +85,23 @@ app.patch(
 
       const transformedProject = {
         ...projectWithRelations,
-        assignees: projectWithRelations?.projectAssignments.map((pa) => pa.user) || [],
+        assignees: projectWithRelations?.projectAssignments.map((pa) => pa.user) ?? [],
         projectAssignments: undefined,
       };
 
       // Log activity for project update
-      await logEntityChange(
-        {
-          entityType: EntityTypes.PROJECT,
-          entityId: projectId,
-          actorId: currentUser.id,
-          projectId: projectId,
-        },
-        existingProject,
-        projectWithRelations!
-      );
+      if (projectWithRelations) {
+        await logEntityChange(
+          {
+            entityType: EntityTypes.PROJECT,
+            entityId: projectId,
+            actorId: currentUser.id,
+            projectId: projectId,
+          },
+          existingProject,
+          projectWithRelations
+        );
+      }
 
       return c.json({
         success: true,

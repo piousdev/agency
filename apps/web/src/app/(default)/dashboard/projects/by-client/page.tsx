@@ -1,11 +1,14 @@
 import Link from 'next/link';
+
 import { IconBuilding, IconFolderOpen, IconPlus } from '@tabler/icons-react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { requireUser } from '@/lib/auth/session';
 import { listProjects } from '@/lib/api/projects';
+import { requireUser } from '@/lib/auth/session';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface ClientGroup {
@@ -26,21 +29,19 @@ export default async function ProjectsByClientPage() {
 
   // Group projects by client
   const clientGroups = projects.reduce<Record<string, ClientGroup>>((acc, project) => {
-    const clientId = project.client?.id ?? 'unknown';
-    const clientName = project.client?.name ?? 'Unknown Client';
-    const clientType = project.client?.type ?? 'unknown';
+    const clientId = project.client.id || 'unknown';
+    const clientName = project.client.name || 'Unknown Client';
+    const clientType = project.client.type || 'unknown';
 
-    if (!acc[clientId]) {
-      acc[clientId] = {
-        id: clientId,
-        name: clientName,
-        type: clientType,
-        projects: [],
-        totalProjects: 0,
-        activeProjects: 0,
-        avgCompletion: 0,
-      };
-    }
+    acc[clientId] ??= {
+      id: clientId,
+      name: clientName,
+      type: clientType,
+      projects: [],
+      totalProjects: 0,
+      activeProjects: 0,
+      avgCompletion: 0,
+    };
 
     acc[clientId].projects.push(project);
     acc[clientId].totalProjects++;

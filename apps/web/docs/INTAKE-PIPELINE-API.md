@@ -1,10 +1,14 @@
 # Intake Pipeline API Documentation
 
-Technical documentation for the Intake Pipeline API endpoints and server actions.
+Technical documentation for the Intake Pipeline API endpoints and server
+actions.
 
 ## Overview
 
-The Intake Pipeline provides a structured workflow for processing incoming requests before they become tickets or projects. Requests flow through stages: **In Treatment** → **On Hold** (optional) → **Estimation** → **Ready** → **Converted**.
+The Intake Pipeline provides a structured workflow for processing incoming
+requests before they become tickets or projects. Requests flow through stages:
+**In Treatment** → **On Hold** (optional) → **Estimation** → **Ready** →
+**Converted**.
 
 ## API Endpoints
 
@@ -18,21 +22,18 @@ Base URL: `/api/requests`
 GET /api/requests
 ```
 
-**Query Parameters:**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `stage` | string | Filter by stage (`in_treatment`, `on_hold`, `estimation`, `ready`) |
-| `type` | string | Filter by type (`bug`, `feature`, `enhancement`, `change_request`, `support`, `other`) |
-| `priority` | string | Filter by priority (`critical`, `high`, `medium`, `low`) |
-| `assignedPmId` | string | Filter by assigned PM |
-| `clientId` | string | Filter by client |
-| `isConverted` | boolean | Filter by conversion status |
-| `isCancelled` | boolean | Filter by cancellation status |
-| `search` | string | Search in title and description |
-| `sortBy` | string | Sort field (`createdAt`, `updatedAt`, `priority`, `stageEnteredAt`) |
-| `sortOrder` | string | Sort direction (`asc`, `desc`) |
-| `page` | number | Page number (default: 1) |
-| `limit` | number | Items per page (default: 20) |
+**Query Parameters:** | Parameter | Type | Description |
+|-----------|------|-------------| | `stage` | string | Filter by stage
+(`in_treatment`, `on_hold`, `estimation`, `ready`) | | `type` | string | Filter
+by type (`bug`, `feature`, `enhancement`, `change_request`, `support`, `other`)
+| | `priority` | string | Filter by priority (`critical`, `high`, `medium`,
+`low`) | | `assignedPmId` | string | Filter by assigned PM | | `clientId` |
+string | Filter by client | | `isConverted` | boolean | Filter by conversion
+status | | `isCancelled` | boolean | Filter by cancellation status | | `search`
+| string | Search in title and description | | `sortBy` | string | Sort field
+(`createdAt`, `updatedAt`, `priority`, `stageEnteredAt`) | | `sortOrder` |
+string | Sort direction (`asc`, `desc`) | | `page` | number | Page number
+(default: 1) | | `limit` | number | Items per page (default: 20) |
 
 **Response:**
 
@@ -112,13 +113,10 @@ POST /api/requests/:id/transition
 }
 ```
 
-**Valid Transitions:**
-| From | To |
-|------|-----|
-| `in_treatment` | `on_hold`, `estimation` |
-| `on_hold` | `in_treatment`, `estimation` |
-| `estimation` | `in_treatment`, `on_hold`, `ready` |
-| `ready` | `in_treatment`, `on_hold`, `estimation` |
+**Valid Transitions:** | From | To | |------|-----| | `in_treatment` |
+`on_hold`, `estimation` | | `on_hold` | `in_treatment`, `estimation` | |
+`estimation` | `in_treatment`, `on_hold`, `ready` | | `ready` | `in_treatment`,
+`on_hold`, `estimation` |
 
 #### Hold Request
 
@@ -366,7 +364,13 @@ interface Request {
 ### Enums
 
 ```typescript
-type RequestType = 'bug' | 'feature' | 'enhancement' | 'change_request' | 'support' | 'other';
+type RequestType =
+  | 'bug'
+  | 'feature'
+  | 'enhancement'
+  | 'change_request'
+  | 'support'
+  | 'other';
 type RequestStage = 'in_treatment' | 'on_hold' | 'estimation' | 'ready';
 type Priority = 'critical' | 'high' | 'medium' | 'low';
 type ConfidenceLevel = 'low' | 'medium' | 'high';

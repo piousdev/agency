@@ -1,7 +1,7 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { BentoCard, BentoCardContent, BentoCardHeader } from '@/components/ui/bento-grid';
+import { cn } from '@/lib/utils';
 
 interface ProjectStatusChartProps {
   contentCount: number;
@@ -17,20 +17,20 @@ export function ProjectStatusChart({ contentCount, softwareCount }: ProjectStatu
       label: 'Content',
       value: contentCount,
       color: 'bg-chart-1',
-      width: `${(contentCount / maxValue) * 100}%`,
+      width: `${String((contentCount / maxValue) * 100)}%`,
     },
     {
       label: 'Software',
       value: softwareCount,
       color: 'bg-chart-2',
-      width: `${(softwareCount / maxValue) * 100}%`,
+      width: `${String((softwareCount / maxValue) * 100)}%`,
     },
   ];
 
   return (
     <BentoCard
       className="h-full"
-      aria-label={`Active projects: ${contentCount} content, ${softwareCount} software`}
+      aria-label={`Active projects: ${String(contentCount)} content, ${String(softwareCount)} software`}
     >
       <BentoCardHeader>
         <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
@@ -50,7 +50,7 @@ export function ProjectStatusChart({ contentCount, softwareCount }: ProjectStatu
               aria-valuenow={item.value}
               aria-valuemin={0}
               aria-valuemax={maxValue}
-              aria-label={`${item.label} projects: ${item.value}`}
+              aria-label={`${item.label} projects: ${String(item.value)}`}
             >
               <div
                 className={cn(

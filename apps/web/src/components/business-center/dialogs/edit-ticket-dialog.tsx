@@ -1,6 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
+import { ClientSelect, type ClientOption } from '@/components/business-center/forms/client-select';
+import { UserSelect, type UserOption } from '@/components/business-center/forms/user-select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,11 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Select,
   SelectContent,
@@ -20,15 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ClientSelect, type ClientOption } from '@/components/business-center/forms/client-select';
-import { UserSelect, type UserOption } from '@/components/business-center/forms/user-select';
+import { Textarea } from '@/components/ui/textarea';
+import { updateTicketFullAction } from '@/lib/actions/business-center/tickets';
 import {
   ticketTypeOptions,
   ticketStatusOptions,
   ticketPriorityOptions,
 } from '@/lib/schemas/ticket';
-import { updateTicketFullAction } from '@/lib/actions/business-center/tickets';
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
 
 interface Ticket {
   id: string;
@@ -75,9 +78,9 @@ export function EditTicketDialog({
   const [status, setStatus] = useState(ticket.status);
   const [priority, setPriority] = useState(ticket.priority);
   const [clientId, setClientId] = useState(ticket.clientId);
-  const [assignedToId, setAssignedToId] = useState(ticket.assignedToId || '');
-  const [environment, setEnvironment] = useState(ticket.environment || '');
-  const [affectedUrl, setAffectedUrl] = useState(ticket.affectedUrl || '');
+  const [assignedToId, setAssignedToId] = useState(ticket.assignedToId);
+  const [environment, setEnvironment] = useState(ticket.environment);
+  const [affectedUrl, setAffectedUrl] = useState(ticket.affectedUrl);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

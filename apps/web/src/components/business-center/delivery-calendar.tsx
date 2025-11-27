@@ -1,6 +1,8 @@
 import { IconCalendar, IconCode, IconPalette } from '@tabler/icons-react';
+
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 /**
@@ -19,9 +21,7 @@ function groupByDeliveryDate(projects: ProjectWithRelations[]) {
   projects.forEach((project) => {
     if (project.deliveredAt) {
       const date = new Date(project.deliveredAt).toDateString();
-      if (!grouped[date]) {
-        grouped[date] = [];
-      }
+      grouped[date] ??= [];
       grouped[date].push(project);
     }
   });
@@ -33,7 +33,7 @@ function groupByDeliveryDate(projects: ProjectWithRelations[]) {
 
   const sorted: Record<string, ProjectWithRelations[]> = {};
   sortedDates.forEach((date) => {
-    sorted[date] = grouped[date]!; // We know this exists because date is from Object.keys(grouped)
+    sorted[date] = grouped[date];
   });
 
   return sorted;
@@ -85,7 +85,9 @@ export function DeliveryCalendar({ projects }: DeliveryCalendarProps) {
   return (
     <div className="space-y-4">
       {dates.map((dateStr) => {
-        const projectsOnDate = projectsByDate[dateStr]!; // We know this exists because dateStr is from Object.keys(projectsByDate)
+        const projectsOnDate = projectsByDate[dateStr];
+        if (!projectsOnDate) return null;
+
         const date = new Date(dateStr);
         const isMultiple = projectsOnDate.length > 1;
 
@@ -94,7 +96,7 @@ export function DeliveryCalendar({ projects }: DeliveryCalendarProps) {
             {/* Date Header */}
             <div className="flex items-center gap-2">
               <div className="text-sm font-semibold">
-                {date.toLocaleDateString('en-US', {
+                {date.toLocaleDateString('en-BE', {
                   weekday: 'short',
                   month: 'short',
                   day: 'numeric',

@@ -11,6 +11,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+
 import { client } from './client';
 import { projectPriorityEnum, projectStatusEnum, projectVisibilityEnum } from './enums';
 import { user } from './user';

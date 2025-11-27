@@ -4,6 +4,7 @@
  */
 
 import { buildApiUrl, getAuthHeaders } from './api-utils';
+
 import type { TicketResponse } from './types';
 
 /**
@@ -24,8 +25,8 @@ export async function getTicket(ticketId: string): Promise<TicketResponse> {
   if (!response.ok) {
     const errorText = await response.text();
     console.error('API Error Response:', response.status, errorText);
-    throw new Error(`Failed to fetch ticket: ${response.status}`);
+    throw new Error(`Failed to fetch ticket: ${String(response.status)}`);
   }
 
-  return response.json();
+  return (await response.json()) as TicketResponse;
 }

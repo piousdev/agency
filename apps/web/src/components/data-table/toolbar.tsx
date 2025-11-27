@@ -1,6 +1,7 @@
 'use client';
 
-import { type Table } from '@tanstack/react-table';
+import { useCallback, useEffect, useState } from 'react';
+
 import {
   IconX,
   IconSearch,
@@ -8,8 +9,10 @@ import {
   IconColumns3,
   IconRotate2,
 } from '@tabler/icons-react';
+
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -18,9 +21,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { useCallback, useEffect, useState } from 'react';
+
+import type { Table } from '@tanstack/react-table';
+
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -142,13 +147,13 @@ export function DataTableToolbar<TData>({
                 .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
                 .map((column) => {
                   const meta = column.columnDef.meta;
-                  const displayName = meta?.displayName || column.id;
+                  const displayName = meta?.displayName ?? column.id;
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      onCheckedChange={(value) => column.toggleVisibility(value)}
                     >
                       {displayName}
                     </DropdownMenuCheckboxItem>

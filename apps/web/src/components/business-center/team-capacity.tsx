@@ -1,7 +1,9 @@
 import { IconUsers } from '@tabler/icons-react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import {
   Table,
   TableBody,
@@ -10,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Progress } from '@/components/ui/progress';
+
 import type { TeamMember } from '@/lib/api/users/types';
 
 /**
@@ -86,7 +88,7 @@ export function TeamCapacity({ teamMembers }: TeamCapacityProps) {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={member.image || undefined} />
+                        <AvatarImage src={member.image ?? undefined} />
                         <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           {member.name
                             .split(' ')

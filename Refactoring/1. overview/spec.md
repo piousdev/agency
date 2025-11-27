@@ -13,20 +13,24 @@
 
 ### 1.1 Primary Purpose
 
-The Overview navigation serves as a role-based command center that provides each user with a personalized dashboard displaying the most relevant information, actions, and metrics for their specific role within the Skyll platform.
+The Overview navigation serves as a role-based command center that provides each
+user with a personalized dashboard displaying the most relevant information,
+actions, and metrics for their specific role within the Skyll platform.
 
 ### 1.2 Core Objectives
 
 - Reduce time-to-action by surfacing critical information immediately upon login
 - Eliminate navigation complexity by providing role-specific views
 - Enable quick decision-making through real-time data and visual indicators
-- Provide contextual awareness of team status, project health, and pending actions
+- Provide contextual awareness of team status, project health, and pending
+  actions
 - Support multiple work styles through customizable widget arrangements
 
 ### 1.3 Success Metrics
 
 - Users can identify their top priority within 5 seconds of viewing Overview
-- 80% of daily actions are accessible from Overview without additional navigation
+- 80% of daily actions are accessible from Overview without additional
+  navigation
 - Dashboard load time under 2 seconds
 - Users customize their dashboard within first week of use
 - Reduction in "where do I find X?" support requests by 60%
@@ -840,13 +844,17 @@ The Overview navigation serves as a role-based command center that provides each
 
 ## 9. Glossary
 
-**Widget**: A self-contained dashboard component displaying specific information or functionality
+**Widget**: A self-contained dashboard component displaying specific information
+or functionality
 
-**Quick Action**: One-click button to perform common tasks directly from Overview
+**Quick Action**: One-click button to perform common tasks directly from
+Overview
 
-**Role-Based View**: Dashboard configuration that changes based on logged-in user's role
+**Role-Based View**: Dashboard configuration that changes based on logged-in
+user's role
 
-**Story Points**: Estimation unit using Fibonacci sequence (0, 1, 2, 3, 5, 8, 13, 20, 40, 100)
+**Story Points**: Estimation unit using Fibonacci sequence (0, 1, 2, 3, 5, 8,
+13, 20, 40, 100)
 
 **Sprint**: Fixed time period (typically 1-2 weeks) for completing planned work
 

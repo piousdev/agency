@@ -4,6 +4,7 @@
  */
 
 import { buildApiUrl, getAuthHeaders } from './api-utils';
+
 import type { ListUsersParams, PaginatedUsersResponse } from './types';
 
 /**
@@ -23,9 +24,9 @@ export async function listUsers(params: ListUsersParams = {}): Promise<Paginated
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch users');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to fetch users');
   }
 
-  return response.json();
+  return (await response.json()) as PaginatedUsersResponse;
 }

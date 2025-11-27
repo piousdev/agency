@@ -1,4 +1,5 @@
 import { index, pgEnum, pgTable, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+
 import { project } from './project';
 import { user } from './user';
 
@@ -56,11 +57,11 @@ export interface ActivityMetadata {
   newValue?: string | number | boolean | null;
 
   // Multiple field changes (for batch updates)
-  changes?: Array<{
+  changes?: {
     field: string;
     oldValue: unknown;
     newValue: unknown;
-  }>;
+  }[];
 
   // Related entity references
   assigneeId?: string;

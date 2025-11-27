@@ -105,7 +105,6 @@ export const slaStatusOptions = [
  * URL validation helper
  */
 const optionalUrl = z
-  .string()
   .url('Must be a valid URL')
   .max(2000, 'URL too long')
   .optional()
@@ -128,7 +127,7 @@ export const createTicketSchema = z.object({
   // SLA fields - use string for API compatibility (ISO date format)
   dueAt: z.string().optional(),
   // Contact information (for external submissions)
-  contactEmail: z.string().email('Invalid email').max(255).optional().or(z.literal('')),
+  contactEmail: z.email('Invalid email').max(255).optional().or(z.literal('')),
   contactPhone: z.string().max(50).optional().or(z.literal('')),
   contactName: z.string().max(255).optional().or(z.literal('')),
   // Additional context
@@ -167,7 +166,7 @@ export const updateTicketSchema = z.object({
   estimatedTime: z.coerce.number().int().positive().optional().nullable(),
   timeSpent: z.coerce.number().int().min(0).optional(),
   // Contact information
-  contactEmail: z.string().email('Invalid email').max(255).optional(),
+  contactEmail: z.email('Invalid email').max(255).optional(),
   contactPhone: z.string().max(50).optional(),
   contactName: z.string().max(255).optional(),
   // Additional context

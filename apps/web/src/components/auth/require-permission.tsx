@@ -21,8 +21,9 @@
 
 'use client';
 
-import type { ReactNode } from 'react';
 import { useAuth } from '@/lib/hooks/use-auth';
+
+import type { ReactNode } from 'react';
 
 interface UserWithPermissions {
   permissions?: string[];
@@ -110,12 +111,12 @@ export function RequirePermission({
 
   // Show loading state
   if (isLoading) {
-    return <>{loadingFallback}</>;
+    return loadingFallback;
   }
 
   // Not authenticated
   if (!isAuthenticated || !user) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
   // TODO: Implement permission check once session is extended
@@ -127,14 +128,14 @@ export function RequirePermission({
   // 4. Add customSessionClient plugin in apps/web/src/lib/auth-client.ts
   //
   // Placeholder implementation:
-  const userPermissions = (user as UserWithPermissions).permissions as string[] | undefined;
+  const userPermissions = (user as UserWithPermissions).permissions;
 
   if (!userPermissions || userPermissions.length === 0) {
     console.warn(
       'RequirePermission: permissions not found in session. ' +
         'Session needs to be extended server-side with customSession plugin.'
     );
-    return <>{fallback}</>;
+    return fallback;
   }
 
   // Check if user has required permission(s)
@@ -146,8 +147,8 @@ export function RequirePermission({
       : requiredPermissions.some((perm) => userPermissions.includes(perm));
 
   if (!hasAccess) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
-  return <>{children}</>;
+  return children;
 }

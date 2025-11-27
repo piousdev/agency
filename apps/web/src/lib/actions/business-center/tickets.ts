@@ -1,10 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requirePermission, Permissions } from '@/lib/auth/permissions';
+
 import { createTicket, updateTicket, assignTicket } from '@/lib/api/tickets';
-import { withErrorHandling, type ActionResult } from './errors';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createTicketSchema, updateTicketSchema } from '@/lib/schemas';
+
+import { withErrorHandling, type ActionResult } from './errors';
 
 type TicketStatus = 'open' | 'in_progress' | 'pending_client' | 'resolved' | 'closed';
 
@@ -40,9 +42,9 @@ export async function createTicketAction(
   // Validate with Zod
   const parsed = createTicketSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   // Create ticket via API
@@ -103,15 +105,15 @@ export async function updateTicketFullAction(
   // Validate with Zod
   const parsed = updateTicketSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   // Update ticket via API
   const result = await updateTicket(ticketId, parsed.data);
   if (!result.success) {
-    return { success: false, error: result.message || 'Failed to update ticket' };
+    return { success: false, error: result.message ?? 'Failed to update ticket' };
   }
 
   revalidatePath('/dashboard/business-center');
@@ -132,7 +134,7 @@ export async function deleteTicketAction(ticketId: string): Promise<ActionResult
     const result = await updateTicket(ticketId, { status: 'closed' });
 
     if (!result.success) {
-      throw new Error(result.message || 'Failed to delete ticket');
+      throw new Error(result.message ?? 'Failed to delete ticket');
     }
 
     revalidatePath('/dashboard/business-center');
@@ -147,13 +149,13 @@ export async function assignTicketAction(ticketId: string, userId: string): Prom
     // Assign ticket to user
     const assignResult = await assignTicket(ticketId, { assignedToId: userId });
     if (!assignResult.success) {
-      throw new Error(assignResult.error || 'Failed to assign ticket');
+      throw new Error(assignResult.error);
     }
 
     // Update status to in_progress
     const statusResult = await updateTicket(ticketId, { status: 'in_progress' });
     if (!statusResult.success) {
-      throw new Error(statusResult.message || 'Failed to update ticket status');
+      throw new Error(statusResult.message ?? 'Failed to update ticket status');
     }
 
     revalidatePath('/dashboard/business-center');
@@ -171,7 +173,7 @@ export async function updateTicketStatusAction(
     const result = await updateTicket(ticketId, { status });
 
     if (!result.success) {
-      throw new Error(result.message || 'Failed to update ticket status');
+      throw new Error(result.message ?? 'Failed to update ticket status');
     }
 
     revalidatePath('/dashboard/business-center');
@@ -191,7 +193,7 @@ export async function updateTicketPriorityAction(
     const result = await updateTicket(ticketId, { priority });
 
     if (!result.success) {
-      throw new Error(result.message || 'Failed to update ticket priority');
+      throw new Error(result.message ?? 'Failed to update ticket priority');
     }
 
     revalidatePath('/dashboard/business-center');
@@ -202,26 +204,30 @@ export async function updateTicketPriorityAction(
 export async function addTicketCommentAction(
   ticketId: string,
   content: string,
-  isInternal: boolean = false
+  isInternal = false
 ): Promise<ActionResult> {
   return withErrorHandling(async () => {
     await requirePermission(Permissions.TICKET_EDIT);
 
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const cookieString = cookieStore.toString();
+
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/tickets/${ticketId}/comments`,
+      `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}/api/tickets/${ticketId}/comments`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: (await import('next/headers')).cookies().toString(),
+          Cookie: cookieString,
         },
         body: JSON.stringify({ content, isInternal }),
       }
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to add comment');
+      const error = (await response.json()) as { message?: string };
+      throw new Error(error.message ?? 'Failed to add comment');
     }
 
     revalidatePath('/dashboard/business-center');

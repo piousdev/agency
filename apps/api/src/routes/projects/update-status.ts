@@ -2,6 +2,7 @@ import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { project } from '../../db/schema';
 import { type AuthVariables, requireAuth, requireInternal } from '../../middleware/auth';
@@ -72,7 +73,7 @@ app.patch(
         success: true,
         data: {
           ...updatedProject,
-          assignees: updatedProject?.projectAssignments.map((pa) => pa.user),
+          assignees: updatedProject?.projectAssignments.map((pa) => pa.user) ?? [],
           projectAssignments: undefined,
         },
         message: 'Project status updated successfully',
@@ -148,7 +149,7 @@ app.patch(
         success: true,
         data: {
           ...updatedProject,
-          assignees: updatedProject?.projectAssignments.map((pa) => pa.user),
+          assignees: updatedProject?.projectAssignments.map((pa) => pa.user) ?? [],
           projectAssignments: undefined,
         },
         message: 'Project completion updated successfully',
@@ -195,7 +196,7 @@ app.patch(
       await db
         .update(project)
         .set({
-          deliveredAt: body.deliveredAt ? new Date(body.deliveredAt) : null,
+          deliveredAt: body.deliveredAt !== null ? new Date(body.deliveredAt) : null,
           updatedAt: new Date(),
         })
         .where(eq(project.id, projectId));
@@ -224,7 +225,7 @@ app.patch(
         success: true,
         data: {
           ...updatedProject,
-          assignees: updatedProject?.projectAssignments.map((pa) => pa.user),
+          assignees: updatedProject?.projectAssignments.map((pa) => pa.user) ?? [],
           projectAssignments: undefined,
         },
         message: 'Project delivery date updated successfully',

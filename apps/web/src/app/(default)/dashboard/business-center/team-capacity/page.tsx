@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
-import { requireUser } from '@/lib/auth/session';
+
 import { listTeamMembers } from '@/lib/api/users';
+import { requireUser } from '@/lib/auth/session';
+
 import { TeamCapacityClient } from './client';
 
 export default async function TeamCapacityPage() {

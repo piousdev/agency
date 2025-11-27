@@ -1,6 +1,7 @@
 # Skyll Platform Web
 
-Frontend web application for the Skyll Platform, built with Next.js 16, React 19, Tailwind CSS v4, and TypeScript.
+Frontend web application for the Skyll Platform, built with Next.js 16, React
+19, Tailwind CSS v4, and TypeScript.
 
 ## 🎯 Overview
 
@@ -332,7 +333,11 @@ import { useUIStore } from '@/stores/ui-store';
 export default function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useUIStore();
 
-  return <div className={sidebarOpen ? 'block' : 'hidden'}>{/* Sidebar content */}</div>;
+  return (
+    <div className={sidebarOpen ? 'block' : 'hidden'}>
+      {/* Sidebar content */}
+    </div>
+  );
 }
 ```
 
@@ -515,7 +520,8 @@ Access at `/api/hello`
 
 ## 🚢 Deployment
 
-See **[../../DEPLOYMENT.md](../../DEPLOYMENT.md)** for complete deployment guide.
+See **[../../DEPLOYMENT.md](../../DEPLOYMENT.md)** for complete deployment
+guide.
 
 Quick deploy:
 
@@ -542,7 +548,8 @@ fly deploy --build-arg NEXT_PUBLIC_API_URL="https://your-api-app.fly.dev"
 
 ### Build Output
 
-Next.js is configured with `output: "standalone"` for optimized Docker deployments:
+Next.js is configured with `output: "standalone"` for optimized Docker
+deployments:
 
 ```typescript
 // next.config.ts
@@ -618,5 +625,4 @@ ISC
 
 ---
 
-**Last Updated:** 2025-11-07
-**Next.js:** 16.0.1 | **React:** 19.0.0
+**Last Updated:** 2025-11-07 **Next.js:** 16.0.1 | **React:** 19.0.0

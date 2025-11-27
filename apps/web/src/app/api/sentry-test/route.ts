@@ -1,5 +1,6 @@
+import { type NextRequest, NextResponse } from 'next/server';
+
 import * as Sentry from '@sentry/nextjs';
-import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * GET /api/sentry-test
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
     message: 'API route test successful',
     timestamp: new Date().toISOString(),
     sentry: {
-      environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
+      environment: process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV,
       dsn_configured: !!process.env.SENTRY_DSN,
     },
   });
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { triggerError?: boolean };
 
     if (body.triggerError) {
       throw new Error('Test API Route Error: Triggered via POST request');
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       message: 'POST request processed successfully',
       received: body,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     // Capture the error with Sentry
     Sentry.captureException(error, {
       tags: {

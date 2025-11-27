@@ -5,10 +5,12 @@
 
 'use client';
 
-import { format } from 'date-fns';
-import { IconCalendar, IconShield, IconUser, IconX } from '@tabler/icons-react';
 import { useState, useTransition } from 'react';
+
+import { IconCalendar, IconShield, IconUser, IconX } from '@tabler/icons-react';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +24,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
 import { removeRoleAction } from '../../actions';
 
 interface Role {
@@ -55,10 +58,10 @@ export function CurrentRolesList({ userId, roles }: CurrentRolesListProps) {
         const result = await removeRoleAction(userId, roleToRemove.id);
 
         if (result.success) {
-          toast.success(result.message || 'Role removed successfully');
+          toast.success(result.message ?? 'Role removed successfully');
           setRoleToRemove(null);
         } else {
-          toast.error(result.message || 'Failed to remove role');
+          toast.error(result.message ?? 'Failed to remove role');
         }
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Failed to remove role');
@@ -109,7 +112,7 @@ export function CurrentRolesList({ userId, roles }: CurrentRolesListProps) {
                     <p className="text-sm text-muted-foreground">{role.description}</p>
                   )}
 
-                  {(role.assignedAt || role.assignedBy) && (
+                  {(role.assignedAt ?? role.assignedBy) && (
                     <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                       {role.assignedAt && (
                         <div className="flex items-center gap-1">
@@ -120,7 +123,7 @@ export function CurrentRolesList({ userId, roles }: CurrentRolesListProps) {
                       {role.assignedBy && (
                         <div className="flex items-center gap-1">
                           <IconUser className="h-3 w-3" />
-                          <span>by {role.assignedBy.name || role.assignedBy.email}</span>
+                          <span>by {role.assignedBy.name ?? role.assignedBy.email}</span>
                         </div>
                       )}
                     </div>

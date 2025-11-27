@@ -1,10 +1,11 @@
-import { AuthContext, betterAuth, BetterAuthOptions } from 'better-auth';
+import { type AuthContext, betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware } from 'better-auth/plugins';
-import { db } from '../db/index.js';
-import { sendEmail } from './email.js';
+
 import { emailVerificationTemplate, emailVerificationText } from './email/templates.js';
+import { sendEmail } from './email.js';
 import { logAuthEvent, logSecurityEvent, AuthEventType } from './sentry.js';
+import { db } from '../db/index.js';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -156,7 +157,7 @@ export const auth = betterAuth({
    * - Includes "X-Retry-After" header with seconds until retry allowed
    */
   rateLimit: {
-    enabled: !process.env.VITEST, // Disable rate limiting in test mode
+    enabled: process.env.VITEST === undefined, // Disable rate limiting in test mode
     window: 60, // Global default: 60 seconds
     max: 100, // Global default: 100 requests per window
     storage: 'database', // Persist to PostgreSQL for production reliability
@@ -187,13 +188,13 @@ export const auth = betterAuth({
      * After hooks - Log successful authentication events
      * Runs after the action completes successfully
      */
-    after: createAuthMiddleware(async (ctx) => {
+    after: createAuthMiddleware((ctx) => {
       try {
         const ipAddress =
-          ctx.request?.headers.get('x-forwarded-for') ||
-          ctx.request?.headers.get('x-real-ip') ||
+          ctx.request?.headers.get('x-forwarded-for') ??
+          ctx.request?.headers.get('x-real-ip') ??
           'unknown';
-        const userAgent = ctx.request?.headers.get('user-agent') || 'unknown';
+        const userAgent = ctx.request?.headers.get('user-agent') ?? 'unknown';
 
         // Sign-up success - log new user registration
         if (ctx.path === '/sign-up/email') {
@@ -292,7 +293,7 @@ export const auth = betterAuth({
    */
   onAPIError: {
     throw: true, // Re-throw the error after logging
-    onError: async (error: unknown, _ctx: AuthContext<BetterAuthOptions>) => {
+    onError: (error: unknown, _ctx: AuthContext) => {
       try {
         const err = error as { status?: number; message?: string };
         const ipAddress = 'unknown';
@@ -311,7 +312,7 @@ export const auth = betterAuth({
               ipAddress,
               userAgent,
               endpoint,
-              reason: err.message || 'Rate limit exceeded',
+              reason: err.message ?? 'Rate limit exceeded',
             },
             'warning'
           );
@@ -365,7 +366,7 @@ export const auth = betterAuth({
               ipAddress,
               userAgent,
               endpoint,
-              reason: err.message || 'Unauthorized access attempt',
+              reason: err.message ?? 'Unauthorized access attempt',
             },
             'warning'
           );

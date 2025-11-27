@@ -17,11 +17,11 @@ export const listUsersQuerySchema = z.object({
  */
 export const updateUserSchema = z.object({
   name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
-  image: z.string().url().nullable().optional(),
+  email: z.email().optional(),
+  image: z.url().nullable().optional(),
   role: z.enum(['admin', 'editor', 'client']).optional(),
   isInternal: z.boolean().optional(),
-  expiresAt: z.string().datetime().nullable().optional(),
+  expiresAt: z.iso.datetime().nullable().optional(),
 });
 
 /**
@@ -42,5 +42,5 @@ export const updateInternalStatusSchema = z.object({
  * Schema for extending expiration
  */
 export const extendExpirationSchema = z.object({
-  expiresAt: z.string().datetime().nullable(),
+  expiresAt: z.iso.datetime().nullable(),
 });

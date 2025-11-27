@@ -1,6 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+
+import { IconLoader2, IconAlertCircle, IconUserOff, IconAlertTriangle } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -10,9 +14,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { deactivateClientAction } from '@/lib/actions/business-center/clients';
-import { IconLoader2, IconAlertCircle, IconUserOff, IconAlertTriangle } from '@tabler/icons-react';
+
 
 interface DeleteClientDialogProps {
   clientId: string;

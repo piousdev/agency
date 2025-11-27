@@ -2,30 +2,42 @@
 
 ## Why
 
-Skyll currently lacks a centralized operational hub for managing work intake, tracking active projects, and monitoring team capacity across both service lines (content/media production and software development). As the agency scales, the team needs:
+Skyll currently lacks a centralized operational hub for managing work intake,
+tracking active projects, and monitoring team capacity across both service lines
+(content/media production and software development). As the agency scales, the
+team needs:
 
-- **Centralized intake management** - Single place to triage and assign new work requests
-- **Active work visibility** - Real-time view of all in-flight projects across both service lines
-- **Capacity planning** - Understand team allocation and identify bottlenecks before they occur
-- **Delivery tracking** - Clear timeline of deadlines and recently completed work
+- **Centralized intake management** - Single place to triage and assign new work
+  requests
+- **Active work visibility** - Real-time view of all in-flight projects across
+  both service lines
+- **Capacity planning** - Understand team allocation and identify bottlenecks
+  before they occur
+- **Delivery tracking** - Clear timeline of deadlines and recently completed
+  work
 - **Internal-only access** - Operational dashboard for Skyll team members only
 
-Without this capability, work tracking is fragmented, capacity planning is manual, and there's no single source of truth for operational status.
+Without this capability, work tracking is fragmented, capacity planning is
+manual, and there's no single source of truth for operational status.
 
 ## What Changes
 
 ### Database Schema Extensions
 
-- **Add `project_assignment` table** - Many-to-many relationship between projects and users
-- **Add `capacity_percentage` column to `user` table** - Track current capacity allocation (0-100%)
-- **Extend `ticket` type enum** - Leverage existing 'intake' type for work requests
+- **Add `project_assignment` table** - Many-to-many relationship between
+  projects and users
+- **Add `capacity_percentage` column to `user` table** - Track current capacity
+  allocation (0-100%)
+- **Extend `ticket` type enum** - Leverage existing 'intake' type for work
+  requests
 - **Add indexes** - Performance optimization for Business Center queries
 
 ### API Endpoints (Extend Existing Routes)
 
 #### Extend `/api/tickets/*` (New)
 
-- `GET /api/tickets` - List tickets with filters (type, status, priority, assignee)
+- `GET /api/tickets` - List tickets with filters (type, status, priority,
+  assignee)
 - `POST /api/tickets` - Create intake request
 - `PATCH /api/tickets/:id` - Update ticket (assign, change status)
 - `PATCH /api/tickets/:id/assign` - Assign ticket to team member
@@ -48,7 +60,8 @@ Without this capability, work tracking is fragmented, capacity planning is manua
 - **6 Section Views**:
   1. Intake Queue (tickets with type='intake', status='open')
   2. Active Work - Content/Media (projects filtered by client.type='creative')
-  3. Active Work - Software Dev (projects filtered by client.type='software'|'full_service')
+  3. Active Work - Software Dev (projects filtered by
+     client.type='software'|'full_service')
   4. Team Capacity/Allocation (users with is_internal=true, capacity info)
   5. Delivery Calendar/Timeline (projects by deliveredAt date)
   6. Recently Completed (projects delivered in last 14 days)
@@ -110,7 +123,8 @@ Without this capability, work tracking is fragmented, capacity planning is manua
 - **Proactive capacity management** - Spot bottlenecks 1-2 weeks early
 - **Faster intake-to-assignment** - Reduce triage time from hours to minutes
 - **Delivery predictability** - Clear visibility into upcoming deadlines
-- **Scalability foundation** - Supports growth to 10+ team members, 50+ concurrent projects
+- **Scalability foundation** - Supports growth to 10+ team members, 50+
+  concurrent projects
 
 ### Non-Goals (Out of Scope)
 

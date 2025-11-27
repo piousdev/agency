@@ -3,9 +3,11 @@
  * Tests for Business Center components and their integration
  */
 
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+
 import { BusinessCenter } from '../index';
+
 import type { BusinessCenterData } from '../types';
 
 // Mock empty data for testing

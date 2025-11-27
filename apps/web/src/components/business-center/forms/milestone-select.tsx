@@ -1,6 +1,10 @@
 'use client';
 
-import { forwardRef, useState, useEffect } from 'react';
+import { forwardRef, useState, useEffect, useMemo } from 'react';
+
+import { IconFlag, IconCalendar } from '@tabler/icons-react';
+import { format } from 'date-fns';
+
 import {
   Select,
   SelectContent,
@@ -9,12 +13,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 import { listMilestones } from '@/lib/api/milestones';
-import type { Milestone } from '@/lib/api/milestones/types';
 import { getMilestoneStatusColor, type MilestoneStatus } from '@/lib/schemas/milestone';
-import { IconFlag, IconCalendar } from '@tabler/icons-react';
-import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+
+import type { Milestone } from '@/lib/api/milestones/types';
+
 
 interface MilestoneSelectProps {
   value?: string | null;
@@ -44,6 +48,9 @@ export const MilestoneSelect = forwardRef<HTMLButtonElement, MilestoneSelectProp
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Create a stable string representation of excludeStatuses for dependency tracking
+    const excludeStatusesKey = useMemo(() => excludeStatuses.join(','), [excludeStatuses]);
+
     useEffect(() => {
       async function fetchMilestones() {
         if (!projectId) {
@@ -67,8 +74,8 @@ export const MilestoneSelect = forwardRef<HTMLButtonElement, MilestoneSelectProp
         }
       }
 
-      fetchMilestones();
-    }, [projectId, excludeStatuses.join(',')]);
+      void fetchMilestones();
+    }, [projectId, excludeStatusesKey, excludeStatuses]);
 
     const handleValueChange = (newValue: string) => {
       if (newValue === '__clear__') {
@@ -115,7 +122,7 @@ export const MilestoneSelect = forwardRef<HTMLButtonElement, MilestoneSelectProp
                     <span
                       className={cn(
                         'inline-flex h-2 w-2 rounded-full',
-                        getMilestoneStatusColor(milestone.status).split(' ')[0]
+                        getMilestoneStatusColor(milestone.status).split(' ')[0] ?? ''
                       )}
                     />
                     {milestone.status.replace('_', ' ')}

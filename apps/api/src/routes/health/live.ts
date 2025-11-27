@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
-import { type AuthVariables } from '../../middleware/auth.js';
+
+import type { AuthVariables } from '../../middleware/auth.js';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 

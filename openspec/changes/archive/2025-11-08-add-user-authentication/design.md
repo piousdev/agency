@@ -2,11 +2,13 @@
 
 ## Context
 
-Skyll Platform needs to authenticate and authorize users across multiple client types and internal team roles. The system must support:
+Skyll Platform needs to authenticate and authorize users across multiple client
+types and internal team roles. The system must support:
 
 - 1M+ users globally (high scale requirement)
 - Multiple client types with different permissions
-- Complex internal team structure across creative, technical, and operations teams
+- Complex internal team structure across creative, technical, and operations
+  teams
 - Organization-level access (multiple users per company)
 - Invitation-based onboarding workflow
 - Data isolation (clients only see their own data)
@@ -57,8 +59,10 @@ Skyll Platform needs to authenticate and authorize users across multiple client 
 
 **Alternatives Considered**:
 
-- Separate `client_types` table with foreign key → Unnecessary complexity for a fixed enum
-- Role-based approach (treat client types as roles) → Doesn't align with internal team roles semantics
+- Separate `client_types` table with foreign key → Unnecessary complexity for a
+  fixed enum
+- Role-based approach (treat client types as roles) → Doesn't align with
+  internal team roles semantics
 
 ### Decision 2: Internal Team Roles Architecture
 
@@ -67,7 +71,8 @@ Skyll Platform needs to authenticate and authorize users across multiple client 
 **Why**:
 
 - Supports complex permission hierarchies (e.g., Creative Director > Designer)
-- Allows fine-grained permissions (e.g., "can_approve_creative", "can_assign_tickets")
+- Allows fine-grained permissions (e.g., "can_approve_creative",
+  "can_assign_tickets")
 - Easy to extend without schema migrations
 - Aligns with future requirements (custom roles)
 
@@ -115,7 +120,8 @@ CREATE TABLE user_roles (
 **Alternatives Considered**:
 
 - Pure JWT tokens → Cannot revoke, harder to manage at scale
-- Redis-backed sessions → Adds infrastructure complexity, Postgres is sufficient for MVP
+- Redis-backed sessions → Adds infrastructure complexity, Postgres is sufficient
+  for MVP
 
 ### Decision 4: Invitation System Design
 
@@ -124,7 +130,8 @@ CREATE TABLE user_roles (
 **Why**:
 
 - Different invite links create different client types (Type A, B, C, One-Time)
-- Admin generates invite → System creates token → Client clicks link → Creates account with predefined type
+- Admin generates invite → System creates token → Client clicks link → Creates
+  account with predefined type
 - Tokens expire after 7 days
 - One-time use (deleted after acceptance)
 
@@ -200,7 +207,8 @@ export function middleware(request: NextRequest) {
 
 - Index on `user_id` and `expires_at` columns
 - Use Neon's connection pooling
-- Set up automated session cleanup (delete expired sessions daily via QStash job)
+- Set up automated session cleanup (delete expired sessions daily via QStash
+  job)
 - Monitor query performance with Sentry
 - Consider read replicas if needed (future)
 
@@ -212,7 +220,8 @@ export function middleware(request: NextRequest) {
 
 - BetterAuth is well-maintained and actively developed
 - Good TypeScript support and documentation
-- Abstraction layer in `apps/web/src/lib/auth/` makes it easier to swap if needed
+- Abstraction layer in `apps/web/src/lib/auth/` makes it easier to swap if
+  needed
 - Open-source with community support
 
 ### Risk 3: Permission System Complexity
@@ -248,11 +257,17 @@ export function middleware(request: NextRequest) {
 3. Set up basic login/logout endpoints
 4. Create protected route middleware
 
-**Phase 2: Client Types & Invitations (Week 2)** 5. Implement invitation system 6. Create client type logic 7. Build invitation acceptance flow 8. Admin UI for sending invitations
+**Phase 2: Client Types & Invitations (Week 2)** 5. Implement invitation
+system 6. Create client type logic 7. Build invitation acceptance flow 8. Admin
+UI for sending invitations
 
-**Phase 3: Team Roles (Week 3)** 9. Create roles table and seed data 10. Implement role-based middleware 11. Add permission checks across API 12. Admin UI for role management
+**Phase 3: Team Roles (Week 3)** 9. Create roles table and seed data 10.
+Implement role-based middleware 11. Add permission checks across API 12. Admin
+UI for role management
 
-**Phase 4: Testing & Hardening (Week 4)** 13. Write comprehensive tests 14. Security audit (rate limiting, CSRF, etc.) 15. Performance testing (simulate 10k concurrent users) 16. Deploy to staging and production
+**Phase 4: Testing & Hardening (Week 4)** 13. Write comprehensive tests 14.
+Security audit (rate limiting, CSRF, etc.) 15. Performance testing (simulate 10k
+concurrent users) 16. Deploy to staging and production
 
 **Rollback Plan**:
 

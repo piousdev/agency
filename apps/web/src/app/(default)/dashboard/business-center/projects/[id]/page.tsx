@@ -1,7 +1,8 @@
-import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { redirect, notFound } from 'next/navigation';
+
 import {
-  IconChevronLeft,
+  
   IconEdit,
   IconCalendar,
   IconUsers,
@@ -9,21 +10,24 @@ import {
   IconGitBranch,
   IconWorld,
   IconServer,
-  IconFileText,
+  
 } from '@tabler/icons-react';
-import { requireUser } from '@/lib/auth/session';
-import { getProject } from '@/lib/api/projects';
-import { listMilestones } from '@/lib/api/milestones';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
-import { projectStatusOptions } from '@/lib/schemas/project';
-import { DetailPageHeader } from '../../components/header';
-import { ProjectActivity } from './project-activity';
+
 import { MilestoneList } from '@/components/business-center/milestone-list';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent,  CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { listMilestones } from '@/lib/api/milestones';
+import { getProject } from '@/lib/api/projects';
+import { requireUser } from '@/lib/auth/session';
+import { projectStatusOptions } from '@/lib/schemas/project';
+
+import { ProjectActivity } from './project-activity';
+import { DetailPageHeader } from '../../components/header';
+
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
@@ -72,7 +76,7 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
             <Badge className={statusColors[project.status] ?? 'bg-gray-100'}>{statusLabel}</Badge>
           </div>
         }
-        description={`Client: ${project.client?.name ?? 'Unknown'}`}
+        description={`Client: ${project.client.name}`}
         backUrl="/dashboard/business-center/projects"
         backLabel="Back to Projects"
       >
@@ -202,11 +206,11 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <IconUsers className="h-4 w-4" />
-                Team ({project.assignees?.length ?? 0})
+                Team ({project.assignees.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {project.assignees && project.assignees.length > 0 ? (
+              {project.assignees.length > 0 ? (
                 <div className="space-y-2">
                   {project.assignees.map((member) => (
                     <div key={member.id} className="flex items-center gap-2">
@@ -214,10 +218,10 @@ export default async function BusinessCenterProjectDetailPage({ params }: Projec
                         <AvatarImage src={member.image ?? undefined} />
                         <AvatarFallback className="text-xs">
                           {member.name
-                            ?.split(' ')
+                            .split(' ')
                             .map((n) => n[0])
                             .join('')
-                            .toUpperCase() ?? '?'}
+                            .toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm">{member.name}</span>

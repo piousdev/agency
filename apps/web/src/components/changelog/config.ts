@@ -1,4 +1,5 @@
 import { getChangelogVersions } from '@/lib/changelog';
+
 import type { ChangelogSection } from './types';
 
 /**

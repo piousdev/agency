@@ -1,13 +1,15 @@
-import { Hono } from 'hono';
+import { randomBytes } from 'crypto';
+
 import { zValidator } from '@hono/zod-validator';
 import { eq, and } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { randomBytes } from 'crypto';
+
 import { db } from '../../db';
 import { invitation, user } from '../../db/schema';
+import { logAuthEvent, logError, AuthEventType } from '../../lib/sentry';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { createInvitationSchema, type CreateInvitationInput } from '../../schemas/invitation';
-import { logAuthEvent, logError, AuthEventType } from '../../lib/sentry';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -131,7 +133,7 @@ app.post(
           token,
           expiresAt,
           used: false,
-          clientId: body.clientId || null,
+          clientId: body.clientId ?? null,
           createdById,
         })
         .returning();
@@ -150,8 +152,8 @@ app.post(
       logAuthEvent(AuthEventType.INVITATION_CREATED, {
         userId: createdById,
         email: body.email,
-        ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        userAgent: c.req.header('user-agent'),
+        ipAddress: c.req.header('x-forwarded-for') ?? c.req.header('x-real-ip') ?? undefined,
+        userAgent: c.req.header('user-agent') ?? undefined,
         endpoint: '/api/invitations/create',
         metadata: {
           invitationId: newInvitation.id,
@@ -178,8 +180,8 @@ app.post(
       logError(error as Error, {
         userId: createdById,
         email: body.email,
-        ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        userAgent: c.req.header('user-agent'),
+        ipAddress: c.req.header('x-forwarded-for') ?? c.req.header('x-real-ip') ?? undefined,
+        userAgent: c.req.header('user-agent') ?? undefined,
         endpoint: '/api/invitations/create',
       });
 

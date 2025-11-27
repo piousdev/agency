@@ -8,10 +8,12 @@ import {
   isTomorrow,
   startOfDay,
 } from 'date-fns';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface DeliverableTimelineViewProps {
@@ -37,7 +39,7 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
   const overdue: ProjectWithRelations[] = [];
   const dueToday: ProjectWithRelations[] = [];
   const dueTomorrow: ProjectWithRelations[] = [];
-  const upcoming: Map<string, ProjectWithRelations[]> = new Map();
+  const upcoming = new Map<string, ProjectWithRelations[]>();
 
   scheduled.forEach((project) => {
     if (!project.deliveredAt) return;
@@ -110,7 +112,7 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
       label = format(date, 'MMM d, yyyy');
     }
 
-    const dateProjects = upcoming.get(dateKey) ?? [];
+    const dateProjects = upcoming.get(dateKey);
     groups.push({
       label,
       date,
@@ -178,7 +180,7 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
         const styles = getVariantStyles(group.variant);
 
         return (
-          <div key={`${group.label}-${groupIndex}`} className="space-y-3">
+          <div key={`${group.label}-${String(groupIndex)}`} className="space-y-3">
             {/* Group Header */}
             <div className={`flex items-center gap-3 p-3 rounded-lg ${styles.bg}`}>
               {styles.icon}
@@ -216,13 +218,13 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
                           <div className="flex items-start gap-2">
                             <h4 className="font-medium truncate">{project.name}</h4>
                             <Badge variant="outline" className="shrink-0 text-xs">
-                              {project.client?.type === 'creative' ? 'Content' : 'Software'}
+                              {project.client.type === 'creative' ? 'Content' : 'Software'}
                             </Badge>
                           </div>
                           <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <IconBuilding className="h-3 w-3" />
-                              {project.client?.name || 'N/A'}
+                              {project.client.name || 'N/A'}
                             </span>
                             {project.deliveredAt && (
                               <span
@@ -249,14 +251,14 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
                           <div className="w-24">
                             <div className="flex justify-between text-xs mb-1">
                               <span className="text-muted-foreground">Progress</span>
-                              <span>{project.completionPercentage || 0}%</span>
+                              <span>{project.completionPercentage}%</span>
                             </div>
-                            <Progress value={project.completionPercentage || 0} className="h-1.5" />
+                            <Progress value={project.completionPercentage} className="h-1.5" />
                           </div>
                         </div>
 
                         {/* Team */}
-                        {project.assignees && project.assignees.length > 0 && (
+                        {project.assignees.length > 0 && (
                           <div className="flex items-center gap-1">
                             <div className="flex -space-x-2">
                               {project.assignees.slice(0, 3).map((assignee) => (
@@ -264,7 +266,7 @@ export function DeliverableTimelineView({ projects }: DeliverableTimelineViewPro
                                   key={assignee.id}
                                   className="h-7 w-7 border-2 border-background"
                                 >
-                                  <AvatarImage src={assignee.image || undefined} />
+                                  <AvatarImage src={assignee.image ?? undefined} />
                                   <AvatarFallback className="text-xs">
                                     {assignee.name
                                       .split(' ')

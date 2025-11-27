@@ -4,13 +4,16 @@
 
 ### Requirement: Intake Queue Display
 
-The Business Center SHALL display all pending work requests (tickets with type='intake') in a filterable list view with key metadata.
+The Business Center SHALL display all pending work requests (tickets with
+type='intake') in a filterable list view with key metadata.
 
 #### Scenario: View intake queue
 
 - **WHEN** internal user navigates to Business Center
-- **THEN** intake queue section displays all tickets where type='intake' AND status IN ('open', 'in_progress')
-- **AND** each item shows: Request ID, Client Name, Service Type (from client.type), Submission Date, Priority, Status
+- **THEN** intake queue section displays all tickets where type='intake' AND
+  status IN ('open', 'in_progress')
+- **AND** each item shows: Request ID, Client Name, Service Type (from
+  client.type), Submission Date, Priority, Status
 
 #### Scenario: Filter intake by service type
 
@@ -24,12 +27,15 @@ The Business Center SHALL display all pending work requests (tickets with type='
 
 ### Requirement: Intake Request Creation
 
-The Business Center SHALL provide a form for internal users to create new work requests (intake tickets) on behalf of clients.
+The Business Center SHALL provide a form for internal users to create new work
+requests (intake tickets) on behalf of clients.
 
 #### Scenario: Create intake request
 
-- **WHEN** internal user submits intake form with required fields (client, title, description, service type, priority)
-- **THEN** system creates new ticket with type='intake', status='open', created_by_id=current user
+- **WHEN** internal user submits intake form with required fields (client,
+  title, description, service type, priority)
+- **THEN** system creates new ticket with type='intake', status='open',
+  created_by_id=current user
 - **AND** redirects to intake queue with success message
 
 #### Scenario: Validation on create
@@ -40,12 +46,14 @@ The Business Center SHALL provide a form for internal users to create new work r
 
 ### Requirement: Intake Detail Modal
 
-The Business Center SHALL provide a detail modal for viewing full intake context and performing assignment actions.
+The Business Center SHALL provide a detail modal for viewing full intake context
+and performing assignment actions.
 
 #### Scenario: Open intake detail modal
 
 - **WHEN** user clicks on intake request in queue
-- **THEN** modal opens showing full ticket details (title, description, client, service type, priority, status, creation date, notes)
+- **THEN** modal opens showing full ticket details (title, description, client,
+  service type, priority, status, creation date, notes)
 - **AND** modal includes assignment action button
 
 #### Scenario: Assign from detail modal
@@ -56,7 +64,8 @@ The Business Center SHALL provide a detail modal for viewing full intake context
 
 ### Requirement: Intake Assignment
 
-The Business Center SHALL allow assignment of intake requests to team members for triage and initial scoping.
+The Business Center SHALL allow assignment of intake requests to team members
+for triage and initial scoping.
 
 #### Scenario: Assign intake to team member
 
@@ -67,34 +76,41 @@ The Business Center SHALL allow assignment of intake requests to team members fo
 
 ### Requirement: Active Work Display - Content/Media
 
-The Business Center SHALL display all active content/media production projects grouped by production stage.
+The Business Center SHALL display all active content/media production projects
+grouped by production stage.
 
 #### Scenario: View active content projects
 
 - **WHEN** internal user views Active Work - Content/Media section
-- **THEN** displays projects where client.type='creative' AND project.status IN ('in_development', 'in_review')
-- **AND** projects are grouped by stage: Pre-Production, In-Production, Post-Production (derived from status/metadata)
+- **THEN** displays projects where client.type='creative' AND project.status IN
+  ('in_development', 'in_review')
+- **AND** projects are grouped by stage: Pre-Production, In-Production,
+  Post-Production (derived from status/metadata)
 
 #### Scenario: Project card display
 
 - **WHEN** viewing active content projects
-- **THEN** each project card shows: Project Name, Client, Assignee(s), Deadline, Current Stage, Completion %, Priority
+- **THEN** each project card shows: Project Name, Client, Assignee(s), Deadline,
+  Current Stage, Completion %, Priority
 - **AND** completion percentage is displayed as visual progress indicator
 
 #### Scenario: Project quick actions
 
 - **WHEN** user interacts with project card quick actions
-- **THEN** available actions include: Change assignee, Update status, View timeline
+- **THEN** available actions include: Change assignee, Update status, View
+  timeline
 - **AND** actions open appropriate modal or navigation
 
 ### Requirement: Active Work Display - Software Development
 
-The Business Center SHALL display all active software development projects grouped by development stage.
+The Business Center SHALL display all active software development projects
+grouped by development stage.
 
 #### Scenario: View active software projects
 
 - **WHEN** internal user views Active Work - Software Development section
-- **THEN** displays projects where client.type IN ('software', 'full_service') AND project.status IN ('in_development', 'in_review')
+- **THEN** displays projects where client.type IN ('software', 'full_service')
+  AND project.status IN ('in_development', 'in_review')
 - **AND** projects are grouped by stage: Design, Development, Testing, Delivery
 
 #### Scenario: Quick status update
@@ -105,12 +121,14 @@ The Business Center SHALL display all active software development projects group
 
 ### Requirement: Project Assignment
 
-The Business Center SHALL allow assignment of team members to projects with role designation.
+The Business Center SHALL allow assignment of team members to projects with role
+designation.
 
 #### Scenario: Assign team member to project
 
 - **WHEN** internal user assigns team member to project
-- **THEN** project_assignment record is created with user_id, project_id, assigned_at timestamp
+- **THEN** project_assignment record is created with user_id, project_id,
+  assigned_at timestamp
 - **AND** project card shows assignee in team list
 
 #### Scenario: Remove team member from project
@@ -121,12 +139,14 @@ The Business Center SHALL allow assignment of team members to projects with role
 
 ### Requirement: Team Capacity Display
 
-The Business Center SHALL display all internal team members with current capacity allocation and availability status.
+The Business Center SHALL display all internal team members with current
+capacity allocation and availability status.
 
 #### Scenario: View team capacity
 
 - **WHEN** internal user views Team Capacity section
-- **THEN** displays table with columns: Team Member, Current Projects (count), Capacity Used (%), Available Capacity (%), Status
+- **THEN** displays table with columns: Team Member, Current Projects (count),
+  Capacity Used (%), Available Capacity (%), Status
 - **AND** each row includes visual bar showing allocation percentage
 - **AND** only shows users where is_internal=true
 
@@ -134,7 +154,8 @@ The Business Center SHALL display all internal team members with current capacit
 
 - **WHEN** user applies filter by service type or team member
 - **THEN** table displays only team members matching filter criteria
-- **AND** available filters include: service type (creative/software), team member name search
+- **AND** available filters include: service type (creative/software), team
+  member name search
 
 #### Scenario: Capacity status calculation
 
@@ -146,7 +167,8 @@ The Business Center SHALL display all internal team members with current capacit
 
 ### Requirement: Manual Capacity Management
 
-The Business Center SHALL allow administrators to manually update team member capacity allocations.
+The Business Center SHALL allow administrators to manually update team member
+capacity allocations.
 
 #### Scenario: Update user capacity
 
@@ -163,14 +185,17 @@ The Business Center SHALL allow administrators to manually update team member ca
 
 ### Requirement: Delivery Calendar
 
-The Business Center SHALL display all active projects on a calendar/timeline view organized by delivery date.
+The Business Center SHALL display all active projects on a calendar/timeline
+view organized by delivery date.
 
 #### Scenario: View delivery calendar
 
 - **WHEN** internal user views Delivery Calendar section
-- **THEN** displays projects with deliveredAt dates in calendar format (month/week view)
+- **THEN** displays projects with deliveredAt dates in calendar format
+  (month/week view)
 - **AND** each entry shows: Project Name, Client, Deadline, Status
-- **AND** projects are color-coded by service type (content/media vs software development)
+- **AND** projects are color-coded by service type (content/media vs software
+  development)
 
 #### Scenario: Identify bottlenecks
 
@@ -185,23 +210,27 @@ The Business Center SHALL display all active projects on a calendar/timeline vie
 
 ### Requirement: Recently Completed Projects
 
-The Business Center SHALL display projects delivered in the past 7-14 days for reference and output tracking.
+The Business Center SHALL display projects delivered in the past 7-14 days for
+reference and output tracking.
 
 #### Scenario: View recently completed
 
 - **WHEN** internal user views Recently Completed section
-- **THEN** displays projects where status='delivered' AND deliveredAt >= (today - 14 days)
+- **THEN** displays projects where status='delivered' AND deliveredAt >=
+  (today - 14 days)
 - **AND** sorted by deliveredAt descending (most recent first)
 - **AND** configurable time range (7 days or 14 days)
 
 #### Scenario: Completed project display
 
 - **WHEN** viewing recently completed projects
-- **THEN** each item shows: Project Name, Client, Service Type, Completion Date, Assigned Team
+- **THEN** each item shows: Project Name, Client, Service Type, Completion Date,
+  Assigned Team
 
 ### Requirement: Internal-Only Access Control
 
-The Business Center SHALL be accessible only to users with is_internal=true flag, enforced at both middleware and component levels.
+The Business Center SHALL be accessible only to users with is_internal=true
+flag, enforced at both middleware and component levels.
 
 #### Scenario: Internal user access
 
@@ -210,8 +239,10 @@ The Business Center SHALL be accessible only to users with is_internal=true flag
 
 #### Scenario: Client user denied
 
-- **WHEN** user with is_internal=false attempts to navigate to /dashboard/business-center
-- **THEN** middleware redirects to /dashboard with error message "Access denied: Internal team only"
+- **WHEN** user with is_internal=false attempts to navigate to
+  /dashboard/business-center
+- **THEN** middleware redirects to /dashboard with error message "Access denied:
+  Internal team only"
 
 #### Scenario: Unauthenticated access denied
 
@@ -220,7 +251,8 @@ The Business Center SHALL be accessible only to users with is_internal=true flag
 
 ### Requirement: Server-First Architecture Compliance
 
-The Business Center SHALL follow the Server-First architecture pattern with Server Components, Server Actions, and minimal client JavaScript.
+The Business Center SHALL follow the Server-First architecture pattern with
+Server Components, Server Actions, and minimal client JavaScript.
 
 #### Scenario: Server Component data fetching
 
@@ -230,7 +262,8 @@ The Business Center SHALL follow the Server-First architecture pattern with Serv
 
 #### Scenario: Server Actions for mutations
 
-- **WHEN** user performs mutation (assign ticket, update capacity, change status)
+- **WHEN** user performs mutation (assign ticket, update capacity, change
+  status)
 - **THEN** action is handled by Server Action
 - **AND** server-to-server API call is made to Hono backend
 - **AND** page revalidates to show updated data
@@ -243,7 +276,8 @@ The Business Center SHALL follow the Server-First architecture pattern with Serv
 
 ### Requirement: Performance Optimization
 
-The Business Center SHALL load efficiently with appropriate database query optimization and caching strategies.
+The Business Center SHALL load efficiently with appropriate database query
+optimization and caching strategies.
 
 #### Scenario: Indexed queries
 
@@ -260,7 +294,8 @@ The Business Center SHALL load efficiently with appropriate database query optim
 
 ### Requirement: Error Handling
 
-The Business Center SHALL gracefully handle errors and display user-friendly messages for all operations.
+The Business Center SHALL gracefully handle errors and display user-friendly
+messages for all operations.
 
 #### Scenario: API error on load
 

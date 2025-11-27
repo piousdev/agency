@@ -1,16 +1,6 @@
-import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
-import { requireUser } from '@/lib/auth/session';
-import { getSprint } from '@/lib/api/sprints';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SprintBurndown } from '@/components/business-center/sprint-burndown';
-import {
-  getSprintStatusColor,
-  calculateSprintProgress,
-  calculateDaysRemaining,
-} from '@/lib/schemas/sprint';
+import { notFound, redirect } from 'next/navigation';
+
 import {
   IconArrowLeft,
   IconRun,
@@ -22,8 +12,21 @@ import {
   IconBan,
   IconEdit,
 } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+
+import { SprintBurndown } from '@/components/business-center/sprint-burndown';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getSprint } from '@/lib/api/sprints';
+import { requireUser } from '@/lib/auth/session';
+import {
+  getSprintStatusColor,
+  calculateSprintProgress,
+  calculateDaysRemaining,
+} from '@/lib/schemas/sprint';
+import { cn } from '@/lib/utils';
+
 
 interface SprintDetailPageProps {
   params: Promise<{ id: string }>;
@@ -39,7 +42,7 @@ export default async function SprintDetailPage({ params }: SprintDetailPageProps
 
   try {
     const response = await getSprint(id);
-    if (!response.success || !response.data) {
+    if (!response.success) {
       notFound();
     }
 
@@ -87,14 +90,12 @@ export default async function SprintDetailPage({ params }: SprintDetailPageProps
               </Badge>
             </h1>
           </div>
-          {user.isInternal && (
-            <Button variant="outline" asChild>
+          <Button variant="outline" asChild>
               <Link href={`/dashboard/business-center/projects/${sprint.projectId}`}>
                 <IconEdit className="h-4 w-4 mr-2" />
                 Edit in Project
               </Link>
             </Button>
-          )}
         </div>
 
         {/* Sprint Goal */}
@@ -154,10 +155,10 @@ export default async function SprintDetailPage({ params }: SprintDetailPageProps
                   >
                     {daysRemaining !== null
                       ? daysRemaining < 0
-                        ? `${Math.abs(daysRemaining)} days overdue`
+                        ? `${String(Math.abs(daysRemaining))} days overdue`
                         : daysRemaining === 0
                           ? 'Ends today'
-                          : `${daysRemaining} days`
+                          : `${String(daysRemaining)} days`
                       : 'Not set'}
                   </p>
                 </div>

@@ -1,6 +1,7 @@
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { type Icon as TablerIcon } from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 
 interface BusinessMetricCardProps {
   title: string;

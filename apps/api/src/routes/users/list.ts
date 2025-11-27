@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq, desc, asc, and, or, like, count } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -35,19 +36,23 @@ app.get(
       }
 
       // Search by name or email
-      if (search && search.length > 0) {
+      if (search !== undefined && search.length > 0) {
         whereConditions.push(or(like(user.name, `%${search}%`), like(user.email, `%${search}%`)));
       }
 
       const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-      // Determine sort column
-      const sortColumn = {
+      // Determine sort column using validated sortBy from schema
+      type SortColumn = typeof user.name | typeof user.email | typeof user.createdAt | typeof user.updatedAt;
+      type ValidSortBy = 'name' | 'email' | 'createdAt' | 'updatedAt';
+      const sortColumnMap: Record<ValidSortBy, SortColumn> = {
         name: user.name,
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-      }[sortBy];
+      };
+      // sortBy is validated by Zod schema to be one of the valid enum values
+      const sortColumn = sortColumnMap[sortBy as ValidSortBy];
 
       // Query users with pagination
       const offset = (page - 1) * pageSize;

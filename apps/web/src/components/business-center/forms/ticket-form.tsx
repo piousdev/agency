@@ -1,24 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ClientSelect, type ClientOption } from './client-select';
-import { UserSelect, type UserOption } from './user-select';
-import { StatusSelect } from './status-select';
-import { PrioritySelect } from './priority-select';
-import { ticketTypeOptions } from '@/lib/schemas';
+
 import {
   IconLoader2,
   IconAlertCircle,
@@ -27,6 +12,25 @@ import {
   IconSettings,
   IconCode,
 } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { ticketTypeOptions } from '@/lib/schemas';
+
+import { ClientSelect, type ClientOption } from './client-select';
+import { PrioritySelect } from './priority-select';
+import { StatusSelect } from './status-select';
+import { UserSelect, type UserOption } from './user-select';
 
 interface TicketFormProps {
   ticket?: {
@@ -93,8 +97,8 @@ export function TicketForm({
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   // Form state for controlled selects (using string type for compatibility)
-  const [clientId, setClientId] = useState(ticket?.clientId ?? '');
-  const [assignedToId, setAssignedToId] = useState(ticket?.assignedToId ?? '');
+  const [clientId, setClientId] = useState(ticket?.clientId);
+  const [assignedToId, setAssignedToId] = useState(ticket?.assignedToId);
   const [type, setType] = useState<string>(ticket?.type ?? 'intake');
   const [status, setStatus] = useState<string>(ticket?.status ?? 'open');
   const [priority, setPriority] = useState<string>(ticket?.priority ?? defaultPriority ?? 'medium');
@@ -116,7 +120,7 @@ export function TicketForm({
     try {
       const result = await onSubmit(formData);
       if (result.success && result.ticketId) {
-        router.push(redirectPath || `/dashboard/business-center/intake-queue`);
+        router.push(redirectPath ?? `/dashboard/business-center/intake-queue`);
       } else if (result.error) {
         setError(result.error);
       }
@@ -153,12 +157,12 @@ export function TicketForm({
               <Input
                 id="title"
                 name="title"
-                defaultValue={ticket?.title ?? ''}
+                defaultValue={ticket?.title}
                 placeholder="Brief summary of the issue"
                 className="h-11"
                 required
               />
-              {errors?.title && <p className="text-destructive text-sm">{errors.title[0]}</p>}
+              {errors.title && <p className="text-destructive text-sm">{errors.title[0]}</p>}
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -172,7 +176,7 @@ export function TicketForm({
                   showType
                   className="h-11"
                 />
-                {errors?.clientId && (
+                {errors.clientId && (
                   <p className="text-destructive text-sm">{errors.clientId[0]}</p>
                 )}
               </div>
@@ -201,12 +205,12 @@ export function TicketForm({
             <Textarea
               id="description"
               name="description"
-              defaultValue={ticket?.description ?? ''}
+              defaultValue={ticket?.description}
               placeholder="Detailed description of the issue or request..."
               className="min-h-[136px] resize-none"
               required
             />
-            {errors?.description && (
+            {errors.description && (
               <p className="text-destructive text-sm">{errors.description[0]}</p>
             )}
           </div>
@@ -273,7 +277,7 @@ export function TicketForm({
             <Input
               id="contactName"
               name="contactName"
-              defaultValue={ticket?.contactName ?? ''}
+              defaultValue={ticket?.contactName}
               placeholder="John Doe"
               className="h-11"
             />
@@ -285,7 +289,7 @@ export function TicketForm({
               id="contactEmail"
               name="contactEmail"
               type="email"
-              defaultValue={ticket?.contactEmail ?? ''}
+              defaultValue={ticket?.contactEmail}
               placeholder="john@example.com"
               className="h-11"
             />
@@ -297,7 +301,7 @@ export function TicketForm({
               id="contactPhone"
               name="contactPhone"
               type="tel"
-              defaultValue={ticket?.contactPhone ?? ''}
+              defaultValue={ticket?.contactPhone}
               placeholder="+1 234 567 8900"
               className="h-11"
             />
@@ -318,7 +322,7 @@ export function TicketForm({
             <Input
               id="environment"
               name="environment"
-              defaultValue={ticket?.environment ?? ''}
+              defaultValue={ticket?.environment}
               placeholder="production, staging, development..."
               className="h-11"
             />
@@ -330,7 +334,7 @@ export function TicketForm({
               id="affectedUrl"
               name="affectedUrl"
               type="url"
-              defaultValue={ticket?.affectedUrl ?? ''}
+              defaultValue={ticket?.affectedUrl}
               placeholder="https://example.com/page"
               className="h-11"
             />

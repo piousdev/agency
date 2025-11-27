@@ -13,7 +13,9 @@
 
 ### 1.1 Purpose of This Document
 
-This document describes the structural design, layout, and feature organization of the Work navigation without specifying visual styling, colors, or specific implementation details.
+This document describes the structural design, layout, and feature organization
+of the Work navigation without specifying visual styling, colors, or specific
+implementation details.
 
 ### 1.2 Design Principles
 

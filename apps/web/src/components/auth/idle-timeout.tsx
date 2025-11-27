@@ -1,8 +1,8 @@
 'use client';
 
-import { useIdleTimeout } from '@/lib/hooks/use-idle-timeout';
-import { toast } from 'sonner';
 import { IconAlertCircle } from '@tabler/icons-react';
+import { toast } from 'sonner';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useIdleTimeout } from '@/lib/hooks/use-idle-timeout';
 
 /**
  * Idle Timeout Provider
@@ -57,7 +58,7 @@ export function IdleTimeoutProvider({ children }: { children: React.ReactNode })
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${String(mins)}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -74,7 +75,7 @@ export function IdleTimeoutProvider({ children }: { children: React.ReactNode })
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-3">
               <p>
-                You've been inactive for a while. For your security, you'll be automatically logged
+                You&apos;ve been inactive for a while. For your security, you&apos;ll be automatically logged
                 out in:
               </p>
               <div className="text-center">

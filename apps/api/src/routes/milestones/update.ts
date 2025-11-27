@@ -2,9 +2,10 @@
  * Update milestone API route
  */
 
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { eq } from 'drizzle-orm';
+
 import { db } from '../../db/index.js';
 import { milestone, type Milestone } from '../../db/schema/milestone.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth.js';
@@ -35,8 +36,12 @@ app.patch('/:id', requireAuth(), requireInternal(), async (c) => {
       return c.json({ success: false, message: 'Milestone not found' }, 404);
     }
 
-    const body = await c.req.json();
-    const { name, description, status, dueDate, sortOrder } = body;
+    const body: unknown = await c.req.json();
+    const name = (body as Record<string, unknown>).name as string | undefined;
+    const description = (body as Record<string, unknown>).description as string | undefined;
+    const status = (body as Record<string, unknown>).status as string | undefined;
+    const dueDate = (body as Record<string, unknown>).dueDate as string | undefined;
+    const sortOrder = (body as Record<string, unknown>).sortOrder as number | undefined;
 
     // Build update object with proper types
     const updates: Partial<{
@@ -52,7 +57,7 @@ app.patch('/:id', requireAuth(), requireInternal(), async (c) => {
     };
 
     if (name !== undefined) updates.name = name.trim();
-    if (description !== undefined) updates.description = description?.trim() || null;
+    if (description !== undefined) updates.description = description.trim() !== '' ? description.trim() : null;
     if (status !== undefined) {
       updates.status = status as MilestoneStatus;
       // Set completedAt when status changes to completed
@@ -62,7 +67,7 @@ app.patch('/:id', requireAuth(), requireInternal(), async (c) => {
         updates.completedAt = null;
       }
     }
-    if (dueDate !== undefined) updates.dueDate = dueDate ? new Date(dueDate) : null;
+    if (dueDate !== undefined) updates.dueDate = dueDate !== '' ? new Date(dueDate) : null;
     if (sortOrder !== undefined) updates.sortOrder = sortOrder;
 
     // Perform update

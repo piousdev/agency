@@ -1,12 +1,13 @@
+import { zValidator } from '@hono/zod-validator';
+import { desc, eq, and } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
-import { zValidator } from '@hono/zod-validator';
+
 import { db } from '../../db';
 import { activity, comment, project } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
-import { desc, eq, and } from 'drizzle-orm';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -77,7 +78,10 @@ app.post(
   zValidator('json', createCommentSchema),
   async (c) => {
     const projectId = c.req.param('id');
-    const user = c.get('user')!;
+    const user = c.get('user');
+    if (!user) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
     const body = c.req.valid('json');
 
     try {
@@ -156,7 +160,10 @@ app.patch(
   async (c) => {
     const projectId = c.req.param('id');
     const commentId = c.req.param('commentId');
-    const user = c.get('user')!;
+    const user = c.get('user');
+    if (!user) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
     const body = c.req.valid('json');
 
     try {
@@ -211,7 +218,10 @@ app.patch(
 app.delete('/:id/comments/:commentId', requireAuth(), requireInternal(), async (c) => {
   const projectId = c.req.param('id');
   const commentId = c.req.param('commentId');
-  const user = c.get('user')!;
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
 
   try {
     // Verify comment exists and belongs to this project

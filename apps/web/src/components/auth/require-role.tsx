@@ -17,8 +17,9 @@
 
 'use client';
 
-import type { ReactNode } from 'react';
 import { useAuth } from '@/lib/hooks/use-auth';
+
+import type { ReactNode } from 'react';
 
 interface RequireRoleProps {
   /**
@@ -26,7 +27,7 @@ interface RequireRoleProps {
    * Currently supports: "internal" (team members)
    * Future: Custom roles from RBAC system
    */
-  role: 'internal' | string;
+  role: string;
 
   /**
    * Content to render if user has the required role
@@ -80,22 +81,22 @@ export function RequireRole({
 
   // Show loading state
   if (isLoading) {
-    return <>{loadingFallback}</>;
+    return loadingFallback;
   }
 
   // Not authenticated
   if (!isAuthenticated || !user) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
   // Check role
   // TODO: Once RBAC is fully implemented, check user.roles array
   // For now, we only check isInternal flag
-  const hasRole = role === 'internal' ? user.isInternal === true : false;
+  const hasRole = role === 'internal' ? user.isInternal : false;
 
   if (!hasRole) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
-  return <>{children}</>;
+  return children;
 }

@@ -1,5 +1,6 @@
-import { getSessionCookie } from 'better-auth/cookies';
 import { type NextRequest, NextResponse } from 'next/server';
+
+import { getSessionCookie } from 'better-auth/cookies';
 
 /**
  * Next.js Proxy - Layer 1: Optimistic Redirect (Edge Runtime)
@@ -19,7 +20,7 @@ import { type NextRequest, NextResponse } from 'next/server';
  * Performance: ~1ms per request (Edge Runtime)
  * Security: Optimistic only - real auth happens server-side
  */
-export async function proxy(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = getSessionCookie(request);
 

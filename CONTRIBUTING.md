@@ -34,7 +34,8 @@ pnpm --filter @repo/web dev
 
 ## 📝 Commit Workflow (Hybrid Approach)
 
-We use **Conventional Commits** + **Changesets** for structured commits and controlled releases.
+We use **Conventional Commits** + **Changesets** for structured commits and
+controlled releases.
 
 ### Option 1: Interactive Commits (Recommended)
 
@@ -46,7 +47,8 @@ git add .
 pnpm commit
 ```
 
-This launches an interactive prompt that guides you through creating a properly formatted commit message:
+This launches an interactive prompt that guides you through creating a properly
+formatted commit message:
 
 ```
 ? Select the type of change: (Use arrow keys)
@@ -306,7 +308,8 @@ apps/
 - **camelCase** for functions: `getUserProjects`
 - **UPPER_SNAKE_CASE** for constants: `MAX_RETRIES`
 
-See `apps/web/ARCHITECTURE.md` and `apps/api/ARCHITECTURE.md` for detailed conventions.
+See `apps/web/ARCHITECTURE.md` and `apps/api/ARCHITECTURE.md` for detailed
+conventions.
 
 ## 🔧 Common Tasks
 

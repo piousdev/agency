@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requirePermission, Permissions } from '@/lib/auth/permissions';
+
 import { createSprint, updateSprint, deleteSprint } from '@/lib/api/sprints';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createSprintSchema, updateSprintSchema } from '@/lib/schemas/sprint';
 
 /**
@@ -36,15 +37,15 @@ export async function createSprintAction(
   // Validate with Zod
   const parsed = createSprintSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
     const result = await createSprint(parsed.data);
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to create sprint' };
+      return { success: false, error: result.message ?? 'Failed to create sprint' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${parsed.data.projectId}`);
@@ -103,15 +104,15 @@ export async function updateSprintAction(
   // Validate with Zod
   const parsed = updateSprintSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
     const result = await updateSprint(sprintId, parsed.data);
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to update sprint' };
+      return { success: false, error: result.message ?? 'Failed to update sprint' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${projectId}`);
@@ -146,7 +147,7 @@ export async function startSprintAction(
       startDate: new Date().toISOString(),
     });
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to start sprint' };
+      return { success: false, error: result.message ?? 'Failed to start sprint' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${projectId}`);
@@ -181,7 +182,7 @@ export async function completeSprintAction(
       endDate: new Date().toISOString(),
     });
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to complete sprint' };
+      return { success: false, error: result.message ?? 'Failed to complete sprint' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${projectId}`);
@@ -213,7 +214,7 @@ export async function deleteSprintAction(
   try {
     const result = await deleteSprint(sprintId);
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to delete sprint' };
+      return { success: false, error: result.message ?? 'Failed to delete sprint' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${projectId}`);

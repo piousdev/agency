@@ -1,10 +1,11 @@
-import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
+import { DEFAULT_LAYOUTS } from './get';
 import { db } from '../../db';
 import { userDashboardPreferences, type WidgetLayout } from '../../db/schema';
 import { requireAuth, type AuthVariables } from '../../middleware/auth';
-import { DEFAULT_LAYOUTS } from './get';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -34,12 +35,7 @@ app.put('/', requireAuth(), async (c) => {
 
     // Validate each widget in layout
     for (const widget of layout) {
-      if (
-        !widget.id ||
-        !widget.type ||
-        widget.position === undefined ||
-        widget.visible === undefined
-      ) {
+      if (!widget.id || !widget.type) {
         throw new HTTPException(400, { message: 'Invalid widget configuration' });
       }
       if (!['small', 'medium', 'large'].includes(widget.size)) {
@@ -100,8 +96,16 @@ app.post('/reset', requireAuth(), async (c) => {
     const body = await c.req.json<{ role?: string }>();
     // Use provided role, or determine from user type
     const defaultRole = currentUser.isInternal ? 'developer' : 'client';
-    const role = (body.role || defaultRole).toLowerCase();
-    const defaultLayout = DEFAULT_LAYOUTS[role] || DEFAULT_LAYOUTS.developer;
+    const requestedRole = (body.role ?? defaultRole).toLowerCase();
+
+    // Validate and map to known role keys
+    const validRoles = ['admin', 'pm', 'developer', 'designer', 'qa', 'client'] as const;
+    type ValidRole = (typeof validRoles)[number];
+    const role: ValidRole = validRoles.includes(requestedRole as ValidRole)
+      ? (requestedRole as ValidRole)
+      : 'developer';
+
+    const defaultLayout = DEFAULT_LAYOUTS[role];
 
     // Delete existing preferences (will use defaults)
     await db

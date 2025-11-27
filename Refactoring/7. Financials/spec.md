@@ -13,7 +13,11 @@
 
 ### 1.1 Purpose
 
-The Financials navigation serves as Skyll's comprehensive financial management system, handling all invoicing, payments, expenses, budgeting, profitability tracking, and financial reporting. It provides complete visibility into the agency's financial health and enables effective financial planning and decision-making.
+The Financials navigation serves as Skyll's comprehensive financial management
+system, handling all invoicing, payments, expenses, budgeting, profitability
+tracking, and financial reporting. It provides complete visibility into the
+agency's financial health and enables effective financial planning and
+decision-making.
 
 ### 1.2 Scope
 
@@ -536,7 +540,8 @@ Total           $5,000   $8,000  $15,000 $10,000 $5,000 $43,000
 - Subcategory (optional)
 - Description
 - Vendor/Merchant
-- Payment method (Company Card, Personal Card - Reimbursable, Cash, Bank Transfer)
+- Payment method (Company Card, Personal Card - Reimbursable, Cash, Bank
+  Transfer)
 - Receipt attachment (required for >$25)
 - Billable to client? (Yes/No)
 - Project (if billable or project-specific)
@@ -1194,7 +1199,8 @@ Ending Cash:                 $46,500
 
 **Actor**: Finance Manager (Maria)
 
-**Context**: Project "Website Redesign" (PR-00234) completed. Need to invoice client TechFlow Inc for $25,000.
+**Context**: Project "Website Redesign" (PR-00234) completed. Need to invoice
+client TechFlow Inc for $25,000.
 
 **Flow**:
 
@@ -1229,7 +1235,15 @@ Ending Cash:                 $46,500
 18. System sets reminder: Follow up in 25 days (if not paid)
 19. Maria sees confirmation: "Invoice INV-00789 sent successfully"
 
-**Two Weeks Later - Payment Received**: 20. TechFlow pays via bank transfer 21. Maria receives bank notification 22. Opens Financials → Payments 23. Clicks "Record Payment" 24. Enters: - Payment date: Dec 15, 2025 - Amount: $25,000 - Payment method: Bank Transfer - Reference: Wire confirmation #12345 25. Selects invoice: INV-00789 26. Clicks "Record Payment" 27. System updates: - Invoice status: Paid - Payment date recorded - AR reduced by $25,000 - Revenue recognized (if accrual accounting) 28. System sends receipt to Alex Johnson 29. System logs payment in TechFlow client record 30. Maria sees confirmation: "Payment recorded successfully"
+**Two Weeks Later - Payment Received**: 20. TechFlow pays via bank transfer 21.
+Maria receives bank notification 22. Opens Financials → Payments 23. Clicks
+"Record Payment" 24. Enters: - Payment date: Dec 15, 2025 - Amount: $25,000 -
+Payment method: Bank Transfer - Reference: Wire confirmation #12345 25. Selects
+invoice: INV-00789 26. Clicks "Record Payment" 27. System updates: - Invoice
+status: Paid - Payment date recorded - AR reduced by $25,000 - Revenue
+recognized (if accrual accounting) 28. System sends receipt to Alex Johnson 29.
+System logs payment in TechFlow client record 30. Maria sees confirmation:
+"Payment recorded successfully"
 
 **Outcome**: Invoice created, sent, and payment tracked efficiently.
 
@@ -1239,7 +1253,8 @@ Ending Cash:                 $46,500
 
 **Actor**: Team Member (Lucas Kim)
 
-**Context**: Lucas traveled for client meeting. Needs to submit travel expenses for reimbursement.
+**Context**: Lucas traveled for client meeting. Needs to submit travel expenses
+for reimbursement.
 
 **Flow**:
 
@@ -1283,13 +1298,26 @@ Ending Cash:                 $46,500
 9. Clicks "Submit for Approval"
 10. System sends notification to Noah Rodriguez (Manager)
 
-**Manager Approval**: 11. Noah receives notification 12. Opens expense report 13. Reviews each expense: - Airfare: ✓ Reasonable, receipt attached - Client dinner: ✓ Appropriate, receipt attached, can bill client - Ground transport: ✓ Reasonable, receipts attached 14. All expenses approved 15. Noah clicks "Approve Report" 16. System updates status: Approved 17. Lucas notified: "Expense report approved" 18. Finance team notified: "New reimbursement pending"
+**Manager Approval**: 11. Noah receives notification 12. Opens expense
+report 13. Reviews each expense: - Airfare: ✓ Reasonable, receipt attached -
+Client dinner: ✓ Appropriate, receipt attached, can bill client - Ground
+transport: ✓ Reasonable, receipts attached 14. All expenses approved 15. Noah
+clicks "Approve Report" 16. System updates status: Approved 17. Lucas notified:
+"Expense report approved" 18. Finance team notified: "New reimbursement pending"
 
-**Finance Processing**: 19. Maria (Finance) sees approved expense report 20. Reviews and confirms 21. Adds to next reimbursement batch (runs bi-weekly) 22. On Dec 15 (next reimbursement date): - System processes direct deposit to Lucas - Lucas receives $595 - System updates status: Reimbursed 23. Lucas notified: "Reimbursement processed: $595"
+**Finance Processing**: 19. Maria (Finance) sees approved expense report 20.
+Reviews and confirms 21. Adds to next reimbursement batch (runs bi-weekly) 22.
+On Dec 15 (next reimbursement date): - System processes direct deposit to
+Lucas - Lucas receives $595 - System updates status: Reimbursed 23. Lucas
+notified: "Reimbursement processed: $595"
 
-**Billable Expense**: 24. Maria notes: $85 client dinner is billable 25. When creating next invoice for TechFlow: - Adds line item: "Client entertainment - Dec 5" - Amount: $85 (or $93.50 with 10% markup) - Links to expense report 26. Expense recovered from client
+**Billable Expense**: 24. Maria notes: $85 client dinner is billable 25. When
+creating next invoice for TechFlow: - Adds line item: "Client entertainment -
+Dec 5" - Amount: $85 (or $93.50 with 10% markup) - Links to expense report 26.
+Expense recovered from client
 
-**Outcome**: Expense report submitted, approved, reimbursed, and billable portion invoiced to client.
+**Outcome**: Expense report submitted, approved, reimbursed, and billable
+portion invoiced to client.
 
 ---
 
@@ -1297,7 +1325,8 @@ Ending Cash:                 $46,500
 
 **Actor**: Project Manager (Noah)
 
-**Context**: Project "E-commerce Platform" (PR-00456) is ongoing. Noah needs to monitor budget and profitability.
+**Context**: Project "E-commerce Platform" (PR-00456) is ongoing. Noah needs to
+monitor budget and profitability.
 
 **Flow**:
 
@@ -1335,21 +1364,24 @@ Ending Cash:                 $46,500
 7. Variance: +$1,500 under budget ✓
 8. Noah is pleased - project on track
 
-**Alert Scenario**: 9. Next week, Lucas logs 20 more hours 10. System recalculates: - Labor now: $27,000 (77% of labor budget) - Total spent: $34,500 (69%) 11. System projects completion cost: $51,500 12. System alerts Noah: ⚠️ "Project PR-00456 projected to exceed budget by $1,500" 13. Noah investigates: - Scope creep: Client added features - Solution: Create change order for additional $5,000 14. Noah discusses with client, gets approval 15. Opens Project → Budget 16. Clicks "Update Budget" 17. Increases budget from $50,000 to $55,000 18. Enters note: "Change order approved - additional features" 19. Budget updated 20. System recalculates: - Total budget: $55,000 - Projected: $51,500 - Variance: +$3,500 under budget ✓ 21. Alert cleared
+**Alert Scenario**: 9. Next week, Lucas logs 20 more hours 10. System
+recalculates: - Labor now: $27,000 (77% of labor budget) - Total spent: $34,500
+(69%) 11. System projects completion cost: $51,500 12. System alerts Noah: ⚠️
+"Project PR-00456 projected to exceed budget by $1,500" 13. Noah investigates: -
+Scope creep: Client added features - Solution: Create change order for
+additional $5,000 14. Noah discusses with client, gets approval 15. Opens
+Project → Budget 16. Clicks "Update Budget" 17. Increases budget from $50,000 to
+$55,000 18. Enters note: "Change order approved - additional features" 19.
+Budget updated 20. System recalculates: - Total budget: $55,000 - Projected:
+$51,500 - Variance: +$3,500 under budget ✓ 21. Alert cleared
 
-**Profitability Check**: 22. Noah opens Financials → Profitability → Projects 23. Finds Project PR-00456 24. Views profitability (current state):
-`     Revenue (invoiced): $50,000
-    Costs: $34,500
-      Labor: $27,000
-      Expenses: $7,500
-      Overhead (20%): $6,900
-    Gross Profit: $15,500
-    Gross Margin: 31%
-    Net Profit: $8,600
-    Net Margin: 17%
-    ` 25. Profitability looks good ✓ 26. Project on track financially
+**Profitability Check**: 22. Noah opens Financials → Profitability →
+Projects 23. Finds Project PR-00456 24. Views profitability (current state):
+`     Revenue (invoiced): $50,000     Costs: $34,500       Labor: $27,000       Expenses: $7,500       Overhead (20%): $6,900     Gross Profit: $15,500     Gross Margin: 31%     Net Profit: $8,600     Net Margin: 17%     ` 25.
+Profitability looks good ✓ 26. Project on track financially
 
-**Outcome**: Budget monitored, alert addressed with change order, profitability confirmed.
+**Outcome**: Budget monitored, alert addressed with change order, profitability
+confirmed.
 
 ---
 
@@ -1357,7 +1389,8 @@ Ending Cash:                 $46,500
 
 **Actor**: Finance Manager (Maria)
 
-**Context**: End of month. Maria needs to close November financials and generate reports.
+**Context**: End of month. Maria needs to close November financials and generate
+reports.
 
 **Flow**:
 
@@ -1374,7 +1407,8 @@ Ending Cash:                 $46,500
 5. Reconciles payments with bank statement
 6. All payments match ✓
 
-**Reconcile Expenses**: 7. Opens Financials → Expenses 8. Filters: "November 2025" 9. Reviews all expenses:
+**Reconcile Expenses**: 7. Opens Financials → Expenses 8. Filters: "November
+2025" 9. Reviews all expenses:
 
 - 45 expenses submitted
 - 42 approved
@@ -1384,15 +1418,31 @@ Ending Cash:                 $46,500
 11. All transactions accounted for ✓
 12. Processes reimbursements for approved expenses
 
-**Generate Reports**: 13. Opens Financials → Reports 14. Generates November P&L: - Revenue: $95,000 - Expenses: $68,000 - Profit: $27,000 - Margin: 28% 15. Exports to PDF 16. Generates Cash Flow Statement 17. Generates AR Aging Report: - Total AR: $43,000 - Current: $20,000 - 1-30 days: $15,000 - 31-60 days: $8,000 - Over 60 days: $0 18. Identifies overdue invoices: - INV-00745 (RetailCo): 5 days overdue - INV-00760 (HealthTech): 12 days overdue 19. Sends payment reminders
+**Generate Reports**: 13. Opens Financials → Reports 14. Generates November
+P&L: - Revenue: $95,000 - Expenses: $68,000 - Profit: $27,000 - Margin: 28% 15.
+Exports to PDF 16. Generates Cash Flow Statement 17. Generates AR Aging
+Report: - Total AR: $43,000 - Current: $20,000 - 1-30 days: $15,000 - 31-60
+days: $8,000 - Over 60 days: $0 18. Identifies overdue invoices: - INV-00745
+(RetailCo): 5 days overdue - INV-00760 (HealthTech): 12 days overdue 19. Sends
+payment reminders
 
-**Review Budgets**: 20. Opens Financials → Budgets → Company Budget 21. Reviews year-to-date budget vs actual: - Revenue: $1.1M budgeted, $1.05M actual (95%) - Expenses: $850K budgeted, $820K actual (96%) - Profit: $250K budgeted, $230K actual (92%) 22. On track for annual goals ✓
+**Review Budgets**: 20. Opens Financials → Budgets → Company Budget 21. Reviews
+year-to-date budget vs actual: - Revenue: $1.1M budgeted, $1.05M actual (95%) -
+Expenses: $850K budgeted, $820K actual (96%) - Profit: $250K budgeted, $230K
+actual (92%) 22. On track for annual goals ✓
 
-**Management Report**: 23. Compiles executive summary: - November revenue: $95K (↑8% MoM) - November profit: $27K (28% margin) - YTD revenue: $1.05M (target: $1.1M) - YTD profit: $230K (target: $250K) - Cash balance: $185K - AR: $43K (DSO: 38 days) - Key wins: 3 new projects, 2 renewals - Concerns: One project over budget (being addressed) 24. Exports reports 25. Sends to CEO and leadership team 26. Schedules monthly finance review meeting
+**Management Report**: 23. Compiles executive summary: - November revenue: $95K
+(↑8% MoM) - November profit: $27K (28% margin) - YTD revenue: $1.05M (target:
+$1.1M) - YTD profit: $230K (target: $250K) - Cash balance: $185K - AR: $43K
+(DSO: 38 days) - Key wins: 3 new projects, 2 renewals - Concerns: One project
+over budget (being addressed) 24. Exports reports 25. Sends to CEO and
+leadership team 26. Schedules monthly finance review meeting
 
-**Tax Preparation**: 27. Exports quarterly tax report (for accountant) 28. Sends to external accountant for quarterly tax filing
+**Tax Preparation**: 27. Exports quarterly tax report (for accountant) 28. Sends
+to external accountant for quarterly tax filing
 
-**Outcome**: Month-end close completed, all financials reconciled, reports generated and distributed.
+**Outcome**: Month-end close completed, all financials reconciled, reports
+generated and distributed.
 
 ---
 

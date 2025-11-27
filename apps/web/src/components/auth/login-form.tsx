@@ -11,9 +11,12 @@
 
 'use client';
 
-import { IconAlertCircle } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { IconAlertCircle } from '@tabler/icons-react';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,7 +44,7 @@ export function EnhancedLoginForm({ returnUrl = '/dashboard' }: EnhancedLoginFor
   const { rememberEmail, savedEmail, setRememberEmail } = useAuthUI();
 
   // Local form state (temporary, resets on page reload)
-  const [email, setEmail] = useState(savedEmail ?? '');
+  const [email, setEmail] = useState(savedEmail);
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -166,7 +169,6 @@ export function EnhancedLoginForm({ returnUrl = '/dashboard' }: EnhancedLoginFor
               autoComplete="email"
             />
           </div>
-          autoComplete="email"
           <div className="space-y-2">
             <Label htmlFor={passwordId}>Password</Label>
             <Input
@@ -180,7 +182,6 @@ export function EnhancedLoginForm({ returnUrl = '/dashboard' }: EnhancedLoginFor
               autoComplete="current-password"
             />
           </div>
-          autoComplete="current-password"
           <div className="flex items-center space-x-2">
             <Checkbox
               id={rememberId}
@@ -198,7 +199,7 @@ export function EnhancedLoginForm({ returnUrl = '/dashboard' }: EnhancedLoginFor
             {isLoading ? 'Signing in...' : 'Sign In'}
           </Button>
           <div className="text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <a href="/signup" className="text-primary hover:underline">
               Sign up
             </a>

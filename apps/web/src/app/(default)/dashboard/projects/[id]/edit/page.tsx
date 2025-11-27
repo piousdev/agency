@@ -1,11 +1,13 @@
-import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { redirect, notFound } from 'next/navigation';
+
 import { IconChevronLeft } from '@tabler/icons-react';
-import { requireUser } from '@/lib/auth/session';
-import { getProject } from '@/lib/api/projects';
-import { listClients } from '@/lib/api/clients';
-import { Button } from '@/components/ui/button';
+
 import { ProjectForm } from '@/components/projects';
+import { Button } from '@/components/ui/button';
+import { listClients } from '@/lib/api/clients';
+import { getProject } from '@/lib/api/projects';
+import { requireUser } from '@/lib/auth/session';
 
 interface EditProjectPageProps {
   params: Promise<{ id: string }>;

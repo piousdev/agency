@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import {
   IconCalendar,
   IconCircleCheck,
@@ -11,10 +12,17 @@ import {
   IconArchive,
   IconTool,
 } from '@tabler/icons-react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import {
   Table,
@@ -24,15 +32,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { requireUser } from '@/lib/auth/session';
 import { listProjects } from '@/lib/api/projects';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
+import { requireUser } from '@/lib/auth/session';
 
 const statusConfig: Record<
   string,
@@ -99,7 +100,7 @@ function getStatusConfig(status: string) {
 }
 
 export default async function ProjectsPage() {
-  const user = await requireUser();
+  await requireUser();
 
   // Fetch real projects from the API
   const projectsResponse = await listProjects({ pageSize: 100 });
@@ -165,7 +166,7 @@ export default async function ProjectsPage() {
                   <TableHead>Progress</TableHead>
                   <TableHead className="hidden xl:table-cell">Team</TableHead>
                   <TableHead className="hidden lg:table-cell">Timeline</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
+                  <TableHead className="w-[50px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -205,7 +206,7 @@ export default async function ProjectsPage() {
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center gap-2">
                             <IconUsers className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{project.client?.name ?? 'Unknown'}</span>
+                            <span className="text-sm">{project.client.name}</span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -225,7 +226,7 @@ export default async function ProjectsPage() {
                         </TableCell>
                         <TableCell className="hidden xl:table-cell">
                           <div className="flex -space-x-2">
-                            {project.assignees?.slice(0, 3).map((member) => (
+                            {project.assignees.slice(0, 3).map((member) => (
                               <Avatar
                                 key={member.id}
                                 className="h-8 w-8 border-2 border-background"
@@ -233,19 +234,19 @@ export default async function ProjectsPage() {
                                 <AvatarImage src={member.image ?? undefined} />
                                 <AvatarFallback className="text-xs bg-gradient-to-br from-purple-400 to-pink-400 text-white">
                                   {member.name
-                                    ?.split(' ')
+                                    .split(' ')
                                     .map((n) => n[0])
                                     .join('')
-                                    .toUpperCase() ?? '?'}
+                                    .toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
                             ))}
-                            {(project.assignees?.length ?? 0) > 3 && (
+                            {(project.assignees.length) > 3 && (
                               <div className="h-8 w-8 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-medium">
-                                +{(project.assignees?.length ?? 0) - 3}
+                                +{(project.assignees.length) - 3}
                               </div>
                             )}
-                            {(project.assignees?.length ?? 0) === 0 && (
+                            {(project.assignees.length) === 0 && (
                               <span className="text-xs text-muted-foreground">No team</span>
                             )}
                           </div>

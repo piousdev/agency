@@ -59,7 +59,7 @@ export async function getProjectComments(projectId: string): Promise<CommentsRes
     throw new Error(`Failed to fetch comments: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as CommentsResponse;
 }
 
 /**
@@ -81,10 +81,10 @@ export async function createComment(
   if (!response.ok) {
     const errorText = await response.text();
     console.error('API Error Response:', response.status, errorText);
-    throw new Error(`Failed to create comment: ${response.status} - ${errorText}`);
+    throw new Error(`Failed to create comment: ${String(response.status)} - ${errorText}`);
   }
 
-  return response.json();
+  return (await response.json()) as CommentResponse;
 }
 
 /**
@@ -108,7 +108,7 @@ export async function updateComment(
     throw new Error(`Failed to update comment: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as CommentResponse;
 }
 
 /**
@@ -130,5 +130,5 @@ export async function deleteComment(
     throw new Error(`Failed to delete comment: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as { success: boolean; message: string };
 }

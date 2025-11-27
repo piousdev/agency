@@ -1,87 +1,41 @@
 'use client';
 
-import { IconPlus, IconSelector } from '@tabler/icons-react';
-import * as React from 'react';
+import React from 'react';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar';
+import MenuContent from '@/components/default/dashboard/sidebar/skyll-switcher/components/menu-content';
+import MenuTrigger from '@/components/default/dashboard/sidebar/skyll-switcher/components/menu-trigger';
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { SidebarMenu, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 
-export function SkyllSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
-}) {
+import type { ActiveTeam } from '@/components/default/dashboard/sidebar/skyll-switcher/types';
+
+interface SkyllSwitcherProps {
+  teams: readonly ActiveTeam[];
+}
+
+export function SkyllSwitcher({ teams }: SkyllSwitcherProps) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [activeTeam, setActiveTeam] = React.useState<ActiveTeam | undefined>(
+    teams.length > 0 ? teams[0] : undefined
+  );
 
-  if (!activeTeam) {
-    return null;
-  }
+  React.useEffect(() => {
+    setActiveTeam(teams.length > 0 ? teams[0] : undefined);
+  }, [teams]);
+
+  if (!activeTeam) return null;
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <activeTeam.logo className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
-              </div>
-              <IconSelector className="ml-auto" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            align="start"
-            side={isMobile ? 'bottom' : 'right'}
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <team.logo className="size-3.5 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <IconPlus className="size-4" />
-              </div>
-              <div className="text-muted-foreground font-medium">Add team</div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
+    <SidebarMenu data-testid="sidebar__menu">
+      <SidebarMenuItem data-testid="sidebar__menu-item">
+        <DropdownMenu data-testid="sidebar__dropdown-menu">
+          <MenuTrigger activeTeam={activeTeam} data-testid="sidebar__menu-trigger" />
+          <MenuContent
+            teams={teams}
+            isMobile={isMobile}
+            setActiveTeam={setActiveTeam}
+            data-testid="sidebar__menu-content"
+          />
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>

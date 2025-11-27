@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+
 import { cn } from '@/lib/utils';
+
 import type { HelpSection } from './types';
 
 interface SectionItemProps {
@@ -11,12 +13,14 @@ interface SectionItemProps {
   parentPath?: string[];
 }
 
+const DEFAULT_PARENT_PATH: string[] = [];
+
 /**
  * Section Item Component
  * Renders individual sidebar navigation items
  * Client component for link navigation and active state
  */
-export function SectionItem({ section, isActive, parentPath = [] }: SectionItemProps) {
+export function SectionItem({ section, isActive, parentPath = DEFAULT_PARENT_PATH }: SectionItemProps) {
   // Build the full URL path from parent path and section slug
   const fullPath = [...parentPath, section.slug];
   const href = `/dashboard/help/${fullPath.join('/')}`;

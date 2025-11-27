@@ -1,9 +1,12 @@
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { requireUser } from '@/lib/auth/session';
-import { listLabels } from '@/lib/api/labels';
+import { redirect } from 'next/navigation';
+
 import { IconArrowLeft, IconTag } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
+import { listLabels } from '@/lib/api/labels';
+import { requireUser } from '@/lib/auth/session';
+
 import { LabelsClient } from './client';
 
 export const metadata = {

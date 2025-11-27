@@ -1,5 +1,7 @@
-import { IconSettings } from '@tabler/icons-react';
 import Link from 'next/link';
+
+import { IconSettings } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 
 export default function Settings() {

@@ -1,7 +1,7 @@
-import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { redirect, notFound } from 'next/navigation';
+
 import {
-  IconChevronLeft,
   IconEdit,
   IconCalendar,
   IconMail,
@@ -14,15 +14,16 @@ import {
   IconBuilding,
   IconFileText,
 } from '@tabler/icons-react';
-import { requireUser } from '@/lib/auth/session';
-import { getClient } from '@/lib/api/clients';
-import { Button } from '@/components/ui/button';
+
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { DetailPageHeader } from '../../components/header';
+import { getClient } from '@/lib/api/clients';
+import { requireUser } from '@/lib/auth/session';
+
 import { ClientActivity } from './client-activity';
+import { DetailPageHeader } from '../../components/header';
 
 interface ClientDetailPageProps {
   params: Promise<{ id: string }>;
@@ -87,7 +88,7 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
             </Badge>
           </div>
         }
-        description={`${clientTypeLabels[client.type] || client.type} Client`}
+        description={`${clientTypeLabels[client.type] ?? client.type} Client`}
         backUrl="/dashboard/business-center/clients"
         backLabel="Back to Clients"
       >
@@ -157,7 +158,7 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
                         <div className="flex items-center gap-2 mt-1">
                           <Badge
                             variant="secondary"
-                            className={projectStatusColors[project.status] || 'bg-gray-100'}
+                            className={projectStatusColors[project.status] ?? 'bg-gray-100'}
                           >
                             {project.status.replace(/_/g, ' ')}
                           </Badge>
@@ -206,13 +207,13 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
                         <div className="flex items-center gap-2 mt-1">
                           <Badge
                             variant="secondary"
-                            className={ticketStatusColors[ticket.status] || 'bg-gray-100'}
+                            className={ticketStatusColors[ticket.status] ?? 'bg-gray-100'}
                           >
                             {ticket.status.replace(/_/g, ' ')}
                           </Badge>
                           <Badge
                             variant="outline"
-                            className={ticketPriorityColors[ticket.priority] || 'bg-gray-100'}
+                            className={ticketPriorityColors[ticket.priority] ?? 'bg-gray-100'}
                           >
                             {ticket.priority}
                           </Badge>

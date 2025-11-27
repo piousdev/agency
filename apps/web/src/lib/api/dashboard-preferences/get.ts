@@ -3,6 +3,7 @@
  */
 
 import { getAuthHeaders, buildApiUrl } from './api-utils';
+
 import type { ApiResponse, DashboardPreferences } from './types';
 
 /**
@@ -16,16 +17,16 @@ export async function getDashboardPreferences(): Promise<ApiResponse<DashboardPr
       cache: 'no-store',
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as ApiResponse<DashboardPreferences> & { error?: string };
 
     if (!response.ok) {
       return {
         success: false,
-        error: data.error || 'Failed to fetch preferences',
+        error: data.error ?? 'Failed to fetch preferences',
       };
     }
 
-    return data;
+    return data as ApiResponse<DashboardPreferences>;
   } catch (error) {
     console.error('Error fetching dashboard preferences:', error);
     return {

@@ -20,9 +20,9 @@ import * as Sentry from '@sentry/node';
  */
 
 const SENTRY_DSN = process.env.SENTRY_DSN;
-const SENTRY_ENVIRONMENT = process.env.SENTRY_ENVIRONMENT || 'development';
-const SENTRY_TRACES_SAMPLE_RATE = parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '0.1');
-const SENTRY_ENABLE_TRACING = process.env.SENTRY_ENABLE_TRACING === 'true' || false;
+const SENTRY_ENVIRONMENT = process.env.SENTRY_ENVIRONMENT ?? 'development';
+const SENTRY_TRACES_SAMPLE_RATE = parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE ?? '0.1');
+const SENTRY_ENABLE_TRACING = process.env.SENTRY_ENABLE_TRACING === 'true';
 
 /**
  * Initialize Sentry SDK
@@ -31,7 +31,7 @@ const SENTRY_ENABLE_TRACING = process.env.SENTRY_ENABLE_TRACING === 'true' || fa
  * Safe to call multiple times (Sentry handles re-initialization).
  */
 export function initSentry(): void {
-  if (!SENTRY_DSN) {
+  if (SENTRY_DSN === undefined || SENTRY_DSN === '') {
     console.log(
       '⚠️  Sentry DSN not configured. Error tracking disabled. Set SENTRY_DSN environment variable to enable.'
     );
@@ -84,9 +84,12 @@ export function initSentry(): void {
       }
 
       // Filter out 404 errors (too noisy, not actionable)
-      if (event.exception) {
+      if (event.exception !== undefined) {
         const exceptionValue = event.exception.values?.[0]?.value;
-        if (exceptionValue?.includes('404') || exceptionValue?.includes('Not Found')) {
+        if (
+          exceptionValue !== undefined &&
+          (exceptionValue.includes('404') || exceptionValue.includes('Not Found'))
+        ) {
           return null;
         }
       }
@@ -96,7 +99,7 @@ export function initSentry(): void {
   });
 
   console.log(
-    `✅ Sentry initialized (environment: ${SENTRY_ENVIRONMENT}, tracing: ${SENTRY_ENABLE_TRACING})`
+    `✅ Sentry initialized (environment: ${SENTRY_ENVIRONMENT}, tracing: ${String(SENTRY_ENABLE_TRACING)})`
   );
 }
 
@@ -166,7 +169,7 @@ export function logAuthEvent(
   level: Sentry.SeverityLevel = 'info'
 ): void {
   // Set user context if available
-  if (context.userId || context.email) {
+  if (context.userId !== undefined || context.email !== undefined) {
     Sentry.setUser({
       id: context.userId,
       email: context.email,
@@ -253,7 +256,7 @@ export function logSecurityEvent(
  * ```
  */
 export function logError(error: Error | string, context?: AuthEventContext): void {
-  if (context?.userId || context?.email) {
+  if (context?.userId !== undefined || context?.email !== undefined) {
     Sentry.setUser({
       id: context.userId,
       email: context.email,

@@ -1,17 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+
 import { IconCircleCheck } from '@tabler/icons-react';
+
 import {
   BentoCard,
   BentoCardContent,
   BentoCardFooter,
   BentoCardHeader,
 } from '@/components/ui/bento-grid';
-import { TimeFilter, type TimeFilterOption } from './time-filter';
-import { InfoTooltip } from './info-tooltip';
+
 import { CardActionButton } from './card-action-button';
+import { InfoTooltip } from './info-tooltip';
 import { MiniSparkline } from './mini-sparkline';
+import { TimeFilter, type TimeFilterOption } from './time-filter';
 
 interface CompletedProjectsCardProps {
   completedCount: number;
@@ -30,7 +33,7 @@ export function CompletedProjectsCard({
 
   return (
     <BentoCard
-      aria-label={`Completed Projects: ${completedCount} delivered, ${completionRate}% completion rate`}
+      aria-label={`Completed Projects: ${String(completedCount)} delivered, ${String(completionRate)}% completion rate`}
     >
       {/* Watermark Icon */}
       <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none">
@@ -79,7 +82,7 @@ export function CompletedProjectsCard({
           >
             <div
               className="h-full rounded-full bg-success transition-all duration-500 motion-reduce:transition-none"
-              style={{ width: `${completionRate}%` }}
+              style={{ width: `${String(completionRate)}%` }}
             />
           </div>
         </div>

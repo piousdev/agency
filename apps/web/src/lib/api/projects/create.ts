@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { CreateProjectInput, ProjectResponse } from './types';
 
 /**
@@ -17,21 +18,26 @@ import type { CreateProjectInput, ProjectResponse } from './types';
 export async function createProject(data: CreateProjectInput): Promise<ProjectResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
+  const headersObject =
+    authHeaders instanceof Headers
+      ? (Object.fromEntries(authHeaders.entries()) as Record<string, string>)
+      : (authHeaders as Record<string, string>);
+
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects`, {
     method: 'POST',
     headers: {
-      ...authHeaders,
+      ...headersObject,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { message?: string } & Partial<ProjectResponse>;
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to create project');
+    throw new Error(result.message ?? 'Failed to create project');
   }
 
-  return result;
+  return result as ProjectResponse;
 }

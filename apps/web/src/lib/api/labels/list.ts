@@ -3,8 +3,9 @@
  */
 
 import { cookies } from 'next/headers';
-import type { LabelScope } from '@/lib/schemas/label';
+
 import type { LabelsListResponse } from './types';
+import type { LabelScope } from '@/lib/schemas/label';
 
 /**
  * List all labels
@@ -17,8 +18,9 @@ export async function listLabels(scope?: LabelScope): Promise<LabelsListResponse
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
   const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/labels`);
+  const url = new URL(`${apiUrl}/api/labels`);
   if (scope) {
     url.searchParams.set('scope', scope);
   }
@@ -31,9 +33,11 @@ export async function listLabels(scope?: LabelScope): Promise<LabelsListResponse
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Failed to list labels' }));
-    throw new Error(error.message || 'Failed to list labels');
+    const error = (await response.json().catch(() => ({
+      message: 'Failed to list labels',
+    }))) as { message: string };
+    throw new Error(error.message);
   }
 
-  return response.json();
+  return response.json() as Promise<LabelsListResponse>;
 }

@@ -1,4 +1,5 @@
 import { getContentNavigation } from '@/lib/mdx';
+
 import type { HelpSection } from './types';
 
 /**

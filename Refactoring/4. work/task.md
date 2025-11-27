@@ -61,7 +61,8 @@
 ### 2.2 Core Task Data Model
 
 - [ ] Implement task ID generation
-- [ ] Define task status enum (Backlog, To Do, In Progress, Code Review, In Review, Done, Blocked)
+- [ ] Define task status enum (Backlog, To Do, In Progress, Code Review, In
+      Review, Done, Blocked)
 - [ ] Define priority enum (Low, Medium, High, Urgent)
 - [ ] Implement assignee relationship
 - [ ] Implement sprint relationship
@@ -91,7 +92,8 @@
 - [ ] Create endpoint: Get user's assigned tasks
 - [ ] Create endpoint: Get team tasks (PM view)
 - [ ] Implement pagination
-- [ ] Implement filtering (status, assignee, sprint, priority, points, labels, dates)
+- [ ] Implement filtering (status, assignee, sprint, priority, points, labels,
+      dates)
 - [ ] Implement sorting (priority, due date, points, age, updated)
 - [ ] Implement search (title, description, ID)
 - [ ] Implement grouping (status, assignee, sprint, priority, project)
@@ -309,7 +311,8 @@
 ### 6.1 List Layout
 
 - [ ] Create list view component (table format)
-- [ ] Display columns: Checkbox, ID, Title, Assignee, Status, Points, Sprint, Due Date, Labels, Actions
+- [ ] Display columns: Checkbox, ID, Title, Assignee, Status, Points, Sprint,
+      Due Date, Labels, Actions
 - [ ] Implement sortable columns
 - [ ] Implement row selection
 - [ ] Implement row click to open details
@@ -319,7 +322,8 @@
 ### 6.2 Inline Editing
 
 - [ ] Implement double-click to edit
-- [ ] Enable inline editing for: Title, Assignee, Status, Points, Sprint, Due Date, Priority
+- [ ] Enable inline editing for: Title, Assignee, Status, Points, Sprint, Due
+      Date, Priority
 - [ ] Validate inline edits
 - [ ] Auto-save on blur
 - [ ] Test inline editing
@@ -399,7 +403,8 @@
 
 ### 8.5 Sidebar
 
-- [ ] Display editable fields: Status, Assignee, Sprint, Points, Priority, Due Date
+- [ ] Display editable fields: Status, Assignee, Sprint, Points, Priority, Due
+      Date
 - [ ] Display labels (add/remove)
 - [ ] Display relationships (project, request)
 - [ ] Create quick actions menu
@@ -486,7 +491,8 @@
 ### 12.2 Advanced Filters
 
 - [ ] Create filter panel component
-- [ ] Implement all filter types (status, assignee, sprint, priority, points, labels, dates)
+- [ ] Implement all filter types (status, assignee, sprint, priority, points,
+      labels, dates)
 - [ ] Apply filters to board/list
 - [ ] Implement save filter functionality
 - [ ] Create quick filter pills

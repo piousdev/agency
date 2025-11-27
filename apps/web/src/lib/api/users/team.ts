@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { TeamMembersResponse } from './types';
 
 /**
@@ -16,7 +17,7 @@ import type { TeamMembersResponse } from './types';
 export async function listTeamMembers(): Promise<TeamMembersResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/team`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/team`, {
     headers: authHeaders,
     cache: 'no-store',
   });
@@ -24,13 +25,13 @@ export async function listTeamMembers(): Promise<TeamMembersResponse> {
   if (!response.ok) {
     let errorMessage: string;
     try {
-      const errorData = await response.json();
-      errorMessage = errorData.error || errorData.message || `Request failed (${response.status})`;
+      const errorData = (await response.json()) as { error?: string; message?: string };
+      errorMessage = errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
     } catch {
-      errorMessage = `Request failed (${response.status})`;
+      errorMessage = `Request failed (${String(response.status)})`;
     }
     throw new Error(errorMessage);
   }
 
-  return response.json();
+  return (await response.json()) as TeamMembersResponse;
 }

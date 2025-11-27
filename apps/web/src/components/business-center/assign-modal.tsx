@@ -1,7 +1,9 @@
 'use client';
 
+import { useActionState, useState } from 'react';
+
 import { IconAlertTriangle, IconCircleCheck, IconLoader2, IconUsers } from '@tabler/icons-react';
-import { useActionState, useId, useState } from 'react';
+
 import {
   assignProjectAction,
   assignTicketAction,
@@ -19,7 +21,11 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import type { TeamMember } from '@/lib/api/users/types';
+
+// Constant for default empty array to avoid re-renders
+const EMPTY_ARRAY: string[] = [];
 
 /**
  * Assign Modal Props
@@ -70,11 +76,11 @@ export function AssignModal({
   entityType,
   entityId,
   entityName,
-  currentAssignees = [],
+  currentAssignees = EMPTY_ARRAY,
   teamMembers,
 }: AssignModalProps) {
   // For ticket (single select)
-  const [selectedUserId, setSelectedUserId] = useState<string>(currentAssignees[0] || '');
+  const [selectedUserId, setSelectedUserId] = useState<string>(currentAssignees[0]);
 
   // For project (multi-select)
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set(currentAssignees));
@@ -86,7 +92,6 @@ export function AssignModal({
       : assignProjectAction.bind(null, entityId);
 
   const [state, formAction, isPending] = useActionState(boundAction, null);
-  const formId = useId();
 
   // Handle multi-select toggle
   const handleCheckboxChange = (userId: string, checked: boolean) => {
@@ -151,7 +156,7 @@ export function AssignModal({
                 <p className="text-xs mt-1">
                   {overloadedMembers.length === 1 ? (
                     <>
-                      <strong>{overloadedMembers[0]!.name}</strong> is at or above 100% capacity
+                      <strong>{overloadedMembers[0]?.name}</strong> is at or above 100% capacity
                     </>
                   ) : (
                     <>
@@ -201,7 +206,7 @@ export function AssignModal({
                           className="flex items-center gap-3 flex-1 cursor-pointer"
                         >
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={member.image || undefined} />
+                            <AvatarImage src={member.image ?? undefined} />
                             <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                               {member.name
                                 .split(' ')
@@ -256,7 +261,7 @@ export function AssignModal({
                         className="flex items-center gap-3 flex-1 cursor-pointer"
                       >
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={member.image || undefined} />
+                          <AvatarImage src={member.image ?? undefined} />
                           <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                             {member.name
                               .split(' ')

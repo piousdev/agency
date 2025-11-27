@@ -2,14 +2,19 @@
 
 ## Server-First Principle
 
-This Next.js application follows a **Server-First Architecture** to maximize performance, security, and maintainability while using Hono as our backend API.
+This Next.js application follows a **Server-First Architecture** to maximize
+performance, security, and maintainability while using Hono as our backend API.
 
 ### Core Principles
 
-1. **Server Components by default** - All components are Server Components unless they need client-side interactivity
-2. **Server Actions for mutations** - Form submissions and data mutations use Server Actions, not client-side fetch
-3. **Server-to-Server API calls** - Next.js server calls Hono API directly (not through the browser)
-4. **Minimal client JavaScript** - Only ship JavaScript for truly interactive components
+1. **Server Components by default** - All components are Server Components
+   unless they need client-side interactivity
+2. **Server Actions for mutations** - Form submissions and data mutations use
+   Server Actions, not client-side fetch
+3. **Server-to-Server API calls** - Next.js server calls Hono API directly (not
+   through the browser)
+4. **Minimal client JavaScript** - Only ship JavaScript for truly interactive
+   components
 
 ### Architecture Layers
 
@@ -58,7 +63,8 @@ This Next.js application follows a **Server-First Architecture** to maximize per
 
 ### Component Directory Structure (Critical)
 
-**Rule**: Components must be placed in `src/components/` and the directory structure should mirror the app route structure.
+**Rule**: Components must be placed in `src/components/` and the directory
+structure should mirror the app route structure.
 
 **Pattern**:
 
@@ -124,7 +130,8 @@ apps/web/src/app/(default)/dashboard/business-center/intake/
 
 **Rationale**:
 
-- **Separation of Concerns**: Keep routing (app/) separate from UI components (components/)
+- **Separation of Concerns**: Keep routing (app/) separate from UI components
+  (components/)
 - **Reusability**: Components in `components/` can be easily shared
 - **Maintainability**: Clear ownership and easier refactoring
 - **Discoverability**: Predictable location for components
@@ -139,19 +146,23 @@ import { EstimationForm } from '@/components/dashboard/business-center/intake/es
 
 ### File Naming Conventions
 
-All source files must follow strict naming conventions for consistency and clarity.
+All source files must follow strict naming conventions for consistency and
+clarity.
 
 #### General Rules
 
-1. **Use kebab-case** for all filenames (e.g., `user-profile.tsx`, `validate-password.ts`)
+1. **Use kebab-case** for all filenames (e.g., `user-profile.tsx`,
+   `validate-password.ts`)
 2. **Be descriptive but concise** - filenames should clearly indicate purpose
 3. **Avoid adjectives** - No "enhanced-", "custom-", "advanced-" prefixes
 4. **Avoid generic suffixes** - No "-helper", "-util", "-handler" suffixes
-5. **Leverage directory context** - Don't repeat parent directory names in filenames
+5. **Leverage directory context** - Don't repeat parent directory names in
+   filenames
 
 #### Component Files (`*.tsx`)
 
-**Rule**: Use nouns describing what the component **is**, not what it does or how it's enhanced.
+**Rule**: Use nouns describing what the component **is**, not what it does or
+how it's enhanced.
 
 ✅ **Good Examples:**
 
@@ -483,7 +494,8 @@ export default function Page() {
 
 ### Defense-in-Depth Security Model (3 Layers)
 
-Our authentication follows a **layered security approach** as recommended by Better-Auth:
+Our authentication follows a **layered security approach** as recommended by
+Better-Auth:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -605,7 +617,8 @@ export async function deletePost(postId: string) {
 
 **Critical Insight:**
 
-> "Middleware is NOT a security boundary - it's a UX optimization. Always validate in Server Components and Server Actions." - Better-Auth Documentation
+> "Middleware is NOT a security boundary - it's a UX optimization. Always
+> validate in Server Components and Server Actions." - Better-Auth Documentation
 
 ## Examples in This Codebase
 
@@ -685,9 +698,11 @@ export async function deleteItem(id: string) {
 
 ### Architecture Decision: Minimal Client State
 
-Following Server-First principles, we use a **minimal client-side state approach**:
+Following Server-First principles, we use a **minimal client-side state
+approach**:
 
-1. **Session Data**: Better-Auth's built-in `useSession` hook (reactive, ~3KB bundle)
+1. **Session Data**: Better-Auth's built-in `useSession` hook (reactive, ~3KB
+   bundle)
 2. **Auth UI State**: Zustand for client-side interactivity only (~1KB bundle)
 3. **Server State**: Server Components + Server Actions (no client bundle)
 
@@ -897,9 +912,11 @@ export default async function Page() {
 
 ### Role-Based Component Guards
 
-Client-side UI guards for conditional rendering based on user roles, client types, and permissions.
+Client-side UI guards for conditional rendering based on user roles, client
+types, and permissions.
 
-**⚠️ SECURITY WARNING**: These are UI helpers ONLY. Always validate authorization server-side.
+**⚠️ SECURITY WARNING**: These are UI helpers ONLY. Always validate
+authorization server-side.
 
 **Available Components:**
 
@@ -926,7 +943,8 @@ import { RequireRole } from '@/components/auth';
 - ⚠️ RequireClientType: Component created, requires session extension
 - ⚠️ RequirePermission: Component created, requires session extension
 
-**TODO**: Extend session with client type and permissions using Better-Auth `customSession` plugin.
+**TODO**: Extend session with client type and permissions using Better-Auth
+`customSession` plugin.
 
 **Server-Side Authorization** (REAL security):
 
@@ -942,7 +960,9 @@ Reference: `apps/web/src/lib/auth/session.ts` for server-side utilities
 
 ### Overview
 
-The application uses **@next/mdx** for rendering Markdown + JSX content in documentation pages like Help and Changelog. MDX enables rich, interactive documentation with React components embedded in markdown.
+The application uses **@next/mdx** for rendering Markdown + JSX content in
+documentation pages like Help and Changelog. MDX enables rich, interactive
+documentation with React components embedded in markdown.
 
 ### Architecture
 
@@ -1083,8 +1103,10 @@ export default withSentryConfig(withMDX(nextConfig), {
 
 **Important Notes:**
 
-- **Turbopack Limitation**: remark-gfm plugin removed due to serialization issues
-- **Future Enhancement**: Can add plugins when Next.js improves plugin serialization
+- **Turbopack Limitation**: remark-gfm plugin removed due to serialization
+  issues
+- **Future Enhancement**: Can add plugins when Next.js improves plugin
+  serialization
 - **Page Extensions**: `['js', 'jsx', 'md', 'mdx', 'ts', 'tsx']`
 
 ### Navigation Integration
@@ -1107,7 +1129,12 @@ export const changelogNavigation: NavigationItem = {
 // 2. Add to navigation group
 export const generalGroup: NavigationGroup = {
   title: 'General',
-  items: [settingsNavigation, searchNavigation, helpNavigation, changelogNavigation],
+  items: [
+    settingsNavigation,
+    searchNavigation,
+    helpNavigation,
+    changelogNavigation,
+  ],
 };
 
 // 3. Add icon
@@ -1150,14 +1177,17 @@ const changelogWithIcons: NavigationItem = {
 
 ### Overview
 
-The **Business Center** is an internal-only dashboard for agency team members to manage client work, team capacity, and project deliveries. It provides a comprehensive 6-section interface for operational oversight.
+The **Business Center** is an internal-only dashboard for agency team members to
+manage client work, team capacity, and project deliveries. It provides a
+comprehensive 6-section interface for operational oversight.
 
 ### Architecture
 
 **Access Control:**
 
 - **Server-Side**: Page protected with `requireUser()` + `isInternal` check
-- **Client-Side**: Optional guard hook `useBusinessCenterAccess()` for client components
+- **Client-Side**: Optional guard hook `useBusinessCenterAccess()` for client
+  components
 - **Route**: `/dashboard/business-center` (internal users only)
 
 **Data Flow:**
@@ -1201,7 +1231,8 @@ The **Business Center** is an internal-only dashboard for agency team members to
 
 ### 6-Section Dashboard Layout
 
-**Grid Structure:** 3-column responsive grid (1 col mobile, 2 col tablet, 3 col desktop)
+**Grid Structure:** 3-column responsive grid (1 col mobile, 2 col tablet, 3 col
+desktop)
 
 | Section                       | Purpose                                 | Data Source                                                                  | Key Features                                   |
 | ----------------------------- | --------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -1244,7 +1275,8 @@ apps/web/src/components/business-center/
 
 **Client Components (Interactive Elements):**
 
-- `assign-modal.tsx`: Generic assignment for tickets (single-select) or projects (multi-select)
+- `assign-modal.tsx`: Generic assignment for tickets (single-select) or projects
+  (multi-select)
 - `capacity-modal.tsx`: Update team member capacity (0-200%)
 - `assign-trigger.tsx`: Reusable button that opens AssignModal
 - All use `useActionState` hook for Server Action integration
@@ -1347,13 +1379,15 @@ All actions follow the pattern:
 
 **Test Coverage:**
 
-1. **Backend Unit Tests** (`apps/web/src/app/(default)/dashboard/business-center/__tests__/actions.test.ts`)
+1. **Backend Unit Tests**
+   (`apps/web/src/app/(default)/dashboard/business-center/__tests__/actions.test.ts`)
    - All 6 server actions
    - Validation error handling
    - API error handling
    - Revalidation calls
 
-2. **Frontend Component Tests** (`apps/web/src/components/business-center/__tests__/business-center.test.tsx`)
+2. **Frontend Component Tests**
+   (`apps/web/src/components/business-center/__tests__/business-center.test.tsx`)
    - Main component rendering
    - All 6 sections present
    - Empty state displays
@@ -1451,7 +1485,9 @@ function MyClientComponent() {
 ### References
 
 - Implementation: `apps/web/src/components/business-center/`
-- Server Actions: `apps/web/src/app/(default)/dashboard/business-center/actions.ts`
-- Page Component: `apps/web/src/app/(default)/dashboard/business-center/page.tsx`
+- Server Actions:
+  `apps/web/src/app/(default)/dashboard/business-center/actions.ts`
+- Page Component:
+  `apps/web/src/app/(default)/dashboard/business-center/page.tsx`
 - Type Definitions: `apps/web/src/components/business-center/types.ts`
 - Tests: `apps/web/e2e/business-center.spec.ts`

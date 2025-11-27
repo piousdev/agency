@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { validateInvitation } from '@/lib/api/invitations';
+
 import { AcceptInviteForm } from './form';
 
 /**
@@ -24,7 +26,7 @@ export default async function AcceptInvitePage({ params }: { params: Promise<{ t
   if (!validationResult.valid || !validationResult.invitation) {
     return (
       <InvalidInvitationCard
-        message={validationResult.message || 'This invitation is invalid or has expired'}
+        message={validationResult.message ?? 'This invitation is invalid or has expired'}
       />
     );
   }

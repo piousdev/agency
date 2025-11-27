@@ -3,14 +3,16 @@
  * Tests for useSocketStore, useRealtimeAlerts, useRealtimeActivity, useConnectionStatus
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
 import {
   useSocketStore,
   useRealtimeAlerts,
   useRealtimeActivity,
   useConnectionStatus,
 } from '../use-socket';
+
 import type { AlertPayload, ActivityPayload } from '@/lib/socket';
 
 // Mock socket module
@@ -72,7 +74,7 @@ describe('useSocketStore', () => {
 
   describe('Alert Management', () => {
     const createAlert = (overrides: Partial<AlertPayload> = {}): AlertPayload => ({
-      id: `alert-${Date.now()}`,
+      id: `alert-${String(Date.now())}`,
       type: 'warning',
       title: 'Test Alert',
       message: 'This is a test alert',
@@ -115,7 +117,7 @@ describe('useSocketStore', () => {
 
       act(() => {
         for (let i = 0; i < 60; i++) {
-          addAlert(createAlert({ id: `alert-${i}` }));
+          addAlert(createAlert({ id: `alert-${String(i)}` }));
         }
       });
 
@@ -153,7 +155,7 @@ describe('useSocketStore', () => {
 
   describe('Activity Management', () => {
     const createActivity = (overrides: Partial<ActivityPayload> = {}): ActivityPayload => ({
-      id: `activity-${Date.now()}`,
+      id: `activity-${String(Date.now())}`,
       type: 'ticket_created',
       userId: 'user-1',
       userName: 'Test User',
@@ -197,7 +199,7 @@ describe('useSocketStore', () => {
 
       act(() => {
         for (let i = 0; i < 110; i++) {
-          addActivity(createActivity({ id: `activity-${i}` }));
+          addActivity(createActivity({ id: `activity-${String(i)}` }));
         }
       });
 

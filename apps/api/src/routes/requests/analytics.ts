@@ -1,7 +1,8 @@
+import { eq, and, sql, gte, lt, count, isNull, not } from 'drizzle-orm';
 import { Hono } from 'hono';
+
 import { db } from '../../db/index.js';
-import { request, requestHistory } from '../../db/schema/index.js';
-import { eq, and, sql, gte, lt, count, avg, inArray, isNull, not } from 'drizzle-orm';
+import { request } from '../../db/schema/index.js';
 import { requireAuth } from '../../middleware/auth.js';
 
 const app = new Hono();
@@ -21,7 +22,6 @@ const STAGE_THRESHOLDS = {
 app.get('/', requireAuth, async (c) => {
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
   try {
     // 1. Stage distribution (current active requests per stage)
@@ -46,7 +46,10 @@ app.get('/', requireAuth, async (c) => {
 
     // 3. Aging requests count per stage
     const agingRequests: Record<string, number> = {};
-    for (const [stage, thresholdHours] of Object.entries(STAGE_THRESHOLDS)) {
+    type ValidStage = keyof typeof STAGE_THRESHOLDS;
+    const stages: ValidStage[] = ['in_treatment', 'on_hold', 'estimation', 'ready'];
+    for (const stage of stages) {
+      const thresholdHours = STAGE_THRESHOLDS[stage];
       const thresholdDate = new Date(now.getTime() - thresholdHours * 60 * 60 * 1000);
 
       const result = await db
@@ -54,7 +57,7 @@ app.get('/', requireAuth, async (c) => {
         .from(request)
         .where(
           and(
-            eq(request.stage, stage as 'in_treatment' | 'on_hold' | 'estimation' | 'ready'),
+            eq(request.stage, stage),
             lt(request.stageEnteredAt, thresholdDate),
             eq(request.isConverted, false),
             eq(request.isCancelled, false)
@@ -65,7 +68,7 @@ app.get('/', requireAuth, async (c) => {
     }
 
     // 4. Throughput - requests converted per week (last 4 weeks)
-    const throughput: Array<{ week: string; count: number }> = [];
+    const throughput: { week: string; count: number }[] = [];
     for (let i = 0; i < 4; i++) {
       const weekStart = new Date(now.getTime() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
       const weekEnd = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
@@ -82,41 +85,18 @@ app.get('/', requireAuth, async (c) => {
         );
 
       throughput.unshift({
-        week: `Week ${4 - i}`,
+        week: `Week ${String(4 - i)}`,
         count: result[0]?.count ?? 0,
       });
     }
 
     // 5. Average time per stage (using history records, in hours)
-    // Query stage change events to calculate average time in each stage
-    const stageTimeQuery = await db
-      .select({
-        stage: sql<string>`(${requestHistory.metadata}->>'oldStage')::text`,
-        avgHours: sql<number>`
-          AVG(EXTRACT(EPOCH FROM (${requestHistory.createdAt} -
-            (SELECT rh2.created_at FROM request_history rh2
-             WHERE rh2.request_id = ${requestHistory.requestId}
-             AND rh2.action = 'stage_changed'
-             AND (rh2.metadata->>'newStage')::text = (${requestHistory.metadata}->>'oldStage')::text
-             AND rh2.created_at < ${requestHistory.createdAt}
-             ORDER BY rh2.created_at DESC
-             LIMIT 1)
-          )) / 3600)
-        `.as('avg_hours'),
-      })
-      .from(requestHistory)
-      .where(
-        and(
-          eq(requestHistory.action, 'stage_changed'),
-          gte(requestHistory.createdAt, thirtyDaysAgo)
-        )
-      )
-      .groupBy(sql`(${requestHistory.metadata}->>'oldStage')::text`);
-
-    // Calculate simpler average time in stage based on current stage entry time
+    // Calculate average time in stage based on current stage entry time
     const avgTimeInStage: Record<string, number> = {};
 
-    for (const stage of ['in_treatment', 'on_hold', 'estimation', 'ready'] as const) {
+    type Stage = keyof typeof STAGE_THRESHOLDS;
+    const avgStages: Stage[] = ['in_treatment', 'on_hold', 'estimation', 'ready'];
+    for (const stage of avgStages) {
       const result = await db
         .select({
           avgHours:
@@ -160,7 +140,7 @@ app.get('/', requireAuth, async (c) => {
       .orderBy(request.storyPoints);
 
     // 8. Weekly new requests (last 4 weeks)
-    const weeklyNewRequests: Array<{ week: string; count: number }> = [];
+    const weeklyNewRequests: { week: string; count: number }[] = [];
     for (let i = 0; i < 4; i++) {
       const weekStart = new Date(now.getTime() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
       const weekEnd = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
@@ -171,7 +151,7 @@ app.get('/', requireAuth, async (c) => {
         .where(and(gte(request.createdAt, weekStart), lt(request.createdAt, weekEnd)));
 
       weeklyNewRequests.unshift({
-        week: `Week ${4 - i}`,
+        week: `Week ${String(4 - i)}`,
         count: result[0]?.count ?? 0,
       });
     }

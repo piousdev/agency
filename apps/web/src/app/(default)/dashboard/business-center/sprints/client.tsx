@@ -1,36 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { SprintForm } from '@/components/business-center/forms/sprint-form';
-import { SprintBurndownMini } from '@/components/business-center/sprint-burndown';
-import { toast } from 'sonner';
-import {
-  getSprintStatusColor,
-  calculateSprintProgress,
-  calculateDaysRemaining,
-  type SprintStatus,
-} from '@/lib/schemas/sprint';
-import type { Sprint } from '@/lib/api/sprints/types';
-import { createSprintAction } from '@/lib/actions/business-center/sprints';
+
 import {
   IconPlus,
   IconRun,
@@ -42,12 +15,43 @@ import {
   IconCircleCheck,
   IconBan,
 } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
+
+import { SprintForm } from '@/components/business-center/forms/sprint-form';
+import { SprintBurndownMini } from '@/components/business-center/sprint-burndown';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { createSprintAction } from '@/lib/actions/business-center/sprints';
+import {
+  getSprintStatusColor,
+  calculateSprintProgress,
+  calculateDaysRemaining,
+  type SprintStatus,
+} from '@/lib/schemas/sprint';
+import { cn } from '@/lib/utils';
+
+import type { Sprint } from '@/lib/api/sprints/types';
+
 
 interface SprintsClientProps {
-  sprints: Array<Sprint & { project?: { id: string; name: string } }>;
-  projects: Array<{ id: string; name: string }>;
+  sprints: (Sprint & { project?: { id: string; name: string } })[];
+  projects: { id: string; name: string }[];
   canEdit?: boolean;
 }
 
@@ -109,10 +113,10 @@ export function SprintsClient({
         project: project ? { id: project.id, name: project.name } : undefined,
         name: formData.get('name') as string,
         goal: (formData.get('goal') as string) || null,
-        status: (formData.get('status') as SprintStatus) || 'planning',
+        status: ((formData.get('status') ?? 'planning') as SprintStatus),
         startDate: (formData.get('startDate') as string) || null,
         endDate: (formData.get('endDate') as string) || null,
-        plannedPoints: parseInt(formData.get('plannedPoints') as string) || 0,
+        plannedPoints: parseInt(formData.get('plannedPoints') as string),
         completedPoints: 0,
         sprintNumber: parseInt(formData.get('sprintNumber') as string) || null,
         createdAt: new Date().toISOString(),
@@ -206,9 +210,9 @@ export function SprintsClient({
         <CardContent>
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="space-y-2 flex-1">
-              <label className="text-sm font-medium">Project</label>
+              <label htmlFor="project-filter" className="text-sm font-medium">Project</label>
               <Select value={selectedProject} onValueChange={setSelectedProject}>
-                <SelectTrigger>
+                <SelectTrigger id="project-filter">
                   <SelectValue placeholder="All projects" />
                 </SelectTrigger>
                 <SelectContent>
@@ -222,9 +226,9 @@ export function SprintsClient({
               </Select>
             </div>
             <div className="space-y-2 flex-1">
-              <label className="text-sm font-medium">Status</label>
+              <label htmlFor="status-filter" className="text-sm font-medium">Status</label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger id="status-filter">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -276,17 +280,19 @@ export function SprintsClient({
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Project *</label>
+              <label htmlFor="create-sprint-project" className="text-sm font-medium">Project *</label>
               <Select
                 onValueChange={(value) => {
                   const form = document.querySelector('form');
                   if (form) {
-                    const input = form.querySelector('input[name="projectId"]') as HTMLInputElement;
-                    if (input) input.value = value;
+                    const input = form.querySelector('input[name="projectId"]');
+                    if (input && input instanceof HTMLInputElement) {
+                      input.value = value;
+                    }
                   }
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger id="create-sprint-project">
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
                 <SelectContent>
@@ -299,7 +305,7 @@ export function SprintsClient({
               </Select>
             </div>
             <SprintForm
-              projectId={projects[0]?.id ?? ''}
+              projectId={projects[0]?.id}
               mode="create"
               onSubmit={handleCreateSubmit}
               onSuccess={() => setIsCreateOpen(false)}
@@ -317,8 +323,8 @@ interface SprintCardProps {
 }
 
 function SprintCard({ sprint }: SprintCardProps) {
-  const progress = calculateSprintProgress(sprint.plannedPoints, sprint.completedPoints);
-  const daysRemaining = calculateDaysRemaining(sprint.endDate);
+  const _progress = calculateSprintProgress(sprint.plannedPoints, sprint.completedPoints);
+  const _daysRemaining = calculateDaysRemaining(sprint.endDate);
 
   return (
     <Link href={`/dashboard/business-center/sprints/${sprint.id}`}>

@@ -1,9 +1,10 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+import { z } from 'zod';
+
 import { db } from '../../db';
 import { comment, ticket, ticketActivity } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -62,7 +63,11 @@ app.post(
   async (c) => {
     const ticketId = c.req.param('id');
     const { content, isInternal } = c.req.valid('json');
-    const user = c.get('user')!;
+    const user = c.get('user');
+
+    if (!user) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
 
     try {
       // Verify ticket exists

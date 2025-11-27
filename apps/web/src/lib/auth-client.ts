@@ -1,10 +1,11 @@
 import { inferAdditionalFields } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
+
 import type { auth } from '../../../api/src/lib/auth';
 
 // Connect directly to the Hono API backend
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000',
   credentials: 'include', // Required for cross-origin cookie handling
   plugins: [
     inferAdditionalFields<typeof auth>(), // Infer additional user fields from server
@@ -19,7 +20,7 @@ export const authClient = createAuthClient({
      * This provides a consistent user experience across all authentication
      * operations (sign-in, sign-up, etc.)
      */
-    onError: async (context) => {
+    onError: (context) => {
       const { response } = context;
 
       if (response.status === 429) {
@@ -27,11 +28,11 @@ export const authClient = createAuthClient({
         const retrySeconds = retryAfter ? parseInt(retryAfter, 10) : 60;
 
         // Log for debugging (can be replaced with toast notification in UI components)
-        console.warn(`Rate limit exceeded. Please try again in ${retrySeconds} seconds.`);
+        console.warn(`Rate limit exceeded. Please try again in ${String(retrySeconds)} seconds.`);
 
         // Throw error with retry information for UI components to handle
         throw new Error(
-          `Too many attempts. Please wait ${retrySeconds} seconds before trying again.`
+          `Too many attempts. Please wait ${String(retrySeconds)} seconds before trying again.`
         );
       }
     },

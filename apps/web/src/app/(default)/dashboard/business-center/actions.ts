@@ -1,6 +1,6 @@
 'use server';
-
 import { revalidatePath } from 'next/cache';
+
 import { assignProject, updateProjectCompletion, updateProjectStatus } from '@/lib/api/projects';
 import { assignTicket, createTicket } from '@/lib/api/tickets';
 import { updateCapacity } from '@/lib/api/users';
@@ -29,10 +29,16 @@ export async function createIntakeAction(
       priority: formData.get('priority') as string,
     };
 
-    const validatedData = createTicketSchema.parse(rawData);
+    const validation = createTicketSchema.safeParse(rawData);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: validation.error.issues[0]?.message ?? 'Validation failed',
+      };
+    }
 
     // Create the ticket via API
-    const result = await createTicket(validatedData);
+    const result = await createTicket(validation.data);
 
     if (!result.success) {
       return { success: false, error: result.error };
@@ -64,14 +70,21 @@ export async function assignTicketAction(
 ): Promise<{ success: boolean; error?: string; data?: unknown }> {
   try {
     // Extract and validate form data
+    const assignedToIdValue = formData.get('assignedToId') as string;
     const rawData = {
-      assignedToId: formData.get('assignedToId') as string,
+      assignedToId: assignedToIdValue === '' ? null : assignedToIdValue,
     };
 
-    const validatedData = assignTicketSchema.parse(rawData);
+    const validation = assignTicketSchema.safeParse(rawData);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: validation.error.issues[0]?.message ?? 'Validation failed',
+      };
+    }
 
     // Assign the ticket via API
-    const result = await assignTicket(ticketId, validatedData);
+    const result = await assignTicket(ticketId, validation.data);
 
     if (!result.success) {
       return { success: false, error: result.error };
@@ -103,13 +116,19 @@ export async function assignProjectAction(
 ): Promise<{ success: boolean; error?: string; data?: unknown }> {
   try {
     // Extract and validate form data
-    const userIds = formData.getAll('userIds') as string[];
+    const userIds = formData.getAll('userIds').filter((v): v is string => typeof v === 'string');
     const rawData = { userIds };
 
-    const validatedData = assignProjectSchema.parse(rawData);
+    const validation = assignProjectSchema.safeParse(rawData);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: validation.error.issues[0]?.message ?? 'Validation failed',
+      };
+    }
 
     // Assign the project via API
-    const result = await assignProject(projectId, validatedData);
+    const result = await assignProject(projectId, validation.data);
 
     if (!result.success) {
       return { success: false, error: result.error };
@@ -145,10 +164,16 @@ export async function updateProjectStatusAction(
       status: formData.get('status') as string,
     };
 
-    const validatedData = updateProjectStatusSchema.parse(rawData);
+    const validation = updateProjectStatusSchema.safeParse(rawData);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: validation.error.issues[0]?.message ?? 'Validation failed',
+      };
+    }
 
     // Update project status via API
-    const result = await updateProjectStatus(projectId, validatedData);
+    const result = await updateProjectStatus(projectId, validation.data);
 
     if (!result.success) {
       return { success: false, error: result.error };
@@ -180,14 +205,28 @@ export async function updateProjectCompletionAction(
 ): Promise<{ success: boolean; error?: string; data?: unknown }> {
   try {
     // Extract and validate form data
+    const value = formData.get('completionPercentage');
+    const num = Number(value);
+    if (typeof value !== 'string' || value.trim() === '' || isNaN(num)) {
+      return {
+        success: false,
+        error: 'Invalid or missing completion percentage.',
+      };
+    }
     const rawData = {
-      completionPercentage: Number(formData.get('completionPercentage')),
+      completionPercentage: num,
     };
 
-    const validatedData = updateProjectCompletionSchema.parse(rawData);
+    const validation = updateProjectCompletionSchema.safeParse(rawData);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: validation.error.issues[0]?.message ?? 'Validation failed',
+      };
+    }
 
     // Update project completion via API
-    const result = await updateProjectCompletion(projectId, validatedData);
+    const result = await updateProjectCompletion(projectId, validation.data);
 
     if (!result.success) {
       return { success: false, error: result.error };
@@ -218,19 +257,31 @@ export async function updateCapacityAction(
   formData: FormData
 ): Promise<{ success: boolean; error?: string; data?: unknown }> {
   try {
-    // Extract and validate form data
+    const value = formData.get('capacityPercentage');
+    const num = Number(value);
+
+    if (typeof value !== 'string' || value.trim() === '' || isNaN(num)) {
+      return {
+        success: false,
+        error: 'Capacity percentage is required and must be a valid number.',
+      };
+    }
+
     const rawData = {
-      capacityPercentage: Number(formData.get('capacityPercentage')),
+      capacityPercentage: num,
     };
 
-    const validatedData = updateCapacitySchema.parse(rawData);
+    const validation = updateCapacitySchema.safeParse(rawData);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: validation.error.issues[0]?.message ?? 'Validation failed',
+      };
+    }
 
     // Update capacity via API
-    const result = await updateCapacity(userId, validatedData);
-
-    if (!result.success) {
-      return { success: false, error: result.error };
-    }
+    const result = await updateCapacity(userId, validation.data);
+    if (!result.success) return { success: false, error: result.error };
 
     // Revalidate the business center page
     revalidatePath('/dashboard/business-center');

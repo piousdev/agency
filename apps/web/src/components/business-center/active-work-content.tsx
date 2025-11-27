@@ -1,11 +1,14 @@
 import { IconCalendar, IconPalette, IconUsers } from '@tabler/icons-react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+
+import { AssignTrigger } from './assign-trigger';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import type { TeamMember } from '@/lib/api/users/types';
-import { AssignTrigger } from './assign-trigger';
 
 /**
  * Active Work - Content Props
@@ -17,13 +20,14 @@ interface ActiveWorkContentProps {
 
 /**
  * Priority configuration using global CSS variables
+ * Currently unused but kept for future priority display functionality
  */
-const priorityConfig = {
-  low: { label: 'Low', color: 'text-success bg-success/10 border-success/20' },
-  medium: { label: 'Medium', color: 'text-info bg-info/10 border-info/20' },
-  high: { label: 'High', color: 'text-warning bg-warning/10 border-warning/20' },
-  critical: { label: 'Critical', color: 'text-error bg-error/10 border-error/20' },
-};
+// const priorityConfig = {
+//   low: { label: 'Low', color: 'text-success bg-success/10 border-success/20' },
+//   medium: { label: 'Medium', color: 'text-info bg-info/10 border-info/20' },
+//   high: { label: 'High', color: 'text-warning bg-warning/10 border-warning/20' },
+//   critical: { label: 'Critical', color: 'text-error bg-error/10 border-error/20' },
+// };
 
 /**
  * Group projects by production stage based on status and completion
@@ -83,7 +87,7 @@ export function ActiveWorkContent({ projects, teamMembers }: ActiveWorkContentPr
 
   return (
     <div className="space-y-6">
-      {(Object.keys(projectsByStage) as Array<keyof typeof projectsByStage>).map((stage) => {
+      {(Object.keys(projectsByStage) as (keyof typeof projectsByStage)[]).map((stage) => {
         const stageProjects = projectsByStage[stage];
 
         if (stageProjects.length === 0) return null;
@@ -114,7 +118,7 @@ export function ActiveWorkContent({ projects, teamMembers }: ActiveWorkContentPr
                       <div className="flex items-center gap-2">
                         <IconUsers className="h-3 w-3 text-muted-foreground" />
                         <div className="flex items-center gap-1">
-                          {project.assignees.slice(0, 3).map((assignee, idx) => (
+                          {project.assignees.slice(0, 3).map((assignee) => (
                             <div
                               key={assignee.id}
                               className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium"
@@ -147,7 +151,7 @@ export function ActiveWorkContent({ projects, teamMembers }: ActiveWorkContentPr
                         <IconCalendar className="h-3 w-3" />
                         <span>
                           Due{' '}
-                          {new Date(project.deliveredAt).toLocaleDateString('en-US', {
+                          {new Date(project.deliveredAt).toLocaleDateString('en-BE', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric',

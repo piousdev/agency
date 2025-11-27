@@ -2,7 +2,10 @@
 
 ## Context
 
-The Overview Dashboard is a role-based command center for the Business Center. It requires complex state management, real-time updates, and customizable layouts while maintaining the Server-First architecture defined in `apps/web/ARCHITECTURE.md`.
+The Overview Dashboard is a role-based command center for the Business Center.
+It requires complex state management, real-time updates, and customizable
+layouts while maintaining the Server-First architecture defined in
+`apps/web/ARCHITECTURE.md`.
 
 ### Stakeholders
 
@@ -39,7 +42,8 @@ The Overview Dashboard is a role-based command center for the Business Center. I
 
 ### 1. Architecture: Server-First with Islands
 
-**Decision**: Use Server Components for data fetching with Client Islands for interactivity.
+**Decision**: Use Server Components for data fetching with Client Islands for
+interactivity.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -56,7 +60,8 @@ The Overview Dashboard is a role-based command center for the Business Center. I
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Rationale**: Reduces client bundle size, enables server-side role checks, follows existing architecture patterns.
+**Rationale**: Reduces client bundle size, enables server-side role checks,
+follows existing architecture patterns.
 
 ### 2. State Management: TanStack Query + Zustand
 
@@ -128,7 +133,8 @@ export const useDashboardStore = create<DashboardState>()(
 | Critical alerts | Socket.IO              | <5 seconds |
 | Activity feed   | Socket.IO              | Real-time  |
 
-**Rationale**: Most widget data tolerates 30s staleness. Critical alerts need immediate delivery.
+**Rationale**: Most widget data tolerates 30s staleness. Critical alerts need
+immediate delivery.
 
 ### 5. Responsive Grid: CSS Grid with Tailwind
 
@@ -182,7 +188,8 @@ CREATE TABLE widget_configurations (
 
 ### Risk: Widget data load causing slow initial render
 
-**Mitigation**: Skeleton loading states, parallel data fetching, prioritize above-fold widgets.
+**Mitigation**: Skeleton loading states, parallel data fetching, prioritize
+above-fold widgets.
 
 ### Risk: Socket connection instability
 
@@ -194,7 +201,8 @@ CREATE TABLE widget_configurations (
 
 ### Trade-off: Polling vs WebSocket for all data
 
-**Decision**: Polling for most data (simpler, more reliable), WebSocket only for critical alerts.
+**Decision**: Polling for most data (simpler, more reliable), WebSocket only for
+critical alerts.
 
 ## Migration Plan
 

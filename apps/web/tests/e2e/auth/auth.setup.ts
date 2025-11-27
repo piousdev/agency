@@ -4,8 +4,9 @@
  * State is saved and reused across tests for better performance
  */
 
-import { test as setup, expect } from '@playwright/test';
 import path from 'path';
+
+import { test as setup, expect } from '@playwright/test';
 
 // Path to save authenticated state
 const authFile = path.join(__dirname, '../../.auth/internal-user.json');

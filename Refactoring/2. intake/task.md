@@ -65,8 +65,10 @@
 ### 2.2 Core Request Data Model
 
 - [ ] Implement request ID generation (sequential or UUID)
-- [ ] Define request status enum (In Treatment, On Hold, Estimation, Ready, Routed, Rejected)
-- [ ] Define request type enum (Feature, Bug, Change, Content, Infrastructure, Other)
+- [ ] Define request status enum (In Treatment, On Hold, Estimation, Ready,
+      Routed, Rejected)
+- [ ] Define request type enum (Feature, Bug, Change, Content, Infrastructure,
+      Other)
 - [ ] Define priority enum (Low, Medium, High, Urgent)
 - [ ] Define date flexibility enum (Hard, Preferred, None)
 - [ ] Define confidence level enum (High, Medium, Low)
@@ -231,7 +233,8 @@
 - [ ] Create email templates for all events
 - [ ] Implement in-app notification creation
 - [ ] Create notification preferences system
-- [ ] Send notifications for: submission, status change, assignment, aging, mention
+- [ ] Send notifications for: submission, status change, assignment, aging,
+      mention
 - [ ] Implement notification batching (daily digest option)
 - [ ] Test notification delivery
 
@@ -301,7 +304,8 @@
 ### 5.3 Request List View
 
 - [ ] Create list view component (table format)
-- [ ] Display columns: Checkbox, ID/Title, Type, Priority, Requester, Age, Actions
+- [ ] Display columns: Checkbox, ID/Title, Type, Priority, Requester, Age,
+      Actions
 - [ ] Implement sortable columns
 - [ ] Implement aging indicator colors
 - [ ] Implement row selection (checkbox)

@@ -1,11 +1,12 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import { z } from 'zod';
+
 import { db } from '../../db';
 import { user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
-import { eq } from 'drizzle-orm';
-import { z } from 'zod';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 

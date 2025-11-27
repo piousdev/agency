@@ -1,10 +1,11 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireUser } from '@/lib/auth/session';
-import { updateTicket, assignTicket } from '@/lib/api/tickets';
-import { updateProject, assignProject } from '@/lib/api/projects';
+
 import { updateClient } from '@/lib/api/clients';
+import { updateProject, assignProject } from '@/lib/api/projects';
+import { updateTicket, assignTicket } from '@/lib/api/tickets';
+import { requireUser } from '@/lib/auth/session';
 
 // ============================================================================
 // Types
@@ -70,7 +71,8 @@ export async function bulkUpdateTicketStatusAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(ticketIds[index]!);
+      const ticketId = ticketIds[index];
+      if (ticketId) failedIds.push(ticketId);
     }
   });
 
@@ -82,7 +84,8 @@ export async function bulkUpdateTicketStatusAction(
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to update ${failedIds.length} ticket(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to update ${String(failedIds.length)} ticket(s)` : undefined,
   };
 }
 
@@ -123,7 +126,8 @@ export async function bulkUpdateTicketPriorityAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(ticketIds[index]!);
+      const ticketId = ticketIds[index];
+      if (ticketId) failedIds.push(ticketId);
     }
   });
 
@@ -135,7 +139,8 @@ export async function bulkUpdateTicketPriorityAction(
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to update ${failedIds.length} ticket(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to update ${String(failedIds.length)} ticket(s)` : undefined,
   };
 }
 
@@ -178,7 +183,8 @@ export async function bulkAssignTicketsAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(ticketIds[index]!);
+      const ticketId = ticketIds[index];
+      if (ticketId) failedIds.push(ticketId);
     }
   });
 
@@ -190,7 +196,8 @@ export async function bulkAssignTicketsAction(
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to assign ${failedIds.length} ticket(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to assign ${String(failedIds.length)} ticket(s)` : undefined,
   };
 }
 
@@ -231,7 +238,8 @@ export async function bulkDeleteTicketsAction(ticketIds: string[]): Promise<Bulk
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(ticketIds[index]!);
+      const ticketId = ticketIds[index];
+      if (ticketId) failedIds.push(ticketId);
     }
   });
 
@@ -243,7 +251,8 @@ export async function bulkDeleteTicketsAction(ticketIds: string[]): Promise<Bulk
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to delete ${failedIds.length} ticket(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to delete ${String(failedIds.length)} ticket(s)` : undefined,
   };
 }
 
@@ -288,7 +297,8 @@ export async function bulkUpdateProjectStatusAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(projectIds[index]!);
+      const projectId = projectIds[index];
+      if (projectId) failedIds.push(projectId);
     }
   });
 
@@ -300,7 +310,8 @@ export async function bulkUpdateProjectStatusAction(
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to update ${failedIds.length} project(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to update ${String(failedIds.length)} project(s)` : undefined,
   };
 }
 
@@ -343,7 +354,8 @@ export async function bulkAssignProjectMemberAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(projectIds[index]!);
+      const projectId = projectIds[index];
+      if (projectId) failedIds.push(projectId);
     }
   });
 
@@ -357,7 +369,7 @@ export async function bulkAssignProjectMemberAction(
     failedIds,
     error:
       failedIds.length > 0
-        ? `Failed to assign member to ${failedIds.length} project(s)`
+        ? `Failed to assign member to ${String(failedIds.length)} project(s)`
         : undefined,
   };
 }
@@ -401,7 +413,8 @@ export async function bulkArchiveProjectsAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(projectIds[index]!);
+      const projectId = projectIds[index];
+      if (projectId) failedIds.push(projectId);
     }
   });
 
@@ -413,7 +426,8 @@ export async function bulkArchiveProjectsAction(
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to archive ${failedIds.length} project(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to archive ${String(failedIds.length)} project(s)` : undefined,
   };
 }
 
@@ -459,7 +473,8 @@ export async function bulkDeactivateClientsAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(clientIds[index]!);
+      const clientId = clientIds[index];
+      if (clientId) failedIds.push(clientId);
     }
   });
 
@@ -471,7 +486,10 @@ export async function bulkDeactivateClientsAction(
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to deactivate ${failedIds.length} client(s)` : undefined,
+    error:
+      failedIds.length > 0
+        ? `Failed to deactivate ${String(failedIds.length)} client(s)`
+        : undefined,
   };
 }
 
@@ -511,7 +529,8 @@ export async function bulkActivateClientsAction(clientIds: string[]): Promise<Bu
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(clientIds[index]!);
+      const clientId = clientIds[index];
+      if (clientId) failedIds.push(clientId);
     }
   });
 
@@ -523,7 +542,8 @@ export async function bulkActivateClientsAction(clientIds: string[]): Promise<Bu
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to activate ${failedIds.length} client(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to activate ${String(failedIds.length)} client(s)` : undefined,
   };
 }
 
@@ -564,7 +584,8 @@ export async function bulkUpdateClientTypeAction(
     if (result.status === 'fulfilled' && result.value.success) {
       successCount++;
     } else {
-      failedIds.push(clientIds[index]!);
+      const clientId = clientIds[index];
+      if (clientId) failedIds.push(clientId);
     }
   });
 
@@ -576,6 +597,7 @@ export async function bulkUpdateClientTypeAction(
     successCount,
     failedCount: failedIds.length,
     failedIds,
-    error: failedIds.length > 0 ? `Failed to update ${failedIds.length} client(s)` : undefined,
+    error:
+      failedIds.length > 0 ? `Failed to update ${String(failedIds.length)} client(s)` : undefined,
   };
 }

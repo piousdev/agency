@@ -1,6 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
+import { ClientSelect, type ClientOption } from '@/components/business-center/forms/client-select';
+import { PrioritySelect } from '@/components/business-center/forms/priority-select';
+import { StatusSelect } from '@/components/business-center/forms/status-select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,17 +16,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ClientSelect, type ClientOption } from '@/components/business-center/forms/client-select';
-import { StatusSelect } from '@/components/business-center/forms/status-select';
-import { PrioritySelect } from '@/components/business-center/forms/priority-select';
+import { Textarea } from '@/components/ui/textarea';
 import { updateProjectFullAction } from '@/lib/actions/business-center/projects';
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
 
 interface Project {
   id: string;
@@ -54,15 +57,15 @@ export function EditProjectDialog({
 
   // Form state
   const [name, setName] = useState(project.name);
-  const [description, setDescription] = useState(project.description || '');
+  const [description, setDescription] = useState(project.description);
   const [status, setStatus] = useState(project.status);
-  const [priority, setPriority] = useState(project.priority || 'medium');
+  const [priority, setPriority] = useState(project.priority ?? 'medium');
   const [clientId, setClientId] = useState(project.clientId);
   const [completionPercentage, setCompletionPercentage] = useState([project.completionPercentage]);
-  const [repositoryUrl, setRepositoryUrl] = useState(project.repositoryUrl || '');
-  const [productionUrl, setProductionUrl] = useState(project.productionUrl || '');
-  const [stagingUrl, setStagingUrl] = useState(project.stagingUrl || '');
-  const [notes, setNotes] = useState(project.notes || '');
+  const [repositoryUrl, setRepositoryUrl] = useState(project.repositoryUrl);
+  const [productionUrl, setProductionUrl] = useState(project.productionUrl);
+  const [stagingUrl, setStagingUrl] = useState(project.stagingUrl);
+  const [notes, setNotes] = useState(project.notes);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,7 +78,7 @@ export function EditProjectDialog({
     formData.set('status', status);
     formData.set('priority', priority);
     formData.set('clientId', clientId);
-    formData.set('completionPercentage', completionPercentage[0]?.toString() || '0');
+    formData.set('completionPercentage', completionPercentage[0]?.toString() ?? '0');
     if (repositoryUrl) formData.set('repositoryUrl', repositoryUrl);
     if (productionUrl) formData.set('productionUrl', productionUrl);
     if (stagingUrl) formData.set('stagingUrl', stagingUrl);

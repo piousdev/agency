@@ -1,6 +1,7 @@
 # Skyll Platform API
 
-Backend API server for the Skyll Platform, built with Hono v4, TypeScript, Drizzle ORM, and Neon Postgres.
+Backend API server for the Skyll Platform, built with Hono v4, TypeScript,
+Drizzle ORM, and Neon Postgres.
 
 ## 🎯 Overview
 
@@ -597,7 +598,8 @@ pnpm db:generate && pnpm db:migrate  # Production
 
 ## 🚢 Deployment
 
-See **[../../DEPLOYMENT.md](../../DEPLOYMENT.md)** for complete deployment guide.
+See **[../../DEPLOYMENT.md](../../DEPLOYMENT.md)** for complete deployment
+guide.
 
 Quick deploy:
 
@@ -688,5 +690,4 @@ ISC
 
 ---
 
-**Last Updated:** 2025-11-07
-**API Version:** 1.0.0
+**Last Updated:** 2025-11-07 **API Version:** 1.0.0

@@ -1,11 +1,14 @@
 import { IconCalendar, IconCode, IconUsers } from '@tabler/icons-react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+
+import { AssignTrigger } from './assign-trigger';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import type { TeamMember } from '@/lib/api/users/types';
-import { AssignTrigger } from './assign-trigger';
 
 /**
  * Active Work - Software Props
@@ -82,7 +85,7 @@ export function ActiveWorkSoftware({ projects, teamMembers }: ActiveWorkSoftware
 
   return (
     <div className="space-y-6">
-      {(Object.keys(projectsByStage) as Array<keyof typeof projectsByStage>).map((stage) => {
+      {(Object.keys(projectsByStage) as (keyof typeof projectsByStage)[]).map((stage) => {
         const stageProjects = projectsByStage[stage];
 
         if (stageProjects.length === 0) return null;
@@ -146,7 +149,7 @@ export function ActiveWorkSoftware({ projects, teamMembers }: ActiveWorkSoftware
                         <IconCalendar className="h-3 w-3" />
                         <span>
                           Due{' '}
-                          {new Date(project.deliveredAt).toLocaleDateString('en-US', {
+                          {new Date(project.deliveredAt).toLocaleDateString('en-BE', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric',

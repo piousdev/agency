@@ -1,6 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,11 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -20,10 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { clientTypeOptions } from '@/lib/schemas';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { updateClientFullAction } from '@/lib/actions/business-center/clients';
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+import { clientTypeOptions } from '@/lib/schemas';
+
 
 interface Client {
   id: string;
@@ -52,10 +55,10 @@ export function EditClientDialog({ client, open, onOpenChange, onSuccess }: Edit
   const [name, setName] = useState(client.name);
   const [type, setType] = useState(client.type);
   const [email, setEmail] = useState(client.email);
-  const [phone, setPhone] = useState(client.phone || '');
-  const [website, setWebsite] = useState(client.website || '');
-  const [address, setAddress] = useState(client.address || '');
-  const [notes, setNotes] = useState(client.notes || '');
+  const [phone, setPhone] = useState(client.phone);
+  const [website, setWebsite] = useState(client.website);
+  const [address, setAddress] = useState(client.address);
+  const [notes, setNotes] = useState(client.notes);
   const [active, setActive] = useState(client.active);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

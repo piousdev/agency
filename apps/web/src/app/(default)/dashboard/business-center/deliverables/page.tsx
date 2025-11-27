@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
+
 import { listProjects } from '@/lib/api/projects/list';
 import { listTeamMembers } from '@/lib/api/users/team';
 import { requireUser } from '@/lib/auth/session';
+
 import { DeliverablesClient } from './client';
 
 export default async function DeliverablesPage() {

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
-import { format } from 'date-fns';
-import { type ColumnDef, type Row, type Table } from '@tanstack/react-table';
+
 import {
   IconDots,
   IconPencil,
@@ -13,6 +13,10 @@ import {
   IconPhone,
   IconEye,
 } from '@tabler/icons-react';
+import { format } from 'date-fns';
+
+import { ClientBulkActions } from '@/components/business-center/bulk-actions';
+import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,11 +27,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DataTable } from '@/components/data-table';
-import { ClientBulkActions } from '@/components/business-center/bulk-actions';
 import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
-import type { Client } from '@/lib/api/clients/types';
 import { clientTypeOptions } from '@/lib/schemas';
+
+import type { Client } from '@/lib/api/clients/types';
+import type { ColumnDef, Row, Table } from '@tanstack/react-table';
 
 interface ClientsTableViewProps {
   clients: Client[];
@@ -48,6 +52,77 @@ const typeLabels: Record<ClientType, string> = {
   software: 'Software',
   creative: 'Creative',
   full_service: 'Full Service',
+};
+
+// Cell components moved outside to prevent recreation on every render
+const NameCell = ({ row }: { row: Row<Client> }) => (
+  <div>
+    <Link
+      href={`/dashboard/business-center/clients/${row.original.id}`}
+      className="font-medium max-w-[200px] truncate hover:text-primary hover:underline"
+      title={row.original.name}
+    >
+      {row.original.name}
+    </Link>
+    {row.original.website && (
+      <a
+        href={row.original.website}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-muted-foreground hover:text-primary flex items-center gap-1 text-xs"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <IconExternalLink className="h-3 w-3" />
+        {new URL(row.original.website).hostname}
+      </a>
+    )}
+  </div>
+);
+
+const TypeCell = ({ row }: { row: Row<Client> }) => {
+  const type = row.original.type;
+  return <Badge variant={typeVariants[type]}>{typeLabels[type]}</Badge>;
+};
+
+const EmailCell = ({ row }: { row: Row<Client> }) => (
+  <a
+    href={`mailto:${row.original.email}`}
+    className="text-muted-foreground hover:text-primary flex items-center gap-1 text-sm"
+    onClick={(e) => e.stopPropagation()}
+  >
+    <IconMail className="h-3 w-3" />
+    <span className="max-w-[180px] truncate">{row.original.email}</span>
+  </a>
+);
+
+const PhoneCell = ({ row }: { row: Row<Client> }) => {
+  const phone = row.original.phone;
+  if (!phone) return <span className="text-muted-foreground text-sm">—</span>;
+  return (
+    <a
+      href={`tel:${phone}`}
+      className="text-muted-foreground hover:text-primary flex items-center gap-1 text-sm"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <IconPhone className="h-3 w-3" />
+      {phone}
+    </a>
+  );
+};
+
+const StatusCell = ({ row }: { row: Row<Client> }) => (
+  <Badge variant={row.original.active ? 'default' : 'secondary'}>
+    {row.original.active ? 'Active' : 'Inactive'}
+  </Badge>
+);
+
+const CreatedCell = ({ row }: { row: Row<Client> }) => {
+  const createdAt = row.original.createdAt;
+  return (
+    <span className="text-muted-foreground text-sm">
+      {format(new Date(createdAt), 'MMM d, yyyy')}
+    </span>
+  );
 };
 
 export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: ClientsTableViewProps) {
@@ -74,29 +149,7 @@ export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: Clien
     {
       accessorKey: 'name',
       header: 'Client',
-      cell: ({ row }) => (
-        <div>
-          <Link
-            href={`/dashboard/business-center/clients/${row.original.id}`}
-            className="font-medium max-w-[200px] truncate hover:text-primary hover:underline"
-            title={row.original.name}
-          >
-            {row.original.name}
-          </Link>
-          {row.original.website && (
-            <a
-              href={row.original.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-primary flex items-center gap-1 text-xs"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <IconExternalLink className="h-3 w-3" />
-              {new URL(row.original.website).hostname}
-            </a>
-          )}
-        </div>
-      ),
+      cell: NameCell,
       meta: {
         displayName: 'Client Name',
       },
@@ -104,12 +157,9 @@ export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: Clien
     {
       accessorKey: 'type',
       header: 'Type',
-      cell: ({ row }) => {
-        const type = row.original.type;
-        return <Badge variant={typeVariants[type]}>{typeLabels[type]}</Badge>;
-      },
+      cell: TypeCell,
       filterFn: (row, id, value: string[]) => {
-        if (!value?.length) return true;
+        if (!value.length) return true;
         return value.includes(row.getValue(id));
       },
       meta: {
@@ -121,16 +171,7 @@ export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: Clien
     {
       accessorKey: 'email',
       header: 'Email',
-      cell: ({ row }) => (
-        <a
-          href={`mailto:${row.original.email}`}
-          className="text-muted-foreground hover:text-primary flex items-center gap-1 text-sm"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <IconMail className="h-3 w-3" />
-          <span className="max-w-[180px] truncate">{row.original.email}</span>
-        </a>
-      ),
+      cell: EmailCell,
       meta: {
         displayName: 'Email',
       },
@@ -138,20 +179,7 @@ export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: Clien
     {
       accessorKey: 'phone',
       header: 'Phone',
-      cell: ({ row }) => {
-        const phone = row.original.phone;
-        if (!phone) return <span className="text-muted-foreground text-sm">—</span>;
-        return (
-          <a
-            href={`tel:${phone}`}
-            className="text-muted-foreground hover:text-primary flex items-center gap-1 text-sm"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <IconPhone className="h-3 w-3" />
-            {phone}
-          </a>
-        );
-      },
+      cell: PhoneCell,
       meta: {
         displayName: 'Phone',
       },
@@ -159,14 +187,10 @@ export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: Clien
     {
       accessorKey: 'active',
       header: 'Status',
-      cell: ({ row }) => (
-        <Badge variant={row.original.active ? 'default' : 'secondary'}>
-          {row.original.active ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
+      cell: StatusCell,
       filterFn: (row, id, value: string[]) => {
-        if (!value?.length) return true;
-        const active = row.getValue(id) as boolean;
+        if (!value.length) return true;
+        const active = row.getValue(id);
         return value.includes(active ? 'active' : 'inactive');
       },
       meta: {
@@ -181,14 +205,7 @@ export function ClientsTableView({ clients, onEdit, onDelete, onSuccess }: Clien
     {
       accessorKey: 'createdAt',
       header: 'Created',
-      cell: ({ row }) => {
-        const createdAt = row.original.createdAt;
-        return (
-          <span className="text-muted-foreground text-sm">
-            {format(new Date(createdAt), 'MMM d, yyyy')}
-          </span>
-        );
-      },
+      cell: CreatedCell,
       sortingFn: 'datetime',
       meta: {
         displayName: 'Created Date',

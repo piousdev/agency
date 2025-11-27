@@ -7,7 +7,8 @@
 
 ### 0.1 Frontend - Delete Old Route Files ✅
 
-Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-queue/` directory:
+Deleted the entire
+`apps/web/src/app/(default)/dashboard/business-center/intake-queue/` directory:
 
 - [x] 0.1.1 Delete `intake-queue/page.tsx`
 - [x] 0.1.2 Delete `intake-queue/client.tsx`
@@ -29,36 +30,56 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 - [x] 0.2.2 Delete `components/business-center/intake-form.tsx`
 - [x] 0.2.3 Delete `components/business-center/intake-detail-modal.tsx`
 - [x] 0.2.4 Delete `components/business-center/components/intake-queue-hero.tsx`
-- [x] 0.2.5 Delete `components/business-center/components/intake-trend-chart.tsx`
+- [x] 0.2.5 Delete
+      `components/business-center/components/intake-trend-chart.tsx`
 - [x] 0.2.6 Delete `components/dashboard/overview/widgets/intake-pipeline.tsx`
 
 ### 0.3 Frontend - Update Files (Remove Imports) ✅
 
-- [x] 0.3.1 Update `components/business-center/index.tsx` - Removed IntakeQueue import, section, and intakeTickets from interface
-- [x] 0.3.2 Update `components/dashboard/overview/widgets/index.ts` - Removed IntakePipelineWidget and SuspenseIntakePipelineWidget exports
-- [x] 0.3.3 Update `components/dashboard/overview/widgets/lazy-widgets.tsx` - Removed LazyIntakePipelineWidget and SuspenseIntakePipelineWidget
-- [x] 0.3.4 Update `config/navigation.ts` - Updated nav item URL to new `/dashboard/business-center/intake` path
-- [x] 0.3.5 Update `lib/stores/dashboard-store.ts` - Removed intake-pipeline from admin DEFAULT_LAYOUTS
-- [x] 0.3.6 Update `lib/actions/business-center/overview.ts` - Removed getIntakePipeline function and PipelineStage type
-- [x] 0.3.7 Update `components/dashboard/overview/shared/index.ts` - Removed IntakePipelineSkeleton export
-- [x] 0.3.8 Update `components/dashboard/overview/shared/widget-skeleton.tsx` - Removed IntakePipelineSkeleton component
+- [x] 0.3.1 Update `components/business-center/index.tsx` - Removed IntakeQueue
+      import, section, and intakeTickets from interface
+- [x] 0.3.2 Update `components/dashboard/overview/widgets/index.ts` - Removed
+      IntakePipelineWidget and SuspenseIntakePipelineWidget exports
+- [x] 0.3.3 Update `components/dashboard/overview/widgets/lazy-widgets.tsx` -
+      Removed LazyIntakePipelineWidget and SuspenseIntakePipelineWidget
+- [x] 0.3.4 Update `config/navigation.ts` - Updated nav item URL to new
+      `/dashboard/business-center/intake` path
+- [x] 0.3.5 Update `lib/stores/dashboard-store.ts` - Removed intake-pipeline
+      from admin DEFAULT_LAYOUTS
+- [x] 0.3.6 Update `lib/actions/business-center/overview.ts` - Removed
+      getIntakePipeline function and PipelineStage type
+- [x] 0.3.7 Update `components/dashboard/overview/shared/index.ts` - Removed
+      IntakePipelineSkeleton export
+- [x] 0.3.8 Update `components/dashboard/overview/shared/widget-skeleton.tsx` -
+      Removed IntakePipelineSkeleton component
 
 ### 0.4 Frontend - Update/Remove Tests ✅
 
-- [x] 0.4.1 Update `components/business-center/__tests__/business-center.test.tsx` - Removed intakeTickets from mock data, updated section count from 6 to 5
-- [x] 0.4.2 Update `lib/stores/__tests__/dashboard-store.test.ts` - Removed intake-pipeline references from role-based widget tests
-- [x] 0.4.3 Update `components/dashboard/overview/__tests__/widgets.test.tsx` - Removed intake-pipeline from admin roleWidgetMatrix
-- [x] 0.4.4 Update E2E tests - Updated all `/intake-queue` URLs to `/intake` in business-center-crud.spec.ts, business-center-a11y.spec.ts, business-center-responsive.spec.ts
-- [x] 0.4.5 Update `e2e/business-center.spec.ts` - Removed Intake Queue section tests, updated to 5 sections
-- [x] 0.4.6 Update `tests/e2e/business-center.spec.ts` - Removed Intake Flow tests
+- [x] 0.4.1 Update
+      `components/business-center/__tests__/business-center.test.tsx` - Removed
+      intakeTickets from mock data, updated section count from 6 to 5
+- [x] 0.4.2 Update `lib/stores/__tests__/dashboard-store.test.ts` - Removed
+      intake-pipeline references from role-based widget tests
+- [x] 0.4.3 Update `components/dashboard/overview/__tests__/widgets.test.tsx` -
+      Removed intake-pipeline from admin roleWidgetMatrix
+- [x] 0.4.4 Update E2E tests - Updated all `/intake-queue` URLs to `/intake` in
+      business-center-crud.spec.ts, business-center-a11y.spec.ts,
+      business-center-responsive.spec.ts
+- [x] 0.4.5 Update `e2e/business-center.spec.ts` - Removed Intake Queue section
+      tests, updated to 5 sections
+- [x] 0.4.6 Update `tests/e2e/business-center.spec.ts` - Removed Intake Flow
+      tests
 
 ### 0.5 Types Cleanup ✅
 
-- [x] 0.5.1 Update `components/business-center/types.ts` - Removed intakeTickets from BusinessCenterData, removed IntakeQueueProps interface, removed TicketWithRelations import
+- [x] 0.5.1 Update `components/business-center/types.ts` - Removed intakeTickets
+      from BusinessCenterData, removed IntakeQueueProps interface, removed
+      TicketWithRelations import
 
 ### 0.6 Verification ✅
 
-- [x] 0.6.1 Run `pnpm --filter @repo/web build` - ✅ Build passes (TypeScript and Next.js)
+- [x] 0.6.1 Run `pnpm --filter @repo/web build` - ✅ Build passes (TypeScript
+      and Next.js)
 - [x] 0.6.2 Run `pnpm --filter @repo/web lint` - ✅ No lint errors
 
 ---
@@ -77,7 +98,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 - [x] 1.2.1 Verify react-hook-form version (v7.x required)
 - [x] 1.2.2 Verify @dnd-kit packages installed
-- [x] 1.2.3 Set up TanStack Query key factory pattern (using Server Actions instead)
+- [x] 1.2.3 Set up TanStack Query key factory pattern (using Server Actions
+      instead)
 - [x] 1.2.4 Configure Zustand persist middleware
 
 ## Phase 2: Database Schema ✅ COMPLETED
@@ -89,7 +111,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 - [x] 2.1.3 Create confidence_level enum
 - [x] 2.1.4 Create priority enum (if not exists)
 - [x] 2.1.5 Create request table with all fields
-- [x] 2.1.6 Create request_attachment table (deferred - can use existing attachment system)
+- [x] 2.1.6 Create request_attachment table (deferred - can use existing
+      attachment system)
 - [x] 2.1.7 Create request_history table for audit trail (using activity table)
 
 ### 2.2 Relations ✅
@@ -111,7 +134,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 ### 2.4 Migration ✅
 
 - [x] 2.4.1 Generate Drizzle migration
-- [x] 2.4.2 Test migration on dev database - ✅ Schema pushed and seeded with 21 requests
+- [x] 2.4.2 Test migration on dev database - ✅ Schema pushed and seeded with 21
+      requests
 - [x] 2.4.3 Create rollback migration (using drizzle-kit drop)
 
 ## Phase 3: Backend API ✅ COMPLETED
@@ -172,7 +196,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 - [x] 4.2.1 Create intake-store.ts (Zustand)
 - [x] 4.2.2 Implement filter state
-- [x] 4.2.3 Implement view mode state (card/kanban/table) - Added kanban view with drag-drop stage transitions
+- [x] 4.2.3 Implement view mode state (card/kanban/table) - Added kanban view
+      with drag-drop stage transitions
 - [x] 4.2.4 Implement draft persistence
 - [x] 4.2.5 Configure persist middleware
 
@@ -182,7 +207,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 - [x] 4.3.2 Create useRequests query hook - Using Server Actions
 - [x] 4.3.3 Create useStageCounts query hook - Using Server Actions
 - [x] 4.3.4 Create useRequest query hook (single) - Using Server Actions
-- [x] 4.3.5 Create mutation hooks (create, update, transition) - Using Server Actions
+- [x] 4.3.5 Create mutation hooks (create, update, transition) - Using Server
+      Actions
 
 ### 4.4 Server Actions ✅
 
@@ -246,7 +272,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 - [x] 6.2.1 Add Edit button (opens edit form)
 - [x] 6.2.2 Add stage transition buttons
-- [x] 6.2.3 Add Assign PM dropdown - ✅ Implemented in request-detail-client.tsx (lines 259-279)
+- [x] 6.2.3 Add Assign PM dropdown - ✅ Implemented in request-detail-client.tsx
+      (lines 259-279)
 - [x] 6.2.4 Add Request Estimation button
 
 ### 6.3 History ✅
@@ -260,7 +287,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### 7.1 In Treatment Stage ✅
 
-- [x] 7.1.1 Add Triage form (assign PM, set priority) - ✅ Assign PM dropdown in detail header; priority editable via Edit form
+- [x] 7.1.1 Add Triage form (assign PM, set priority) - ✅ Assign PM dropdown in
+      detail header; priority editable via Edit form
 - [x] 7.1.2 Add Move to On Hold action
 - [x] 7.1.3 Add Send for Estimation action
 
@@ -268,11 +296,13 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 - [x] 7.2.1 Show hold reason field
 - [x] 7.2.2 Add Resume action
-- [x] 7.2.3 Add Cancel Request action - ✅ Implemented in request-detail-client.tsx (lines 304-312)
+- [x] 7.2.3 Add Cancel Request action - ✅ Implemented in
+      request-detail-client.tsx (lines 304-312)
 
 ### 7.3 Estimation Stage ✅ COMPLETED
 
-- [x] 7.3.1 Create EstimationForm component - `components/dashboard/business-center/intake/estimation-form.tsx`
+- [x] 7.3.1 Create EstimationForm component -
+      `components/dashboard/business-center/intake/estimation-form.tsx`
 - [x] 7.3.2 Story points selector (1,2,3,5,8,13)
 - [x] 7.3.3 Confidence level selector
 - [x] 7.3.4 Estimation notes field
@@ -281,7 +311,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### 7.4 Ready Stage ✅ COMPLETED
 
-- [x] 7.4.1 Create RoutingForm component - `components/dashboard/business-center/intake/routing-form.tsx`
+- [x] 7.4.1 Create RoutingForm component -
+      `components/dashboard/business-center/intake/routing-form.tsx`
 - [x] 7.4.2 Show routing recommendation
 - [x] 7.4.3 Allow override selection
 - [x] 7.4.4 Project selector (for Ticket routing)
@@ -362,69 +393,99 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### 9.3 Confirmation ✅
 
-- [x] 9.3.1 Create bulk confirmation dialog - AlertDialog with title, description, optional hold reason input
-- [x] 9.3.2 Show affected items count - Displayed in dialog before confirming action
-- [x] 9.3.3 Handle partial failures - Toast shows success/failed counts with error details
-- [x] 9.3.4 Backend bulk endpoints - POST /requests/bulk/transition, POST /requests/bulk/assign
+- [x] 9.3.1 Create bulk confirmation dialog - AlertDialog with title,
+      description, optional hold reason input
+- [x] 9.3.2 Show affected items count - Displayed in dialog before confirming
+      action
+- [x] 9.3.3 Handle partial failures - Toast shows success/failed counts with
+      error details
+- [x] 9.3.4 Backend bulk endpoints - POST /requests/bulk/transition, POST
+      /requests/bulk/assign
 
 ## Phase 10: Real-Time Updates (Week 6-7) ✅
 
 ### 10.1 Socket Events ✅
 
-- [x] 10.1.1 Define intake socket events - Added IntakeRequestPayload, IntakeStageChangedPayload, IntakeEstimatedPayload, IntakeConvertedPayload, IntakeAssignedPayload
+- [x] 10.1.1 Define intake socket events - Added IntakeRequestPayload,
+      IntakeStageChangedPayload, IntakeEstimatedPayload, IntakeConvertedPayload,
+      IntakeAssignedPayload
 - [x] 10.1.2 Emit on request created - broadcastIntakeCreated() in create.ts
-- [x] 10.1.3 Emit on stage changed - broadcastIntakeStageChanged() in transition.ts
-- [x] 10.1.4 Emit on estimation submitted - broadcastIntakeEstimated() in transition.ts estimate endpoint
+- [x] 10.1.3 Emit on stage changed - broadcastIntakeStageChanged() in
+      transition.ts
+- [x] 10.1.4 Emit on estimation submitted - broadcastIntakeEstimated() in
+      transition.ts estimate endpoint
 
 ### 10.2 Client Handlers ✅
 
-- [x] 10.2.1 Create useIntakeSocket hook - Created in apps/web/src/lib/hooks/use-socket.ts
-- [x] 10.2.2 Handle request:created event - onCreated callback with toast notification
-- [x] 10.2.3 Handle request:stage-changed event - onStageChanged callback with toast notification
-- [x] 10.2.4 Handle request:estimated event - onEstimated callback with toast notification
-- [x] 10.2.5 Invalidate queries on events - Using router.refresh() to re-fetch server data
+- [x] 10.2.1 Create useIntakeSocket hook - Created in
+      apps/web/src/lib/hooks/use-socket.ts
+- [x] 10.2.2 Handle request:created event - onCreated callback with toast
+      notification
+- [x] 10.2.3 Handle request:stage-changed event - onStageChanged callback with
+      toast notification
+- [x] 10.2.4 Handle request:estimated event - onEstimated callback with toast
+      notification
+- [x] 10.2.5 Invalidate queries on events - Using router.refresh() to re-fetch
+      server data
 
 ### 10.3 Room Scoping ✅
 
-- [x] 10.3.1 Join stage-specific rooms - subscribe:intake-stage event with room intake:stage:{stage}
-- [x] 10.3.2 Join PM-specific room - subscribe:intake event joins intake:all room for internal users
-- [x] 10.3.3 Leave rooms on unmount - unsubscribe:intake and unsubscribe:intake-stage on cleanup
+- [x] 10.3.1 Join stage-specific rooms - subscribe:intake-stage event with room
+      intake:stage:{stage}
+- [x] 10.3.2 Join PM-specific room - subscribe:intake event joins intake:all
+      room for internal users
+- [x] 10.3.3 Leave rooms on unmount - unsubscribe:intake and
+      unsubscribe:intake-stage on cleanup
 
 ## Phase 11: Notifications (Week 7) ✅
 
 ### 11.1 Aging Alerts ✅
 
-- [x] 11.1.1 Create aging check cron job - node-cron hourly job in intake-notifications.ts
-- [x] 11.1.2 Query for aging requests - getAgingRequests() with stage-specific thresholds (in_treatment: 3d, on_hold: 5d, estimation: 2d)
-- [x] 11.1.3 Create alert for aging threshold - broadcastAlert() with critical/warning/info types based on days over threshold
-- [x] 11.1.4 Send email notification to PM - intakeAgingAlertTemplate sent to assigned PM
+- [x] 11.1.1 Create aging check cron job - node-cron hourly job in
+      intake-notifications.ts
+- [x] 11.1.2 Query for aging requests - getAgingRequests() with stage-specific
+      thresholds (in_treatment: 3d, on_hold: 5d, estimation: 2d)
+- [x] 11.1.3 Create alert for aging threshold - broadcastAlert() with
+      critical/warning/info types based on days over threshold
+- [x] 11.1.4 Send email notification to PM - intakeAgingAlertTemplate sent to
+      assigned PM
 
 ### 11.2 Stage Notifications ✅
 
-- [x] 11.2.1 Notify on moved to estimation - sendStageChangeNotification() in transition endpoint
-- [x] 11.2.2 Notify estimator assigned - N/A (estimator not explicitly assigned, estimation is done by any internal user)
-- [x] 11.2.3 Notify on converted to Project/Ticket - sendConversionNotification() in convert endpoint
-- [x] 11.2.4 Notify requester on stage changes - Email sent for estimation and on_hold transitions
+- [x] 11.2.1 Notify on moved to estimation - sendStageChangeNotification() in
+      transition endpoint
+- [x] 11.2.2 Notify estimator assigned - N/A (estimator not explicitly assigned,
+      estimation is done by any internal user)
+- [x] 11.2.3 Notify on converted to Project/Ticket -
+      sendConversionNotification() in convert endpoint
+- [x] 11.2.4 Notify requester on stage changes - Email sent for estimation and
+      on_hold transitions
 
 ### 11.3 In-App Alerts ✅
 
-- [x] 11.3.1 Integrate with Critical Alerts widget - Using existing broadcastAlert() infrastructure to PM/admin roles
-- [x] 11.3.2 Show aging alerts in widget - Aging alerts broadcast to role:admin and role:pm rooms
-- [x] 11.3.3 Add dismiss/snooze actions - Already supported via existing socket infrastructure
+- [x] 11.3.1 Integrate with Critical Alerts widget - Using existing
+      broadcastAlert() infrastructure to PM/admin roles
+- [x] 11.3.2 Show aging alerts in widget - Aging alerts broadcast to role:admin
+      and role:pm rooms
+- [x] 11.3.3 Add dismiss/snooze actions - Already supported via existing socket
+      infrastructure
 
 ## Phase 12: Mobile Experience (Week 7-8) ✅ COMPLETED
 
 ### 12.1 Responsive Layout ✅
 
-- [x] 12.1.1 Stack layout for mobile - Using Tailwind responsive classes (flex-col → sm:flex-row)
+- [x] 12.1.1 Stack layout for mobile - Using Tailwind responsive classes
+      (flex-col → sm:flex-row)
 - [x] 12.1.2 Collapsible filter sidebar - FilterSheet component for mobile
 - [x] 12.1.3 Full-width cards - Grid responsive (1 → md:2 → lg:3 cols)
 
 ### 12.2 Mobile Interactions ✅
 
-- [x] 12.2.1 Swipe actions on cards - SwipeableCard component with configurable left/right actions
+- [x] 12.2.1 Swipe actions on cards - SwipeableCard component with configurable
+      left/right actions
 - [x] 12.2.2 Bottom sheet for filters - FilterSheet component
-- [x] 12.2.3 Bottom sheet for actions - ActionSheet component using Drawer for stage transitions, PM assignment
+- [x] 12.2.3 Bottom sheet for actions - ActionSheet component using Drawer for
+      stage transitions, PM assignment
 - [x] 12.2.4 Touch-optimized buttons (44x44px) - Using shadcn/ui default sizing
 
 ### 12.3 Mobile Form ✅
@@ -437,10 +498,13 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### 13.1 Metrics ✅
 
-- [x] 13.1.1 Track average time per stage - API endpoint calculates avg hours per stage
+- [x] 13.1.1 Track average time per stage - API endpoint calculates avg hours
+      per stage
 - [x] 13.1.2 Track requests per type - API returns requestsByType distribution
-- [x] 13.1.3 Track estimation accuracy - API tracks estimationConfidence and storyPointsDistribution
-- [x] 13.1.4 Track throughput (requests/week) - API returns weekly throughput for last 4 weeks
+- [x] 13.1.3 Track estimation accuracy - API tracks estimationConfidence and
+      storyPointsDistribution
+- [x] 13.1.4 Track throughput (requests/week) - API returns weekly throughput
+      for last 4 weeks
 
 ### 13.2 Dashboard Widget ✅
 
@@ -453,25 +517,40 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### 14.1 Unit Tests ✅
 
-- [x] 14.1.1 Test Zod schemas - `src/lib/schemas/__tests__/request.test.ts` (70 tests)
-- [x] 14.1.2 Test store actions - `src/lib/stores/__tests__/intake-store.test.ts` (57 tests)
-- [x] 14.1.3 Test utility functions - Covered in schema tests (getRoutingRecommendation, constants)
-- [x] 14.1.4 Test routing rules - Covered in `request.test.ts` (getRoutingRecommendation)
+- [x] 14.1.1 Test Zod schemas - `src/lib/schemas/__tests__/request.test.ts` (70
+      tests)
+- [x] 14.1.2 Test store actions -
+      `src/lib/stores/__tests__/intake-store.test.ts` (57 tests)
+- [x] 14.1.3 Test utility functions - Covered in schema tests
+      (getRoutingRecommendation, constants)
+- [x] 14.1.4 Test routing rules - Covered in `request.test.ts`
+      (getRoutingRecommendation)
 
 ### 14.2 Component Tests ✅
 
-- [x] 14.2.1 Test RequestCard - `components/dashboard/business-center/intake/__tests__/intake-components.test.tsx` (38 tests)
-- [~] 14.2.2 Test StageTabs - Implemented inline in intake-client, no separate component
-- [x] 14.2.3 Test FilterSidebar - `components/dashboard/business-center/intake/__tests__/filter-sidebar.test.tsx` (22 tests)
-- [x] 14.2.4 Test RequestForm steps - `components/dashboard/business-center/intake/__tests__/request-form.test.tsx` (35 tests)
-- [x] 14.2.5 Test EstimationForm - `components/dashboard/business-center/intake/__tests__/estimation-form.test.tsx` (23 tests)
+- [x] 14.2.1 Test RequestCard -
+      `components/dashboard/business-center/intake/__tests__/intake-components.test.tsx`
+      (38 tests)
+- [~] 14.2.2 Test StageTabs - Implemented inline in intake-client, no separate
+  component
+- [x] 14.2.3 Test FilterSidebar -
+      `components/dashboard/business-center/intake/__tests__/filter-sidebar.test.tsx`
+      (22 tests)
+- [x] 14.2.4 Test RequestForm steps -
+      `components/dashboard/business-center/intake/__tests__/request-form.test.tsx`
+      (35 tests)
+- [x] 14.2.5 Test EstimationForm -
+      `components/dashboard/business-center/intake/__tests__/estimation-form.test.tsx`
+      (23 tests)
 
 ### 14.3 Integration Tests ✅
 
-- [x] 14.3.1 Test request creation flow - `lib/actions/business-center/__tests__/requests.test.ts`
+- [x] 14.3.1 Test request creation flow -
+      `lib/actions/business-center/__tests__/requests.test.ts`
 - [x] 14.3.2 Test stage transition flow - (transition, hold, resume actions)
 - [x] 14.3.3 Test estimation flow - (estimate action with auto-transition)
-- [x] 14.3.4 Test conversion flow - (convert to ticket/project with cache invalidation)
+- [x] 14.3.4 Test conversion flow - (convert to ticket/project with cache
+      invalidation)
 
 ### 14.4 E2E Tests ✅
 
@@ -486,7 +565,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 - [x] 14.5.1 Keyboard navigation - `tests/e2e/intake-pipeline-a11y.spec.ts`
 - [x] 14.5.2 Screen reader testing - (ARIA labels, live regions, announcements)
-- [x] 14.5.3 Color contrast - (badge colors, stage distinction, focus indicators)
+- [x] 14.5.3 Color contrast - (badge colors, stage distinction, focus
+      indicators)
 - [x] 14.5.4 Focus management - (trap focus, restore focus, visible indicators)
 
 ## Phase 15: Documentation (Week 9) ✅ COMPLETED
@@ -509,7 +589,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### 16.1 Database ✅ READY
 
-- [x] 16.1.1 Migration created - `drizzle/0011_violet_morph.sql` (complete schema)
+- [x] 16.1.1 Migration created - `drizzle/0011_violet_morph.sql` (complete
+      schema)
 - [ ] 16.1.2 Run migration on staging - Pending deployment
 - [ ] 16.1.3 Run migration on production - Pending deployment
 
@@ -537,15 +618,20 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### 17.1 Final Checks ✅
 
-- [x] 17.1.1 Performance testing - Playwright performance tests (intake-pipeline-performance.spec.ts)
-- [x] 17.1.2 Security review - Playwright security tests (intake-pipeline-security.spec.ts)
-- [x] 17.1.3 Accessibility audit - Already complete in Phase 14.5 (intake-pipeline-a11y.spec.ts)
-- [x] 17.1.4 Load testing - k6 load test script (tests/load/intake-pipeline-load.js)
+- [x] 17.1.1 Performance testing - Playwright performance tests
+      (intake-pipeline-performance.spec.ts)
+- [x] 17.1.2 Security review - Playwright security tests
+      (intake-pipeline-security.spec.ts)
+- [x] 17.1.3 Accessibility audit - Already complete in Phase 14.5
+      (intake-pipeline-a11y.spec.ts)
+- [x] 17.1.4 Load testing - k6 load test script
+      (tests/load/intake-pipeline-load.js)
 
 ### 17.2 Launch ⚠️ OPERATIONAL
 
 - [~] 17.2.1 Remove feature flag - N/A (no feature flags in project)
-- [x] 17.2.2 Update navigation - Already configured at /dashboard/business-center/intake
+- [x] 17.2.2 Update navigation - Already configured at
+      /dashboard/business-center/intake
 - [ ] 17.2.3 Announce feature - Manual/marketing process
 - [ ] 17.2.4 Monitor dashboards - Manual/ops process
 
@@ -581,7 +667,8 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 **Frontend Components (17 files):**
 
-- `apps/web/src/components/dashboard/business-center/intake/` - All components exist
+- `apps/web/src/components/dashboard/business-center/intake/` - All components
+  exist
 
 **API Routes (7 files):**
 
@@ -609,4 +696,5 @@ Deleted the entire `apps/web/src/app/(default)/dashboard/business-center/intake-
 
 ### Ready for Archive
 
-The Intake Pipeline feature is **COMPLETE** and ready for archiving. Remaining items (17.2.3, 17.2.4) are manual operational tasks outside the codebase scope.
+The Intake Pipeline feature is **COMPLETE** and ready for archiving. Remaining
+items (17.2.3, 17.2.4) are manual operational tasks outside the codebase scope.

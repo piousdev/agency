@@ -1,4 +1,5 @@
-import { IconCircleCheck, IconCode, IconPalette, IconUsers } from '@tabler/icons-react';
+import { IconCircleCheck, IconCode, IconPalette } from '@tabler/icons-react';
+
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -8,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 /**
@@ -52,8 +54,8 @@ export function RecentlyCompleted({ projects }: RecentlyCompletedProps) {
     })
     .sort((a, b) => {
       // Sort by deliveredAt descending (most recent first)
-      const dateA = new Date(a.deliveredAt!).getTime();
-      const dateB = new Date(b.deliveredAt!).getTime();
+      const dateA = a.deliveredAt ? new Date(a.deliveredAt).getTime() : 0;
+      const dateB = b.deliveredAt ? new Date(b.deliveredAt).getTime() : 0;
       return dateB - dateA;
     });
 
@@ -117,11 +119,13 @@ export function RecentlyCompleted({ projects }: RecentlyCompletedProps) {
                   {/* Completion Date */}
                   <TableCell className="text-center">
                     <div className="text-sm">
-                      {new Date(project.deliveredAt!).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      {project.deliveredAt
+                        ? new Date(project.deliveredAt).toLocaleDateString('en-BE', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })
+                        : 'N/A'}
                     </div>
                   </TableCell>
 

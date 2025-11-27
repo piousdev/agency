@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';

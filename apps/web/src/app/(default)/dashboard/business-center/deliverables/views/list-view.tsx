@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import {
   IconAlertTriangle,
   IconArrowDown,
@@ -8,7 +10,7 @@ import {
   IconMinus,
 } from '@tabler/icons-react';
 import { differenceInDays, format, isPast, isToday } from 'date-fns';
-import { useState } from 'react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface DeliverableListViewProps {
@@ -88,7 +91,7 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
         comparison = a.name.localeCompare(b.name);
         break;
       case 'client':
-        comparison = (a.client?.name || '').localeCompare(b.client?.name || '');
+        comparison = a.client.name.localeCompare(b.client.name);
         break;
       case 'delivery': {
         const aDate = a.deliveredAt ? new Date(a.deliveredAt).getTime() : Infinity;
@@ -100,10 +103,10 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
         comparison = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
         break;
       case 'progress':
-        comparison = (a.completionPercentage || 0) - (b.completionPercentage || 0);
+        comparison = (a.completionPercentage) - (b.completionPercentage);
         break;
       case 'type':
-        comparison = (a.client?.type || '').localeCompare(b.client?.type || '');
+        comparison = a.client.type.localeCompare(b.client.type);
         break;
     }
 
@@ -210,15 +213,15 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
                   <Badge
                     variant="outline"
                     className={
-                      project.client?.type === 'creative'
+                      project.client.type === 'creative'
                         ? 'border-pink-500 text-pink-500'
                         : 'border-blue-500 text-blue-500'
                     }
                   >
-                    {project.client?.type === 'creative' ? 'Content' : 'Software'}
+                    {project.client.type === 'creative' ? 'Content' : 'Software'}
                   </Badge>
                 </TableCell>
-                <TableCell>{project.client?.name || 'N/A'}</TableCell>
+                <TableCell>{project.client.name}</TableCell>
                 <TableCell>
                   {project.deliveredAt ? (
                     <div className={isOverdue ? 'text-destructive' : ''}>
@@ -229,7 +232,7 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
                         ) : isToday(new Date(project.deliveredAt)) ? (
                           <span className="text-orange-500">Due today</span>
                         ) : daysUntil !== null ? (
-                          `In ${daysUntil} day${daysUntil === 1 ? '' : 's'}`
+                          `In ${String(daysUntil)} day${daysUntil === 1 ? '' : 's'}`
                         ) : null}
                       </div>
                     </div>
@@ -249,19 +252,19 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">
-                        {project.completionPercentage || 0}%
+                        {project.completionPercentage}%
                       </span>
                     </div>
-                    <Progress value={project.completionPercentage || 0} className="h-1.5" />
+                    <Progress value={project.completionPercentage} className="h-1.5" />
                   </div>
                 </TableCell>
                 <TableCell>
-                  {project.assignees && project.assignees.length > 0 ? (
+                  {project.assignees.length > 0 ? (
                     <div className="flex items-center gap-1">
                       <div className="flex -space-x-2">
                         {project.assignees.slice(0, 3).map((assignee) => (
                           <Avatar key={assignee.id} className="h-6 w-6 border-2 border-background">
-                            <AvatarImage src={assignee.image || undefined} />
+                            <AvatarImage src={assignee.image ?? undefined} />
                             <AvatarFallback className="text-xs">
                               {assignee.name
                                 .split(' ')

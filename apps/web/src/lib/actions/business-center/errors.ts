@@ -24,8 +24,8 @@ export type ActionResult<T = void> =
  */
 function formatPermissionError(error: Error): string {
   // Extract the permission from error message like "Permission denied: ticket:create"
-  const match = error.message.match(/Permission denied: (.+)/);
-  if (match && match[1]) {
+  const match = /Permission denied: (.+)/.exec(error.message);
+  if (match?.[1]) {
     const permission = match[1];
     const permissionLabels: Record<string, string> = {
       'ticket:create': 'create tickets',

@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+
 import { project } from './project';
 import { ticket } from './ticket';
 import { user } from './user';

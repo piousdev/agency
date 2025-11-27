@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Select,
   SelectContent,
@@ -14,8 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { sprintStatusOptions, type SprintStatus } from '@/lib/schemas/sprint';
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
 
 interface SprintFormData {
   id: string;
@@ -90,7 +94,7 @@ export function SprintForm({
     if (!dateStr) return '';
     const date = new Date(dateStr);
     const isoString = date.toISOString();
-    return isoString.split('T')[0] ?? '';
+    return isoString.split('T')[0];
   };
 
   return (
@@ -108,7 +112,7 @@ export function SprintForm({
         <Input
           id="name"
           name="name"
-          defaultValue={sprint?.name ?? ''}
+          defaultValue={sprint?.name}
           placeholder="e.g., Sprint 1, January Sprint"
           required
           maxLength={200}
@@ -121,7 +125,7 @@ export function SprintForm({
         <Textarea
           id="goal"
           name="goal"
-          defaultValue={sprint?.goal ?? ''}
+          defaultValue={sprint?.goal}
           placeholder="What is the objective of this sprint?"
           rows={3}
           maxLength={2000}
@@ -175,7 +179,7 @@ export function SprintForm({
           name="plannedPoints"
           type="number"
           min={0}
-          defaultValue={sprint?.plannedPoints ?? 0}
+          defaultValue={sprint?.plannedPoints}
         />
         <p className="text-xs text-muted-foreground">Total story points planned for this sprint</p>
       </div>
@@ -188,7 +192,7 @@ export function SprintForm({
           name="sprintNumber"
           type="number"
           min={1}
-          defaultValue={sprint?.sprintNumber ?? ''}
+          defaultValue={sprint?.sprintNumber}
           placeholder="Auto-generated if empty"
         />
         <p className="text-xs text-muted-foreground">

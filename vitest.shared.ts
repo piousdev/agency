@@ -19,6 +19,7 @@ export default defineConfig({
         '**/*.config.{js,ts}',
         '**/.next/**',
         '**/coverage/**',
+        '**/components/ui/**', // Third-party shadcn/ui components
       ],
     },
   },

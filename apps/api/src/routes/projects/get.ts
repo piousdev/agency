@@ -1,9 +1,10 @@
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { project } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
-import { eq } from 'drizzle-orm';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 

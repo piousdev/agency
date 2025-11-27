@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+
 import { acceptInvitation } from '@/lib/api/invitations';
 
 export interface AcceptInviteState {
@@ -24,10 +25,10 @@ export async function acceptInviteAction(
   formData: FormData
 ): Promise<AcceptInviteState> {
   // Extract form data
-  const name = formData.get('name') as string;
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
+  const name = formData.get('name') as string | null;
+  const email = formData.get('email') as string | null;
+  const password = formData.get('password') as string | null;
+  const confirmPassword = formData.get('confirmPassword') as string | null;
 
   // Server-side validation
   const errors: AcceptInviteState['errors'] = {};
@@ -36,7 +37,7 @@ export async function acceptInviteAction(
     errors.name = ['Name must be at least 2 characters'];
   }
 
-  if (!email || !email.includes('@')) {
+  if (!email?.includes('@')) {
     errors.email = ['Please enter a valid email address'];
   }
 
@@ -46,6 +47,7 @@ export async function acceptInviteAction(
     errors.password = ['Password must contain uppercase, lowercase, and number'];
   }
 
+  // eslint-disable-next-line security/detect-possible-timing-attacks -- Password comparison is intentional, not a timing attack vulnerability
   if (password !== confirmPassword) {
     errors.confirmPassword = ["Passwords don't match"];
   }
@@ -58,9 +60,9 @@ export async function acceptInviteAction(
   try {
     await acceptInvitation({
       token,
-      name,
-      email,
-      password,
+      name: name ?? '',
+      email: email ?? '',
+      password: password ?? '',
     });
 
     // Success - redirect to login with email verification message

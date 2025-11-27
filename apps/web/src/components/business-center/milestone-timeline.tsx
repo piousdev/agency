@@ -1,9 +1,5 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Milestone } from '@/lib/api/milestones/types';
-import { getMilestoneStatusColor, type MilestoneStatus } from '@/lib/schemas/milestone';
 import {
   IconFlag,
   IconClock,
@@ -12,8 +8,15 @@ import {
   IconCircleX,
   IconBan,
 } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
 import { format, isPast, isFuture, isToday } from 'date-fns';
+
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getMilestoneStatusColor, type MilestoneStatus } from '@/lib/schemas/milestone';
+import { cn } from '@/lib/utils';
+
+import type { Milestone } from '@/lib/api/milestones/types';
+
 
 interface MilestoneTimelineProps {
   milestones: Milestone[];
@@ -56,7 +59,7 @@ export function MilestoneTimeline({ milestones, className }: MilestoneTimelinePr
 
           {/* Milestones */}
           <div className="space-y-6">
-            {sortedMilestones.map((milestone, index) => {
+            {sortedMilestones.map((milestone, _index) => {
               const dueDate = milestone.dueDate ? new Date(milestone.dueDate) : null;
               const isOverdue =
                 dueDate &&
@@ -165,7 +168,11 @@ export function MilestoneTimelineCompact({
 }) {
   const sortedMilestones = [...milestones]
     .filter((m) => m.dueDate && m.status !== 'cancelled')
-    .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime())
+    .sort((a, b) => {
+      const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
+      const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
+      return dateA - dateB;
+    })
     .slice(0, 5);
 
   if (sortedMilestones.length === 0) {
@@ -174,7 +181,7 @@ export function MilestoneTimelineCompact({
 
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      {sortedMilestones.map((milestone, index) => (
+      {sortedMilestones.map((milestone, _index) => (
         <div
           key={milestone.id}
           className={cn(

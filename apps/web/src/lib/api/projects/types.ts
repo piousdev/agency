@@ -30,6 +30,7 @@ export interface ProjectAssignee {
 }
 
 export interface ProjectWithRelations extends Project {
+  teamMembers: ProjectAssignee[];
   client: {
     id: string;
     name: string;
@@ -156,7 +157,7 @@ export interface ProjectDetailResponse {
     stagingUrl?: string | null;
     notes?: string | null;
     startedAt?: string | null;
-    tickets?: Array<{
+    tickets?: {
       id: string;
       title: string;
       status: string;
@@ -166,7 +167,7 @@ export interface ProjectDetailResponse {
         name: string;
         email: string;
       } | null;
-    }>;
+    }[];
   };
   message?: string;
 }

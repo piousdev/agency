@@ -12,7 +12,11 @@
 
 ## Executive Summary
 
-The Overview Navigation is a complex role-based dashboard with 500+ tasks across 15 phases. Based on thorough research of the specification, design documents, and current 2025 best practices via Context7, this document outlines the recommended technology stack that aligns with the existing architecture (Next.js, TypeScript, shadcn/ui, Tailwind CSS, Better-Auth).
+The Overview Navigation is a complex role-based dashboard with 500+ tasks across
+15 phases. Based on thorough research of the specification, design documents,
+and current 2025 best practices via Context7, this document outlines the
+recommended technology stack that aligns with the existing architecture
+(Next.js, TypeScript, shadcn/ui, Tailwind CSS, Better-Auth).
 
 ---
 
@@ -34,7 +38,8 @@ The Overview Navigation is a complex role-based dashboard with 500+ tasks across
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Pattern**: Pass Server Component data to Client Components via props (slot pattern from Next.js 15 docs)
+**Pattern**: Pass Server Component data to Client Components via props (slot
+pattern from Next.js 15 docs)
 
 **Rationale**:
 
@@ -402,7 +407,10 @@ export function useRealtimeAlerts() {
 
     socket.on('critical-alert', (alert: Alert) => {
       // Update cache immediately
-      queryClient.setQueryData(['alerts'], (old: Alert[] = []) => [alert, ...old]);
+      queryClient.setQueryData(['alerts'], (old: Alert[] = []) => [
+        alert,
+        ...old,
+      ]);
 
       // Show toast notification
       toast.error(alert.message, {

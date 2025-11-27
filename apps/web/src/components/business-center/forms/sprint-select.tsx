@@ -1,6 +1,10 @@
 'use client';
 
-import { forwardRef, useState, useEffect } from 'react';
+import { forwardRef, useState, useEffect, useMemo } from 'react';
+
+import { IconRun, IconCalendar } from '@tabler/icons-react';
+import { format } from 'date-fns';
+
 import {
   Select,
   SelectContent,
@@ -9,12 +13,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 import { listSprints } from '@/lib/api/sprints';
-import type { Sprint } from '@/lib/api/sprints/types';
 import { getSprintStatusColor, type SprintStatus } from '@/lib/schemas/sprint';
-import { IconRun, IconCalendar } from '@tabler/icons-react';
-import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+
+import type { Sprint } from '@/lib/api/sprints/types';
+
 
 interface SprintSelectProps {
   value?: string | null;
@@ -44,6 +48,9 @@ export const SprintSelect = forwardRef<HTMLButtonElement, SprintSelectProps>(
     const [sprints, setSprints] = useState<Sprint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Create a stable string representation of excludeStatuses for dependency tracking
+    const excludeStatusesKey = useMemo(() => excludeStatuses.join(','), [excludeStatuses]);
+
     useEffect(() => {
       async function fetchSprints() {
         if (!projectId) {
@@ -67,8 +74,8 @@ export const SprintSelect = forwardRef<HTMLButtonElement, SprintSelectProps>(
         }
       }
 
-      fetchSprints();
-    }, [projectId, excludeStatuses.join(',')]);
+      void fetchSprints();
+    }, [projectId, excludeStatusesKey, excludeStatuses]);
 
     const handleValueChange = (newValue: string) => {
       if (newValue === '__clear__') {

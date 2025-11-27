@@ -1,6 +1,7 @@
 'use client';
 
 import { IconX } from '@tabler/icons-react';
+
 import { cn } from '@/lib/utils';
 
 interface LabelBadgeProps {

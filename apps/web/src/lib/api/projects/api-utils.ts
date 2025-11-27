@@ -15,7 +15,7 @@ export async function getAuthHeaders(): Promise<HeadersInit> {
   const headersList = await headers();
   return {
     'Content-Type': 'application/json',
-    cookie: headersList.get('cookie') || '',
+    cookie: headersList.get('cookie'),
   };
 }
 
@@ -27,7 +27,8 @@ export async function getAuthHeaders(): Promise<HeadersInit> {
  * @returns Full URL with query string
  */
 export function buildApiUrl(path: string, params?: Record<string, unknown>): string {
-  const url = `${process.env.NEXT_PUBLIC_API_URL}${path}`;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
+  const url = `${apiUrl}${path}`;
 
   if (!params) {
     return url;
@@ -37,7 +38,13 @@ export function buildApiUrl(path: string, params?: Record<string, unknown>): str
 
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      queryParams.append(key, value.toString());
+      // Handle different types properly
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        queryParams.append(key, String(value));
+      } else {
+        // Handle arrays and objects by serializing to JSON
+        queryParams.append(key, JSON.stringify(value));
+      }
     }
   });
 

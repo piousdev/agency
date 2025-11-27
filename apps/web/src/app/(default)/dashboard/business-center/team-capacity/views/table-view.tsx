@@ -1,11 +1,14 @@
 'use client';
 
+import * as React from 'react';
 import { useState } from 'react';
-import { type ColumnDef, type Row } from '@tanstack/react-table';
+
 import { IconDots, IconUser, IconCalendar, IconChartBar } from '@tabler/icons-react';
+
+
+import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +17,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DataTable } from '@/components/data-table';
+import { Progress } from '@/components/ui/progress';
+
 import type { TeamMember } from '@/lib/api/users/types';
+import type { ColumnDef, Row } from '@tanstack/react-table';
 
 interface TeamTableViewProps {
   teamMembers: TeamMember[];
@@ -56,7 +61,10 @@ export function TeamTableView({ teamMembers }: TeamTableViewProps) {
     });
   };
 
-  const columns: ColumnDef<TeamMember>[] = [
+  const columns = React.useMemo<ColumnDef<TeamMember>[]>(
+    () => {
+      /* eslint-disable react/no-unstable-nested-components */
+      return [
     {
       accessorKey: 'name',
       header: 'Team Member',
@@ -77,7 +85,7 @@ export function TeamTableView({ teamMembers }: TeamTableViewProps) {
         return <Badge variant={statusVariants[status]}>{statusLabels[status]}</Badge>;
       },
       filterFn: (row, id, value: string[]) => {
-        if (!value?.length) return true;
+        if (!value.length) return true;
         return value.includes(row.getValue(id));
       },
       meta: {
@@ -142,7 +150,7 @@ export function TeamTableView({ teamMembers }: TeamTableViewProps) {
       enableSorting: false,
       cell: ({ row }) => {
         const projects = row.original.projects;
-        if (!projects?.length) {
+        if (!projects.length) {
           return <span className="text-muted-foreground text-sm">No active projects</span>;
         }
 
@@ -171,8 +179,12 @@ export function TeamTableView({ teamMembers }: TeamTableViewProps) {
       },
     },
   ];
+      /* eslint-enable react/no-unstable-nested-components */
+    },
+    []
+  );
 
-  const renderRowActions = (row: Row<TeamMember>) => (
+  const renderRowActions = (_row: Row<TeamMember>) => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">

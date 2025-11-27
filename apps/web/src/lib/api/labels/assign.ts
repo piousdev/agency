@@ -3,8 +3,8 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type {
-  Label,
   AssignLabelsResponse,
   RemoveLabelsResponse,
   LabelsListResponse,
@@ -18,24 +18,22 @@ export async function assignLabelsToTicket(
   labelIds: string[]
 ): Promise<AssignLabelsResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/labels/tickets/${ticketId}/assign`,
-    {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ labelIds }),
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${apiUrl}/api/labels/tickets/${ticketId}/assign`, {
+    method: 'POST',
+    headers: authHeaders,
+    body: JSON.stringify({ labelIds }),
+    cache: 'no-store',
+  });
 
-  const result = await response.json();
+  const result = (await response.json()) as AssignLabelsResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to assign labels to ticket');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as AssignLabelsResponse;
 }
 
 /**
@@ -46,24 +44,22 @@ export async function removeLabelsFromTicket(
   labelIds: string[]
 ): Promise<RemoveLabelsResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/labels/tickets/${ticketId}/remove`,
-    {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ labelIds }),
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${apiUrl}/api/labels/tickets/${ticketId}/remove`, {
+    method: 'POST',
+    headers: authHeaders,
+    body: JSON.stringify({ labelIds }),
+    cache: 'no-store',
+  });
 
-  const result = await response.json();
+  const result = (await response.json()) as RemoveLabelsResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to remove labels from ticket');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as RemoveLabelsResponse;
 }
 
 /**
@@ -71,22 +67,20 @@ export async function removeLabelsFromTicket(
  */
 export async function getTicketLabels(ticketId: string): Promise<LabelsListResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/labels/tickets/${ticketId}`,
-    {
-      headers: authHeaders,
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${apiUrl}/api/labels/tickets/${ticketId}`, {
+    headers: authHeaders,
+    cache: 'no-store',
+  });
 
-  const result = await response.json();
+  const result = (await response.json()) as LabelsListResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to get ticket labels');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as LabelsListResponse;
 }
 
 /**
@@ -97,24 +91,22 @@ export async function assignLabelsToProject(
   labelIds: string[]
 ): Promise<AssignLabelsResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/labels/projects/${projectId}/assign`,
-    {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ labelIds }),
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${apiUrl}/api/labels/projects/${projectId}/assign`, {
+    method: 'POST',
+    headers: authHeaders,
+    body: JSON.stringify({ labelIds }),
+    cache: 'no-store',
+  });
 
-  const result = await response.json();
+  const result = (await response.json()) as AssignLabelsResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to assign labels to project');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as AssignLabelsResponse;
 }
 
 /**
@@ -125,24 +117,22 @@ export async function removeLabelsFromProject(
   labelIds: string[]
 ): Promise<RemoveLabelsResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/labels/projects/${projectId}/remove`,
-    {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ labelIds }),
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${apiUrl}/api/labels/projects/${projectId}/remove`, {
+    method: 'POST',
+    headers: authHeaders,
+    body: JSON.stringify({ labelIds }),
+    cache: 'no-store',
+  });
 
-  const result = await response.json();
+  const result = (await response.json()) as RemoveLabelsResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to remove labels from project');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as RemoveLabelsResponse;
 }
 
 /**
@@ -150,20 +140,18 @@ export async function removeLabelsFromProject(
  */
 export async function getProjectLabels(projectId: string): Promise<LabelsListResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/labels/projects/${projectId}`,
-    {
-      headers: authHeaders,
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${apiUrl}/api/labels/projects/${projectId}`, {
+    headers: authHeaders,
+    cache: 'no-store',
+  });
 
-  const result = await response.json();
+  const result = (await response.json()) as LabelsListResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to get project labels');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as LabelsListResponse;
 }

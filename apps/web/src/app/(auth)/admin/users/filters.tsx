@@ -5,9 +5,12 @@
 
 'use client';
 
-import { IconSearch, IconX } from '@tabler/icons-react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { IconSearch, IconX } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {

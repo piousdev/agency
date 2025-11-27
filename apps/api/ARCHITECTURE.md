@@ -46,12 +46,15 @@ src/
 
 **Key Pattern:**
 
-- **Centralized schemas**: All Zod schemas live in `src/schemas/` organized by domain
+- **Centralized schemas**: All Zod schemas live in `src/schemas/` organized by
+  domain
 - **One schema file per domain**: `user.ts`, `role.ts`, `invitation.ts`, etc.
-- **Routes import from schemas/**: `import { updateUserSchema } from '../../schemas/user'`
+- **Routes import from schemas/**:
+  `import { updateUserSchema } from '../../schemas/user'`
 - **One endpoint per file**: Unless closely related and under 250 lines combined
 - **Index file**: Composes all routes in the domain
-- **Consistent naming**: File names match route purpose (get, list, update, delete)
+- **Consistent naming**: File names match route purpose (get, list, update,
+  delete)
 
 ### 2. File Organization
 
@@ -66,7 +69,8 @@ src/
 
 **Centralized Schema Organization** (Required Pattern):
 
-All Zod validation schemas MUST be located in `src/schemas/` directory, NOT in route folders.
+All Zod validation schemas MUST be located in `src/schemas/` directory, NOT in
+route folders.
 
 ```
 src/
@@ -84,7 +88,8 @@ src/
 - **Single Source of Truth**: No duplicate schema definitions
 - **Easier Testing**: Test schemas independently of routes
 - **Type Safety**: TypeScript types can be derived and shared
-- **Better Organization**: Clear separation between validation and business logic
+- **Better Organization**: Clear separation between validation and business
+  logic
 
 **Example Schema File (`schemas/user.ts`):**
 
@@ -130,7 +135,11 @@ import { updateUserSchema } from './schemas';
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { HTTPException } from 'hono/http-exception';
-import { requireAuth, requireInternal, type AuthVariables } from '../middleware/auth';
+import {
+  requireAuth,
+  requireInternal,
+  type AuthVariables,
+} from '../middleware/auth';
 import { updateUserSchema } from './schemas';
 
 const app = new Hono<{ Variables: AuthVariables }>();

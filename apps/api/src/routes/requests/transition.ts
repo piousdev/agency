@@ -1,9 +1,21 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { eq, sql } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
 import { request, requestHistory, project, ticket } from '../../db/schema';
+import {
+  sendStageChangeNotification,
+  sendEstimationNotification,
+  sendConversionNotification,
+} from '../../lib/intake-notifications.js';
+import {
+  broadcastIntakeStageChanged,
+  broadcastIntakeEstimated,
+  broadcastIntakeConverted,
+} from '../../lib/socket.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import {
   transitionRequestSchema,
@@ -11,17 +23,6 @@ import {
   convertRequestSchema,
   holdRequestSchema,
 } from '../../schemas/request';
-import { eq, sql } from 'drizzle-orm';
-import {
-  broadcastIntakeStageChanged,
-  broadcastIntakeEstimated,
-  broadcastIntakeConverted,
-} from '../../lib/socket.js';
-import {
-  sendStageChangeNotification,
-  sendEstimationNotification,
-  sendConversionNotification,
-} from '../../lib/intake-notifications.js';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -73,15 +74,19 @@ app.post(
       const fromStage = existingRequest.stage;
 
       // Validate transition
-      const validTargets = VALID_TRANSITIONS[fromStage];
-      if (!validTargets?.includes(toStage)) {
+      type ValidStage = keyof typeof VALID_TRANSITIONS;
+      const validStages: ValidStage[] = ['in_treatment', 'on_hold', 'estimation', 'ready'];
+      const isValidStage = validStages.includes(fromStage as ValidStage);
+      const validTargets = isValidStage ? VALID_TRANSITIONS[fromStage as ValidStage] : [];
+      const isValidTransition = validTargets.includes(toStage);
+      if (!isValidTransition) {
         throw new HTTPException(400, {
           message: `Invalid transition from ${fromStage} to ${toStage}`,
         });
       }
 
       // Require reason for on_hold transition
-      if (toStage === 'on_hold' && !reason) {
+      if (toStage === 'on_hold' && (reason === undefined || reason === '')) {
         throw new HTTPException(400, {
           message: 'Reason is required when moving to on_hold stage',
         });
@@ -146,18 +151,24 @@ app.post(
         );
 
         // Send email notification to requester for significant stage changes
-        if (result.requester?.email && (toStage === 'estimation' || toStage === 'on_hold')) {
-          sendStageChangeNotification({
-            requestId: result.id,
-            requestNumber: result.requestNumber || result.id,
-            requestTitle: result.title,
-            requesterEmail: result.requester.email,
-            requesterName: result.requester.name || 'User',
-            fromStage,
-            toStage,
-            actorName: currentUser.name || 'Unknown',
-            reason: toStage === 'on_hold' ? reason : undefined,
-          }).catch((err) => console.error('Failed to send stage change notification:', err));
+        if (toStage === 'estimation' || toStage === 'on_hold') {
+          void (async () => {
+            try {
+              await sendStageChangeNotification({
+                requestId: result.id,
+                requestNumber: result.requestNumber ?? result.id,
+                requestTitle: result.title,
+                requesterEmail: result.requester.email,
+                requesterName: result.requester.name,
+                fromStage,
+                toStage,
+                actorName: currentUser.name,
+                reason: toStage === 'on_hold' ? reason : undefined,
+              });
+            } catch (err: unknown) {
+              console.error('Failed to send stage change notification:', err);
+            }
+          })();
         }
       }
 
@@ -385,7 +396,7 @@ app.post(
         metadata: {
           storyPoints,
           confidence,
-          description: `Estimated: ${storyPoints} story points (${confidence} confidence)`,
+          description: `Estimated: ${String(storyPoints)} story points (${confidence} confidence)`,
         },
       });
 
@@ -407,10 +418,10 @@ app.post(
           {
             requestId: result.id,
             requestTitle: result.title,
-            storyPoints,
+            storyPoints: String(storyPoints),
             confidence,
             estimatorId: currentUser.id,
-            estimatorName: currentUser.name || 'Unknown',
+            estimatorName: currentUser.name,
             routingRecommendation,
             timestamp: now.toISOString(),
           },
@@ -418,19 +429,23 @@ app.post(
         );
 
         // Send email notification to requester about estimation
-        if (result.requester?.email) {
-          sendEstimationNotification({
-            requestId: result.id,
-            requesterEmail: result.requester.email,
-            requesterName: result.requester.name || 'User',
-            requestNumber: result.requestNumber || result.id,
-            requestTitle: result.title,
-            storyPoints,
-            confidence,
-            estimatorName: currentUser.name || 'Unknown',
-            routingRecommendation,
-          }).catch((err) => console.error('Failed to send estimation notification:', err));
-        }
+        void (async () => {
+          try {
+            await sendEstimationNotification({
+              requestId: result.id,
+              requesterEmail: result.requester.email,
+              requesterName: result.requester.name,
+              requestNumber: result.requestNumber ?? result.id,
+              requestTitle: result.title,
+              storyPoints,
+              confidence,
+              estimatorName: currentUser.name,
+              routingRecommendation,
+            });
+          } catch (err: unknown) {
+            console.error('Failed to send estimation notification:', err);
+          }
+        })();
       }
 
       return c.json({
@@ -447,14 +462,8 @@ app.post(
 );
 
 /**
- * Helper to generate unique project/ticket number
+ * Helper to generate unique ticket number
  */
-async function generateProjectNumber(): Promise<string> {
-  const result = await db.select({ count: sql<number>`count(*)::int` }).from(project);
-  const count = result[0]?.count ?? 0;
-  return `PRJ-${String(count + 1).padStart(4, '0')}`;
-}
-
 async function generateTicketNumber(): Promise<string> {
   const result = await db.select({ count: sql<number>`count(*)::int` }).from(ticket);
   const count = result[0]?.count ?? 0;
@@ -506,7 +515,7 @@ app.post(
 
       // Apply routing rules if not overriding
       let finalDestination = destinationType;
-      if (!overrideRouting && existingRequest.storyPoints) {
+      if (!overrideRouting && existingRequest.storyPoints !== null) {
         // Change requests always go to tickets
         if (existingRequest.type === 'change_request') {
           finalDestination = 'ticket';
@@ -522,7 +531,7 @@ app.post(
 
       if (finalDestination === 'project') {
         // Validate clientId is required for project conversion
-        if (!existingRequest.clientId) {
+        if (existingRequest.clientId === null || existingRequest.clientId === '') {
           throw new HTTPException(400, {
             message: 'Request must have a client assigned to convert to a project',
           });
@@ -545,10 +554,23 @@ app.post(
           })
           .returning();
 
-        convertedToId = newProject[0]!.id;
+        const firstProject = newProject[0];
+        if (!firstProject) {
+          throw new HTTPException(500, { message: 'Failed to create project' });
+        }
+        convertedToId = firstProject.id;
       } else {
         // Create a new ticket
         const ticketNumber = await generateTicketNumber();
+
+        // Ensure clientId is defined for ticket creation
+        const ticketClientId = existingRequest.clientId ?? '';
+        if (ticketClientId === '') {
+          throw new HTTPException(400, {
+            message: 'Request must have a client assigned to convert to a ticket',
+          });
+        }
+
         const newTicket = await db
           .insert(ticket)
           .values({
@@ -559,14 +581,18 @@ app.post(
             type: existingRequest.type === 'bug' ? 'bug' : 'task',
             status: 'open',
             priority: existingRequest.priority,
-            clientId: existingRequest.clientId!,
-            projectId: projectId || existingRequest.relatedProjectId,
+            clientId: ticketClientId,
+            projectId: projectId ?? existingRequest.relatedProjectId,
             createdById: currentUser.id,
             storyPoints: existingRequest.storyPoints,
           })
           .returning();
 
-        convertedToId = newTicket[0]!.id;
+        const firstTicket = newTicket[0];
+        if (!firstTicket) {
+          throw new HTTPException(500, { message: 'Failed to create ticket' });
+        }
+        convertedToId = firstTicket.id;
       }
 
       // Update the request
@@ -608,17 +634,21 @@ app.post(
       );
 
       // Send email notification to requester about conversion
-      if (existingRequest.requester?.email) {
-        sendConversionNotification({
-          requesterEmail: existingRequest.requester.email,
-          requesterName: existingRequest.requester.name || 'User',
-          requestNumber: existingRequest.requestNumber || existingRequest.id,
-          requestTitle: existingRequest.title,
-          convertedToType: finalDestination,
-          convertedToId,
-          actorName: currentUser.name || 'Unknown',
-        }).catch((err) => console.error('Failed to send conversion notification:', err));
-      }
+      void (async () => {
+        try {
+          await sendConversionNotification({
+            requesterEmail: existingRequest.requester.email,
+            requesterName: existingRequest.requester.name,
+            requestNumber: existingRequest.requestNumber ?? existingRequest.id,
+            requestTitle: existingRequest.title,
+            convertedToType: finalDestination,
+            convertedToId,
+            actorName: currentUser.name,
+          });
+        } catch (err: unknown) {
+          console.error('Failed to send conversion notification:', err);
+        }
+      })();
 
       return c.json({
         success: true,

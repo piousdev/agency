@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState,  useMemo } from 'react';
+
+import { IconCheck, IconChevronDown, IconLoader2 } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -11,10 +14,11 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { IconTag, IconCheck, IconChevronDown, IconLoader2 } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
+
 import { LabelBadge } from './label-badge';
-import type { Label } from '@/lib/api/labels';
+
+import type { Label as _Label } from '@/lib/api/labels';
 
 export interface LabelOption {
   id: string;

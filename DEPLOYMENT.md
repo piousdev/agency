@@ -1,6 +1,7 @@
 # Deployment Guide - Skyll Platform
 
-This guide covers deploying the Skyll Platform (API + Web) to Fly.io using the 2025 best practices.
+This guide covers deploying the Skyll Platform (API + Web) to Fly.io using the
+2025 best practices.
 
 ## Table of Contents
 
@@ -262,7 +263,8 @@ fly logs --app your-web-app-name
 
 ### 4. Update CORS Configuration
 
-The API currently allows `http://localhost:3000`. Update it to allow your production web URL:
+The API currently allows `http://localhost:3000`. Update it to allow your
+production web URL:
 
 **apps/api/src/index.ts:**
 
@@ -480,7 +482,9 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Deploy Web
-        run: fly deploy --config apps/web/fly.toml --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+        run:
+          fly deploy --config apps/web/fly.toml --build-arg
+          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 ```
@@ -528,5 +532,4 @@ fly apps destroy <app-name>
 
 ---
 
-**Last Updated:** 2025-11-07
-**Fly.io Best Practices Version:** 2025
+**Last Updated:** 2025-11-07 **Fly.io Best Practices Version:** 2025

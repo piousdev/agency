@@ -5,9 +5,12 @@
 
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
+
+import { useRouter } from 'next/navigation';
+
 import { toast } from 'sonner';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+
 import { deleteUserAction } from './actions';
 
 interface DeleteUserDialogProps {
@@ -43,12 +47,12 @@ export function DeleteUserDialog({ userId, onClose }: DeleteUserDialogProps) {
         const result = await deleteUserAction(userId);
 
         if (result.success) {
-          toast.success(result.message || 'User deleted successfully');
+          toast.success(result.message ?? 'User deleted successfully');
           onClose();
           router.refresh();
         } else {
-          setError(result.message || 'Failed to delete user');
-          toast.error(result.message || 'Failed to delete user');
+          setError(result.message ?? 'Failed to delete user');
+          toast.error(result.message ?? 'Failed to delete user');
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Failed to delete user';
@@ -78,7 +82,7 @@ export function DeleteUserDialog({ userId, onClose }: DeleteUserDialogProps) {
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
-              handleDelete();
+              void handleDelete();
             }}
             disabled={isPending}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
-import { requireUser } from '@/lib/auth/session';
-import { listAllSprints } from '@/lib/api/sprints';
+
 import { listProjects } from '@/lib/api/projects/list';
+import { listAllSprints } from '@/lib/api/sprints';
+import { requireUser } from '@/lib/auth/session';
+
 import { SprintsClient } from './client';
 
 export default async function SprintsPage() {

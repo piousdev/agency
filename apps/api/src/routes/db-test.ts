@@ -1,6 +1,7 @@
-import { Hono } from 'hono';
-import { db } from '../db/index.js';
 import { sql } from 'drizzle-orm';
+import { Hono } from 'hono';
+
+import { db } from '../db/index.js';
 
 const app = new Hono();
 

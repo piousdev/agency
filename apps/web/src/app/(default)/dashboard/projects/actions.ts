@@ -1,9 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { requireUser } from '@/lib/auth/session';
+
 import { createProject, updateProject } from '@/lib/api/projects';
+import { requireUser } from '@/lib/auth/session';
 import {
   createProjectSchema,
   updateProjectSchema,
@@ -17,11 +17,6 @@ export interface ProjectActionState {
   errors?: Record<string, string[]>;
   projectId?: string;
 }
-
-const initialState: ProjectActionState = {
-  success: false,
-  message: '',
-};
 
 /**
  * Server Action: Create a new project
@@ -44,8 +39,8 @@ export async function createProjectAction(
     name: formData.get('name') as string,
     description: (formData.get('description') as string) || undefined,
     clientId: formData.get('clientId') as string,
-    status: (formData.get('status') as CreateProjectFormInput['status']) || 'proposal',
-    completionPercentage: parseInt(formData.get('completionPercentage') as string) || 0,
+    status: (formData.get('status') as CreateProjectFormInput['status']) ?? 'proposal',
+    completionPercentage: parseInt(formData.get('completionPercentage') as string),
     repositoryUrl: (formData.get('repositoryUrl') as string) || undefined,
     productionUrl: (formData.get('productionUrl') as string) || undefined,
     stagingUrl: (formData.get('stagingUrl') as string) || undefined,
@@ -59,8 +54,7 @@ export async function createProjectAction(
   if (!parsed.success) {
     return {
       success: false,
-      message: 'Validation failed',
-      errors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      message: parsed.error.issues[0]?.message ?? 'Validation failed',
     };
   }
 
@@ -107,8 +101,8 @@ export async function updateProjectAction(
     name: formData.get('name') as string,
     description: (formData.get('description') as string) || undefined,
     clientId: formData.get('clientId') as string,
-    status: (formData.get('status') as UpdateProjectFormInput['status']) || undefined,
-    completionPercentage: parseInt(formData.get('completionPercentage') as string) || 0,
+    status: (formData.get('status') as UpdateProjectFormInput['status']) ?? undefined,
+    completionPercentage: parseInt(formData.get('completionPercentage') as string),
     repositoryUrl: (formData.get('repositoryUrl') as string) || undefined,
     productionUrl: (formData.get('productionUrl') as string) || undefined,
     stagingUrl: (formData.get('stagingUrl') as string) || undefined,
@@ -122,8 +116,7 @@ export async function updateProjectAction(
   if (!parsed.success) {
     return {
       success: false,
-      message: 'Validation failed',
-      errors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      message: parsed.error.issues[0]?.message ?? 'Validation failed',
     };
   }
 

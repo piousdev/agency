@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useTransition, useEffect } from 'react';
+
 import {
   DragDropContext,
   Draggable,
@@ -20,12 +22,13 @@ import {
   IconCircleX,
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
-import { useState, useTransition, useEffect } from 'react';
 import { toast } from 'sonner';
+
 import { Badge } from '@/components/ui/badge';
 import { updateClientFullAction } from '@/lib/actions/business-center/clients';
-import type { Client } from '@/lib/api/clients/types';
 import { cn } from '@/lib/utils';
+
+import type { Client } from '@/lib/api/clients/types';
 
 interface ClientsKanbanViewProps {
   clients: Client[];
@@ -59,7 +62,7 @@ const typeHeaderColors: Record<ClientType, string> = {
 export function ClientsKanbanView({
   clients: initialClients,
   onEdit,
-  onDelete,
+  onDelete: _onDelete,
   onViewDetail,
 }: ClientsKanbanViewProps) {
   const [isPending, startTransition] = useTransition();
@@ -166,7 +169,7 @@ export function ClientsKanbanView({
             newState[oldType] = sourceCol;
             return newState;
           });
-          toast.error(apiResult.error || 'Failed to update client type');
+          toast.error(apiResult.error ?? 'Failed to update client type');
         } else {
           toast.success(`Moved "${client.name}" to ${typeLabels[newType]}`);
         }
@@ -231,6 +234,14 @@ export function ClientsKanbanView({
                               isPending && draggingId === client.id && 'opacity-70'
                             )}
                             onClick={(e) => handleCardClick(client, e)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleCardClick(client, e as unknown as React.MouseEvent);
+                              }
+                            }}
+                            role="button"
+                            tabIndex={0}
                           >
                             {/* Card Header: Status + Drag Handle */}
                             <div className="flex items-center justify-between gap-2 mb-2">
@@ -253,7 +264,7 @@ export function ClientsKanbanView({
                                 )}
                                 <button
                                   type="button"
-                                  {...(dragProvided.dragHandleProps ?? {})}
+                                  {...(dragProvided.dragHandleProps)}
                                   className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing"
                                   onClick={(e) => e.stopPropagation()}
                                 >

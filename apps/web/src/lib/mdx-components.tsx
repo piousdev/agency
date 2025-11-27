@@ -1,8 +1,6 @@
 import React from 'react';
 
-type MDXComponentsType = {
-  [key: string]: React.ComponentType<any>;
-};
+type MDXComponentsType = Record<string, React.ComponentType<Record<string, unknown>>>;
 
 /**
  * Generate a URL-friendly slug from heading text
@@ -10,15 +8,27 @@ type MDXComponentsType = {
  */
 function slugify(children: React.ReactNode): string {
   // Convert React children to plain text
-  const text = typeof children === 'string' ? children : React.Children.toArray(children).join('');
+  const extractText = (node: React.ReactNode): string => {
+    if (typeof node === 'string') return node;
+    if (typeof node === 'number') return String(node);
+    if (Array.isArray(node)) return node.map(extractText).join('');
+    if (React.isValidElement(node)) {
+      const element = node as React.ReactElement<{ children?: React.ReactNode }>;
+      if (element.props.children) {
+        return extractText(element.props.children);
+      }
+    }
+    return '';
+  };
+
+  const text = extractText(children);
 
   return text
-    .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+    .replace(/\\-\\-+/g, '-') // Replace multiple - with single -
     .replace(/^-+/, '') // Trim - from start
     .replace(/-+$/, ''); // Trim - from end
 }
@@ -30,7 +40,7 @@ function slugify(children: React.ReactNode): string {
  */
 export const mdxComponents: MDXComponentsType = {
   // Headings with auto-generated IDs for anchor links
-  h1: ({ children }) => {
+  h1: ({ children }: { children?: React.ReactNode }) => {
     const id = slugify(children);
     return (
       <h1
@@ -41,7 +51,7 @@ export const mdxComponents: MDXComponentsType = {
       </h1>
     );
   },
-  h2: ({ children }) => {
+  h2: ({ children }: { children?: React.ReactNode }) => {
     const id = slugify(children);
     return (
       <h2
@@ -52,7 +62,7 @@ export const mdxComponents: MDXComponentsType = {
       </h2>
     );
   },
-  h3: ({ children }) => {
+  h3: ({ children }: { children?: React.ReactNode }) => {
     const id = slugify(children);
     return (
       <h3
@@ -63,7 +73,7 @@ export const mdxComponents: MDXComponentsType = {
       </h3>
     );
   },
-  h4: ({ children }) => {
+  h4: ({ children }: { children?: React.ReactNode }) => {
     const id = slugify(children);
     return (
       <h4
@@ -74,22 +84,24 @@ export const mdxComponents: MDXComponentsType = {
       </h4>
     );
   },
-  h5: ({ children }) => (
+  h5: ({ children }: { children?: React.ReactNode }) => (
     <h5 className="mb-2 mt-3 scroll-mt-20 text-lg font-semibold tracking-tight text-foreground">
       {children}
     </h5>
   ),
-  h6: ({ children }) => (
+  h6: ({ children }: { children?: React.ReactNode }) => (
     <h6 className="mb-2 mt-3 scroll-mt-20 text-base font-semibold tracking-tight text-foreground">
       {children}
     </h6>
   ),
 
   // Paragraphs
-  p: ({ children }) => <p className="mb-4 leading-7 text-muted-foreground">{children}</p>,
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="mb-4 leading-7 text-muted-foreground">{children}</p>
+  ),
 
   // Links
-  a: ({ href, children }) => (
+  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
     <a
       href={href}
       className="font-medium text-primary underline underline-offset-4 hover:opacity-80"
@@ -101,19 +113,19 @@ export const mdxComponents: MDXComponentsType = {
   ),
 
   // Lists
-  ul: ({ children }) => (
+  ul: ({ children }: { children?: React.ReactNode }) => (
     <ul className="mb-4 ml-6 list-disc space-y-2 text-muted-foreground">{children}</ul>
   ),
-  ol: ({ children }) => (
+  ol: ({ children }: { children?: React.ReactNode }) => (
     <ol className="mb-4 ml-6 list-decimal space-y-2 text-muted-foreground">{children}</ol>
   ),
-  li: ({ children }) => <li className="leading-7">{children}</li>,
+  li: ({ children }: { children?: React.ReactNode }) => <li className="leading-7">{children}</li>,
 
   // Code blocks
-  pre: ({ children }) => (
+  pre: ({ children }: { children?: React.ReactNode }) => (
     <pre className="mb-4 overflow-x-auto rounded-lg border bg-muted p-4">{children}</pre>
   ),
-  code: ({ children, className }) => {
+  code: ({ children, className }: { children?: React.ReactNode; className?: string }) => {
     // Check if this is an inline code block
     const isInline = !className;
 
@@ -128,8 +140,8 @@ export const mdxComponents: MDXComponentsType = {
     // Code block (inside pre)
     return (
       <code
-        className={`font-mono text-sm ${className ?? ''}`}
-        data-language={className?.replace('language-', '')}
+        className={`font-mono text-sm ${className}`}
+        data-language={className.replace('language-', '')}
       >
         {children}
       </code>
@@ -137,7 +149,7 @@ export const mdxComponents: MDXComponentsType = {
   },
 
   // Blockquotes
-  blockquote: ({ children }) => (
+  blockquote: ({ children }: { children?: React.ReactNode }) => (
     <blockquote className="mb-4 border-l-4 border-primary bg-accent p-4 italic text-muted-foreground">
       {children}
     </blockquote>
@@ -147,20 +159,27 @@ export const mdxComponents: MDXComponentsType = {
   hr: () => <hr className="my-8 border-border" />,
 
   // Tables
-  table: ({ children }) => (
+  table: ({ children }: { children?: React.ReactNode }) => (
     <div className="mb-4 overflow-x-auto">
       <table className="min-w-full divide-y divide-border">{children}</table>
     </div>
   ),
-  thead: ({ children }) => <thead className="bg-muted">{children}</thead>,
-  tbody: ({ children }) => <tbody className="divide-y divide-border bg-card">{children}</tbody>,
-  tr: ({ children }) => <tr>{children}</tr>,
-  th: ({ children }) => (
+  thead: ({ children }: { children?: React.ReactNode }) => (
+    <thead className="bg-muted">{children}</thead>
+  ),
+  tbody: ({ children }: { children?: React.ReactNode }) => (
+    <tbody className="divide-y divide-border bg-card">{children}</tbody>
+  ),
+  th: ({ children }: { children?: React.ReactNode }) => (
     <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">{children}</th>
   ),
-  td: ({ children }) => <td className="px-4 py-3 text-sm text-muted-foreground">{children}</td>,
+  td: ({ children }: { children?: React.ReactNode }) => (
+    <td className="px-4 py-3 text-sm text-muted-foreground">{children}</td>
+  ),
 
   // Strong and emphasis
-  strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
-  em: ({ children }) => <em className="italic">{children}</em>,
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold text-foreground">{children}</strong>
+  ),
+  em: ({ children }: { children?: React.ReactNode }) => <em className="italic">{children}</em>,
 };

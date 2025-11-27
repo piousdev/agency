@@ -1,13 +1,14 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { eq, sql } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
-import { request, requestHistory, client, project, user } from '../../db/schema';
+import { request, requestHistory, client, project } from '../../db/schema';
+import { broadcastIntakeCreated } from '../../lib/socket.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { createRequestSchema } from '../../schemas/request';
-import { eq, sql } from 'drizzle-orm';
-import { broadcastIntakeCreated } from '../../lib/socket.js';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -40,7 +41,7 @@ app.post(
 
     try {
       // Verify client exists if provided
-      if (body.clientId) {
+      if (body.clientId !== undefined && body.clientId !== '') {
         const clientExists = await db.query.client.findFirst({
           where: eq(client.id, body.clientId),
         });
@@ -50,7 +51,7 @@ app.post(
       }
 
       // Verify related project exists if provided
-      if (body.relatedProjectId) {
+      if (body.relatedProjectId !== undefined && body.relatedProjectId !== '') {
         const projectExists = await db.query.project.findFirst({
           where: eq(project.id, body.relatedProjectId),
         });
@@ -86,10 +87,15 @@ app.post(
         })
         .returning();
 
+      const firstRequest = newRequest[0];
+      if (!firstRequest) {
+        throw new HTTPException(500, { message: 'Failed to create request' });
+      }
+
       // Create history entry
       await db.insert(requestHistory).values({
         id: nanoid(),
-        requestId: newRequest[0]!.id,
+        requestId: firstRequest.id,
         actorId: currentUser.id,
         action: 'created',
         metadata: {
@@ -99,7 +105,7 @@ app.post(
 
       // Fetch the complete request with relations
       const createdRequest = await db.query.request.findFirst({
-        where: eq(request.id, newRequest[0]!.id),
+        where: eq(request.id, firstRequest.id),
         with: {
           requester: {
             columns: {
@@ -132,8 +138,8 @@ app.post(
             priority: createdRequest.priority,
             stage: createdRequest.stage,
             requesterId: createdRequest.requesterId,
-            requesterName: createdRequest.requester?.name || 'Unknown',
-            clientId: createdRequest.clientId || undefined,
+            requesterName: createdRequest.requester.name,
+            clientId: createdRequest.clientId ?? undefined,
             clientName: createdRequest.client?.name,
             createdAt: createdRequest.createdAt.toISOString(),
             updatedAt: createdRequest.updatedAt.toISOString(),

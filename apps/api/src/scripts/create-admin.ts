@@ -6,12 +6,14 @@
  */
 
 import 'dotenv/config';
-import { db } from '../db/index.js';
-import { user, account } from '../db/schema/index.js';
-import { eq } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
 import { createHash, scrypt } from 'crypto';
 import { promisify } from 'util';
+
+import { eq } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
+
+import { db } from '../db/index.js';
+import { user, account } from '../db/schema/index.js';
 
 const scryptAsync = promisify(scrypt);
 
@@ -32,16 +34,16 @@ async function createAdmin() {
     // Get admin credentials from environment variables
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const adminName = process.env.ADMIN_NAME || 'Admin User';
+    const adminName = process.env.ADMIN_NAME ?? 'Admin User';
 
     // Debug: log environment variables
     console.log('📋 Environment variables:');
-    console.log(`   ADMIN_EMAIL: ${adminEmail}`);
-    console.log(`   ADMIN_PASSWORD: ${adminPassword ? '[SET]' : '[NOT SET]'}`);
-    console.log(`   ADMIN_NAME (raw): "${process.env.ADMIN_NAME}"`);
+    console.log(`   ADMIN_EMAIL: ${adminEmail ?? '[NOT SET]'}`);
+    console.log(`   ADMIN_PASSWORD: ${adminPassword !== undefined && adminPassword !== '' ? '[SET]' : '[NOT SET]'}`);
+    console.log(`   ADMIN_NAME (raw): "${process.env.ADMIN_NAME ?? ''}"`);
     console.log(`   ADMIN_NAME (final): "${adminName}"\n`);
 
-    if (!adminEmail || !adminPassword) {
+    if (adminEmail === undefined || adminEmail === '' || adminPassword === undefined || adminPassword === '') {
       console.error('❌ Error: ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env');
       console.log('\nExample:');
       console.log('  ADMIN_EMAIL=admin@example.com');
@@ -72,8 +74,8 @@ async function createAdmin() {
       console.log(`⚠️  User with email ${adminEmail} already exists`);
       console.log(`   Current Name: ${existingUser.name}`);
       console.log(`   Current Role: ${existingUser.role}`);
-      console.log(`   Current Email Verified: ${existingUser.emailVerified}`);
-      console.log(`   Current Is Internal: ${existingUser.isInternal}\n`);
+      console.log(`   Current Email Verified: ${String(existingUser.emailVerified)}`);
+      console.log(`   Current Is Internal: ${String(existingUser.isInternal)}\n`);
 
       // Update user if any property is different
       const needsUpdate =

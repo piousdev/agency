@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
 import { CHANGELOG_SECTIONS } from './config';
 import { Content } from './content';
 import { Sidebar } from './sidebar';
 import { TableOfContents } from './table-of-contents';
+
+import type { ReactNode } from 'react';
 
 interface ChangelogProps {
   children: ReactNode;

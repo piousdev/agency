@@ -3,8 +3,9 @@
  * Tests for Zustand store actions and state management for intake pipeline
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
 import {
   useIntakeStore,
   selectViewMode,
@@ -13,19 +14,18 @@ import {
   selectSelectedIds,
   selectSelectedCount,
   selectHasActiveFilters,
-  type ViewMode,
-  type IntakeFilters,
 } from '../intake-store';
 
 // Mock localStorage
 const mockLocalStorage = (() => {
   let store: Record<string, string> = {};
   return {
-    getItem: vi.fn((key: string) => store[key] || null),
+    getItem: vi.fn((key: string) => store[key] ?? null),
     setItem: vi.fn((key: string, value: string) => {
       store[key] = value;
     }),
     removeItem: vi.fn((key: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete store[key];
     }),
     clear: vi.fn(() => {

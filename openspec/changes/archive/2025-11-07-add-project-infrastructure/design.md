@@ -2,7 +2,8 @@
 
 ## Context
 
-The Skyll Platform needs a scalable, type-safe, and developer-friendly infrastructure that can support:
+The Skyll Platform needs a scalable, type-safe, and developer-friendly
+infrastructure that can support:
 
 - 1M+ users globally (high scale requirement)
 - Multiple client types and team roles with complex permissions
@@ -14,7 +15,8 @@ The Skyll Platform needs a scalable, type-safe, and developer-friendly infrastru
 
 - Must use modern, actively maintained technologies
 - Must support TypeScript throughout the stack
-- Must integrate with Cloudflare (R2, Durable Objects), Upstash (QStash), and other services
+- Must integrate with Cloudflare (R2, Durable Objects), Upstash (QStash), and
+  other services
 - Must deploy on Fly.io
 - Must be monorepo-compatible for code sharing
 
@@ -46,15 +48,21 @@ The Skyll Platform needs a scalable, type-safe, and developer-friendly infrastru
 
 ### Decision 1: Next.js 16 with App Router
 
-**What**: Use Next.js 16 (latest, released in 2025) with App Router and React 19.2
+**What**: Use Next.js 16 (latest, released in 2025) with App Router and React
+19.2
 
 **Why**:
 
-- **Turbopack is now stable and default** - significantly faster builds than Webpack
-- **React 19.2** includes latest features: useActionState, useFormStatus, useOptimistic
-- **App Router maturity** - server components, parallel routes, intercepting routes fully supported
-- **Async Request APIs** - cookies(), headers(), params are now async (better for edge runtime)
-- **Built-in optimizations** - automatic image optimization, font optimization, code splitting
+- **Turbopack is now stable and default** - significantly faster builds than
+  Webpack
+- **React 19.2** includes latest features: useActionState, useFormStatus,
+  useOptimistic
+- **App Router maturity** - server components, parallel routes, intercepting
+  routes fully supported
+- **Async Request APIs** - cookies(), headers(), params are now async (better
+  for edge runtime)
+- **Built-in optimizations** - automatic image optimization, font optimization,
+  code splitting
 
 **Key Features for Skyll Platform**:
 
@@ -66,8 +74,10 @@ The Skyll Platform needs a scalable, type-safe, and developer-friendly infrastru
 **Alternatives Considered**:
 
 - **Remix** - Good SSR story, but smaller ecosystem than Next.js, less tooling
-- **SvelteKit** - Excellent performance, but team expertise and hiring favor React
-- **Vite + React SPA** - Simpler but loses SSR benefits, worse initial load times
+- **SvelteKit** - Excellent performance, but team expertise and hiring favor
+  React
+- **Vite + React SPA** - Simpler but loses SSR benefits, worse initial load
+  times
 
 ### Decision 2: Hono for Backend API
 
@@ -75,11 +85,16 @@ The Skyll Platform needs a scalable, type-safe, and developer-friendly infrastru
 
 **Why**:
 
-- **Ultrafast** - Built on Web Standards, minimal overhead (14kB with zero dependencies for tiny preset)
-- **Edge-first** - Works seamlessly with Cloudflare Workers (we use Durable Objects)
-- **TypeScript-first** - Excellent type inference, Hono RPC for end-to-end type safety
-- **Middleware ecosystem** - Built-in middleware for common tasks (auth, CORS, rate limiting)
-- **Runtime agnostic** - Works on Node.js, Bun, Deno, Edge (Fly.io compatibility)
+- **Ultrafast** - Built on Web Standards, minimal overhead (14kB with zero
+  dependencies for tiny preset)
+- **Edge-first** - Works seamlessly with Cloudflare Workers (we use Durable
+  Objects)
+- **TypeScript-first** - Excellent type inference, Hono RPC for end-to-end type
+  safety
+- **Middleware ecosystem** - Built-in middleware for common tasks (auth, CORS,
+  rate limiting)
+- **Runtime agnostic** - Works on Node.js, Bun, Deno, Edge (Fly.io
+  compatibility)
 
 **Hono RPC Integration**:
 
@@ -92,7 +107,8 @@ The Skyll Platform needs a scalable, type-safe, and developer-friendly infrastru
 - **Express** - Too slow, not TypeScript-first, larger bundle
 - **Fastify** - Good performance, but less edge-compatible, heavier than Hono
 - **tRPC** - Excellent DX, but requires more boilerplate, Hono RPC is simpler
-- **Next.js API Routes only** - Couples frontend and backend too tightly, harder to scale independently
+- **Next.js API Routes only** - Couples frontend and backend too tightly, harder
+  to scale independently
 
 ### Decision 3: Turborepo for Monorepo Management
 
@@ -100,10 +116,12 @@ The Skyll Platform needs a scalable, type-safe, and developer-friendly infrastru
 
 **Why**:
 
-- **Task orchestration** - Runs tasks in parallel across packages with dependency awareness
+- **Task orchestration** - Runs tasks in parallel across packages with
+  dependency awareness
 - **Caching** - Remote and local caching dramatically speeds up CI/CD
 - **Simple configuration** - turbo.json is intuitive, minimal setup
-- **pnpm integration** - Efficient disk usage, fast installs, workspace protocol support
+- **pnpm integration** - Efficient disk usage, fast installs, workspace protocol
+  support
 
 **Monorepo Structure**:
 
@@ -142,22 +160,27 @@ packages/
 **Why Neon**:
 
 - **Serverless Postgres** - Auto-scaling, pay for what you use
-- **Branching** - Database branches for preview environments (perfect for Fly.io)
+- **Branching** - Database branches for preview environments (perfect for
+  Fly.io)
 - **Fast cold starts** - Critical for edge deployments
 - **Connection pooling** - Built-in, handles 1M+ users scale
 
 **Connection Strategy**:
 
-- Use `@neondatabase/serverless` with `drizzle-orm/neon-http` for synchronous queries
+- Use `@neondatabase/serverless` with `drizzle-orm/neon-http` for synchronous
+  queries
 - HTTP-based queries work well with edge runtimes and Fly.io
 - Session/transaction support when needed
 
 **Alternatives Considered**:
 
-- **Prisma** - Popular but slower runtime, heavier abstractions, worse edge support
+- **Prisma** - Popular but slower runtime, heavier abstractions, worse edge
+  support
 - **TypeORM** - Good but outdated patterns, slower than Drizzle
-- **Kysely** - Excellent SQL builder, but Drizzle has better DX for schema management
-- **Supabase** - Good product, but we need Neon's branching and Fly.io compatibility
+- **Kysely** - Excellent SQL builder, but Drizzle has better DX for schema
+  management
+- **Supabase** - Good product, but we need Neon's branching and Fly.io
+  compatibility
 
 ### Decision 5: TypeScript Configuration Strategy
 
@@ -171,9 +194,12 @@ packages/
 
 **Configs**:
 
-- `base.json` - Shared strict settings (strict: true, noUncheckedIndexedAccess, etc.)
-- `nextjs.json` - Extends base, adds Next.js-specific settings (jsx: "preserve", etc.)
-- `node.json` - Extends base, adds Node.js settings (module: "ESNext", moduleResolution: "bundler")
+- `base.json` - Shared strict settings (strict: true, noUncheckedIndexedAccess,
+  etc.)
+- `nextjs.json` - Extends base, adds Next.js-specific settings (jsx: "preserve",
+  etc.)
+- `node.json` - Extends base, adds Node.js settings (module: "ESNext",
+  moduleResolution: "bundler")
 
 **TypeScript 5.1+ Required**:
 
@@ -276,11 +302,16 @@ packages/
 5. Configure Drizzle + Neon connection
 6. Verify builds and dev mode work
 
-**Phase 2: Tooling (Week 1-2)** 7. Set up ESLint + Prettier 8. Configure Vitest for both apps 9. Set up Playwright for E2E tests 10. Add basic smoke tests
+**Phase 2: Tooling (Week 1-2)** 7. Set up ESLint + Prettier 8. Configure Vitest
+for both apps 9. Set up Playwright for E2E tests 10. Add basic smoke tests
 
-**Phase 3: Deployment (Week 2)** 11. Configure Fly.io for API 12. Configure Fly.io for Web app 13. Set up CI/CD (GitHub Actions) 14. Deploy to staging, verify
+**Phase 3: Deployment (Week 2)** 11. Configure Fly.io for API 12. Configure
+Fly.io for Web app 13. Set up CI/CD (GitHub Actions) 14. Deploy to staging,
+verify
 
-**Phase 4: Developer Experience (Week 2)** 15. Write comprehensive README 16. Document development workflow 17. Set up VS Code recommended extensions 18. Create contribution guidelines
+**Phase 4: Developer Experience (Week 2)** 15. Write comprehensive README 16.
+Document development workflow 17. Set up VS Code recommended extensions 18.
+Create contribution guidelines
 
 **Rollback Plan**:
 

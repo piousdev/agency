@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requirePermission, Permissions } from '@/lib/auth/permissions';
+
 import {
   createLabel,
   updateLabel,
@@ -11,6 +11,7 @@ import {
   assignLabelsToProject,
   removeLabelsFromProject,
 } from '@/lib/api/labels';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createLabelSchema, updateLabelSchema } from '@/lib/schemas/label';
 
 /**
@@ -36,9 +37,9 @@ export async function createLabelAction(
   // Validate with Zod
   const parsed = createLabelSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
@@ -89,9 +90,9 @@ export async function updateLabelAction(
   // Validate with Zod
   const parsed = updateLabelSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {

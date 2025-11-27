@@ -3,9 +3,11 @@
  * Tests requireAuth, requireRole, requireUser, isAuthenticated, etc.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import {
   getSession,
   requireAuth,
@@ -54,13 +56,13 @@ describe('Session Auth Utilities', () => {
 
       // Mock headers
       vi.mocked(headers).mockResolvedValue(
-        new Map([['cookie', 'auth_session=valid-session-cookie']]) as any
+        new Map([['cookie', 'auth_session=valid-session-cookie']]) as unknown as Headers
       );
 
       // Mock successful API response
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSessionData,
+        json: () => Promise.resolve(mockSessionData),
       } as Response);
 
       const session = await getSession();
@@ -78,7 +80,7 @@ describe('Session Auth Utilities', () => {
     });
 
     it('should return null when not authenticated', async () => {
-      vi.mocked(headers).mockResolvedValue(new Map() as any);
+      vi.mocked(headers).mockResolvedValue(new Map() as unknown as Headers);
 
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
@@ -91,11 +93,13 @@ describe('Session Auth Utilities', () => {
     });
 
     it('should return null when session data is invalid', async () => {
-      vi.mocked(headers).mockResolvedValue(new Map([['cookie', 'auth_session=invalid']]) as any);
+      vi.mocked(headers).mockResolvedValue(
+        new Map([['cookie', 'auth_session=invalid']]) as unknown as Headers
+      );
 
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ invalid: 'data' }),
+        json: () => Promise.resolve({ invalid: 'data' }),
       } as Response);
 
       const session = await getSession();
@@ -104,9 +108,11 @@ describe('Session Auth Utilities', () => {
     });
 
     it('should return null and log error when fetch fails', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        /* empty */
+      });
 
-      vi.mocked(headers).mockResolvedValue(new Map() as any);
+      vi.mocked(headers).mockResolvedValue(new Map() as unknown as Headers);
       vi.mocked(global.fetch).mockRejectedValueOnce(new Error('Network error'));
 
       const session = await getSession();
@@ -138,10 +144,12 @@ describe('Session Auth Utilities', () => {
         },
       };
 
-      vi.mocked(headers).mockResolvedValue(new Map([['cookie', 'auth_session=valid']]) as any);
+      vi.mocked(headers).mockResolvedValue(
+        new Map([['cookie', 'auth_session=valid']]) as unknown as Headers
+      );
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSessionData,
+        json: () => Promise.resolve(mockSessionData),
       } as Response);
 
       const session = await requireAuth();
@@ -151,7 +159,7 @@ describe('Session Auth Utilities', () => {
     });
 
     it('should redirect to /login when not authenticated', async () => {
-      vi.mocked(headers).mockResolvedValue(new Map() as any);
+      vi.mocked(headers).mockResolvedValue(new Map() as unknown as Headers);
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
       } as Response);
@@ -161,7 +169,7 @@ describe('Session Auth Utilities', () => {
     });
 
     it('should redirect to /login with returnUrl when provided', async () => {
-      vi.mocked(headers).mockResolvedValue(new Map() as any);
+      vi.mocked(headers).mockResolvedValue(new Map() as unknown as Headers);
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
       } as Response);
@@ -189,13 +197,16 @@ describe('Session Auth Utilities', () => {
           createdAt: '2025-01-01T00:00:00.000Z',
           updatedAt: '2025-01-01T00:00:00.000Z',
           isInternal: true,
+          role: 'internal',
         },
       };
 
-      vi.mocked(headers).mockResolvedValue(new Map([['cookie', 'auth_session=valid']]) as any);
+      vi.mocked(headers).mockResolvedValue(
+        new Map([['cookie', 'auth_session=valid']]) as unknown as Headers
+      );
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSessionData,
+        json: () => Promise.resolve(mockSessionData),
       } as Response);
 
       const session = await requireRole('internal');
@@ -223,17 +234,19 @@ describe('Session Auth Utilities', () => {
         },
       };
 
-      vi.mocked(headers).mockResolvedValue(new Map([['cookie', 'auth_session=valid']]) as any);
+      vi.mocked(headers).mockResolvedValue(
+        new Map([['cookie', 'auth_session=valid']]) as unknown as Headers
+      );
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSessionData,
+        json: () => Promise.resolve(mockSessionData),
       } as Response);
 
       await expect(requireRole('internal')).rejects.toThrow('Insufficient permissions');
     });
 
     it('should redirect when not authenticated', async () => {
-      vi.mocked(headers).mockResolvedValue(new Map() as any);
+      vi.mocked(headers).mockResolvedValue(new Map() as unknown as Headers);
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
       } as Response);
@@ -263,10 +276,12 @@ describe('Session Auth Utilities', () => {
         },
       };
 
-      vi.mocked(headers).mockResolvedValue(new Map([['cookie', 'auth_session=valid']]) as any);
+      vi.mocked(headers).mockResolvedValue(
+        new Map([['cookie', 'auth_session=valid']]) as unknown as Headers
+      );
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSessionData,
+        json: () => Promise.resolve(mockSessionData),
       } as Response);
 
       const user = await requireUser();
@@ -276,7 +291,7 @@ describe('Session Auth Utilities', () => {
     });
 
     it('should redirect when not authenticated', async () => {
-      vi.mocked(headers).mockResolvedValue(new Map() as any);
+      vi.mocked(headers).mockResolvedValue(new Map() as unknown as Headers);
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
       } as Response);
@@ -306,10 +321,12 @@ describe('Session Auth Utilities', () => {
         },
       };
 
-      vi.mocked(headers).mockResolvedValue(new Map([['cookie', 'auth_session=valid']]) as any);
+      vi.mocked(headers).mockResolvedValue(
+        new Map([['cookie', 'auth_session=valid']]) as unknown as Headers
+      );
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSessionData,
+        json: () => Promise.resolve(mockSessionData),
       } as Response);
 
       const authenticated = await isAuthenticated();
@@ -318,7 +335,7 @@ describe('Session Auth Utilities', () => {
     });
 
     it('should return false when not authenticated', async () => {
-      vi.mocked(headers).mockResolvedValue(new Map() as any);
+      vi.mocked(headers).mockResolvedValue(new Map() as unknown as Headers);
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
       } as Response);

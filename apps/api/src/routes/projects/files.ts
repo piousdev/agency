@@ -1,10 +1,11 @@
+import { desc, eq, and } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
 import { activity, file, project } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
-import { desc, eq, and } from 'drizzle-orm';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -60,7 +61,10 @@ app.get('/:id/files', requireAuth(), requireInternal(), async (c) => {
 app.delete('/:id/files/:fileId', requireAuth(), requireInternal(), async (c) => {
   const projectId = c.req.param('id');
   const fileId = c.req.param('fileId');
-  const user = c.get('user')!;
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
 
   try {
     // Verify file exists and belongs to this project

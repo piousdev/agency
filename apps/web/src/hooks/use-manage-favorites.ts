@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-export type FavoriteItem = {
+export interface FavoriteItem {
   id: string;
   type: 'page' | 'project' | 'client' | 'issue';
   title: string;
   url: string;
   timestamp: number;
-};
+}
 
 const STORAGE_KEY = 'skyll-favorites';
 const MAX_FAVORITES = 50;

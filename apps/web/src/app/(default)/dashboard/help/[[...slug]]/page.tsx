@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+
 import { Help } from '@/components/help';
 import { findSectionByPath, HELP_SECTIONS } from '@/components/help/config';
 import { loadMDXFile } from '@/lib/mdx';
@@ -46,7 +47,7 @@ export default async function HelpPage({ params }: HelpPageProps) {
   // Find the section in config
   const section = findSectionByPath(HELP_SECTIONS, helpSlug);
 
-  if (!section || !section.file) {
+  if (!section?.file) {
     notFound();
   }
 
@@ -73,9 +74,8 @@ export default async function HelpPage({ params }: HelpPageProps) {
  * This enables static generation at build time for better performance
  */
 export function generateStaticParams() {
-  // Return empty array to enable dynamic routing
-  // TODO: Add static paths when content structure is finalized
-  return [];
+  // Return at least one param for the root help page
+  return [{ slug: [] }];
 }
 
 /**

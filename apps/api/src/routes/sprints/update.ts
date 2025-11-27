@@ -2,9 +2,10 @@
  * Update sprint API route
  */
 
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { eq } from 'drizzle-orm';
+
 import { db } from '../../db/index.js';
 import { sprint, type Sprint } from '../../db/schema/sprint.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth.js';
@@ -35,9 +36,15 @@ app.patch('/:id', requireAuth(), requireInternal(), async (c) => {
       return c.json({ success: false, message: 'Sprint not found' }, 404);
     }
 
-    const body = await c.req.json();
-    const { name, goal, status, startDate, endDate, plannedPoints, completedPoints, sprintNumber } =
-      body;
+    const body: unknown = await c.req.json();
+    const name = (body as Record<string, unknown>).name as string | undefined;
+    const goal = (body as Record<string, unknown>).goal as string | undefined;
+    const status = (body as Record<string, unknown>).status as string | undefined;
+    const startDate = (body as Record<string, unknown>).startDate as string | undefined;
+    const endDate = (body as Record<string, unknown>).endDate as string | undefined;
+    const plannedPoints = (body as Record<string, unknown>).plannedPoints as number | undefined;
+    const completedPoints = (body as Record<string, unknown>).completedPoints as number | undefined;
+    const sprintNumber = (body as Record<string, unknown>).sprintNumber as number | undefined;
 
     // Build update object with proper types
     const updates: Partial<{
@@ -55,10 +62,10 @@ app.patch('/:id', requireAuth(), requireInternal(), async (c) => {
     };
 
     if (name !== undefined) updates.name = name.trim();
-    if (goal !== undefined) updates.goal = goal?.trim() || null;
+    if (goal !== undefined) updates.goal = goal.trim() !== '' ? goal.trim() : null;
     if (status !== undefined) updates.status = status as SprintStatus;
-    if (startDate !== undefined) updates.startDate = startDate ? new Date(startDate) : null;
-    if (endDate !== undefined) updates.endDate = endDate ? new Date(endDate) : null;
+    if (startDate !== undefined) updates.startDate = startDate !== '' ? new Date(startDate) : null;
+    if (endDate !== undefined) updates.endDate = endDate !== '' ? new Date(endDate) : null;
     if (plannedPoints !== undefined) updates.plannedPoints = plannedPoints;
     if (completedPoints !== undefined) updates.completedPoints = completedPoints;
     if (sprintNumber !== undefined) updates.sprintNumber = sprintNumber;

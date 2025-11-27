@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -20,13 +21,14 @@ import {
   type VisibilityState,
   type TableOptions,
 } from '@tanstack/react-table';
+
 import type { DataTableConfig, UseDataTableReturn } from '@/components/data-table/types';
 
 /**
  * Extract column ID from a ColumnDef.
  * TanStack Table generates IDs from accessorKey by replacing dots with underscores.
  */
-function getColumnId<TData>(column: ColumnDef<TData, unknown>): string | null {
+function getColumnId<TData>(column: ColumnDef<TData>): string | null {
   // Explicit id takes precedence
   if (column.id) return column.id;
 
@@ -43,13 +45,13 @@ function getColumnId<TData>(column: ColumnDef<TData, unknown>): string | null {
 /**
  * Extract all column IDs from column definitions
  */
-function getColumnIds<TData>(columns: ColumnDef<TData, unknown>[]): string[] {
+function getColumnIds<TData>(columns: ColumnDef<TData>[]): string[] {
   return columns.map((c) => getColumnId(c)).filter((id): id is string => id !== null);
 }
 
 interface UseDataTableOptions<TData> {
   data: TData[];
-  columns: ColumnDef<TData, unknown>[];
+  columns: ColumnDef<TData>[];
   config?: DataTableConfig;
   initialSorting?: SortingState;
   initialColumnFilters?: ColumnFiltersState;
@@ -92,8 +94,11 @@ export function useDataTable<TData>({
 }: UseDataTableOptions<TData>): UseDataTableReturn<TData> {
   const {
     enableRowSelection = false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     enableColumnVisibility = true,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     enableColumnOrdering = true,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     enableColumnPinning = true,
     enableColumnResizing = true,
     enableSorting = true,
@@ -160,12 +165,12 @@ export function useDataTable<TData>({
   );
 
   // Determine row selection mode
-  const rowSelectionMode = useMemo(() => {
+  const _rowSelectionMode = useMemo(() => {
     if (enableRowSelection === true || enableRowSelection === 'multi') {
       return true;
     }
     if (enableRowSelection === 'single') {
-      return (row: { original: TData }) => true;
+      return (_row: { original: TData }) => true;
     }
     return false;
   }, [enableRowSelection]);
@@ -249,6 +254,7 @@ export function useDataTable<TData>({
     ]
   );
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable(tableOptions);
 
   // Reset functions

@@ -4,6 +4,7 @@
  */
 
 import { buildApiUrl, getAuthHeaders } from './api-utils';
+
 import type { ListTicketsParams, PaginatedTicketsResponse } from './types';
 
 /**
@@ -35,13 +36,13 @@ export async function listTickets(
   if (!response.ok) {
     let errorMessage: string;
     try {
-      const errorData = await response.json();
-      errorMessage = errorData.error || errorData.message || `Request failed (${response.status})`;
+      const errorData = (await response.json()) as { error?: string; message?: string };
+      errorMessage = errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
     } catch {
-      errorMessage = `Request failed (${response.status})`;
+      errorMessage = `Request failed (${String(response.status)})`;
     }
     throw new Error(errorMessage);
   }
 
-  return response.json();
+  return (await response.json()) as PaginatedTicketsResponse;
 }

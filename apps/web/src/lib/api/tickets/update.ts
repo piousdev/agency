@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { TicketResponse, UpdateTicketInput } from './types';
 
 /**
@@ -21,17 +22,17 @@ export async function updateTicket(
 ): Promise<TicketResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${ticketId}`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/tickets/${ticketId}`, {
     method: 'PATCH',
     headers: authHeaders,
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { message?: string } & Partial<TicketResponse>;
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to update ticket');
+    throw new Error(result.message ?? 'Failed to update ticket');
   }
 
-  return result;
+  return result as TicketResponse;
 }

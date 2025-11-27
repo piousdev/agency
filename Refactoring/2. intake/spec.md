@@ -13,7 +13,10 @@
 
 ### 1.1 Primary Purpose
 
-The Intake navigation serves as the centralized gateway where all new work requests enter the Skyll platform. It provides a structured workflow for reviewing, triaging, estimating, and routing requests to the appropriate execution pipeline (Projects or Work sections).
+The Intake navigation serves as the centralized gateway where all new work
+requests enter the Skyll platform. It provides a structured workflow for
+reviewing, triaging, estimating, and routing requests to the appropriate
+execution pipeline (Projects or Work sections).
 
 ### 1.2 Core Objectives
 
@@ -96,7 +99,8 @@ The Intake navigation serves as the centralized gateway where all new work reque
 
 ### 3.1 Stage 1: In Treatment
 
-**Purpose**: Initial holding area for all newly submitted requests awaiting PM review and triage.
+**Purpose**: Initial holding area for all newly submitted requests awaiting PM
+review and triage.
 
 **Entry Criteria**:
 
@@ -108,7 +112,8 @@ The Intake navigation serves as the centralized gateway where all new work reque
 
 - PM reviews request details
 - PM assesses urgency and priority
-- PM categorizes request type (new feature, bug fix, change request, content, etc.)
+- PM categorizes request type (new feature, bug fix, change request, content,
+  etc.)
 - PM may contact requester for clarification
 - PM makes initial feasibility assessment
 - PM may reject/close obviously out-of-scope requests
@@ -133,7 +138,8 @@ The Intake navigation serves as the centralized gateway where all new work reque
 
 ### 3.2 Stage 2: On Hold
 
-**Purpose**: Temporary parking for requests awaiting additional information or decisions from requesters or external dependencies.
+**Purpose**: Temporary parking for requests awaiting additional information or
+decisions from requesters or external dependencies.
 
 **Entry Criteria**:
 
@@ -173,7 +179,8 @@ The Intake navigation serves as the centralized gateway where all new work reque
 
 ### 3.3 Stage 3: Estimation
 
-**Purpose**: Team assigns story points to requests to determine scope and enable routing decisions.
+**Purpose**: Team assigns story points to requests to determine scope and enable
+routing decisions.
 
 **Entry Criteria**:
 
@@ -186,7 +193,8 @@ The Intake navigation serves as the centralized gateway where all new work reque
 - Assigned team member reviews request details
 - Team member analyzes technical complexity
 - Team member considers unknowns and dependencies
-- Team member assigns story points using Fibonacci scale (0, 1, 2, 3, 5, 8, 13, 20, 40, 100)
+- Team member assigns story points using Fibonacci scale (0, 1, 2, 3, 5, 8, 13,
+  20, 40, 100)
 - Multiple estimates may be gathered and averaged if needed
 - Team member adds technical notes or concerns
 - PM reviews and approves estimate
@@ -221,7 +229,8 @@ The Intake navigation serves as the centralized gateway where all new work reque
 
 ### 3.4 Stage 4: Ready
 
-**Purpose**: Estimated requests awaiting PM's routing decision to Projects or Work sections.
+**Purpose**: Estimated requests awaiting PM's routing decision to Projects or
+Work sections.
 
 **Entry Criteria**:
 
@@ -360,7 +369,8 @@ ELSE IF Story Points 0-8:
 
 ### 4.2 Change Request Workflow
 
-**Definition**: A change request is a modification to existing work (project or task).
+**Definition**: A change request is a modification to existing work (project or
+task).
 
 **Identification**:
 
@@ -386,7 +396,8 @@ ELSE IF Story Points 0-8:
 
 ### 4.3 Bulk Request Submission
 
-**Use Case**: PM or Admin needs to enter multiple requests at once (e.g., from client meeting)
+**Use Case**: PM or Admin needs to enter multiple requests at once (e.g., from
+client meeting)
 
 **Process**:
 
@@ -403,7 +414,8 @@ ELSE IF Story Points 0-8:
 
 ### 5.1 Estimation Dashboard
 
-**Purpose**: Centralized view for team members to see and complete estimation assignments.
+**Purpose**: Centralized view for team members to see and complete estimation
+assignments.
 
 **Access**: Team members see only their assigned estimates; PM/Admin see all
 
@@ -739,7 +751,8 @@ ELSE IF Story Points 0-8:
 
 ### 8.3 Capacity Management
 
-**Purpose**: Prevent intake bottleneck by monitoring capacity to accept new requests
+**Purpose**: Prevent intake bottleneck by monitoring capacity to accept new
+requests
 
 **Capacity Calculation**:
 
@@ -1396,15 +1409,18 @@ Intake Capacity = Available Capacity / Average Story Points per Request
 
 ## 17. Glossary
 
-**Intake**: The process and system for receiving, evaluating, and routing new work requests
+**Intake**: The process and system for receiving, evaluating, and routing new
+work requests
 
 **Request**: A submission for new work, changes, or services
 
 **Triage**: The process of reviewing and categorizing requests
 
-**Story Points**: Estimation unit using Fibonacci sequence indicating effort/complexity
+**Story Points**: Estimation unit using Fibonacci sequence indicating
+effort/complexity
 
-**Routing**: Decision to send request to Projects (13+ points) or Work (0-8 points)
+**Routing**: Decision to send request to Projects (13+ points) or Work (0-8
+points)
 
 **Change Request**: Request to modify existing work (always becomes Task)
 
@@ -1416,7 +1432,8 @@ Intake Capacity = Available Capacity / Average Story Points per Request
 
 **Estimation**: Process of assigning story points to requests
 
-**Confidence Level**: Estimator's certainty about their estimate (High/Medium/Low)
+**Confidence Level**: Estimator's certainty about their estimate
+(High/Medium/Low)
 
 ---
 

@@ -1,8 +1,10 @@
 'use client';
 
 import * as React from 'react';
+
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
+
 import {
   fetchDashboardPreferences,
   updateDashboardPreferences,
@@ -197,7 +199,7 @@ interface DashboardState {
 
   // Async actions
   initialize: () => Promise<void>;
-  saveToDatabase: () => Promise<void>;
+  saveToDatabase: () => void;
 
   // Sync actions
   setLayout: (layout: WidgetLayout[]) => void;
@@ -210,7 +212,7 @@ interface DashboardState {
   applyPreset: (role: string) => void;
   resetToDefault: () => Promise<void>;
   setWidgetConfig: (widgetId: string, config: Record<string, unknown>) => void;
-  getWidgetConfig: <T extends Record<string, unknown>>(widgetId: string, widgetType: string) => T;
+  getWidgetConfig: (widgetId: string, widgetType: string) => Record<string, unknown>;
 
   // Helpers
   getDefaultLayoutForRole: (role: string) => WidgetLayout[];
@@ -243,10 +245,10 @@ export const useDashboardStore = create<DashboardState>()(
         try {
           const result = await fetchDashboardPreferences();
 
-          if (result.success && result.data) {
+          if (result.success) {
             set({
               layout: result.data.layout,
-              collapsedWidgets: result.data.collapsedWidgets || [],
+              collapsedWidgets: result.data.collapsedWidgets,
               isLoading: false,
               isInitialized: true,
             });
@@ -255,7 +257,7 @@ export const useDashboardStore = create<DashboardState>()(
             set({
               isLoading: false,
               isInitialized: true,
-              error: result.success === false ? result.error : null,
+              error: result.error,
             });
           }
         } catch (error) {
@@ -269,7 +271,7 @@ export const useDashboardStore = create<DashboardState>()(
       },
 
       // Save to database (debounced)
-      saveToDatabase: async () => {
+      saveToDatabase: () => {
         const state = get();
 
         // Clear existing timeout
@@ -278,23 +280,25 @@ export const useDashboardStore = create<DashboardState>()(
         }
 
         // Debounce the save
-        saveTimeout = setTimeout(async () => {
+        saveTimeout = setTimeout(() => {
           set({ isSaving: true });
 
-          try {
-            const result = await updateDashboardPreferences({
-              layout: state.layout,
-              collapsedWidgets: state.collapsedWidgets,
-            });
+          void (async () => {
+            try {
+              const result = await updateDashboardPreferences({
+                layout: state.layout,
+                collapsedWidgets: state.collapsedWidgets,
+              });
 
-            if (!result.success) {
-              console.error('Failed to save preferences:', result.error);
+              if (!result.success) {
+                console.error('Failed to save preferences:', result.error);
+              }
+            } catch (error) {
+              console.error('Failed to save preferences:', error);
+            } finally {
+              set({ isSaving: false });
             }
-          } catch (error) {
-            console.error('Failed to save preferences:', error);
-          } finally {
-            set({ isSaving: false });
-          }
+          })();
         }, SAVE_DEBOUNCE_MS);
       },
 
@@ -385,10 +389,10 @@ export const useDashboardStore = create<DashboardState>()(
         try {
           const result = await resetToDefaultPreferences();
 
-          if (result.success && result.data) {
+          if (result.success) {
             set({
               layout: result.data.layout,
-              collapsedWidgets: result.data.collapsedWidgets || [],
+              collapsedWidgets: result.data.collapsedWidgets,
               widgetConfigs: {},
               isLoading: false,
             });
@@ -424,20 +428,20 @@ export const useDashboardStore = create<DashboardState>()(
       },
 
       // Get widget configuration with defaults
-      getWidgetConfig: <T extends Record<string, unknown>>(
-        widgetId: string,
-        widgetType: string
-      ): T => {
+      getWidgetConfig: (widgetId: string, widgetType: string): Record<string, unknown> => {
         const state = get();
         const customConfig = state.widgetConfigs[widgetId];
-        const defaultConfig = DEFAULT_WIDGET_CONFIGS[widgetType] || {};
-        return { ...defaultConfig, ...customConfig } as T;
+        const defaultConfig = DEFAULT_WIDGET_CONFIGS[widgetType];
+        return { ...defaultConfig, ...customConfig };
       },
 
       // Get default layout for a role
       getDefaultLayoutForRole: (role) => {
-        const roleKey = role.toLowerCase() as RoleKey;
-        return DEFAULT_LAYOUTS[roleKey] ?? DEFAULT_LAYOUTS.developer;
+        const roleKey = role.toLowerCase();
+        if (roleKey in DEFAULT_LAYOUTS) {
+          return DEFAULT_LAYOUTS[roleKey as RoleKey];
+        }
+        return DEFAULT_LAYOUTS.developer;
       },
     })),
     { name: 'DashboardStore' }
@@ -454,12 +458,9 @@ export const useIsSaving = () => useDashboardStore((state) => state.isSaving);
 export const useIsInitialized = () => useDashboardStore((state) => state.isInitialized);
 
 // Hook to get config for a specific widget
-export function useWidgetConfig<T extends Record<string, unknown>>(
-  widgetId: string,
-  widgetType: string
-): T {
+export function useWidgetConfig(widgetId: string, widgetType: string): Record<string, unknown> {
   const { getWidgetConfig } = useDashboardStore();
-  return getWidgetConfig<T>(widgetId, widgetType);
+  return getWidgetConfig(widgetId, widgetType);
 }
 
 // Initialize hook for use in components
@@ -470,7 +471,7 @@ export function useDashboardInit() {
   React.useEffect(() => {
     if (!isInitialized && !isLoading && !hasStartedInit) {
       setHasStartedInit(true);
-      initialize();
+      void initialize();
     }
   }, [isInitialized, isLoading, hasStartedInit, initialize]);
 

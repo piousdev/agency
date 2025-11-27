@@ -3,6 +3,7 @@
  */
 
 import { cookies } from 'next/headers';
+
 import type { LabelResponse } from './types';
 
 /**
@@ -16,8 +17,9 @@ export async function getLabel(labelId: string): Promise<LabelResponse> {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
   const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/labels/${labelId}`, {
+  const response = await fetch(`${apiUrl}/api/labels/${labelId}`, {
     headers: {
       Cookie: cookieHeader,
     },
@@ -25,9 +27,11 @@ export async function getLabel(labelId: string): Promise<LabelResponse> {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Failed to get label' }));
-    throw new Error(error.message || 'Failed to get label');
+    const error = (await response.json().catch(() => ({
+      message: 'Failed to get label',
+    }))) as { message: string };
+    throw new Error(error.message);
   }
 
-  return response.json();
+  return response.json() as Promise<LabelResponse>;
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import type { Table } from '@tanstack/react-table';
+
 import {
   IconArchive,
   IconCircleCheck,
@@ -11,15 +11,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,13 +22,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   bulkUpdateTicketStatusAction,
   bulkUpdateTicketPriorityAction,
   bulkAssignTicketsAction,
   bulkDeleteTicketsAction,
+  bulkUpdateProjectStatusAction,
+  bulkArchiveProjectsAction,
+  bulkDeactivateClientsAction,
+  bulkActivateClientsAction,
+  bulkUpdateClientTypeAction,
   type BulkOperationResult,
 } from '@/lib/actions/business-center/bulk';
+
+// ============================================================================
+// Client Bulk Actions Component
+// ============================================================================
+
+import type { Table } from '@tanstack/react-table';
 
 // ============================================================================
 // Types
@@ -49,6 +61,9 @@ interface BulkActionsProps<TData> {
   table: Table<TData>;
   onSuccess?: () => void;
 }
+
+// Constant for default empty array to avoid re-renders
+const EMPTY_USERS: { id: string; name: string }[] = [];
 
 interface TicketBulkActionsProps<TData> extends BulkActionsProps<TData> {
   users?: { id: string; name: string }[];
@@ -82,10 +97,10 @@ function handleBulkResult(result: BulkOperationResult, successMessage: string) {
     toast.success(successMessage);
   } else if (result.successCount > 0) {
     toast.warning(
-      `Partially completed: ${result.successCount} succeeded, ${result.failedCount} failed`
+      `Partially completed: ${String(result.successCount)} succeeded, ${String(result.failedCount)} failed`
     );
   } else {
-    toast.error(result.error || 'Operation failed');
+    toast.error(result.error ?? 'Operation failed');
   }
 }
 
@@ -95,7 +110,7 @@ function handleBulkResult(result: BulkOperationResult, successMessage: string) {
 
 export function TicketBulkActions<TData extends { id: string }>({
   table,
-  users = [],
+  users = EMPTY_USERS,
   onSuccess,
 }: TicketBulkActionsProps<TData>) {
   const [isPending, startTransition] = useTransition();
@@ -109,7 +124,7 @@ export function TicketBulkActions<TData extends { id: string }>({
       const result = await bulkUpdateTicketStatusAction(selectedIds, status);
       handleBulkResult(
         result,
-        `Updated ${result.successCount} ticket(s) to "${ticketStatusLabels[status]}"`
+        `Updated ${String(result.successCount)} ticket(s) to "${ticketStatusLabels[status]}"`
       );
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
@@ -123,7 +138,7 @@ export function TicketBulkActions<TData extends { id: string }>({
       const result = await bulkUpdateTicketPriorityAction(selectedIds, priority);
       handleBulkResult(
         result,
-        `Updated ${result.successCount} ticket(s) to "${ticketPriorityLabels[priority]}" priority`
+        `Updated ${String(result.successCount)} ticket(s) to "${ticketPriorityLabels[priority]}" priority`
       );
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
@@ -136,8 +151,8 @@ export function TicketBulkActions<TData extends { id: string }>({
     startTransition(async () => {
       const result = await bulkAssignTicketsAction(selectedIds, userId);
       const message = userId
-        ? `Assigned ${result.successCount} ticket(s)`
-        : `Unassigned ${result.successCount} ticket(s)`;
+        ? `Assigned ${String(result.successCount)} ticket(s)`
+        : `Unassigned ${String(result.successCount)} ticket(s)`;
       handleBulkResult(result, message);
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
@@ -149,7 +164,7 @@ export function TicketBulkActions<TData extends { id: string }>({
   const handleDelete = () => {
     startTransition(async () => {
       const result = await bulkDeleteTicketsAction(selectedIds);
-      handleBulkResult(result, `Closed ${result.successCount} ticket(s)`);
+      handleBulkResult(result, `Closed ${String(result.successCount)} ticket(s)`);
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
         onSuccess?.();
@@ -283,15 +298,6 @@ export function TicketBulkActions<TData extends { id: string }>({
   );
 }
 
-// ============================================================================
-// Project Bulk Actions Component
-// ============================================================================
-
-import {
-  bulkUpdateProjectStatusAction,
-  bulkArchiveProjectsAction,
-} from '@/lib/actions/business-center/bulk';
-
 type ProjectStatus =
   | 'proposal'
   | 'in_development'
@@ -326,7 +332,7 @@ export function ProjectBulkActions<TData extends { id: string }>({
       const result = await bulkUpdateProjectStatusAction(selectedIds, status);
       handleBulkResult(
         result,
-        `Updated ${result.successCount} project(s) to "${projectStatusLabels[status]}"`
+        `Updated ${String(result.successCount)} project(s) to "${projectStatusLabels[status]}"`
       );
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
@@ -338,7 +344,7 @@ export function ProjectBulkActions<TData extends { id: string }>({
   const handleArchive = () => {
     startTransition(async () => {
       const result = await bulkArchiveProjectsAction(selectedIds);
-      handleBulkResult(result, `Archived ${result.successCount} project(s)`);
+      handleBulkResult(result, `Archived ${String(result.successCount)} project(s)`);
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
         onSuccess?.();
@@ -422,16 +428,6 @@ export function ProjectBulkActions<TData extends { id: string }>({
   );
 }
 
-// ============================================================================
-// Client Bulk Actions Component
-// ============================================================================
-
-import {
-  bulkDeactivateClientsAction,
-  bulkActivateClientsAction,
-  bulkUpdateClientTypeAction,
-} from '@/lib/actions/business-center/bulk';
-
 type ClientType = 'software' | 'creative' | 'full_service';
 
 const clientTypeLabels: Record<ClientType, string> = {
@@ -455,7 +451,7 @@ export function ClientBulkActions<TData extends { id: string }>({
       const result = await bulkUpdateClientTypeAction(selectedIds, type);
       handleBulkResult(
         result,
-        `Updated ${result.successCount} client(s) to "${clientTypeLabels[type]}"`
+        `Updated ${String(result.successCount)} client(s) to "${clientTypeLabels[type]}"`
       );
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
@@ -467,7 +463,7 @@ export function ClientBulkActions<TData extends { id: string }>({
   const handleActivate = () => {
     startTransition(async () => {
       const result = await bulkActivateClientsAction(selectedIds);
-      handleBulkResult(result, `Activated ${result.successCount} client(s)`);
+      handleBulkResult(result, `Activated ${String(result.successCount)} client(s)`);
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
         onSuccess?.();
@@ -478,7 +474,7 @@ export function ClientBulkActions<TData extends { id: string }>({
   const handleDeactivate = () => {
     startTransition(async () => {
       const result = await bulkDeactivateClientsAction(selectedIds);
-      handleBulkResult(result, `Deactivated ${result.successCount} client(s)`);
+      handleBulkResult(result, `Deactivated ${String(result.successCount)} client(s)`);
       if (result.success || result.successCount > 0) {
         table.toggleAllRowsSelected(false);
         onSuccess?.();

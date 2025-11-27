@@ -87,7 +87,7 @@ export function useAuth() {
         // Force database validation (bypass cookie cache)
         await authClient.getSession({ query: { disableCookieCache: true } });
       }
-      return session.refetch();
+      session.refetch();
     },
 
     /**

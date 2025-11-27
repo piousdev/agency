@@ -6,8 +6,9 @@
  * 3. New user can login
  */
 
-import { test, expect } from '@playwright/test';
 import path from 'path';
+
+import { test, expect } from '@playwright/test';
 
 // Use authenticated context for invitation creation
 test.use({
@@ -70,7 +71,7 @@ test.describe('Invitation Flow', () => {
         await page.waitForTimeout(1000);
         const toastContent = await page.locator('[data-sonner-toast]').allTextContents();
         const allText = toastContent.join(' ');
-        const match = allText.match(/accept-invite\/([a-zA-Z0-9_-]+)/);
+        const match = /accept-invite\/([a-zA-Z0-9_-]+)/.exec(allText);
         if (match) {
           invitationToken = match[1];
           console.log('✓ Captured invitation token from toast:', invitationToken);

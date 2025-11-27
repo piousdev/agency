@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type {
   ProjectResponse,
   UpdateProjectCompletionInput,
@@ -27,7 +28,7 @@ export async function updateProjectStatus(
     const authHeaders = await getAuthHeaders();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/status`,
+      `${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}/status`,
       {
         method: 'PATCH',
         headers: authHeaders,
@@ -35,10 +36,14 @@ export async function updateProjectStatus(
       }
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as { message?: string; data?: ProjectResponse['data'] };
 
     if (!response.ok) {
-      return { success: false, error: result.message || 'Failed to update project status' };
+      return { success: false, error: result.message ?? 'Failed to update project status' };
+    }
+
+    if (!result.data) {
+      return { success: false, error: 'No data returned from server' };
     }
 
     return { success: true, data: result.data };
@@ -66,7 +71,7 @@ export async function updateProjectCompletion(
     const authHeaders = await getAuthHeaders();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/completion`,
+      `${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}/completion`,
       {
         method: 'PATCH',
         headers: authHeaders,
@@ -74,10 +79,14 @@ export async function updateProjectCompletion(
       }
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as { message?: string; data?: ProjectResponse['data'] };
 
     if (!response.ok) {
-      return { success: false, error: result.message || 'Failed to update project completion' };
+      return { success: false, error: result.message ?? 'Failed to update project completion' };
+    }
+
+    if (!result.data) {
+      return { success: false, error: 'No data returned from server' };
     }
 
     return { success: true, data: result.data };
@@ -105,7 +114,7 @@ export async function updateProjectDelivery(
     const authHeaders = await getAuthHeaders();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}/delivery`,
+      `${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}/delivery`,
       {
         method: 'PATCH',
         headers: authHeaders,
@@ -113,10 +122,14 @@ export async function updateProjectDelivery(
       }
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as { message?: string; data?: ProjectResponse['data'] };
 
     if (!response.ok) {
-      return { success: false, error: result.message || 'Failed to update project delivery date' };
+      return { success: false, error: result.message ?? 'Failed to update project delivery date' };
+    }
+
+    if (!result.data) {
+      return { success: false, error: 'No data returned from server' };
     }
 
     return { success: true, data: result.data };

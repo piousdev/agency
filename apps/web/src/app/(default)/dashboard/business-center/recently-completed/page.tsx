@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
-import { requireUser } from '@/lib/auth/session';
+
 import { listProjects } from '@/lib/api/projects';
+import { requireUser } from '@/lib/auth/session';
+
 import { RecentlyCompletedClient } from './client';
 
 export default async function RecentlyCompletedPage() {
@@ -14,8 +16,8 @@ export default async function RecentlyCompletedPage() {
     .filter((p) => p.status === 'delivered')
     .sort((a, b) => {
       // Sort by deliveredAt if available, otherwise by updatedAt
-      const dateA = a.deliveredAt || a.updatedAt;
-      const dateB = b.deliveredAt || b.updatedAt;
+      const dateA = a.deliveredAt ?? a.updatedAt;
+      const dateB = b.deliveredAt ?? b.updatedAt;
       return new Date(dateB).getTime() - new Date(dateA).getTime();
     });
 

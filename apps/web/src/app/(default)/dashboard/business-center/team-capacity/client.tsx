@@ -1,15 +1,19 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+
 import { IconChevronDown } from '@tabler/icons-react';
-import { Button } from '@/components/ui/button';
+
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import type { TeamMember } from '@/lib/api/users/types';
-import { TeamTableView } from './views/table-view';
+import { Separator } from '@/components/ui/separator';
+
 import { TeamCardsView } from './views/cards-view';
+import { TeamTableView } from './views/table-view';
 import { BusinessCenterHeader } from '../components/header';
+
+import type { TeamMember } from '@/lib/api/users/types';
 
 interface TeamCapacityClientProps {
   teamMembers: TeamMember[];
@@ -133,7 +137,7 @@ export function TeamCapacityClient({ teamMembers }: TeamCapacityClientProps) {
       m.email,
       m.status,
       m.projectCount.toString(),
-      `${m.capacityPercentage}%`,
+      `${String(m.capacityPercentage)}%`,
       m.availableCapacity.toString(),
     ]);
 
@@ -144,7 +148,7 @@ export function TeamCapacityClient({ teamMembers }: TeamCapacityClientProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `team-capacity-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `team-capacity-${new Date().toISOString().split('T')[0] ?? 'export'}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

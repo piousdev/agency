@@ -21,8 +21,9 @@ import {
   IconUserPlus,
 } from '@tabler/icons-react';
 
-import type { NavigationItem } from './navigation';
 import { userMenu, userMenuGroups } from './navigation';
+
+import type { NavigationItem } from './navigation';
 
 /**
  * Icon mapping for user menu items
@@ -71,4 +72,4 @@ export const userMenuGroupsWithIcons = {
  * Flat user menu with icons (for simple rendering)
  * Extends userMenu.items from navigation.ts with icon mappings
  */
-export const userMenuItemsWithIcons: NavigationItem[] = addIconsToItems(userMenu.items || []);
+export const userMenuItemsWithIcons: NavigationItem[] = addIconsToItems(userMenu.items);

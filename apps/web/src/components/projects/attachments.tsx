@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { formatDistanceToNow } from 'date-fns';
+
 import {
   IconPaperclip,
   IconDownload,
@@ -13,6 +13,8 @@ import {
   IconFile,
   IconDotsVertical,
 } from '@tabler/icons-react';
+import { formatDistanceToNow } from 'date-fns';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
 import type { ProjectFile } from '@/lib/api/projects';
 
 interface AttachmentsProps {
@@ -44,7 +47,7 @@ function formatFileSize(bytes: number): string {
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  return `${String(parseFloat((bytes / Math.pow(k, i)).toFixed(1)))} ${String(sizes[i])}`;
 }
 
 function getFileIcon(mimeType: string) {

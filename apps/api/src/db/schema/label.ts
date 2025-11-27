@@ -1,4 +1,5 @@
 import { index, pgTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+
 import { labelScopeEnum } from './enums';
 import { project } from './project';
 import { ticket } from './ticket';

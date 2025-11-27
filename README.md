@@ -1,6 +1,8 @@
 # Skyll Platform
 
-A modern, full-stack agency management platform built with Next.js 16, React 19, Hono, and Neon Postgres. Designed for managing clients, projects, and service requests with role-based access control and invitation-based onboarding.
+A modern, full-stack agency management platform built with Next.js 16, React 19,
+Hono, and Neon Postgres. Designed for managing clients, projects, and service
+requests with role-based access control and invitation-based onboarding.
 
 ## 🎯 Overview
 
@@ -9,7 +11,8 @@ The Skyll Platform is a monorepo application that provides:
 - **Client Management** - Track multiple client types (A, B, C, one-time)
 - **Project Tracking** - Manage projects and deliverables
 - **Service Requests** - Handle client service requests
-- **Role-Based Access** - Granular permissions for internal team and external clients
+- **Role-Based Access** - Granular permissions for internal team and external
+  clients
 - **Invitation System** - Secure client onboarding via email invitations
 - **Authentication** - Email/password auth powered by BetterAuth
 
@@ -353,7 +356,8 @@ pnpm add -D -w <package>
 
 ### Versioning Workflow
 
-We use [Changesets](https://github.com/changesets/changesets) for version management:
+We use [Changesets](https://github.com/changesets/changesets) for version
+management:
 
 ```bash
 # 1. Make your changes
@@ -444,7 +448,8 @@ pnpm deploy:all
 
 ## 📚 Documentation
 
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development workflow and commit guide
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development workflow and commit
+  guide
 - **[VERSIONING.md](./VERSIONING.md)** - Versioning and changelog guide
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment guide
 - **[openspec/STATUS.md](./openspec/STATUS.md)** - Current implementation status
@@ -459,7 +464,8 @@ pnpm deploy:all
 **API:**
 
 - `DATABASE_URL` - Neon Postgres connection string
-- `BETTER_AUTH_SECRET` - Auth secret key (generate with `openssl rand -base64 32`)
+- `BETTER_AUTH_SECRET` - Auth secret key (generate with
+  `openssl rand -base64 32`)
 - `BETTER_AUTH_URL` - Web app URL (e.g., `http://localhost:3000`)
 - `PORT` - Server port (default: 8000)
 - `NODE_ENV` - Environment (`development` | `production`)
@@ -479,7 +485,8 @@ pnpm deploy:all
 
 ## 🤝 Contributing
 
-We use a **hybrid approach** with Conventional Commits + Changesets for structured commits and controlled releases.
+We use a **hybrid approach** with Conventional Commits + Changesets for
+structured commits and controlled releases.
 
 ### Quick Workflow
 
@@ -500,7 +507,8 @@ git push origin feat/my-feature
 
 ### Commit Format (Enforced)
 
-All commits must follow [Conventional Commits](https://www.conventionalcommits.org/):
+All commits must follow
+[Conventional Commits](https://www.conventionalcommits.org/):
 
 ```bash
 feat: add user analytics dashboard
@@ -509,7 +517,8 @@ docs: update deployment guide
 chore: upgrade dependencies
 ```
 
-**Commit types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`
+**Commit types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
+`build`, `ci`, `chore`
 
 **See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete guide.**
 
@@ -553,7 +562,8 @@ lsof -ti:3000 | xargs kill -9
 
 **4. Build failures**
 
-- Clear caches: `pnpm clean` (if script exists) or delete `node_modules` and reinstall
+- Clear caches: `pnpm clean` (if script exists) or delete `node_modules` and
+  reinstall
 - Verify TypeScript version: `pnpm list typescript`
 - Check for conflicting dependencies
 
@@ -580,5 +590,5 @@ Built with ❤️ by the Skyll team
 
 ---
 
-**Last Updated:** 2025-11-07
-**Next.js:** 16.0.1 | **React:** 19.0.0 | **Node.js:** 18+ LTS
+**Last Updated:** 2025-11-07 **Next.js:** 16.0.1 | **React:** 19.0.0 |
+**Node.js:** 18+ LTS

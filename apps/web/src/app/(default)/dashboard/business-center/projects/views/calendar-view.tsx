@@ -1,19 +1,9 @@
 'use client';
 
 import { useMemo, useState, useTransition } from 'react';
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-  isSameMonth,
-  isToday,
-  startOfWeek,
-  endOfWeek,
-  addMonths,
-  subMonths,
-  isBefore,
-} from 'date-fns';
+
+import { useRouter } from 'next/navigation';
+
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -27,6 +17,20 @@ import {
   IconLoader2,
   IconCalendarPlus,
 } from '@tabler/icons-react';
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  isToday,
+  startOfWeek,
+  endOfWeek,
+  addMonths,
+  subMonths,
+  isBefore,
+} from 'date-fns';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,7 +46,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -50,9 +53,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 import { updateDeliveryDateAction } from '@/lib/actions/projects';
-import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface ProjectCalendarViewProps {
@@ -120,7 +125,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
     projectsWithDelivery.forEach((project) => {
       if (project.deliveredAt) {
         const dateKey = format(new Date(project.deliveredAt), 'yyyy-MM-dd');
-        const existing = map.get(dateKey) || [];
+        const existing = map.get(dateKey) ?? [];
         map.set(dateKey, [...existing, project]);
       }
     });
@@ -146,7 +151,11 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
     const now = new Date();
     return projectsWithDelivery
       .filter((p) => p.deliveredAt && new Date(p.deliveredAt) >= now)
-      .sort((a, b) => new Date(a.deliveredAt!).getTime() - new Date(b.deliveredAt!).getTime())
+      .sort((a, b) => {
+        const dateA = a.deliveredAt ? new Date(a.deliveredAt).getTime() : 0;
+        const dateB = b.deliveredAt ? new Date(b.deliveredAt).getTime() : 0;
+        return dateA - dateB;
+      })
       .slice(0, 5);
   }, [projectsWithDelivery]);
 
@@ -160,7 +169,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
   const selectedDateProjects = useMemo(() => {
     if (!selectedDate) return [];
     const dateKey = format(selectedDate, 'yyyy-MM-dd');
-    return projectsByDate.get(dateKey) || [];
+    return projectsByDate.get(dateKey) ?? [];
   }, [selectedDate, projectsByDate]);
 
   // Check if date is in the past
@@ -244,7 +253,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
   // Helper to get project type label
   const getTypeLabel = (type: string | undefined) => {
     if (type === 'creative') return 'Content';
-    return type || 'N/A';
+    return type ?? 'N/A';
   };
 
   return (
@@ -283,7 +292,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
             <div className="grid grid-cols-7 gap-1">
               {calendarDays.map((day) => {
                 const dateKey = format(day, 'yyyy-MM-dd');
-                const dayProjects = projectsByDate.get(dateKey) || [];
+                const dayProjects = projectsByDate.get(dateKey) ?? [];
                 const isCurrentMonth = isSameMonth(day, currentMonth);
                 const hasProjects = dayProjects.length > 0;
 
@@ -314,11 +323,11 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                           key={project.id}
                           className={cn(
                             'text-xs rounded px-1.5 py-0.5 truncate font-medium',
-                            project.client?.type === 'creative'
+                            project.client.type === 'creative'
                               ? 'bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-200'
                               : 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
                           )}
-                          title={`${project.name} (${getTypeLabel(project.client?.type)})`}
+                          title={`${project.name} (${getTypeLabel(project.client.type)})`}
                         >
                           {project.name}
                         </div>
@@ -362,8 +371,10 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                 <button
                   key={project.id}
                   onClick={() => {
-                    setSelectedDate(new Date(project.deliveredAt!));
-                    setDialogOpen(true);
+                    if (project.deliveredAt) {
+                      setSelectedDate(new Date(project.deliveredAt));
+                      setDialogOpen(true);
+                    }
                   }}
                   className="w-full text-left space-y-1 p-2 rounded-md hover:bg-accent transition-colors"
                 >
@@ -373,17 +384,19 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                       variant="outline"
                       className={cn(
                         'text-xs',
-                        typeColors[project.client?.type as keyof typeof typeColors]
+                        typeColors[project.client.type as keyof typeof typeColors]
                       )}
                     >
-                      {getTypeLabel(project.client?.type)}
+                      {getTypeLabel(project.client.type)}
                     </Badge>
                     <Badge variant="outline" className="text-xs">
-                      {project.client?.name || 'N/A'}
+                      {project.client.name || 'N/A'}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {format(new Date(project.deliveredAt!), 'MMM d')}
-                    </span>
+                    {project.deliveredAt && (
+                      <span className="text-xs text-muted-foreground">
+                        {format(new Date(project.deliveredAt), 'MMM d')}
+                      </span>
+                    )}
                   </div>
                 </button>
               ))
@@ -452,10 +465,10 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                               variant="outline"
                               className={cn(
                                 'text-xs',
-                                typeColors[project.client?.type as keyof typeof typeColors]
+                                typeColors[project.client.type as keyof typeof typeColors]
                               )}
                             >
-                              {getTypeLabel(project.client?.type)}
+                              {getTypeLabel(project.client.type)}
                             </Badge>
                           </div>
                           <div className="flex items-center gap-1">
@@ -487,13 +500,13 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <IconBuilding className="h-4 w-4" />
-                            <span>{project.client?.name || 'N/A'}</span>
+                            <span>{project.client.name || 'N/A'}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <IconUsers className="h-4 w-4" />
                             <span>
-                              {project.assignees?.length || 0} assignee
-                              {project.assignees?.length !== 1 ? 's' : ''}
+                              {project.assignees.length} assignee
+                              {project.assignees.length !== 1 ? 's' : ''}
                             </span>
                           </div>
                         </div>
@@ -511,7 +524,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                         </div>
 
                         {/* Assignees */}
-                        {project.assignees && project.assignees.length > 0 && (
+                        {project.assignees.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {project.assignees.map((assignee) => (
                               <Badge key={assignee.id} variant="outline" className="text-xs">
@@ -596,7 +609,7 @@ export function ProjectCalendarView({ projects, allProjects }: ProjectCalendarVi
                       <div className="flex items-center gap-2">
                         <span>{project.name}</span>
                         <span className="text-muted-foreground text-xs">
-                          ({getTypeLabel(project.client?.type)} - {project.client?.name})
+                          ({getTypeLabel(project.client.type)} - {project.client.name})
                         </span>
                       </div>
                     </SelectItem>

@@ -57,7 +57,8 @@
 - [ ] Implement team member ID generation (TM-00001)
 - [ ] Define employment status enum (Active, On Leave, Inactive, Former)
 - [ ] Define employment type enum (Full-time, Part-time, Contract, Intern)
-- [ ] Define department enum (Engineering, Design, Product, Marketing, Sales, Operations, Leadership)
+- [ ] Define department enum (Engineering, Design, Product, Marketing, Sales,
+      Operations, Leadership)
 - [ ] Define skill level enum (Beginner, Intermediate, Advanced, Expert)
 - [ ] Define time-off type enum (Vacation, Sick, Personal, etc.)
 - [ ] Implement manager relationship (self-referencing)
@@ -75,7 +76,8 @@
 - [ ] Create endpoint: Archive team member
 - [ ] Create endpoint: Delete team member (Admin only)
 - [ ] Implement pagination
-- [ ] Implement filtering (status, department, location, employment type, skills, manager)
+- [ ] Implement filtering (status, department, location, employment type,
+      skills, manager)
 - [ ] Implement sorting (name, start date, department)
 - [ ] Implement grouping (department, manager, location)
 - [ ] Implement search (name, email, skills, job title)
@@ -203,7 +205,8 @@
 ### 5.1 List View
 
 - [ ] Create team member list component (table format)
-- [ ] Display columns: Photo, Name, Title, Department, Location, Status, Skills, Projects, Actions
+- [ ] Display columns: Photo, Name, Title, Department, Location, Status, Skills,
+      Projects, Actions
 - [ ] Implement sortable columns
 - [ ] Implement row selection
 - [ ] Implement row click to open profile
@@ -213,7 +216,8 @@
 ### 5.2 Card/Grid View
 
 - [ ] Create team member card component
-- [ ] Display: Photo, Name, Title, Department, Location, Status, Skills, Projects
+- [ ] Display: Photo, Name, Title, Department, Location, Status, Skills,
+      Projects
 - [ ] Implement responsive grid
 - [ ] Test card rendering
 
@@ -277,7 +281,8 @@
 
 - [ ] Create team member profile page/panel
 - [ ] Create header with photo and quick info
-- [ ] Create tabbed interface (About, Skills, Projects, Performance, Time-Off, Goals)
+- [ ] Create tabbed interface (About, Skills, Projects, Performance, Time-Off,
+      Goals)
 - [ ] Create sidebar with quick info and actions
 - [ ] Test profile rendering
 

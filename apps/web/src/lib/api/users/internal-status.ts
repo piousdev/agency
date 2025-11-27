@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { UpdateInternalStatusInput, UserResponse } from './types';
 
 /**
@@ -21,7 +22,7 @@ export async function updateInternalStatus(
   const authHeaders = await getAuthHeaders();
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/internal-status`,
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/${userId}/internal-status`,
     {
       method: 'PATCH',
       headers: authHeaders,
@@ -30,9 +31,9 @@ export async function updateInternalStatus(
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to update internal status');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to update internal status');
   }
 
-  return response.json();
+  return (await response.json()) as UserResponse;
 }

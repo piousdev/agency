@@ -1,12 +1,20 @@
 'use client';
 
 import { useActionState, useEffect } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
+import {
+  createProjectAction,
+  updateProjectAction,
+} from '@/app/(default)/dashboard/projects/actions';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Slider } from '@/components/ui/slider';
 import {
   Select,
   SelectContent,
@@ -14,17 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import { projectStatusOptions } from '@/lib/schemas/project';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
-import type { Client } from '@/lib/api/clients/types';
+
 import type { ProjectActionState } from '@/app/(default)/dashboard/projects/actions';
-import {
-  createProjectAction,
-  updateProjectAction,
-} from '@/app/(default)/dashboard/projects/actions';
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+import type { Client } from '@/lib/api/clients/types';
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
+
+
 
 interface ProjectFormProps {
   project?: ProjectWithRelations & {
@@ -82,7 +87,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
             <Input
               id="name"
               name="name"
-              defaultValue={project?.name ?? ''}
+              defaultValue={project?.name}
               placeholder="Enter project name"
               required
             />
@@ -97,7 +102,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
             <Textarea
               id="description"
               name="description"
-              defaultValue={project?.description ?? ''}
+              defaultValue={project?.description}
               placeholder="Project description..."
               rows={4}
             />
@@ -109,7 +114,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
           {/* Client */}
           <div className="space-y-2">
             <Label htmlFor="clientId">Client *</Label>
-            <Select name="clientId" defaultValue={project?.clientId ?? ''} required>
+            <Select name="clientId" defaultValue={project?.clientId} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select a client" />
               </SelectTrigger>
@@ -149,7 +154,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
           {/* Completion Percentage */}
           <div className="space-y-2">
             <Label htmlFor="completionPercentage">
-              Completion: {project?.completionPercentage ?? 0}%
+              Completion: {project?.completionPercentage}%
             </Label>
             <Input
               type="range"
@@ -157,7 +162,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
               name="completionPercentage"
               min={0}
               max={100}
-              defaultValue={project?.completionPercentage ?? 0}
+              defaultValue={project?.completionPercentage}
               className="w-full"
             />
             {state.errors?.completionPercentage && (
@@ -181,7 +186,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
               id="repositoryUrl"
               name="repositoryUrl"
               type="url"
-              defaultValue={project?.repositoryUrl ?? ''}
+              defaultValue={project?.repositoryUrl}
               placeholder="https://github.com/..."
             />
             {state.errors?.repositoryUrl && (
@@ -196,7 +201,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
               id="stagingUrl"
               name="stagingUrl"
               type="url"
-              defaultValue={project?.stagingUrl ?? ''}
+              defaultValue={project?.stagingUrl}
               placeholder="https://staging.example.com"
             />
             {state.errors?.stagingUrl && (
@@ -211,7 +216,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
               id="productionUrl"
               name="productionUrl"
               type="url"
-              defaultValue={project?.productionUrl ?? ''}
+              defaultValue={project?.productionUrl}
               placeholder="https://example.com"
             />
             {state.errors?.productionUrl && (
@@ -274,7 +279,7 @@ export function ProjectForm({ project, clients, mode }: ProjectFormProps) {
           <Textarea
             id="notes"
             name="notes"
-            defaultValue={project?.notes ?? ''}
+            defaultValue={project?.notes}
             placeholder="Internal notes..."
             rows={4}
           />

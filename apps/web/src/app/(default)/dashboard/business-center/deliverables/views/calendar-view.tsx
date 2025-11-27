@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import {
   IconAlertTriangle,
   IconCalendar,
@@ -20,14 +22,15 @@ import {
   startOfWeek,
   subMonths,
 } from 'date-fns';
-import { useState } from 'react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import { cn } from '@/lib/utils';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface DeliverableCalendarViewProps {
   projects: ProjectWithRelations[];
@@ -63,7 +66,7 @@ export function DeliverableCalendarView({ projects }: DeliverableCalendarViewPro
 
   // Get projects for selected date
   const selectedDateProjects = selectedDate
-    ? projectsByDate.get(format(selectedDate, 'yyyy-MM-dd')) || []
+    ? projectsByDate.get(format(selectedDate, 'yyyy-MM-dd'))
     : [];
 
   // Navigation
@@ -115,7 +118,7 @@ export function DeliverableCalendarView({ projects }: DeliverableCalendarViewPro
           <div className="grid grid-cols-7">
             {calendarDays.map((day, index) => {
               const dateKey = format(day, 'yyyy-MM-dd');
-              const dayProjects = projectsByDate.get(dateKey) || [];
+              const dayProjects = projectsByDate.get(dateKey);
               const isCurrentMonth = isSameMonth(day, currentDate);
               const isSelected = selectedDate && isSameDay(day, selectedDate);
               const hasOverdue = dayProjects.some(
@@ -128,10 +131,10 @@ export function DeliverableCalendarView({ projects }: DeliverableCalendarViewPro
 
               // Group by type for color display
               const contentProjects = dayProjects.filter(
-                (p) => p.client?.type === 'creative'
+                (p) => p.client.type === 'creative'
               ).length;
               const softwareProjects = dayProjects.filter(
-                (p) => p.client?.type === 'software'
+                (p) => p.client.type === 'software'
               ).length;
 
               return (
@@ -251,19 +254,19 @@ export function DeliverableCalendarView({ projects }: DeliverableCalendarViewPro
                                 <h4 className="font-medium text-sm truncate">{project.name}</h4>
                               </div>
                               <p className="text-xs text-muted-foreground">
-                                {project.client?.name}
+                                {project.client.name}
                               </p>
                             </div>
                             <Badge
                               variant="outline"
                               className={cn(
                                 'shrink-0 text-xs',
-                                project.client?.type === 'creative'
+                                project.client.type === 'creative'
                                   ? 'border-pink-500 text-pink-500'
                                   : 'border-blue-500 text-blue-500'
                               )}
                             >
-                              {project.client?.type === 'creative' ? 'Content' : 'Software'}
+                              {project.client.type === 'creative' ? 'Content' : 'Software'}
                             </Badge>
                           </div>
 
@@ -274,16 +277,16 @@ export function DeliverableCalendarView({ projects }: DeliverableCalendarViewPro
                             <div className="space-y-1">
                               <div className="flex justify-between text-xs">
                                 <span className="text-muted-foreground">Progress</span>
-                                <span>{project.completionPercentage || 0}%</span>
+                                <span>{project.completionPercentage}%</span>
                               </div>
                               <Progress
-                                value={project.completionPercentage || 0}
+                                value={project.completionPercentage}
                                 className="h-1.5"
                               />
                             </div>
                           </div>
 
-                          {project.assignees && project.assignees.length > 0 && (
+                          {project.assignees.length > 0 && (
                             <div className="mt-2 text-xs text-muted-foreground">
                               Team: {project.assignees.map((a) => a.name).join(', ')}
                             </div>

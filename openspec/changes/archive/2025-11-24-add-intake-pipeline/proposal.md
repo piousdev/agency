@@ -1,18 +1,23 @@
 # Intake Pipeline - Change Proposal
 
-> **REFACTORING**: This proposal replaces the existing "Intake Queue" feature with a new "Intake Pipeline" implementation. All legacy code must be removed before building the new system.
+> **REFACTORING**: This proposal replaces the existing "Intake Queue" feature
+> with a new "Intake Pipeline" implementation. All legacy code must be removed
+> before building the new system.
 
 ## Why
 
 The existing Intake Queue implementation has limitations:
 
-1. **Tied to Tickets**: Uses ticket entities instead of dedicated request entities
+1. **Tied to Tickets**: Uses ticket entities instead of dedicated request
+   entities
 2. **No Stage Workflow**: Missing formal pipeline stages
 3. **No Estimation**: No story point estimation or confidence tracking
 4. **No Routing Logic**: Manual conversion to Projects/Tickets
 5. **No Aging Alerts**: No threshold-based notifications
 
-The Business Center currently manages Projects, Clients, and Tickets but lacks a formal intake process for new work requests. Users submit requests through informal channels (email, chat, verbal), leading to:
+The Business Center currently manages Projects, Clients, and Tickets but lacks a
+formal intake process for new work requests. Users submit requests through
+informal channels (email, chat, verbal), leading to:
 
 1. **Lost Requests**: No centralized system to track incoming work
 2. **Delayed Triage**: PMs manually track and prioritize requests
@@ -20,7 +25,9 @@ The Business Center currently manages Projects, Clients, and Tickets but lacks a
 4. **Poor Visibility**: Requesters have no way to track request status
 5. **Capacity Blindness**: No insight into incoming work volume
 
-The Intake Pipeline provides a structured workflow to capture, evaluate, estimate, and route all incoming work requests before they become Projects or Tickets.
+The Intake Pipeline provides a structured workflow to capture, evaluate,
+estimate, and route all incoming work requests before they become Projects or
+Tickets.
 
 ## What Changes
 
@@ -37,7 +44,8 @@ A 4-stage pipeline for processing incoming work requests:
 
 - **Request Submission Form**: Multi-step form with type-dependent validation
 - **Stage-Based Views**: Filtered views by pipeline stage with aging indicators
-- **Estimation Workflow**: T-shirt sizing with confidence levels (Low/Medium/High)
+- **Estimation Workflow**: T-shirt sizing with confidence levels
+  (Low/Medium/High)
 - **Routing Decision**: Automatic routing based on story points:
   - 0-8 points → Ticket (Work section)
   - 13+ points → Project (Projects section)

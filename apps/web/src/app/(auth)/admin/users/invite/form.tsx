@@ -6,10 +6,13 @@
 
 'use client';
 
-import { IconAlertCircle, IconCircleCheck, IconLoader2, IconMail } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useId } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { IconAlertCircle, IconCircleCheck, IconLoader2, IconMail } from '@tabler/icons-react';
 import { toast } from 'sonner';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
 import { type ActionState, createInvitationAction } from './actions';
 
 const initialState: ActionState = {
@@ -39,7 +43,7 @@ export function InviteForm() {
   // Handle success - show toast and redirect
   useEffect(() => {
     if (state.success) {
-      toast.success(state.message || 'Invitation sent successfully!');
+      toast.success(state.message ?? 'Invitation sent successfully!');
 
       // Show invitation link in dev mode
       if (state.invitationToken) {

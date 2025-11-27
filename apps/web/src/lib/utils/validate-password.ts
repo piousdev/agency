@@ -56,7 +56,7 @@ export function validatePasswordStrength(password: string): PasswordStrengthResu
   }
 
   // Check for special characters
-  if (!/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password)) {
+  if (!/[!@#$%^&*()_+=[\]{}|;:,.<>?-]/.test(password)) {
     errors.push('Password must contain at least one special character');
   } else {
     score++;

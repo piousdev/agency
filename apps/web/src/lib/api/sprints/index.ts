@@ -4,6 +4,7 @@
  */
 
 import { cookies } from 'next/headers';
+
 import type {
   Sprint,
   SprintWithProject,
@@ -16,7 +17,7 @@ import type {
 async function getAuthHeaders(): Promise<HeadersInit> {
   const cookieStore = await cookies();
   const sessionToken =
-    cookieStore.get('better-auth.session_token')?.value ||
+    cookieStore.get('better-auth.session_token')?.value ??
     cookieStore.get('__Secure-better-auth.session_token')?.value;
 
   return {
@@ -39,20 +40,20 @@ export async function listSprints(
   if (options?.sort) params.set('sort', options.sort);
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/sprints?${params.toString()}`,
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/sprints?${params.toString()}`,
     {
       headers: authHeaders,
       cache: 'no-store',
     }
   );
 
-  const result = await response.json();
+  const result = (await response.json()) as { message?: string } & Partial<SprintsListResponse>;
 
   if (!response.ok) {
-    return { success: false, data: [], message: result.message || 'Failed to list sprints' };
+    return { success: false, data: [], message: result.message ?? 'Failed to list sprints' };
   }
 
-  return result;
+  return result as SprintsListResponse;
 }
 
 /**
@@ -71,18 +72,18 @@ export async function listAllSprints(options?: {
 export async function getSprint(id: string): Promise<SprintResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sprints/${id}`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/sprints/${id}`, {
     headers: authHeaders,
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { message?: string } & Partial<SprintResponse>;
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to get sprint');
+    throw new Error(result.message ?? 'Failed to get sprint');
   }
 
-  return result;
+  return result as SprintResponse;
 }
 
 /**
@@ -93,20 +94,20 @@ export async function createSprint(
 ): Promise<{ success: boolean; data?: Sprint; message?: string }> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sprints`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/sprints`, {
     method: 'POST',
     headers: authHeaders,
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { success?: boolean; data?: Sprint; message?: string };
 
   if (!response.ok) {
-    return { success: false, message: result.message || 'Failed to create sprint' };
+    return { success: false, message: result.message ?? 'Failed to create sprint' };
   }
 
-  return result;
+  return result as { success: boolean; data?: Sprint; message?: string };
 }
 
 /**
@@ -118,20 +119,20 @@ export async function updateSprint(
 ): Promise<{ success: boolean; data?: Sprint; message?: string }> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sprints/${id}`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/sprints/${id}`, {
     method: 'PATCH',
     headers: authHeaders,
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { success?: boolean; data?: Sprint; message?: string };
 
   if (!response.ok) {
-    return { success: false, message: result.message || 'Failed to update sprint' };
+    return { success: false, message: result.message ?? 'Failed to update sprint' };
   }
 
-  return result;
+  return result as { success: boolean; data?: Sprint; message?: string };
 }
 
 /**
@@ -140,19 +141,19 @@ export async function updateSprint(
 export async function deleteSprint(id: string): Promise<{ success: boolean; message?: string }> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sprints/${id}`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/sprints/${id}`, {
     method: 'DELETE',
     headers: authHeaders,
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { success?: boolean; data?: Sprint; message?: string };
 
   if (!response.ok) {
-    return { success: false, message: result.message || 'Failed to delete sprint' };
+    return { success: false, message: result.message ?? 'Failed to delete sprint' };
   }
 
-  return result;
+  return result as { success: boolean; data?: Sprint; message?: string };
 }
 
 export type { Sprint, SprintWithProject, SprintsListResponse, SprintResponse };

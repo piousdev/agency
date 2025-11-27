@@ -1,6 +1,7 @@
 import { boolean, index, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
-import { contactRoleEnum } from './enums';
+
 import { client } from './client';
+import { contactRoleEnum } from './enums';
 
 /**
  * Client contacts - multiple contacts per client organization

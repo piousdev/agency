@@ -2,7 +2,9 @@
 
 ## Overview
 
-The Intake Pipeline provides a visual workflow for processing incoming work requests. This document covers the UI/UX design decisions and component architecture.
+The Intake Pipeline provides a visual workflow for processing incoming work
+requests. This document covers the UI/UX design decisions and component
+architecture.
 
 ## Layout Structure
 
@@ -40,7 +42,8 @@ The Intake Pipeline provides a visual workflow for processing incoming work requ
 
 ### Stage Tabs
 
-Each stage shows a badge with the count of requests in that stage. Active stage is highlighted with primary color underline.
+Each stage shows a badge with the count of requests in that stage. Active stage
+is highlighted with primary color underline.
 
 ### Aging Indicators
 

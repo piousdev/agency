@@ -10,6 +10,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+
 import { client } from './client';
 import {
   ticketPriorityEnum,

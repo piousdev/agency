@@ -1,13 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -16,8 +19,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { clientTypeOptions } from '@/lib/schemas';
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
 
 interface ClientFormProps {
   client?: {
@@ -46,7 +50,7 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
 
   // Form state for controlled inputs
   const [type, setType] = useState(client?.type ?? 'creative');
-  const [active, setActive] = useState(client?.active ?? true);
+  const [active, setActive] = useState(client?.active);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,7 +65,7 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
     try {
       const result = await onSubmit(formData);
       if (result.success && result.clientId) {
-        router.push(redirectPath || `/dashboard/business-center/clients`);
+        router.push(redirectPath ?? `/dashboard/business-center/clients`);
       } else if (result.error) {
         setError(result.error);
       }
@@ -96,11 +100,11 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
             <Input
               id="name"
               name="name"
-              defaultValue={client?.name ?? ''}
+              defaultValue={client?.name}
               placeholder="Company or organization name"
               required
             />
-            {errors?.name && <p className="text-destructive text-sm">{errors.name[0]}</p>}
+            {errors.name && <p className="text-destructive text-sm">{errors.name[0]}</p>}
           </div>
 
           {/* Type */}
@@ -127,11 +131,11 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
               id="email"
               name="email"
               type="email"
-              defaultValue={client?.email ?? ''}
+              defaultValue={client?.email}
               placeholder="contact@company.com"
               required
             />
-            {errors?.email && <p className="text-destructive text-sm">{errors.email[0]}</p>}
+            {errors.email && <p className="text-destructive text-sm">{errors.email[0]}</p>}
           </div>
 
           {/* Phone */}
@@ -141,7 +145,7 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
               id="phone"
               name="phone"
               type="tel"
-              defaultValue={client?.phone ?? ''}
+              defaultValue={client?.phone}
               placeholder="+1 234 567 8900"
             />
           </div>
@@ -153,7 +157,7 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
               id="website"
               name="website"
               type="url"
-              defaultValue={client?.website ?? ''}
+              defaultValue={client?.website}
               placeholder="https://company.com"
             />
           </div>
@@ -173,7 +177,7 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
             <Textarea
               id="address"
               name="address"
-              defaultValue={client?.address ?? ''}
+              defaultValue={client?.address}
               placeholder="Full mailing address"
               rows={3}
             />
@@ -185,7 +189,7 @@ export function ClientForm({ client, mode, redirectPath, onSubmit }: ClientFormP
             <Textarea
               id="notes"
               name="notes"
-              defaultValue={client?.notes ?? ''}
+              defaultValue={client?.notes}
               placeholder="Notes about this client (not visible to client)"
               rows={4}
             />

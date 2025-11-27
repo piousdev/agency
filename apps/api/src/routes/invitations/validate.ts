@@ -1,6 +1,7 @@
-import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { invitation } from '../../db/schema';
 
@@ -109,7 +110,7 @@ app.get('/validate/:token', async (c) => {
       invitation: {
         id: invitationRecord.id,
         email: invitationRecord.email,
-        clientType: invitationRecord.client?.type || null,
+        clientType: invitationRecord.client?.type ?? null,
         expiresAt: invitationRecord.expiresAt,
       },
     });

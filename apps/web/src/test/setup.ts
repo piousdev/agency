@@ -3,8 +3,8 @@
  * Runs before all tests to configure the testing environment
  */
 
-import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import { expect, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 
 // Cleanup after each test case (e.g. clearing jsdom)

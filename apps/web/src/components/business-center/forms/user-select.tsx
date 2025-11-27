@@ -1,6 +1,8 @@
 'use client';
 
 import { forwardRef } from 'react';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Select,
   SelectContent,
@@ -8,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
 // Special value for "unassigned" since Radix Select doesn't allow empty strings
@@ -97,7 +98,7 @@ export const UserSelect = forwardRef<HTMLButtonElement, UserSelectProps>(
                       {getInitials(user.name, user.email)}
                     </AvatarFallback>
                   </Avatar>
-                  <span>{user.name || user.email}</span>
+                  <span>{user.name ?? user.email}</span>
                   {showCapacity && user.capacityPercentage !== undefined && (
                     <span className={cn('text-xs', getCapacityColor(user.capacityPercentage))}>
                       ({user.capacityPercentage}%)

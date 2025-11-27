@@ -4,23 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { Request } from '@/lib/api/requests/types';
 
-// Mock dependencies
-const mockGetAuthHeaders = vi.fn();
-const mockGetApiUrl = vi.fn();
-const mockRevalidatePath = vi.fn();
-
-vi.mock('@/lib/api/requests/api-utils', () => ({
-  getAuthHeaders: () => mockGetAuthHeaders(),
-  getApiUrl: () => mockGetApiUrl(),
-}));
-
-vi.mock('next/cache', () => ({
-  revalidatePath: (path: string) => mockRevalidatePath(path),
-}));
-
-// Import server actions after mocks
 import {
   createRequest,
   updateRequest,
@@ -36,6 +20,26 @@ import {
   bulkTransitionRequests,
   bulkAssignPm,
 } from '../requests';
+
+import type { Request } from '@/lib/api/requests/types';
+
+// Import server actions after mocks
+
+// Mock dependencies
+const mockGetAuthHeaders = vi.fn();
+const mockGetApiUrl = vi.fn();
+const mockRevalidatePath = vi.fn();
+
+vi.mock('@/lib/api/requests/api-utils', () => ({
+  getAuthHeaders: async (): Promise<Record<string, string>> => mockGetAuthHeaders() as Promise<Record<string, string>>,
+  getApiUrl: (): string => mockGetApiUrl() as string,
+}));
+
+vi.mock('next/cache', () => ({
+  revalidatePath: (path: string): void => {
+    mockRevalidatePath(path);
+  },
+}));
 
 // Test fixtures
 const mockRequest: Request = {
@@ -649,7 +653,8 @@ describe('Request Server Actions', () => {
       if (result.success) {
         expect(result.data.succeeded).toHaveLength(1);
         expect(result.data.failed).toHaveLength(1);
-        expect(result.data.failed[0].error).toContain('Invalid stage transition');
+        const firstFailed = result.data.failed[0];
+        expect(firstFailed?.error).toContain('Invalid stage transition');
       }
     });
   });

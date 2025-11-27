@@ -2,21 +2,28 @@
 
 ## 1. Create Bento Grid Components
 
-- [x] 1.1 Create `BentoGrid` component in `apps/web/src/components/ui/bento-grid.tsx`
-- [x] 1.2 Create `BentoCard` component with support for span variants (1x1, 2x1, 1x2, 2x2)
-- [x] 1.3 Add focus-visible states and keyboard navigation (tabIndex, outline-ring)
+- [x] 1.1 Create `BentoGrid` component in
+      `apps/web/src/components/ui/bento-grid.tsx`
+- [x] 1.2 Create `BentoCard` component with support for span variants (1x1, 2x1,
+      1x2, 2x2)
+- [x] 1.3 Add focus-visible states and keyboard navigation (tabIndex,
+      outline-ring)
 - [x] 1.4 Test responsive behavior across breakpoints (mobile, tablet, desktop)
 
 ## 2. Build Hero Metric Cards
 
-- [x] 2.1 Create `IntakeQueueHero` component (col-span-2) with sparkline trend chart
-- [x] 2.2 Create `TeamCapacityHero` component (col-span-2) with availability breakdown
+- [x] 2.1 Create `IntakeQueueHero` component (col-span-2) with sparkline trend
+      chart
+- [x] 2.2 Create `TeamCapacityHero` component (col-span-2) with availability
+      breakdown
 - [x] 2.3 Integrate Recharts `AreaChart` with `accessibilityLayer` prop
-- [x] 2.4 Add semantic status colors (--success, --warning, --error) for capacity indicators
+- [x] 2.4 Add semantic status colors (--success, --warning, --error) for
+      capacity indicators
 
 ## 3. Refactor Standard Metric Cards
 
-- [x] 3.1 Convert page to use `BentoCard` for metrics (replaced BusinessMetricCard usage in page.tsx)
+- [x] 3.1 Convert page to use `BentoCard` for metrics (replaced
+      BusinessMetricCard usage in page.tsx)
 - [ ] 3.2 Add loading skeleton states using existing `Skeleton` component
 - [ ] 3.3 Add empty state handling using existing `Empty` component
 - [x] 3.4 Maintain existing action links and trend indicators
@@ -24,7 +31,8 @@
 ## 4. Upgrade Charts for Accessibility
 
 - [x] 4.1 Add `accessibilityLayer` to `IntakeTrendChart`
-- [x] 4.2 Add `accessibilityLayer` to `ProjectStatusChart` (aria-labels and role="progressbar")
+- [x] 4.2 Add `accessibilityLayer` to `ProjectStatusChart` (aria-labels and
+      role="progressbar")
 - [x] 4.3 Add `accessibilityLayer` to `TeamCapacityChart`
 - [x] 4.4 Keep existing tooltip styling (consistent with design tokens)
 - [x] 4.5 Add aria-labels to all chart components

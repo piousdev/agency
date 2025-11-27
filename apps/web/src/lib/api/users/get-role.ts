@@ -1,10 +1,11 @@
 'use server';
 
-import { getUser } from './get';
 import {
   LAYOUT_PRESETS,
   type LayoutPreset,
-} from '@/components/dashboard/business-center/overview/types';
+} from '@/components/default/dashboard/business-center/overview/types';
+
+import { getUser } from './get';
 
 const ROLE_MAPPINGS: Record<string, LayoutPreset> = {
   administrator: 'admin',

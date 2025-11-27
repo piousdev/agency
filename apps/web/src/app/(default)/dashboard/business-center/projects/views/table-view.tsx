@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
-import { type ColumnDef, type Row, type Table } from '@tanstack/react-table';
+
 import { IconDots, IconExternalLink, IconTrash, IconUsers } from '@tabler/icons-react';
+import { format } from 'date-fns';
+
+import { ProjectBulkActions } from '@/components/business-center/bulk-actions';
+import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +19,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DataTable } from '@/components/data-table';
-import { ProjectBulkActions } from '@/components/business-center/bulk-actions';
+import { Progress } from '@/components/ui/progress';
 import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
+
 import type { ProjectWithRelations, Project } from '@/lib/api/projects/types';
+import type { ColumnDef, Row, Table } from '@tanstack/react-table';
 
 interface ProjectTableViewProps {
   projects: ProjectWithRelations[];
@@ -46,6 +50,78 @@ const statusLabels: Record<ProjectStatus, string> = {
   on_hold: 'On Hold',
   maintenance: 'Maintenance',
   archived: 'Archived',
+};
+
+// Cell components moved outside to prevent recreation on every render
+const ProjectNameCell = ({ row }: { row: Row<ProjectWithRelations> }) => (
+  <div className="font-medium max-w-[200px] truncate" title={row.original.name}>
+    {row.original.name}
+  </div>
+);
+
+const ProjectTypeCell = ({ row }: { row: Row<ProjectWithRelations> }) => {
+  const type = row.original.client.type;
+  return <Badge variant="outline">{type === 'creative' ? 'Content' : type || 'N/A'}</Badge>;
+};
+
+const ClientNameCell = ({ row }: { row: Row<ProjectWithRelations> }) => (
+  <div className="max-w-[150px] truncate" title={row.original.client.name}>
+    {row.original.client.name || 'N/A'}
+  </div>
+);
+
+const StatusCell = ({ row }: { row: Row<ProjectWithRelations> }) => {
+  const status = row.original.status;
+  return <Badge variant={statusVariants[status]}>{statusLabels[status]}</Badge>;
+};
+
+const DeliveryCell = ({ row }: { row: Row<ProjectWithRelations> }) => {
+  const deliveredAt = row.original.deliveredAt;
+  const isOverdue =
+    deliveredAt && new Date(deliveredAt) < new Date() && row.original.status !== 'delivered';
+
+  if (!deliveredAt) {
+    return <span className="text-muted-foreground">Not scheduled</span>;
+  }
+
+  return (
+    <span className={isOverdue ? 'text-destructive font-medium' : ''}>
+      {format(new Date(deliveredAt), 'MMM d, yyyy')}
+      {isOverdue && ' (Overdue)'}
+    </span>
+  );
+};
+
+const TeamCell = ({ row }: { row: Row<ProjectWithRelations> }) => {
+  const assignees = row.original.assignees;
+  if (!assignees.length) {
+    return <span className="text-muted-foreground text-sm">No team</span>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1">
+      {assignees.slice(0, 2).map((assignee) => (
+        <Badge key={assignee.id} variant="outline" className="text-xs">
+          {assignee.name}
+        </Badge>
+      ))}
+      {assignees.length > 2 && (
+        <Badge variant="outline" className="text-xs">
+          +{assignees.length - 2}
+        </Badge>
+      )}
+    </div>
+  );
+};
+
+const ProgressCell = ({ row }: { row: Row<ProjectWithRelations> }) => {
+  const percentage = row.original.completionPercentage;
+  return (
+    <div className="flex items-center gap-2 min-w-[100px]">
+      <Progress value={percentage} className="h-2 w-16" />
+      <span className="text-sm text-muted-foreground w-10">{percentage}%</span>
+    </div>
+  );
 };
 
 export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps) {
@@ -79,11 +155,7 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
     {
       accessorKey: 'name',
       header: 'Project',
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate" title={row.original.name}>
-          {row.original.name}
-        </div>
-      ),
+      cell: ProjectNameCell,
       meta: {
         displayName: 'Project Name',
       },
@@ -91,10 +163,7 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
     {
       accessorKey: 'client.type',
       header: 'Type',
-      cell: ({ row }) => {
-        const type = row.original.client?.type;
-        return <Badge variant="outline">{type === 'creative' ? 'Content' : type || 'N/A'}</Badge>;
-      },
+      cell: ProjectTypeCell,
       meta: {
         displayName: 'Project Type',
         filterType: 'select',
@@ -109,11 +178,7 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
     {
       accessorKey: 'client.name',
       header: 'Client',
-      cell: ({ row }) => (
-        <div className="max-w-[150px] truncate" title={row.original.client?.name}>
-          {row.original.client?.name || 'N/A'}
-        </div>
-      ),
+      cell: ClientNameCell,
       meta: {
         displayName: 'Client',
       },
@@ -121,12 +186,9 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ row }) => {
-        const status = row.original.status;
-        return <Badge variant={statusVariants[status]}>{statusLabels[status]}</Badge>;
-      },
+      cell: StatusCell,
       filterFn: (row, id, value: string[]) => {
-        if (!value?.length) return true;
+        if (!value.length) return true;
         return value.includes(row.getValue(id));
       },
       meta: {
@@ -141,22 +203,7 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
     {
       accessorKey: 'deliveredAt',
       header: 'Delivery',
-      cell: ({ row }) => {
-        const deliveredAt = row.original.deliveredAt;
-        const isOverdue =
-          deliveredAt && new Date(deliveredAt) < new Date() && row.original.status !== 'delivered';
-
-        if (!deliveredAt) {
-          return <span className="text-muted-foreground">Not scheduled</span>;
-        }
-
-        return (
-          <span className={isOverdue ? 'text-destructive font-medium' : ''}>
-            {format(new Date(deliveredAt), 'MMM d, yyyy')}
-            {isOverdue && ' (Overdue)'}
-          </span>
-        );
-      },
+      cell: DeliveryCell,
       sortingFn: 'datetime',
       meta: {
         displayName: 'Delivery Date',
@@ -167,27 +214,7 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
       accessorKey: 'assignees',
       header: 'Team',
       enableSorting: false,
-      cell: ({ row }) => {
-        const assignees = row.original.assignees;
-        if (!assignees?.length) {
-          return <span className="text-muted-foreground text-sm">No team</span>;
-        }
-
-        return (
-          <div className="flex flex-wrap gap-1">
-            {assignees.slice(0, 2).map((assignee) => (
-              <Badge key={assignee.id} variant="outline" className="text-xs">
-                {assignee.name}
-              </Badge>
-            ))}
-            {assignees.length > 2 && (
-              <Badge variant="outline" className="text-xs">
-                +{assignees.length - 2}
-              </Badge>
-            )}
-          </div>
-        );
-      },
+      cell: TeamCell,
       meta: {
         displayName: 'Team Members',
       },
@@ -195,15 +222,7 @@ export function ProjectTableView({ projects, onSuccess }: ProjectTableViewProps)
     {
       accessorKey: 'completionPercentage',
       header: 'Progress',
-      cell: ({ row }) => {
-        const percentage = row.original.completionPercentage || 0;
-        return (
-          <div className="flex items-center gap-2 min-w-[100px]">
-            <Progress value={percentage} className="h-2 w-16" />
-            <span className="text-sm text-muted-foreground w-10">{percentage}%</span>
-          </div>
-        );
-      },
+      cell: ProgressCell,
       meta: {
         displayName: 'Progress',
         filterType: 'number-range',

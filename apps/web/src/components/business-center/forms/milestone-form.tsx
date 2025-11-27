@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Select,
   SelectContent,
@@ -14,8 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { milestoneStatusOptions, type MilestoneStatus } from '@/lib/schemas/milestone';
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react';
+
 
 interface MilestoneFormData {
   id: string;
@@ -88,7 +92,7 @@ export function MilestoneForm({
     if (!dateStr) return '';
     const date = new Date(dateStr);
     const isoString = date.toISOString();
-    return isoString.split('T')[0] ?? '';
+    return isoString.split('T')[0];
   };
 
   return (
@@ -106,7 +110,7 @@ export function MilestoneForm({
         <Input
           id="name"
           name="name"
-          defaultValue={milestone?.name ?? ''}
+          defaultValue={milestone?.name}
           placeholder="e.g., MVP Launch, Beta Release"
           required
           maxLength={200}
@@ -119,7 +123,7 @@ export function MilestoneForm({
         <Textarea
           id="description"
           name="description"
-          defaultValue={milestone?.description ?? ''}
+          defaultValue={milestone?.description}
           placeholder="Optional description of milestone goals and deliverables"
           rows={3}
           maxLength={2000}
@@ -163,7 +167,7 @@ export function MilestoneForm({
           name="sortOrder"
           type="number"
           min={0}
-          defaultValue={milestone?.sortOrder ?? 0}
+          defaultValue={milestone?.sortOrder}
         />
         <p className="text-xs text-muted-foreground">Lower numbers appear first in the list</p>
       </div>

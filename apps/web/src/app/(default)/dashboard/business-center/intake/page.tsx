@@ -1,9 +1,12 @@
 import { Suspense } from 'react';
-import { requireAuth } from '@/lib/auth/session';
-import { listRequests, getStageCounts } from '@/lib/actions/business-center/requests';
-import { getTeamStatus } from '@/lib/actions/business-center/overview';
-import { IntakeClient } from '@/components/dashboard/business-center/intake/intake-client';
+
+import { unstable_noStore as noStore } from 'next/cache';
+
+import { IntakeClient } from '@/components/default/dashboard/business-center/intake/intake-client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getTeamStatus } from '@/lib/actions/business-center/overview';
+import { listRequests, getStageCounts } from '@/lib/actions/business-center/requests';
+import { requireAuth } from '@/lib/auth/session';
 
 export const metadata = {
   title: 'Intake Pipeline - Business Center',
@@ -94,6 +97,7 @@ function IntakeSkeleton() {
 }
 
 export default async function IntakePage() {
+  noStore();
   await requireAuth();
 
   return (

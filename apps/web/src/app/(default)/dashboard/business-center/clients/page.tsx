@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
-import { requireUser } from '@/lib/auth/session';
+
 import { listClients } from '@/lib/api/clients';
+import { requireUser } from '@/lib/auth/session';
+
 import { ClientsClient } from './client';
 
 export const metadata = {

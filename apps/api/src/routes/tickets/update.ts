@@ -1,11 +1,12 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { ticket } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { updateTicketSchema } from '../../schemas/ticket';
-import { eq } from 'drizzle-orm';
 import { logEntityChange, EntityTypes } from '../../utils/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
@@ -74,6 +75,10 @@ app.patch(
         },
       });
 
+      if (!updatedTicket) {
+        throw new HTTPException(500, { message: 'Failed to fetch updated ticket' });
+      }
+
       // Log activity for ticket update
       await logEntityChange(
         {
@@ -82,7 +87,7 @@ app.patch(
           actorId: currentUser.id,
         },
         existingTicket,
-        updatedTicket!
+        updatedTicket
       );
 
       return c.json({

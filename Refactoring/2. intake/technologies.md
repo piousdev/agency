@@ -34,8 +34,7 @@
 
 ### 2.1 React Hook Form
 
-**Library**: `react-hook-form` (v7.x)
-**Resolver**: `@hookform/resolvers/zod`
+**Library**: `react-hook-form` (v7.x) **Resolver**: `@hookform/resolvers/zod`
 
 **Key Patterns**:
 
@@ -170,14 +169,18 @@ export const useIntakeStore = create<IntakeStore>()(
             undefined,
             'intake/setFilters'
           ),
-        resetFilters: () => set({ filters: defaultFilters }, undefined, 'intake/resetFilters'),
+        resetFilters: () =>
+          set({ filters: defaultFilters }, undefined, 'intake/resetFilters'),
 
         viewMode: 'list',
-        setViewMode: (mode) => set({ viewMode: mode }, undefined, 'intake/setViewMode'),
+        setViewMode: (mode) =>
+          set({ viewMode: mode }, undefined, 'intake/setViewMode'),
 
         draftRequest: null,
-        saveDraft: (draft) => set({ draftRequest: draft }, undefined, 'intake/saveDraft'),
-        clearDraft: () => set({ draftRequest: null }, undefined, 'intake/clearDraft'),
+        saveDraft: (draft) =>
+          set({ draftRequest: draft }, undefined, 'intake/saveDraft'),
+        clearDraft: () =>
+          set({ draftRequest: null }, undefined, 'intake/clearDraft'),
       }),
       { name: 'intake-store' }
     )
@@ -223,7 +226,9 @@ const moveToEstimation = useMutation({
   },
   onMutate: async ({ requestId }) => {
     await queryClient.cancelQueries({ queryKey: intakeKeys.lists() });
-    const previousData = queryClient.getQueryData(intakeKeys.list(currentFilters));
+    const previousData = queryClient.getQueryData(
+      intakeKeys.list(currentFilters)
+    );
 
     // Optimistically update the cache
     queryClient.setQueryData(intakeKeys.list(currentFilters), (old) => ({
@@ -237,7 +242,10 @@ const moveToEstimation = useMutation({
   },
   onError: (err, variables, context) => {
     // Rollback on error
-    queryClient.setQueryData(intakeKeys.list(currentFilters), context.previousData);
+    queryClient.setQueryData(
+      intakeKeys.list(currentFilters),
+      context.previousData
+    );
   },
   onSettled: () => {
     queryClient.invalidateQueries({ queryKey: intakeKeys.lists() });
@@ -519,7 +527,10 @@ const agingRequests = await db
   .select()
   .from(request)
   .where(
-    and(eq(request.stage, 'in_treatment'), lt(request.stageEnteredAt, subDays(new Date(), 2)))
+    and(
+      eq(request.stage, 'in_treatment'),
+      lt(request.stageEnteredAt, subDays(new Date(), 2))
+    )
   );
 ```
 

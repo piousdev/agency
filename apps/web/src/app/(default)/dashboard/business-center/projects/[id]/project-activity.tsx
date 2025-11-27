@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
+
 import {
   ActivityFeed,
   useActivityFeed,
@@ -33,7 +34,7 @@ export function ProjectActivity({ projectId }: ProjectActivityProps) {
     return {
       data: activities,
       pagination: {
-        hasMore: response.pagination?.hasMore ?? false,
+        hasMore: response.pagination.hasMore,
       },
     };
   }, []);

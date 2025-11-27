@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
+
 import { create } from 'zustand';
+
 import {
   getSocket,
   connectSocket,
@@ -33,7 +35,7 @@ interface SocketState {
   clearActivities: () => void;
 }
 
-export const useSocketStore = create<SocketState>((set, get) => ({
+export const useSocketStore = create<SocketState>((set) => ({
   connectionState: 'disconnected',
   alerts: [],
   activities: [],
@@ -77,8 +79,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
  * Hook to manage socket connection lifecycle
  * Automatically connects when authenticated and disconnects on unmount
  */
-export function useSocket(enabled: boolean = true) {
-  const socketRef = useRef<SocketClient | null>(null);
+export function useSocket(enabled = true): SocketClient | null {
   const { setConnectionState, addAlert, dismissAlert, addActivity, markActivityRead } =
     useSocketStore();
 
@@ -89,22 +90,18 @@ export function useSocket(enabled: boolean = true) {
       return;
     }
 
-    const socket = getSocket();
-    socketRef.current = socket;
+    const socketInstance = getSocket();
 
     // Connection event handlers
     const onConnect = () => {
-      console.log('Socket connected');
       setConnectionState('connected');
     };
 
-    const onDisconnect = (reason: string) => {
-      console.log('Socket disconnected:', reason);
+    const onDisconnect = () => {
       setConnectionState('disconnected');
     };
 
-    const onConnectError = (error: Error) => {
-      console.error('Socket connection error:', error);
+    const onConnectError = () => {
       setConnectionState('error');
     };
 
@@ -114,7 +111,6 @@ export function useSocket(enabled: boolean = true) {
 
     // Data event handlers
     const onAlert = (payload: AlertPayload) => {
-      console.log('Received alert:', payload);
       addAlert(payload);
     };
 
@@ -123,7 +119,6 @@ export function useSocket(enabled: boolean = true) {
     };
 
     const onActivity = (payload: ActivityPayload) => {
-      console.log('Received activity:', payload);
       addActivity(payload);
     };
 
@@ -131,25 +126,25 @@ export function useSocket(enabled: boolean = true) {
       markActivityRead(activityId);
     };
 
-    const onConnected = (data: { userId: string; rooms: string[] }) => {
-      console.log('Socket authenticated:', data);
+    const onConnected = () => {
+      // Socket authenticated - no logging to avoid exposing userId
     };
 
-    const onError = (message: string) => {
-      console.error('Socket error:', message);
+    const onError = () => {
+      // Socket error handled via connection state
     };
 
     // Register event listeners
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('connect_error', onConnectError);
-    socket.io.on('reconnect_attempt', onReconnectAttempt);
-    socket.on('alert', onAlert);
-    socket.on('alert:dismiss', onAlertDismiss);
-    socket.on('activity', onActivity);
-    socket.on('activity:read', onActivityRead);
-    socket.on('connected', onConnected);
-    socket.on('error', onError);
+    socketInstance.on('connect', onConnect);
+    socketInstance.on('disconnect', onDisconnect);
+    socketInstance.on('connect_error', onConnectError);
+    socketInstance.io.on('reconnect_attempt', onReconnectAttempt);
+    socketInstance.on('alert', onAlert);
+    socketInstance.on('alert:dismiss', onAlertDismiss);
+    socketInstance.on('activity', onActivity);
+    socketInstance.on('activity:read', onActivityRead);
+    socketInstance.on('connected', onConnected);
+    socketInstance.on('error', onError);
 
     // Connect
     setConnectionState('connecting');
@@ -157,20 +152,20 @@ export function useSocket(enabled: boolean = true) {
 
     // Cleanup
     return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('connect_error', onConnectError);
-      socket.io.off('reconnect_attempt', onReconnectAttempt);
-      socket.off('alert', onAlert);
-      socket.off('alert:dismiss', onAlertDismiss);
-      socket.off('activity', onActivity);
-      socket.off('activity:read', onActivityRead);
-      socket.off('connected', onConnected);
-      socket.off('error', onError);
+      socketInstance.off('connect', onConnect);
+      socketInstance.off('disconnect', onDisconnect);
+      socketInstance.off('connect_error', onConnectError);
+      socketInstance.io.off('reconnect_attempt', onReconnectAttempt);
+      socketInstance.off('alert', onAlert);
+      socketInstance.off('alert:dismiss', onAlertDismiss);
+      socketInstance.off('activity', onActivity);
+      socketInstance.off('activity:read', onActivityRead);
+      socketInstance.off('connected', onConnected);
+      socketInstance.off('error', onError);
     };
   }, [enabled, setConnectionState, addAlert, dismissAlert, addActivity, markActivityRead]);
 
-  return socketRef.current;
+  return enabled ? getSocket() : null;
 }
 
 /**
@@ -373,37 +368,31 @@ export function useIntakeSocket(
 
     // Event handlers
     const handleCreated = (payload: IntakeRequestPayload) => {
-      console.log('Intake request created:', payload);
       addEvent({ type: 'created', payload, timestamp: new Date() });
       onCreated?.(payload);
     };
 
     const handleUpdated = (payload: IntakeRequestPayload) => {
-      console.log('Intake request updated:', payload);
       addEvent({ type: 'updated', payload, timestamp: new Date() });
       onUpdated?.(payload);
     };
 
     const handleStageChanged = (payload: IntakeStageChangedPayload) => {
-      console.log('Intake stage changed:', payload);
       addEvent({ type: 'stage-changed', payload, timestamp: new Date() });
       onStageChanged?.(payload);
     };
 
     const handleEstimated = (payload: IntakeEstimatedPayload) => {
-      console.log('Intake request estimated:', payload);
       addEvent({ type: 'estimated', payload, timestamp: new Date() });
       onEstimated?.(payload);
     };
 
     const handleConverted = (payload: IntakeConvertedPayload) => {
-      console.log('Intake request converted:', payload);
       addEvent({ type: 'converted', payload, timestamp: new Date() });
       onConverted?.(payload);
     };
 
     const handleAssigned = (payload: IntakeAssignedPayload) => {
-      console.log('Intake request assigned:', payload);
       addEvent({ type: 'assigned', payload, timestamp: new Date() });
       onAssigned?.(payload);
     };

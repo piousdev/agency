@@ -1,23 +1,28 @@
 # Business Center - Implementation Notes
 
-**Note**: This change implements interactive functionality for existing requirements. No new requirements are being added - only implementing the behavior already specified in the base spec.
+**Note**: This change implements interactive functionality for existing
+requirements. No new requirements are being added - only implementing the
+behavior already specified in the base spec.
 
 ## ADDED Requirements
 
 ### Requirement: Interactive UI Components
 
-The Business Center UI components SHALL provide interactive elements (modals, dialogs, forms) following shadcn/ui patterns and Server-First architecture.
+The Business Center UI components SHALL provide interactive elements (modals,
+dialogs, forms) following shadcn/ui patterns and Server-First architecture.
 
 #### Scenario: Click to view details
 
-- **WHEN** user clicks on any ticket, project, or team member in any view (table, cards, kanban)
+- **WHEN** user clicks on any ticket, project, or team member in any view
+  (table, cards, kanban)
 - **THEN** detail modal/sheet opens showing full context
 - **AND** modal provides action buttons relevant to the entity type
 
 #### Scenario: Server Actions for mutations
 
 - **WHEN** user performs any mutation (assign, update status, change capacity)
-- **THEN** action is handled by Server Action using Next.js server-side execution
+- **THEN** action is handled by Server Action using Next.js server-side
+  execution
 - **AND** Server Action makes authenticated API call to Hono backend
 - **AND** page revalidates using revalidatePath() to show updated data
 
@@ -30,7 +35,8 @@ The Business Center UI components SHALL provide interactive elements (modals, di
 
 ### Requirement: Form Validation and Error Handling
 
-All forms and Server Actions SHALL include comprehensive validation and user-friendly error messages.
+All forms and Server Actions SHALL include comprehensive validation and
+user-friendly error messages.
 
 #### Scenario: Client-side form validation
 
@@ -55,7 +61,8 @@ All forms and Server Actions SHALL include comprehensive validation and user-fri
 
 ## MODIFIED Requirements
 
-None - all existing requirements remain unchanged. This change provides the implementation layer for already-specified behavior.
+None - all existing requirements remain unchanged. This change provides the
+implementation layer for already-specified behavior.
 
 ## REMOVED Requirements
 

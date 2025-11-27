@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-export type RecentItem = {
+export interface RecentItem {
   id: string;
   type: 'page' | 'project' | 'client' | 'issue';
   title: string;
   url: string;
   timestamp: number;
-};
+}
 
 const STORAGE_KEY = 'skyll-recent-items';
 const MAX_RECENT_ITEMS = 20;

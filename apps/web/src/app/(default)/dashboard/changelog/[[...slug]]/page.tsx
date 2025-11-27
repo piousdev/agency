@@ -1,9 +1,11 @@
-import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Changelog } from '@/components/changelog';
-import { loadMDXFile } from '@/lib/mdx';
-import { getChangelogVersions, getAdjacentVersions } from '@/lib/changelog';
+import { notFound, redirect } from 'next/navigation';
+
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+
+import { Changelog } from '@/components/changelog';
+import { getChangelogVersions, getAdjacentVersions } from '@/lib/changelog';
+import { loadMDXFile } from '@/lib/mdx';
 
 interface ChangelogPageProps {
   params: Promise<{
@@ -34,10 +36,16 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
     }
 
     // Redirect to latest version (we know versions has at least one element here)
-    redirect(`/dashboard/changelog/${versions[0]!.dateSlug}`);
+    const latestVersion = versions[0];
+    if (latestVersion) {
+      redirect(`/dashboard/changelog/${latestVersion.dateSlug}`);
+    }
   }
 
-  const dateSlug = slug[0]!; // We know slug has at least one element here
+  const dateSlug = slug[0]; // We know slug has at least one element here
+  if (!dateSlug) {
+    notFound();
+  }
 
   // Find the version
   const version = versions.find((v) => v.dateSlug === dateSlug);
@@ -58,7 +66,7 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
         {content}
 
         {/* Next/Previous Navigation */}
-        {(prev || next) && (
+        {(prev ?? next) && (
           <div className="mt-12 flex items-center justify-between border-t border-border pt-8">
             <div className="flex-1">
               {prev ? (
@@ -115,10 +123,9 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
  * This enables static generation at build time for better performance
  */
 export function generateStaticParams() {
-  // Return empty array for now - changelog is dynamically rendered
-  // In the future, add paths for specific versions:
-  // return [{ slug: ['v0.1.0'] }, { slug: ['v0.2.0'] }]
-  return [];
+  // Return at least one param for the root changelog page
+  // Additional versions can be added dynamically
+  return [{ slug: [] }];
 }
 
 /**

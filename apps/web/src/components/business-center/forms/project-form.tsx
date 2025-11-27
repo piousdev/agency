@@ -1,22 +1,9 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Slider } from '@/components/ui/slider';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ClientSelect, type ClientOption } from './client-select';
-import { StatusSelect } from './status-select';
-import { PrioritySelect } from './priority-select';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
-import type { ProjectActionState } from '@/app/(default)/dashboard/projects/actions';
-import {
-  createProjectAction,
-  updateProjectAction,
-} from '@/app/(default)/dashboard/projects/actions';
+
 import {
   IconLoader2,
   IconAlertCircle,
@@ -25,6 +12,26 @@ import {
   IconNote,
   IconSettings,
 } from '@tabler/icons-react';
+
+import {
+  createProjectAction,
+  updateProjectAction,
+} from '@/app/(default)/dashboard/projects/actions';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
+
+import { ClientSelect, type ClientOption } from './client-select';
+import { PrioritySelect } from './priority-select';
+import { StatusSelect } from './status-select';
+
+import type { ProjectActionState } from '@/app/(default)/dashboard/projects/actions';
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
+
+
 
 interface ProjectFormProps {
   project?: ProjectWithRelations & {
@@ -78,10 +85,10 @@ export function ProjectForm({
   const router = useRouter();
 
   // Controlled state for selects (using string type for compatibility with Select components)
-  const [clientId, setClientId] = useState(project?.clientId ?? '');
+  const [clientId, setClientId] = useState(project?.clientId);
   const [status, setStatus] = useState<string>(project?.status ?? defaultStatus ?? 'proposal');
   const [priority, setPriority] = useState<string>(project?.priority ?? 'medium');
-  const [completion, setCompletion] = useState([project?.completionPercentage ?? 0]);
+  const [completion, setCompletion] = useState([project?.completionPercentage]);
 
   // Bind the action with projectId for edit mode
   const boundAction =
@@ -92,7 +99,7 @@ export function ProjectForm({
   // Redirect on success
   useEffect(() => {
     if (state.success && state.projectId) {
-      router.push(redirectPath || `/dashboard/business-center/projects/${state.projectId}`);
+      router.push(redirectPath ?? `/dashboard/business-center/projects/${state.projectId}`);
     }
   }, [state.success, state.projectId, router, redirectPath]);
 
@@ -127,7 +134,7 @@ export function ProjectForm({
               <Input
                 id="name"
                 name="name"
-                defaultValue={project?.name ?? ''}
+                defaultValue={project?.name}
                 placeholder="Enter project name"
                 className="h-11"
                 required
@@ -159,7 +166,7 @@ export function ProjectForm({
             <Textarea
               id="description"
               name="description"
-              defaultValue={project?.description ?? ''}
+              defaultValue={project?.description}
               placeholder="Describe the project scope and objectives..."
               className="min-h-[136px] resize-none"
             />
@@ -237,7 +244,7 @@ export function ProjectForm({
               id="repositoryUrl"
               name="repositoryUrl"
               type="url"
-              defaultValue={project?.repositoryUrl ?? ''}
+              defaultValue={project?.repositoryUrl}
               placeholder="https://github.com/..."
               className="h-11"
             />
@@ -249,7 +256,7 @@ export function ProjectForm({
               id="stagingUrl"
               name="stagingUrl"
               type="url"
-              defaultValue={project?.stagingUrl ?? ''}
+              defaultValue={project?.stagingUrl}
               placeholder="https://staging.example.com"
               className="h-11"
             />
@@ -261,7 +268,7 @@ export function ProjectForm({
               id="productionUrl"
               name="productionUrl"
               type="url"
-              defaultValue={project?.productionUrl ?? ''}
+              defaultValue={project?.productionUrl}
               placeholder="https://example.com"
               className="h-11"
             />
@@ -279,7 +286,7 @@ export function ProjectForm({
         <Textarea
           id="notes"
           name="notes"
-          defaultValue={project?.notes ?? ''}
+          defaultValue={project?.notes}
           placeholder="Add any internal notes, context, or important details about this project..."
           className="min-h-[120px]"
         />

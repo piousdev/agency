@@ -1,7 +1,8 @@
+import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { zValidator } from '@hono/zod-validator';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
 import { project } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -36,16 +37,16 @@ app.post(
         .values({
           id: projectId,
           name: data.name,
-          description: data.description || null,
+          description: data.description !== undefined && data.description !== '' ? data.description : null,
           clientId: data.clientId,
           status: data.status,
           completionPercentage: data.completionPercentage,
-          repositoryUrl: data.repositoryUrl || null,
-          productionUrl: data.productionUrl || null,
-          stagingUrl: data.stagingUrl || null,
-          notes: data.notes || null,
-          startedAt: data.startedAt ? new Date(data.startedAt) : null,
-          deliveredAt: data.deliveredAt ? new Date(data.deliveredAt) : null,
+          repositoryUrl: data.repositoryUrl !== undefined && data.repositoryUrl !== '' ? data.repositoryUrl : null,
+          productionUrl: data.productionUrl !== undefined && data.productionUrl !== '' ? data.productionUrl : null,
+          stagingUrl: data.stagingUrl !== undefined && data.stagingUrl !== '' ? data.stagingUrl : null,
+          notes: data.notes !== undefined && data.notes !== '' ? data.notes : null,
+          startedAt: data.startedAt !== undefined && data.startedAt !== '' ? new Date(data.startedAt) : null,
+          deliveredAt: data.deliveredAt !== undefined && data.deliveredAt !== '' ? new Date(data.deliveredAt) : null,
         })
         .returning();
 
@@ -71,7 +72,7 @@ app.post(
 
       const transformedProject = {
         ...projectWithRelations,
-        assignees: projectWithRelations?.projectAssignments.map((pa) => pa.user) || [],
+        assignees: projectWithRelations?.projectAssignments.map((pa) => pa.user) ?? [],
         projectAssignments: undefined,
       };
 

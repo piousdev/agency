@@ -1,6 +1,5 @@
 'use client';
 
-import { formatDistanceToNow } from 'date-fns';
 import {
   IconActivity,
   IconPlus,
@@ -14,9 +13,12 @@ import {
   IconAlertTriangle,
   IconCalendar,
 } from '@tabler/icons-react';
+import { formatDistanceToNow } from 'date-fns';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { Activity, ActivityType } from '@/lib/api/projects';
 import { cn } from '@/lib/utils';
+
+import type { Activity, ActivityType } from '@/lib/api/projects';
 
 interface ActivityFeedProps {
   activities: Activity[];

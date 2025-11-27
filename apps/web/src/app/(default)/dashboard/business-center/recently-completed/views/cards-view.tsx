@@ -1,8 +1,13 @@
 'use client';
 
-import { format, formatDistanceToNowStrict } from 'date-fns';
-import { useRouter } from 'next/navigation';
 import { useCallback, useId } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { IconCircleCheck, IconConfetti, IconCalendarCheck, IconUsers } from '@tabler/icons-react';
+import { format, formatDistanceToNowStrict } from 'date-fns';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
   MotionCard,
@@ -11,11 +16,10 @@ import {
   MotionCardHeader,
   MotionCardContainer,
 } from '@/components/ui/motion-card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { IconCircleCheck, IconConfetti, IconCalendarCheck, IconUsers } from '@tabler/icons-react';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import { cn } from '@/lib/utils';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface CompletedCardsViewProps {
   projects: ProjectWithRelations[];
@@ -81,7 +85,7 @@ export function CompletedCardsView({ projects, onProjectClick }: CompletedCardsV
     <TooltipProvider delayDuration={300}>
       <MotionCardContainer className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" staggerDelay={0.06}>
         {projects.map((project, index) => {
-          const clientType = project.client?.type || 'software';
+          const clientType = project.client.type || 'software';
           const typeConfig = clientTypeConfig[clientType] ?? {
             label: 'Software',
             color: 'bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-500/30',
@@ -141,7 +145,7 @@ export function CompletedCardsView({ projects, onProjectClick }: CompletedCardsV
                   <div className="flex items-center gap-2 min-w-0 flex-1">
                     <span className="text-xs text-muted-foreground shrink-0">Client</span>
                     <span className="text-sm font-medium truncate">
-                      {project.client?.name || 'Unknown'}
+                      {project.client.name || 'Unknown'}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-emerald-600 shrink-0">
@@ -160,7 +164,7 @@ export function CompletedCardsView({ projects, onProjectClick }: CompletedCardsV
                     <IconUsers className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Team</span>
                   </div>
-                  {project.assignees && project.assignees.length > 0 ? (
+                  {project.assignees.length > 0 ? (
                     <div className="flex items-center gap-2">
                       <div className="flex -space-x-1.5">
                         {project.assignees.slice(0, 3).map((assignee) => (
@@ -168,7 +172,7 @@ export function CompletedCardsView({ projects, onProjectClick }: CompletedCardsV
                             <TooltipTrigger asChild>
                               <Avatar className="h-6 w-6 border-2 border-background ring-0">
                                 {assignee.image && (
-                                  <AvatarImage src={assignee.image} alt={assignee.name || ''} />
+                                  <AvatarImage src={assignee.image} alt={assignee.name} />
                                 )}
                                 <AvatarFallback className="text-[9px] font-semibold bg-muted">
                                   {getInitials(assignee.name || assignee.email || '?')}

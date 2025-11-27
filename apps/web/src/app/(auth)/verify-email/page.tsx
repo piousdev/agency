@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+
 import { VerifyEmailContent } from './verify-email-content';
 
 /**

@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { AssignTicketInput, TicketResponse } from './types';
 
 /**
@@ -23,7 +24,7 @@ export async function assignTicket(
     const authHeaders = await getAuthHeaders();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${ticketId}/assign`,
+      `${String(process.env.NEXT_PUBLIC_API_URL)}/api/tickets/${ticketId}/assign`,
       {
         method: 'PATCH',
         headers: authHeaders,
@@ -31,10 +32,14 @@ export async function assignTicket(
       }
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as { message?: string; data?: TicketResponse['data'] };
 
     if (!response.ok) {
-      return { success: false, error: result.message || 'Failed to assign ticket' };
+      return { success: false, error: result.message ?? 'Failed to assign ticket' };
+    }
+
+    if (!result.data) {
+      return { success: false, error: 'No data returned from server' };
     }
 
     return { success: true, data: result.data };

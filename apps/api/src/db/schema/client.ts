@@ -10,6 +10,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+
 import { clientIndustryEnum, clientSizeEnum, clientTypeEnum, slaTierEnum } from './enums';
 
 export const client = pgTable(

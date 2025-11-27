@@ -5,14 +5,17 @@
 - [x] 1.1 Create `project_assignment` table schema
   - [x] 1.1.1 Define columns: id, project_id, user_id, assigned_at, created_at
   - [x] 1.1.2 Add foreign key constraints with cascade rules
-  - [x] 1.1.3 Create indexes: project_id, user_id, composite (project_id, user_id)
+  - [x] 1.1.3 Create indexes: project_id, user_id, composite (project_id,
+        user_id)
   - [x] 1.1.4 Export TypeScript types (ProjectAssignment, NewProjectAssignment)
 - [x] 1.2 Add `capacity_percentage` column to `user` table
-  - [x] 1.2.1 Add column: capacity_percentage integer DEFAULT 0 CHECK (capacity_percentage >= 0 AND capacity_percentage <= 200)
+  - [x] 1.2.1 Add column: capacity_percentage integer DEFAULT 0 CHECK
+        (capacity_percentage >= 0 AND capacity_percentage <= 200)
   - [x] 1.2.2 Create index on capacity_percentage for filtering
   - [x] 1.2.3 Update User type export
 - [x] 1.3 Add `completion_percentage` column to `project` table
-  - [x] 1.3.1 Add column: completion_percentage integer DEFAULT 0 CHECK (completion_percentage >= 0 AND completion_percentage <= 100)
+  - [x] 1.3.1 Add column: completion_percentage integer DEFAULT 0 CHECK
+        (completion_percentage >= 0 AND completion_percentage <= 100)
   - [x] 1.3.2 Update Project type export
 - [x] 1.4 Create database migrations
   - [x] 1.4.1 Generate migration: `drizzle-kit generate`
@@ -29,13 +32,15 @@
   - [x] 2.1.2 Create `index.ts` with Hono router
   - [x] 2.1.3 Wire up to main app router
 - [x] 2.2 Implement `GET /api/tickets` (list with filters)
-  - [x] 2.2.1 Define query params schema (type, status, priority, assignedToId, clientId, limit, offset)
+  - [x] 2.2.1 Define query params schema (type, status, priority, assignedToId,
+        clientId, limit, offset)
   - [x] 2.2.2 Build dynamic Drizzle query with filters
   - [x] 2.2.3 Include client and assignee data (joins)
   - [x] 2.2.4 Add pagination support
   - [x] 2.2.5 Add auth middleware (requireInternal)
 - [x] 2.3 Implement `POST /api/tickets` (create intake)
-  - [x] 2.3.1 Define request body schema (clientId, title, description, priority)
+  - [x] 2.3.1 Define request body schema (clientId, title, description,
+        priority)
   - [x] 2.3.2 Validate with Zod
   - [x] 2.3.3 Generate unique ticket ID (using nanoid)
   - [x] 2.3.4 Set type='intake', status='open', createdById=session.user.id
@@ -65,7 +70,8 @@
   - [x] 3.1.2 Create `index.ts` with Hono router
   - [x] 3.1.3 Wire up to main app router
 - [x] 3.2 Implement `GET /api/projects` (list with filters)
-  - [x] 3.2.1 Define query params schema (status, clientId, serviceType, assignedToId, limit, offset)
+  - [x] 3.2.1 Define query params schema (status, clientId, serviceType,
+        assignedToId, limit, offset)
   - [x] 3.2.2 Build dynamic query with client.type filter support
   - [x] 3.2.3 Include client, assignments (with user data)
   - [x] 3.2.4 Return completion percentage from database
@@ -96,7 +102,8 @@
 - [x] 3.8 Add tests for projects endpoints ✅
   - [x] 3.8.1 Test list with filters (status, client ID)
   - [x] 3.8.2 Test assignment/removal logic
-  - [x] 3.8.3 Test status transitions (proposal, in_development, in_review, delivered, on_hold)
+  - [x] 3.8.3 Test status transitions (proposal, in_development, in_review,
+        delivered, on_hold)
   - [x] 3.8.4 Test completion percentage updates
   - [x] 3.8.5 Test auth protection (internal only)
   - [x] 3.8.6 All 25 project tests passing
@@ -124,24 +131,33 @@
 ## 5. Frontend API Client Layer ✅
 
 - [x] 5.1 Create `lib/api/tickets/` directory
-  - [x] 5.1.1 Define TypeScript interfaces in `types.ts` (Ticket, TicketWithRelations, CreateTicketInput, etc.)
+  - [x] 5.1.1 Define TypeScript interfaces in `types.ts` (Ticket,
+        TicketWithRelations, CreateTicketInput, etc.)
   - [x] 5.1.2 Implement `listTickets(filters)` in `list.ts` - GET /api/tickets
   - [x] 5.1.3 Implement `createTicket(data)` in `create.ts` - POST /api/tickets
-  - [x] 5.1.4 Implement `updateTicket(id, data)` in `update.ts` - PATCH /api/tickets/:id
-  - [x] 5.1.5 Implement `assignTicket(id, userId)` in `assign.ts` - PATCH /api/tickets/:id/assign
+  - [x] 5.1.4 Implement `updateTicket(id, data)` in `update.ts` - PATCH
+        /api/tickets/:id
+  - [x] 5.1.5 Implement `assignTicket(id, userId)` in `assign.ts` - PATCH
+        /api/tickets/:id/assign
   - [x] 5.1.6 Export all from `index.ts`
 - [x] 5.2 Create `lib/api/projects/` directory
-  - [x] 5.2.1 Define TypeScript interfaces in `types.ts` (Project, ProjectWithRelations, AssignProjectInput, etc.)
+  - [x] 5.2.1 Define TypeScript interfaces in `types.ts` (Project,
+        ProjectWithRelations, AssignProjectInput, etc.)
   - [x] 5.2.2 Implement `listProjects(filters)` in `list.ts` - GET /api/projects
   - [x] 5.2.3 Implement `getProject(id)` in `get.ts` - GET /api/projects/:id
-  - [x] 5.2.4 Implement `assignProject(id, userIds)` in `assign.ts` - PATCH /api/projects/:id/assign
-  - [x] 5.2.5 Implement `removeProjectAssignment(id, userId)` in `assign.ts` - DELETE /api/projects/:id/assign
-  - [x] 5.2.6 Implement `updateProjectStatus(id, status)` in `update-status.ts` - PATCH /api/projects/:id/status
-  - [x] 5.2.7 Implement `updateProjectCompletion(id, percentage)` in `update-status.ts` - PATCH /api/projects/:id/completion
+  - [x] 5.2.4 Implement `assignProject(id, userIds)` in `assign.ts` - PATCH
+        /api/projects/:id/assign
+  - [x] 5.2.5 Implement `removeProjectAssignment(id, userId)` in `assign.ts` -
+        DELETE /api/projects/:id/assign
+  - [x] 5.2.6 Implement `updateProjectStatus(id, status)` in
+        `update-status.ts` - PATCH /api/projects/:id/status
+  - [x] 5.2.7 Implement `updateProjectCompletion(id, percentage)` in
+        `update-status.ts` - PATCH /api/projects/:id/completion
   - [x] 5.2.8 Export all from `index.ts`
 - [x] 5.3 Extend `lib/api/users/`
   - [x] 5.3.1 Add TeamMember and related interfaces to `types.ts`
-  - [x] 5.3.2 Implement `updateCapacity(id, percentage)` in `capacity.ts` - PATCH /api/users/:id/capacity
+  - [x] 5.3.2 Implement `updateCapacity(id, percentage)` in `capacity.ts` -
+        PATCH /api/users/:id/capacity
   - [x] 5.3.3 Implement `listTeamMembers()` in `team.ts` - GET /api/users/team
   - [x] 5.3.4 Export new functions from `index.ts`
 
@@ -167,7 +183,8 @@
 ## 7. Frontend Components - Business Center Layout ✅
 
 - [x] 7.1 Create page structure ✅
-  - [x] 7.1.1 Create `app/(default)/dashboard/business-center/page.tsx` (Server Component)
+  - [x] 7.1.1 Create `app/(default)/dashboard/business-center/page.tsx` (Server
+        Component)
   - [x] 7.1.2 Add requireUser() auth check at top
   - [x] 7.1.3 Add server-side role check (redirect if not internal)
   - [x] 7.1.4 Fetch all section data server-side (placeholder structure ready)
@@ -190,21 +207,28 @@
 
 ## 8. Frontend Components - Section 1: Intake Queue ✅
 
-- [x] 8.1 Create `components/business-center/intake-queue.tsx` (Server Component) ✅
+- [x] 8.1 Create `components/business-center/intake-queue.tsx` (Server
+      Component) ✅
   - [x] 8.1.1 Accept tickets data as prop
-  - [x] 8.1.2 Render list view with columns (ID, Client, Type, Date, Priority, Status)
-  - [x] 8.1.3 Add filter dropdowns (service type, priority) - handled via table display
+  - [x] 8.1.2 Render list view with columns (ID, Client, Type, Date, Priority,
+        Status)
+  - [x] 8.1.3 Add filter dropdowns (service type, priority) - handled via table
+        display
   - [x] 8.1.4 Add "New Request" button (opens modal)
   - [x] 8.1.5 Add click handler to open detail modal (ready for integration)
-- [x] 8.2 Create `components/business-center/intake-form.tsx` (Client Component) ✅
+- [x] 8.2 Create `components/business-center/intake-form.tsx` (Client Component)
+      ✅
   - [x] 8.2.1 Add 'use client' directive
-  - [x] 8.2.2 Implement form with fields (client select, title, description, priority)
+  - [x] 8.2.2 Implement form with fields (client select, title, description,
+        priority)
   - [x] 8.2.3 Integrate with createIntakeAction via useActionState
   - [x] 8.2.4 Add validation with Zod schemas
   - [x] 8.2.5 Show loading state during submission
   - [x] 8.2.6 Close modal on success (via onOpenChange)
-- [x] 8.3 Create `components/business-center/intake-detail-modal.tsx` (Client Component) ✅
-  - [x] 8.3.1 Display full ticket details (title, description, client, service type, priority, status, dates)
+- [x] 8.3 Create `components/business-center/intake-detail-modal.tsx` (Client
+      Component) ✅
+  - [x] 8.3.1 Display full ticket details (title, description, client, service
+        type, priority, status, dates)
   - [x] 8.3.2 Add assignment button (opens assign modal) - callback provided
   - [x] 8.3.3 Show current assignee if assigned
   - [x] 8.3.4 Add close button
@@ -215,10 +239,12 @@
   - [x] 9.1.1 Accept projects data (filtered by client.type='creative')
   - [x] 9.1.2 Group by stage (Pre-Production, In-Production, Post-Production)
   - [x] 9.1.3 Render card view per project
-  - [x] 9.1.4 Show: Name, Client, Assignees, Deadline, Stage, Completion %, Priority
+  - [x] 9.1.4 Show: Name, Client, Assignees, Deadline, Stage, Completion %,
+        Priority
   - [x] 9.1.5 Add quick actions (Change Assignee, Update Status)
 - [x] 9.2 Create `components/business-center/active-work-software.tsx`
-  - [x] 9.2.1 Accept projects data (filtered by client.type IN ('software', 'full_service'))
+  - [x] 9.2.1 Accept projects data (filtered by client.type IN ('software',
+        'full_service'))
   - [x] 9.2.2 Group by stage (Design, Development, Testing, Delivery)
   - [x] 9.2.3 Render card view (same structure as content)
   - [x] 9.2.4 Add quick actions
@@ -232,11 +258,14 @@
 
 - [x] 10.1 Create `components/business-center/team-capacity.tsx`
   - [x] 10.1.1 Accept team data as prop
-  - [x] 10.1.2 Render table with columns (Member, Projects, Used %, Available %, Status)
+  - [x] 10.1.2 Render table with columns (Member, Projects, Used %, Available %,
+        Status)
   - [x] 10.1.3 Add visual capacity bar per row
-  - [x] 10.1.4 Color-code status (green=available, yellow=at capacity, red=overloaded)
+  - [x] 10.1.4 Color-code status (green=available, yellow=at capacity,
+        red=overloaded)
   - [x] 10.1.5 Add "Update Capacity" action per row
-- [x] 10.2 Create `components/business-center/capacity-modal.tsx` (Client Component)
+- [x] 10.2 Create `components/business-center/capacity-modal.tsx` (Client
+      Component)
   - [x] 10.2.1 Number input for capacity percentage (0-200)
   - [x] 10.2.2 Show warning if > 100%
   - [x] 10.2.3 Integrate with updateCapacityAction
@@ -254,8 +283,10 @@
 ## 12. Frontend Components - Section 6: Recently Completed ✅
 
 - [x] 12.1 Create `components/business-center/recently-completed.tsx`
-  - [x] 12.1.1 Accept projects data (status='delivered', deliveredAt >= today - 14 days)
-  - [x] 12.1.2 Render list view with columns (Project, Client, Type, Completed, Team)
+  - [x] 12.1.1 Accept projects data (status='delivered', deliveredAt >= today -
+        14 days)
+  - [x] 12.1.2 Render list view with columns (Project, Client, Type, Completed,
+        Team)
   - [x] 12.1.3 Sort by deliveredAt descending
   - [x] 12.1.4 Display completion metadata
 
@@ -263,13 +294,16 @@
 
 - [x] 13.1 Create `components/business-center/assign-modal.tsx`
   - [x] 13.1.1 Generic assignment modal (tickets or projects)
-  - [x] 13.1.2 Multi-select for team members (projects) or single select (tickets)
+  - [x] 13.1.2 Multi-select for team members (projects) or single select
+        (tickets)
   - [x] 13.1.3 Show capacity info and warnings if assignee at 100%
   - [x] 13.1.4 Integrate with assignTicketAction or assignProjectAction
   - [x] 13.1.5 Client component with useActionState
 - [x] 13.2 Add intake detail modal to shared modals (completed in section 8.3)
-- [x] 13.3 Create `components/business-center/capacity-modal.tsx` (completed in 10.2)
-- [x] 13.4 Create `components/business-center/assign-trigger.tsx` (reusable trigger)
+- [x] 13.3 Create `components/business-center/capacity-modal.tsx` (completed in
+      10.2)
+- [x] 13.4 Create `components/business-center/assign-trigger.tsx` (reusable
+      trigger)
 
 ## 14. Frontend Components - Types ✅
 
@@ -305,14 +339,16 @@
 
 - [x] 17.1 Backend unit tests
   - [x] 17.1.1 Test tickets endpoints (list, create, assign) - 18 tests passing
-  - [x] 17.1.2 Test projects endpoints (list, assign, update-status) - 25 tests passing
+  - [x] 17.1.2 Test projects endpoints (list, assign, update-status) - 25 tests
+        passing
   - [x] 17.1.3 Test users/capacity and users/team - covered in API tests
   - [x] 17.1.4 Test auth protection (internal only) - included in endpoint tests
 - [x] 17.2 Frontend component tests
   - [x] 17.2.1 Created `__tests__/business-center.test.tsx`
   - [x] 17.2.2 Basic component rendering tests
 - [x] 17.3 E2E tests with Playwright
-  - [x] 17.3.1 Test full intake flow (create → assign) - created comprehensive suite
+  - [x] 17.3.1 Test full intake flow (create → assign) - created comprehensive
+        suite
   - [x] 17.3.2 Test project assignment flow - included
   - [x] 17.3.3 Test capacity update flow - included
   - [x] 17.3.4 Test access control (client user denied) - included
@@ -320,14 +356,18 @@
 ## 18. Documentation & Polish ✅
 
 - [x] 18.1 Update ARCHITECTURE.md
-  - [x] 18.1.1 Document Business Center pattern - Added comprehensive documentation
+  - [x] 18.1.1 Document Business Center pattern - Added comprehensive
+        documentation
   - [x] 18.1.2 Add to examples section - Business Center example included
 - [x] 18.2 Add inline code comments
-  - [x] 18.2.1 Document complex queries - All components have detailed JSDoc comments
-  - [x] 18.2.2 Explain capacity calculations - Capacity logic documented in components
+  - [x] 18.2.1 Document complex queries - All components have detailed JSDoc
+        comments
+  - [x] 18.2.2 Explain capacity calculations - Capacity logic documented in
+        components
 - [x] 18.3 Create user guide (optional)
   - [x] 18.3.1 Add help content to help system - N/A for now
-  - [x] 18.3.2 Document workflow for intake → project - Documented in ARCHITECTURE.md
+  - [x] 18.3.2 Document workflow for intake → project - Documented in
+        ARCHITECTURE.md
 
 ## 19. Deployment & Validation ✅
 
@@ -347,5 +387,6 @@
   - [x] 19.4.2 Verify indexes created correctly - Indexes in place
   - [x] 19.4.3 Check query performance - Performance acceptable
 - [x] 19.5 Validate with OpenSpec
-  - [x] 19.5.1 `openspec validate add-business-center --strict` - Validation complete
+  - [x] 19.5.1 `openspec validate add-business-center --strict` - Validation
+        complete
   - [x] 19.5.2 Fix any validation issues - No issues

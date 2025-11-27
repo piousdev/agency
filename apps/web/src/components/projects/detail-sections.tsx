@@ -1,18 +1,23 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+
 import { useRouter } from 'next/navigation';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { IconMessage, IconPaperclip, IconActivity } from '@tabler/icons-react';
-import { Comments } from './comments';
-import { Attachments } from './attachments';
-import { ActivityFeed } from './activity-feed';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   createCommentAction,
   updateCommentAction,
   deleteCommentAction,
   deleteFileAction,
 } from '@/lib/actions/comments';
+
+import { ActivityFeed } from './activity-feed';
+import { Attachments } from './attachments';
+import { Comments } from './comments';
+
 import type { Comment, ProjectFile, Activity as ActivityType } from '@/lib/api/projects';
 
 interface ProjectDetailSectionsProps {
@@ -32,14 +37,17 @@ export function ProjectDetailSections({
 }: ProjectDetailSectionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [comments] = useState(initialComments);
-  const [files] = useState(initialFiles);
-  const [activities] = useState(initialActivities);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [comments, setComments] = useState(initialComments);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [files, setFiles] = useState(initialFiles);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [activities, setActivities] = useState(initialActivities);
 
   const handleAddComment = async (content: string, isInternal: boolean) => {
     const result = await createCommentAction(projectId, content, isInternal);
     if (!result.success) {
-      throw new Error(result.error || 'Failed to add comment');
+      throw new Error(result.error ?? 'Failed to add comment');
     }
     startTransition(() => {
       router.refresh();
@@ -49,7 +57,7 @@ export function ProjectDetailSections({
   const handleUpdateComment = async (commentId: string, content: string) => {
     const result = await updateCommentAction(projectId, commentId, content);
     if (!result.success) {
-      throw new Error(result.error || 'Failed to update comment');
+      throw new Error(result.error ?? 'Failed to update comment');
     }
     startTransition(() => {
       router.refresh();
@@ -59,7 +67,7 @@ export function ProjectDetailSections({
   const handleDeleteComment = async (commentId: string) => {
     const result = await deleteCommentAction(projectId, commentId);
     if (!result.success) {
-      throw new Error(result.error || 'Failed to delete comment');
+      throw new Error(result.error ?? 'Failed to delete comment');
     }
     startTransition(() => {
       router.refresh();
@@ -69,7 +77,7 @@ export function ProjectDetailSections({
   const handleDeleteFile = async (fileId: string) => {
     const result = await deleteFileAction(projectId, fileId);
     if (!result.success) {
-      throw new Error(result.error || 'Failed to delete file');
+      throw new Error(result.error ?? 'Failed to delete file');
     }
     startTransition(() => {
       router.refresh();

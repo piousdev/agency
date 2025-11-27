@@ -1,10 +1,16 @@
 'use client';
 
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+import React from 'react';
+
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+
+import { useLocalStorage } from '@/hooks/use-local-storage';
 import { cn } from '@/lib/utils';
+
 import { SectionItem } from './section-item';
+
 import type { HelpSection } from './types';
 
 interface SidebarProps {
@@ -19,51 +25,28 @@ interface SidebarProps {
  */
 export function Sidebar({ sections, className }: SidebarProps) {
   const pathname = usePathname();
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  const [mounted, setMounted] = useState(false);
+  const [expandedSectionsList, setExpandedSectionsList] = useLocalStorage<string[]>(
+    'help-expanded-sections',
+    sections.length > 0 && sections[0] ? [sections[0].id] : []
+  );
 
-  // Initialize from localStorage after mount
-  useEffect(() => {
-    const stored = localStorage.getItem('help-expanded-sections');
-    if (stored) {
-      try {
-        setExpandedSections(new Set(JSON.parse(stored)));
-      } catch {
-        // Ignore parse errors
-      }
-    } else {
-      // Expand the first section by default
-      if (sections.length > 0 && sections[0]) {
-        setExpandedSections(new Set([sections[0].id]));
-      }
-    }
-    setMounted(true);
-  }, [sections]);
-
-  // Save to localStorage when changed
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('help-expanded-sections', JSON.stringify([...expandedSections]));
-    }
-  }, [expandedSections, mounted]);
+  const expandedSections = new Set(expandedSectionsList);
 
   const toggleSection = (sectionId: string) => {
-    setExpandedSections((prev) => {
-      const next = new Set(prev);
-      if (next.has(sectionId)) {
-        next.delete(sectionId);
-      } else {
-        next.add(sectionId);
-      }
-      return next;
-    });
+    const next = new Set(expandedSections);
+    if (next.has(sectionId)) {
+      next.delete(sectionId);
+    } else {
+      next.add(sectionId);
+    }
+    setExpandedSectionsList(Array.from(next));
   };
 
   const isExpanded = (sectionId: string) => expandedSections.has(sectionId);
 
   const renderSection = (
     section: HelpSection,
-    depth: number = 0,
+    depth = 0,
     parentPath: string[] = []
   ): React.ReactNode => {
     const hasChildren = section.children && section.children.length > 0;
@@ -78,11 +61,11 @@ export function Sidebar({ sections, className }: SidebarProps) {
         {depth > 0 && (
           <div
             className="absolute left-2 top-0 h-full w-px bg-border"
-            style={{ left: `${depth * 16 - 8}px` }}
+            style={{ left: `${String(depth * 16 - 8)}px` }}
           />
         )}
 
-        <div className="relative" style={{ paddingLeft: `${depth * 16}px` }}>
+        <div className="relative" style={{ paddingLeft: `${String(depth * 16)}px` }}>
           {hasChildren ? (
             <button
               type="button"

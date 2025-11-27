@@ -1,6 +1,7 @@
-import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { user, roleAssignment } from '../../db/schema';
 import { requireAuth, type AuthVariables } from '../../middleware/auth';
@@ -100,7 +101,7 @@ app.get('/:id/permissions', requireAuth(), async (c) => {
       if (rolePermissions && typeof rolePermissions === 'object') {
         // Add permissions that are set to true
         for (const [permission, enabled] of Object.entries(rolePermissions)) {
-          if (enabled === true) {
+          if (enabled) {
             permissionsSet.add(permission);
           }
         }
@@ -109,7 +110,11 @@ app.get('/:id/permissions', requireAuth(), async (c) => {
       // Fallback: if role has no permissions defined, use default based on role name
       if (!rolePermissions || Object.keys(rolePermissions).length === 0) {
         const roleName = assignment.role.name.toLowerCase();
-        const defaultPerms = DEFAULT_ROLE_PERMISSIONS[roleName];
+        // Use a safe lookup to avoid object injection warning
+        type ValidRoleName = 'admin' | 'editor' | 'viewer' | 'client';
+        const defaultPerms = (roleName in DEFAULT_ROLE_PERMISSIONS) ?
+          DEFAULT_ROLE_PERMISSIONS[roleName as ValidRoleName] :
+          undefined;
         if (defaultPerms) {
           defaultPerms.forEach((p) => permissionsSet.add(p));
         }

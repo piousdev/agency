@@ -11,11 +11,14 @@
  */
 
 import { cacheLife, cacheTag } from 'next/cache';
-import { headers } from 'next/headers';
-import { listTickets } from '@/lib/api/tickets/list';
+
 import { listSprints } from '@/lib/api/sprints';
-import type { TicketWithRelations, TicketStatus, TicketPriority } from '@/lib/api/tickets/types';
+import { listTickets } from '@/lib/api/tickets/list';
+import { serverFetch } from '@/lib/api-client';
+
 import type { SprintWithProject } from '@/lib/api/sprints/types';
+import type { TicketWithRelations, TicketStatus, TicketPriority } from '@/lib/api/tickets/types';
+import type { SessionUser } from '@/lib/auth/session';
 
 // ============================================================================
 // Types
@@ -147,17 +150,6 @@ export interface OverviewData {
   orgHealth: OrganizationMetric[];
   financialSnapshot: FinancialSnapshot | null;
   riskSummary: RiskSummary | null;
-}
-
-// ============================================================================
-// Auth Helper
-// ============================================================================
-
-async function getAuthToken(): Promise<string | undefined> {
-  const headersList = await headers();
-  const cookie = headersList.get('cookie') || '';
-  const match = cookie.match(/better-auth\.session_token=([^;]+)/);
-  return match?.[1];
 }
 
 // ============================================================================
@@ -317,13 +309,13 @@ export async function getUpcomingDeadlines(): Promise<DeadlineItem[]> {
       .filter((t: TicketWithRelations) => t.dueAt)
       .sort(
         (a: TicketWithRelations, b: TicketWithRelations) =>
-          new Date(a.dueAt!).getTime() - new Date(b.dueAt!).getTime()
+          new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime()
       );
 
     return ticketsWithDueDates.slice(0, 5).map((ticket: TicketWithRelations) => ({
       id: ticket.id,
       title: ticket.title,
-      dueDate: ticket.dueAt!,
+      dueDate: ticket.dueAt,
       type: 'task' as const,
       projectName: ticket.project?.name ?? null,
       priority: ticket.priority,
@@ -370,31 +362,33 @@ export async function getRecentActivity(): Promise<ActivityItem[]> {
  */
 export async function getTeamStatus(): Promise<TeamMember[]> {
   try {
-    const headersList = await headers();
-    const cookie = headersList.get('cookie') || '';
+    interface TeamMemberData {
+      id: string;
+      name: string;
+      image: string | null;
+    }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/team`, {
-      headers: {
-        'Content-Type': 'application/json',
-        cookie,
-      },
-      cache: 'no-store',
-    });
+    interface TeamResponse {
+      success: boolean;
+      data: TeamMemberData[];
+    }
+
+    const response = await serverFetch('/api/users/team');
 
     if (!response.ok) {
       return [];
     }
 
-    const result = await response.json();
+    const result = await response.json() as TeamResponse;
 
-    if (!result.success || !result.data) {
+    if (!result.success) {
       return [];
     }
 
-    return result.data.slice(0, 6).map((member: Record<string, unknown>) => ({
-      id: member.id as string,
-      name: member.name as string,
-      image: (member.image as string) ?? null,
+    return result.data.slice(0, 6).map((member) => ({
+      id: member.id,
+      name: member.name,
+      image: member.image,
       status: 'available' as const,
       activeTasks: 0,
       completedToday: 0,
@@ -417,9 +411,9 @@ export async function getOrganizationHealth(): Promise<OrganizationMetric[]> {
       listTickets({ priority: 'critical', pageSize: 1 }),
     ]);
 
-    const totalOpen = openTickets.pagination?.totalCount ?? 0;
-    const totalResolved = resolvedTickets.pagination?.totalCount ?? 0;
-    const totalCritical = criticalTickets.pagination?.totalCount ?? 0;
+    const totalOpen = openTickets.pagination.totalCount;
+    const totalResolved = resolvedTickets.pagination.totalCount;
+    const totalCritical = criticalTickets.pagination.totalCount;
 
     return [
       {
@@ -582,19 +576,11 @@ export async function getRiskSummary(): Promise<RiskSummary | null> {
  * Aggregate all overview data
  * All fetches run in parallel for optimal performance
  */
-export async function getOverviewData(userId: string): Promise<OverviewData> {
-  const [
-    myWork,
-    sprint,
-    blockers,
-    recentActivity,
-    deadlines,
-    teamStatus,
-    orgHealth,
-    financialSnapshot,
-    riskSummary,
-  ] = await Promise.all([
-    getMyWorkToday(userId),
+export async function getOverviewData(user: SessionUser): Promise<OverviewData> {
+  if (!user.isInternal) throw new Error('Unauthorized: Internal access required');
+
+  const results = await Promise.allSettled([
+    getMyWorkToday(user.id),
     getCurrentSprint(),
     getBlockers(),
     getRecentActivity(),
@@ -605,15 +591,36 @@ export async function getOverviewData(userId: string): Promise<OverviewData> {
     getRiskSummary(),
   ]);
 
+  const [
+    myWorkResult,
+    sprintResult,
+    blockersResult,
+    recentActivityResult,
+    deadlinesResult,
+    teamStatusResult,
+    orgHealthResult,
+    financialSnapshotResult,
+    riskSummaryResult,
+  ] = results;
+
+  // Helper to extract value or return default
+  const getValue = <T>(result: PromiseSettledResult<T>, defaultValue: T, label: string): T => {
+    if (result.status === 'fulfilled') {
+      return result.value;
+    }
+    console.error(`Failed to fetch ${label}:`, result.reason);
+    return defaultValue;
+  };
+
   return {
-    myWork,
-    sprint,
-    blockers,
-    recentActivity,
-    deadlines,
-    teamStatus,
-    orgHealth,
-    financialSnapshot,
-    riskSummary,
+    myWork: getValue(myWorkResult, [], 'myWork'),
+    sprint: getValue(sprintResult, null, 'sprint'),
+    blockers: getValue(blockersResult, [], 'blockers'),
+    recentActivity: getValue(recentActivityResult, [], 'recentActivity'),
+    deadlines: getValue(deadlinesResult, [], 'deadlines'),
+    teamStatus: getValue(teamStatusResult, [], 'teamStatus'),
+    orgHealth: getValue(orgHealthResult, [], 'orgHealth'),
+    financialSnapshot: getValue(financialSnapshotResult, null, 'financialSnapshot'),
+    riskSummary: getValue(riskSummaryResult, null, 'riskSummary'),
   };
 }

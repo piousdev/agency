@@ -2,8 +2,9 @@
  * Get sprint API route
  */
 
-import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
+
 import { db } from '../../db/index.js';
 import { sprint } from '../../db/schema/sprint.js';
 import { requireAuth, requireInternal } from '../../middleware/auth.js';

@@ -1,10 +1,16 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+
 import Link from 'next/link';
-import { IconX, IconChevronDown, IconPlus } from '@tabler/icons-react';
+
+import {  IconChevronDown, IconPlus } from '@tabler/icons-react';
+
+import { ViewSwitcher, type ViewMode } from '@/components/business-center/view-switcher';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -12,20 +18,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ViewSwitcher, type ViewMode } from '@/components/business-center/view-switcher';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
-import type { TeamMember } from '@/lib/api/users/types';
-import { ProjectTableView } from './views/table-view';
+
+import { ProjectCalendarView } from './views/calendar-view';
 import { ProjectCardsView } from './views/cards-view';
 import { ProjectKanbanView } from './views/kanban-view';
-import { ProjectCalendarView } from './views/calendar-view';
+import { ProjectTableView } from './views/table-view';
 import { BusinessCenterHeader } from '../components/header';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
+import type { TeamMember } from '@/lib/api/users/types';
 
 type ProjectType = 'all' | 'content' | 'software';
 type DeliverableFilter = 'all' | 'has_delivery' | 'no_delivery' | 'overdue';
@@ -61,10 +66,10 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
   const filteredProjects = useMemo(() => {
     return baseProjects.filter((project) => {
       // Filter by project type
-      if (projectType === 'content' && project.client?.type !== 'creative') {
+      if (projectType === 'content' && project.client.type !== 'creative') {
         return false;
       }
-      if (projectType === 'software' && project.client?.type !== 'software') {
+      if (projectType === 'software' && project.client.type !== 'software') {
         return false;
       }
 
@@ -75,7 +80,7 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
 
       // Filter by assignee
       if (selectedAssignees.length > 0) {
-        const projectAssigneeIds = project.assignees?.map((a) => a.id) || [];
+        const projectAssigneeIds = project.assignees.map((a) => a.id);
         const hasMatchingAssignee = selectedAssignees.some((id) => projectAssigneeIds.includes(id));
         if (!hasMatchingAssignee) {
           return false;
@@ -133,8 +138,8 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
   };
 
   // Count projects by type for tab badges
-  const contentCount = baseProjects.filter((p) => p.client?.type === 'creative').length;
-  const softwareCount = baseProjects.filter((p) => p.client?.type === 'software').length;
+  const contentCount = baseProjects.filter((p) => p.client.type === 'creative').length;
+  const softwareCount = baseProjects.filter((p) => p.client.type === 'software').length;
 
   const [statusOpen, setStatusOpen] = useState(true);
   const [assigneesOpen, setAssigneesOpen] = useState(false);
@@ -274,11 +279,11 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
     const headers = ['Name', 'Client', 'Status', 'Progress', 'Delivery Date', 'Team'];
     const rows = filteredProjects.map((p) => [
       p.name,
-      p.client?.name || 'Unknown',
+      p.client.name || 'Unknown',
       p.status,
-      `${p.completionPercentage}%`,
+      `${String(p.completionPercentage)}%`,
       p.deliveredAt ? new Date(p.deliveredAt).toLocaleDateString() : 'Not set',
-      p.assignees?.map((a) => a.name).join(', ') || 'Unassigned',
+      p.assignees.map((a) => a.name).join(', ') || 'Unassigned',
     ]);
 
     const csv = [headers, ...rows]
@@ -288,7 +293,7 @@ export function ProjectsClient({ projects, allProjects, teamMembers }: ProjectsC
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `projects-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `projects-${new Date().toISOString().split('T')[0] ?? 'export'}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

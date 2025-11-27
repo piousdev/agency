@@ -1,17 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+
 import { IconCode, IconFileText, IconFolderOpen } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
+
 import {
   BentoCard,
   BentoCardContent,
   BentoCardFooter,
   BentoCardHeader,
 } from '@/components/ui/bento-grid';
-import { TimePeriodSelector, type TimePeriod } from './time-period-selector';
-import { InfoTooltip } from './info-tooltip';
+import { cn } from '@/lib/utils';
+
 import { CardActionButton } from './card-action-button';
+import { InfoTooltip } from './info-tooltip';
+import { TimePeriodSelector, type TimePeriod } from './time-period-selector';
 
 interface ActiveProjectsCardProps {
   contentCount: number;
@@ -31,7 +34,7 @@ export function ActiveProjectsCard({ contentCount, softwareCount }: ActiveProjec
       color: 'bg-chart-1',
       textColor: 'text-chart-1',
       href: '/dashboard/business-center/content-projects',
-      width: `${(contentCount / maxValue) * 100}%`,
+      width: `${String((contentCount / maxValue) * 100)}%`,
     },
     {
       label: 'Software',
@@ -40,13 +43,13 @@ export function ActiveProjectsCard({ contentCount, softwareCount }: ActiveProjec
       color: 'bg-chart-2',
       textColor: 'text-chart-2',
       href: '/dashboard/business-center/software-projects',
-      width: `${(softwareCount / maxValue) * 100}%`,
+      width: `${String((softwareCount / maxValue) * 100)}%`,
     },
   ];
 
   return (
     <BentoCard
-      aria-label={`Active Projects: ${total} total - ${contentCount} content, ${softwareCount} software`}
+      aria-label={`Active Projects: ${String(total)} total - ${String(contentCount)} content, ${String(softwareCount)} software`}
     >
       {/* Watermark Icon */}
       <div className="absolute -top-6 -right-6 opacity-[0.03] pointer-events-none">
@@ -100,7 +103,7 @@ export function ActiveProjectsCard({ contentCount, softwareCount }: ActiveProjec
                   aria-valuenow={project.count}
                   aria-valuemin={0}
                   aria-valuemax={maxValue}
-                  aria-label={`${project.label} projects: ${project.count}`}
+                  aria-label={`${project.label} projects: ${String(project.count)}`}
                 >
                   <div
                     className={cn(

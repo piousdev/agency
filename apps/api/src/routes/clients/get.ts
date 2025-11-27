@@ -1,6 +1,7 @@
+import { eq, desc } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { eq, desc } from 'drizzle-orm';
+
 import { db } from '../../db';
 import { client, project, ticket } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';

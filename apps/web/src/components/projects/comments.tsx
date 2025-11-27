@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { formatDistanceToNow } from 'date-fns';
+
 import {
   IconMessage,
   IconSend,
@@ -10,9 +10,10 @@ import {
   IconTrash,
   IconLock,
 } from '@tabler/icons-react';
+import { formatDistanceToNow } from 'date-fns';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
@@ -20,7 +21,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+
 import type { Comment } from '@/lib/api/projects';
 
 interface CommentsProps {
@@ -108,7 +111,7 @@ export function Comments({
           className="min-h-[100px] resize-none bg-background/50"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && e.metaKey) {
-              handleSubmit();
+              void handleSubmit();
             }
           }}
         />
@@ -187,8 +190,7 @@ export function Comments({
                       <Textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        className="min-h-[80px] resize-none"
-                        autoFocus
+                        className="min-h-20 resize-none"
                       />
                       <div className="flex items-center gap-2">
                         <Button

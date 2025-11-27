@@ -82,13 +82,15 @@
  *
  * @module middleware/auth
  */
-import { Context, Next } from 'hono';
+import { eq } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { auth } from '../lib/auth.js';
+
 import { db } from '../db';
 import { roleAssignment, role, userToClient, client } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { auth } from '../lib/auth.js';
 import { logSecurityEvent, AuthEventType } from '../lib/sentry.js';
+
+import type { Context, Next } from 'hono';
 
 /**
  * Types for auth context variables
@@ -99,27 +101,29 @@ import { logSecurityEvent, AuthEventType } from '../lib/sentry.js';
 export type AuthUser = typeof auth.$Infer.Session.user;
 export type AuthSession = typeof auth.$Infer.Session.session;
 
-export type AuthVariables = {
+export interface AuthVariables {
   user: AuthUser | null;
   session: AuthSession | null;
-};
+}
 
 /**
  * Global middleware to attach user and session to context
  * Add this to your Hono app: app.use("*", authContext)
  */
-export const authContext = async (c: Context, next: Next) => {
+export const authContext = async (c: Context, next: Next): Promise<void> => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
   if (!session) {
     c.set('user', null);
     c.set('session', null);
+    // eslint-disable-next-line n/callback-return
     await next();
     return;
   }
 
   c.set('user', session.user);
   c.set('session', session.session);
+  // eslint-disable-next-line n/callback-return
   await next();
 };
 
@@ -134,15 +138,22 @@ export const authContext = async (c: Context, next: Next) => {
  * });
  */
 export const requireAuth = () => {
-  return async (c: Context, next: Next) => {
-    const user = c.get('user');
+  return async (c: Context, next: Next): Promise<void> => {
+    const user = c.get('user') as AuthUser | null;
 
-    if (!user) {
+    if (user === null) {
       // Log unauthorized access attempt to Sentry
+      const forwardedFor = c.req.header('x-forwarded-for');
+      const realIp = c.req.header('x-real-ip');
       logSecurityEvent(
         AuthEventType.UNAUTHORIZED_ACCESS,
         {
-          ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+          ipAddress:
+            forwardedFor !== undefined && forwardedFor !== ''
+              ? forwardedFor
+              : realIp !== undefined && realIp !== ''
+                ? realIp
+                : undefined,
           userAgent: c.req.header('user-agent'),
           endpoint: c.req.path,
           reason: 'No authentication token provided',
@@ -155,6 +166,7 @@ export const requireAuth = () => {
       });
     }
 
+    // eslint-disable-next-line n/callback-return
     await next();
   };
 };
@@ -176,10 +188,10 @@ export const requireAuth = () => {
  * });
  */
 export const requireRole = (...roles: string[]) => {
-  return async (c: Context, next: Next) => {
-    const user = c.get('user');
+  return async (c: Context, next: Next): Promise<void> => {
+    const user = c.get('user') as AuthUser | null;
 
-    if (!user) {
+    if (user === null) {
       throw new HTTPException(401, {
         message: 'Unauthorized - Please sign in',
       });
@@ -201,12 +213,19 @@ export const requireRole = (...roles: string[]) => {
 
     if (!hasRole) {
       // Log permission denied to Sentry
+      const forwardedFor = c.req.header('x-forwarded-for');
+      const realIp = c.req.header('x-real-ip');
       logSecurityEvent(
         AuthEventType.PERMISSION_DENIED,
         {
           userId: user.id,
           email: user.email,
-          ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+          ipAddress:
+            forwardedFor !== undefined && forwardedFor !== ''
+              ? forwardedFor
+              : realIp !== undefined && realIp !== ''
+                ? realIp
+                : undefined,
           userAgent: c.req.header('user-agent'),
           endpoint: c.req.path,
           reason: `User lacks required role(s): ${roles.join(', ')}. User roles: ${userRoleNames.join(', ') || 'none'}`,
@@ -219,6 +238,7 @@ export const requireRole = (...roles: string[]) => {
       });
     }
 
+    // eslint-disable-next-line n/callback-return
     await next();
   };
 };
@@ -235,12 +255,12 @@ export const requireRole = (...roles: string[]) => {
  * });
  */
 export const requireClientType = (
-  ...types: Array<'creative' | 'software' | 'full_service' | 'one_time'>
+  ...types: ('creative' | 'software' | 'full_service' | 'one_time')[]
 ) => {
-  return async (c: Context, next: Next) => {
-    const user = c.get('user');
+  return async (c: Context, next: Next): Promise<void> => {
+    const user = c.get('user') as AuthUser | null;
 
-    if (!user) {
+    if (user === null) {
       throw new HTTPException(401, {
         message: 'Unauthorized - Please sign in',
       });
@@ -262,12 +282,19 @@ export const requireClientType = (
 
     if (!hasClientType) {
       // Log permission denied to Sentry
+      const forwardedFor = c.req.header('x-forwarded-for');
+      const realIp = c.req.header('x-real-ip');
       logSecurityEvent(
         AuthEventType.PERMISSION_DENIED,
         {
           userId: user.id,
           email: user.email,
-          ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+          ipAddress:
+            forwardedFor !== undefined && forwardedFor !== ''
+              ? forwardedFor
+              : realIp !== undefined && realIp !== ''
+                ? realIp
+                : undefined,
           userAgent: c.req.header('user-agent'),
           endpoint: c.req.path,
           reason: `User lacks required client type(s): ${types.join(', ')}. User types: ${clientTypes.join(', ') || 'none'}`,
@@ -280,6 +307,7 @@ export const requireClientType = (
       });
     }
 
+    // eslint-disable-next-line n/callback-return
     await next();
   };
 };
@@ -301,10 +329,10 @@ export const requireClientType = (
  * });
  */
 export const requirePermission = (...permissions: string[]) => {
-  return async (c: Context, next: Next) => {
-    const user = c.get('user');
+  return async (c: Context, next: Next): Promise<void> => {
+    const user = c.get('user') as AuthUser | null;
 
-    if (!user) {
+    if (user === null) {
       throw new HTTPException(401, {
         message: 'Unauthorized - Please sign in',
       });
@@ -322,12 +350,10 @@ export const requirePermission = (...permissions: string[]) => {
     // Collect all permissions from all roles
     const allPermissions = new Set<string>();
     for (const userRole of userRoles) {
-      if (userRole.permissions && typeof userRole.permissions === 'object') {
-        // Permissions is a JSONB object like { "can_approve_projects": true, "can_view_all": true }
-        for (const [key, value] of Object.entries(userRole.permissions)) {
-          if (value === true) {
-            allPermissions.add(key);
-          }
+      // Permissions is a JSONB object like { "can_approve_projects": true, "can_view_all": true }
+      for (const [key, value] of Object.entries(userRole.permissions)) {
+        if (value) {
+          allPermissions.add(key);
         }
       }
     }
@@ -339,12 +365,19 @@ export const requirePermission = (...permissions: string[]) => {
 
     if (!hasPermission) {
       // Log permission denied to Sentry
+      const forwardedFor = c.req.header('x-forwarded-for');
+      const realIp = c.req.header('x-real-ip');
       logSecurityEvent(
         AuthEventType.PERMISSION_DENIED,
         {
           userId: user.id,
           email: user.email,
-          ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+          ipAddress:
+            forwardedFor !== undefined && forwardedFor !== ''
+              ? forwardedFor
+              : realIp !== undefined && realIp !== ''
+                ? realIp
+                : undefined,
           userAgent: c.req.header('user-agent'),
           endpoint: c.req.path,
           reason: `User lacks required permission(s): ${permissions.join(', ')}. User permissions: ${Array.from(allPermissions).join(', ') || 'none'}`,
@@ -357,6 +390,7 @@ export const requirePermission = (...permissions: string[]) => {
       });
     }
 
+    // eslint-disable-next-line n/callback-return
     await next();
   };
 };
@@ -371,10 +405,10 @@ export const requirePermission = (...permissions: string[]) => {
  * });
  */
 export const requireInternal = () => {
-  return async (c: Context, next: Next) => {
-    const user = c.get('user');
+  return async (c: Context, next: Next): Promise<void> => {
+    const user = c.get('user') as AuthUser | null;
 
-    if (!user) {
+    if (user === null) {
       throw new HTTPException(401, {
         message: 'Unauthorized - Please sign in',
       });
@@ -388,14 +422,21 @@ export const requireInternal = () => {
       },
     });
 
-    if (!userDetails?.isInternal) {
+    if (userDetails?.isInternal !== true) {
       // Log permission denied to Sentry
+      const forwardedFor = c.req.header('x-forwarded-for');
+      const realIp = c.req.header('x-real-ip');
       logSecurityEvent(
         AuthEventType.PERMISSION_DENIED,
         {
           userId: user.id,
           email: user.email,
-          ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+          ipAddress:
+            forwardedFor !== undefined && forwardedFor !== ''
+              ? forwardedFor
+              : realIp !== undefined && realIp !== ''
+                ? realIp
+                : undefined,
           userAgent: c.req.header('user-agent'),
           endpoint: c.req.path,
           reason: 'User is not an internal team member',
@@ -408,6 +449,7 @@ export const requireInternal = () => {
       });
     }
 
+    // eslint-disable-next-line n/callback-return
     await next();
   };
 };

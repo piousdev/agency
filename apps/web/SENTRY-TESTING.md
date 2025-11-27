@@ -1,6 +1,7 @@
 # Sentry Testing Guide
 
-This guide explains how to properly test your Sentry integration to ensure errors are being tracked correctly.
+This guide explains how to properly test your Sentry integration to ensure
+errors are being tracked correctly.
 
 ## Quick Start
 
@@ -44,7 +45,8 @@ SENTRY_AUTH_TOKEN=your_auth_token
 ### Get Your Sentry DSN
 
 1. Go to [sentry.io](https://sentry.io)
-2. Navigate to **Settings** → **Projects** → **[Your Project]** → **Client Keys (DSN)**
+2. Navigate to **Settings** → **Projects** → **[Your Project]** → **Client Keys
+   (DSN)**
 3. Copy the DSN and paste it in your `.env.local`
 
 ---
@@ -165,7 +167,8 @@ The test page provides buttons to test different error scenarios:
 
 ✅ **Checklist:**
 
-- [ ] Browser console shows: `🔍 [Sentry Dev Mode - Client] Event would be sent:`
+- [ ] Browser console shows:
+      `🔍 [Sentry Dev Mode - Client] Event would be sent:`
 - [ ] Server logs show: `🔍 [Sentry Dev Mode - Server] Event would be sent:`
 - [ ] Event object contains correct error message
 - [ ] Event includes tags and extra context

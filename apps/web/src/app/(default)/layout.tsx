@@ -1,7 +1,8 @@
-import type React from 'react';
+import { SidebarWrapper } from '@/components/default/dashboard/common/sidebar-wrapper';
 import { DefaultHeader } from '@/components/default/dashboard/navigation/header';
-import { SidebarWrapper } from '@/components/default/dashboard/sidebar-wrapper';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+
+import type React from 'react';
 
 /**
  * Default Layout

@@ -1,8 +1,11 @@
 'use client';
 
-import { IconCircleCheck, IconCircleX, IconMail } from '@tabler/icons-react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { IconCircleCheck, IconCircleX, IconMail } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { authClient } from '@/lib/auth-client';
@@ -59,7 +62,7 @@ export function VerifyEmailContent() {
         // Better-Auth automatically handles verification via the token parameter
         // The verification endpoint is: /api/auth/verify-email?token=<token>
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-email?token=${verificationToken}`,
+          `${String(process.env.NEXT_PUBLIC_API_URL)}/api/auth/verify-email?token=${verificationToken}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -72,9 +75,9 @@ export function VerifyEmailContent() {
             router.push('/login');
           }, 3000);
         } else {
-          const data = await response.json();
+          const data = (await response.json()) as { error?: string };
           setState('error');
-          setError(data.error || 'Verification failed. The link may have expired or is invalid.');
+          setError(data.error ?? 'Verification failed. The link may have expired or is invalid.');
         }
       } catch (err) {
         console.error('Verification error:', err);
@@ -91,7 +94,7 @@ export function VerifyEmailContent() {
       return;
     }
 
-    verifyEmail(token);
+    void verifyEmail(token);
   }, [token, verifyEmail]);
 
   // No token in URL
@@ -104,7 +107,7 @@ export function VerifyEmailContent() {
           </div>
           <CardTitle className="text-2xl font-bold">No Verification Token</CardTitle>
           <CardDescription>
-            We couldn't find a verification token in the URL. Please check your email and click the
+            We couldn&apos;t find a verification token in the URL. Please check your email and click the
             verification link.
           </CardDescription>
         </CardHeader>

@@ -1,8 +1,5 @@
 'use client';
 
-import { Progress } from '@/components/ui/progress';
-import type { Milestone } from '@/lib/api/milestones/types';
-import type { MilestoneStatus } from '@/lib/schemas/milestone';
 import {
   IconCircleCheck,
   IconProgress,
@@ -10,7 +7,12 @@ import {
   IconCircleX,
   IconBan,
 } from '@tabler/icons-react';
+
+import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+
+import type { Milestone } from '@/lib/api/milestones/types';
+import type { MilestoneStatus } from '@/lib/schemas/milestone';
 
 interface MilestoneProgressProps {
   milestones: Milestone[];
@@ -81,7 +83,7 @@ export function MilestoneProgress({
   // Calculate percentages (completed and in_progress count towards progress)
   const completedPercent = (counts.completed / total) * 100;
   const inProgressPercent = (counts.in_progress / total) * 100;
-  const progressPercent = completedPercent + inProgressPercent * 0.5; // In progress counts as half
+  const _progressPercent = completedPercent + inProgressPercent * 0.5; // In progress counts as half
 
   // Calculate active milestones (not cancelled)
   const activeMilestones = total - counts.cancelled;
@@ -100,14 +102,14 @@ export function MilestoneProgress({
           {/* Completed (green) */}
           <div
             className="absolute h-full bg-green-500 transition-all duration-300"
-            style={{ width: `${completedPercent}%` }}
+            style={{ width: `${String(completedPercent)}%` }}
           />
           {/* In Progress (blue, partial) */}
           <div
             className="absolute h-full bg-blue-500/60 transition-all duration-300"
             style={{
-              left: `${completedPercent}%`,
-              width: `${inProgressPercent}%`,
+              left: `${String(completedPercent)}%`,
+              width: `${String(inProgressPercent)}%`,
             }}
           />
         </div>

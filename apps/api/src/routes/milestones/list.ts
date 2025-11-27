@@ -2,8 +2,9 @@
  * List milestones API route
  */
 
-import { Hono } from 'hono';
 import { asc, desc } from 'drizzle-orm';
+import { Hono } from 'hono';
+
 import { db } from '../../db/index.js';
 import { milestone, type Milestone } from '../../db/schema/milestone.js';
 import { requireAuth, requireInternal } from '../../middleware/auth.js';
@@ -23,9 +24,9 @@ type MilestoneStatus = Milestone['status'];
 app.get('/', requireAuth(), requireInternal(), async (c) => {
   const projectId = c.req.query('projectId');
   const status = c.req.query('status') as MilestoneStatus | undefined;
-  const sort = c.req.query('sort') || 'sortOrder';
+  const sort = c.req.query('sort') ?? 'sortOrder';
 
-  if (!projectId) {
+  if (projectId === undefined || projectId === '') {
     return c.json({ success: false, message: 'projectId is required' }, 400);
   }
 

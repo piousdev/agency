@@ -4,13 +4,16 @@
  * Protected route - requires internal team member access
  */
 
-import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+
+import { IconArrowLeft } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/api/users';
 import { listRoles } from '@/lib/api/users/roles';
 import { requireRole } from '@/lib/auth/session';
+
 import { AssignRoleForm } from './assign';
 import { CurrentRolesList } from './list';
 
@@ -32,14 +35,14 @@ export default async function UserRolesPage({ params }: PageProps) {
   // Fetch user data (includes current roles)
   const userResponse = await getUser(userId);
 
-  if (!userResponse.success || !userResponse.data) {
+  if (!userResponse.success) {
     notFound();
   }
 
   const user = userResponse.data;
 
   // Only allow role assignment for internal team members
-  if (!user.isInternal) {
+  if (user.isInternal === false) {
     return (
       <div className="container mx-auto py-8 max-w-4xl">
         <div className="mb-6">
@@ -69,7 +72,7 @@ export default async function UserRolesPage({ params }: PageProps) {
   });
 
   const availableRoles = rolesResponse.success ? rolesResponse.data : [];
-  const currentRoleIds = user.roles?.map((r) => r.id) || [];
+  const currentRoleIds = user.roles?.map((r) => r.id);
 
   // Filter out already assigned roles
   const unassignedRoles = availableRoles.filter((role) => !currentRoleIds.includes(role.id));
@@ -95,7 +98,7 @@ export default async function UserRolesPage({ params }: PageProps) {
 
       <div className="grid gap-8">
         {/* Current Roles */}
-        <CurrentRolesList userId={userId} roles={user.roles || []} />
+        <CurrentRolesList userId={userId} roles={user.roles} />
 
         {/* Assign New Role */}
         {unassignedRoles.length > 0 && (

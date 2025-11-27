@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { IconLoader2, IconAlertCircle, IconCheck } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Select,
   SelectContent,
@@ -14,8 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { labelColors, labelScopes, type LabelScope } from '@/lib/schemas/label';
-import { IconLoader2, IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
 
 interface LabelFormData {
@@ -88,7 +91,7 @@ export function LabelForm({ label, mode, onSubmit, onSuccess, onCancel }: LabelF
         <Input
           id="name"
           name="name"
-          defaultValue={label?.name ?? ''}
+          defaultValue={label?.name}
           placeholder="e.g., High Priority, In Review"
           required
           maxLength={100}
@@ -165,7 +168,7 @@ export function LabelForm({ label, mode, onSubmit, onSuccess, onCancel }: LabelF
         <Textarea
           id="description"
           name="description"
-          defaultValue={label?.description ?? ''}
+          defaultValue={label?.description}
           placeholder="Optional description for this label"
           rows={2}
           maxLength={500}
@@ -183,7 +186,7 @@ export function LabelForm({ label, mode, onSubmit, onSuccess, onCancel }: LabelF
               color: isLightColor(selectedColor) ? '#000' : '#fff',
             }}
           >
-            {label?.name || 'Label Name'}
+            {label?.name ?? 'Label Name'}
           </span>
         </div>
       </div>

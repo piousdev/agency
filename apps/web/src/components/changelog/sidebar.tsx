@@ -1,10 +1,15 @@
 'use client';
 
-import { IconChevronDown, IconChevronRight, IconHistory } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+import { IconChevronDown, IconChevronRight, IconHistory } from '@tabler/icons-react';
+
+
 import { cn } from '@/lib/utils';
+
 import type { ChangelogSection } from './types';
 
 interface SidebarProps {
@@ -27,7 +32,8 @@ export function Sidebar({ sections, className }: SidebarProps) {
     const stored = localStorage.getItem('changelog-expanded-sections');
     if (stored) {
       try {
-        setExpandedSections(new Set(JSON.parse(stored)));
+        const parsed = JSON.parse(stored) as string[];
+        setExpandedSections(new Set(parsed));
       } catch {
         // Ignore parse errors
       }
@@ -62,7 +68,7 @@ export function Sidebar({ sections, className }: SidebarProps) {
 
   const renderSection = (
     section: ChangelogSection,
-    depth: number = 0,
+    depth = 0,
     parentPath: string[] = []
   ): React.ReactNode => {
     const hasChildren = section.children && section.children.length > 0;
@@ -80,11 +86,11 @@ export function Sidebar({ sections, className }: SidebarProps) {
         {depth > 0 && (
           <div
             className="absolute left-2 top-0 h-full w-px bg-border"
-            style={{ left: `${depth * 16 - 8}px` }}
+            style={{ left: `${String(depth * 16 - 8)}px` }}
           />
         )}
 
-        <div className="relative" style={{ paddingLeft: `${depth * 16}px` }}>
+        <div className="relative" style={{ paddingLeft: `${String(depth * 16)}px` }}>
           {hasChildren ? (
             <button
               type="button"

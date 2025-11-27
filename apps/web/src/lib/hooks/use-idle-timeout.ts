@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback, useState } from 'react';
+
 import { signOut } from '@/lib/auth-client';
 
 /**
@@ -140,7 +141,7 @@ export function useIdleTimeout(config: IdleTimeoutConfig = {}) {
     }, 1000);
 
     // Set timeout for auto-logout
-    idleTimerRef.current = setTimeout(handleTimeout, warningDuration);
+    idleTimerRef.current = setTimeout(() => void handleTimeout(), warningDuration);
   }, [idleTimeout, warningTimeout, handleTimeout, onWarning]);
 
   /**

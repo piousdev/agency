@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requirePermission, Permissions } from '@/lib/auth/permissions';
+
 import {
   createProject,
   updateProject,
@@ -9,8 +9,11 @@ import {
   assignProject,
   removeProjectAssignment,
 } from '@/lib/api/projects';
-import { withErrorHandling, type ActionResult } from './errors';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createProjectSchema, updateProjectSchema } from '@/lib/schemas';
+
+import { withErrorHandling, type ActionResult } from './errors';
+
 
 type ProjectStatus =
   | 'proposal'
@@ -68,7 +71,7 @@ export async function removeProjectMemberAction(
     const result = await removeProjectAssignment(projectId, { userId });
 
     if (!result.success) {
-      throw new Error(result.message || 'Failed to remove project assignment');
+      throw new Error(result.message ?? 'Failed to remove project assignment');
     }
 
     revalidatePath('/dashboard/business-center');
@@ -107,9 +110,9 @@ export async function createProjectAction(
   // Validate with Zod
   const parsed = createProjectSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
@@ -181,9 +184,9 @@ export async function updateProjectFullAction(
   // Validate with Zod
   const parsed = updateProjectSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
@@ -217,7 +220,7 @@ export async function deleteProjectAction(projectId: string): Promise<ActionResu
     const result = await updateProjectStatus(projectId, { status: 'archived' });
 
     if (!result.success) {
-      throw new Error(result.error || 'Failed to archive project');
+      throw new Error(result.error);
     }
 
     revalidatePath('/dashboard/business-center');

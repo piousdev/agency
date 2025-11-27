@@ -4,4 +4,5 @@
 
 ### Minor Changes
 
-- Initial release of the Skyll API with authentication, user management, health checks, and database integration
+- Initial release of the Skyll API with authentication, user management, health
+  checks, and database integration

@@ -1,42 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MilestoneForm } from './forms/milestone-form';
-import { MilestoneProgress } from './milestone-progress';
-import { toast } from 'sonner';
-import { getMilestoneStatusColor, type MilestoneStatus } from '@/lib/schemas/milestone';
-import type { Milestone } from '@/lib/api/milestones/types';
-import {
-  createMilestoneAction,
-  updateMilestoneAction,
-  deleteMilestoneAction,
-} from '@/lib/actions/business-center/milestones';
+
 import {
   IconPlus,
   IconDotsVertical,
@@ -50,8 +15,49 @@ import {
   IconProgress,
   IconBan,
 } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from 'sonner';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  createMilestoneAction,
+  updateMilestoneAction,
+  deleteMilestoneAction,
+} from '@/lib/actions/business-center/milestones';
+import { getMilestoneStatusColor, type MilestoneStatus } from '@/lib/schemas/milestone';
+import { cn } from '@/lib/utils';
+
+import { MilestoneForm } from './forms/milestone-form';
+import { MilestoneProgress } from './milestone-progress';
+
+import type { Milestone } from '@/lib/api/milestones/types';
+
+
 
 interface MilestoneListProps {
   milestones: Milestone[];
@@ -89,7 +95,7 @@ export function MilestoneList({
         description: (formData.get('description') as string) || null,
         status: formData.get('status') as MilestoneStatus,
         dueDate: (formData.get('dueDate') as string) || null,
-        sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
+        sortOrder: parseInt(formData.get('sortOrder') as string),
         completedAt: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -114,7 +120,7 @@ export function MilestoneList({
                   ...m,
                   name: (formData.get('name') as string) || m.name,
                   description: (formData.get('description') as string) || m.description,
-                  status: (formData.get('status') as MilestoneStatus) || m.status,
+                  status: ((formData.get('status') ?? m.status) as MilestoneStatus),
                   dueDate: (formData.get('dueDate') as string) || m.dueDate,
                   sortOrder: parseInt(formData.get('sortOrder') as string) || m.sortOrder,
                   updatedAt: new Date().toISOString(),
@@ -138,7 +144,7 @@ export function MilestoneList({
         setMilestones((prev) => prev.filter((m) => m.id !== deletingMilestone.id));
         toast.success('Milestone deleted successfully');
       } else {
-        toast.error(result.error || 'Failed to delete milestone');
+        toast.error(result.error ?? 'Failed to delete milestone');
       }
     } catch {
       toast.error('Failed to delete milestone');

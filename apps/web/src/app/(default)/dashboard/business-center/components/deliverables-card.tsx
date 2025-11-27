@@ -1,17 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+
 import { IconCalendar } from '@tabler/icons-react';
+
 import {
   BentoCard,
   BentoCardContent,
   BentoCardFooter,
   BentoCardHeader,
 } from '@/components/ui/bento-grid';
-import { TimeFilter, type TimeFilterOption } from './time-filter';
-import { InfoTooltip } from './info-tooltip';
+
 import { CardActionButton } from './card-action-button';
+import { InfoTooltip } from './info-tooltip';
 import { MiniSparkline } from './mini-sparkline';
+import { TimeFilter, type TimeFilterOption } from './time-filter';
 
 interface DeliverablesCardProps {
   upcomingCount: number;
@@ -32,7 +35,7 @@ export function DeliverablesCard({
 
   return (
     <BentoCard
-      aria-label={`Deliverables: ${totalDeliverables} total, ${overdueCount} overdue, ${thisWeekCount} due this week`}
+      aria-label={`Deliverables: ${String(totalDeliverables)} total, ${String(overdueCount)} overdue, ${String(thisWeekCount)} due this week`}
     >
       {/* Watermark Icon */}
       <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none">

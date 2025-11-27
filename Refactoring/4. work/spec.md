@@ -13,11 +13,15 @@
 
 ### 1.1 Primary Purpose
 
-The Work navigation serves as the central workspace where all executable tasks (0-8 story points) are managed, tracked, and completed. It consolidates tasks from both standalone requests and project breakdowns into a unified workflow for team execution.
+The Work navigation serves as the central workspace where all executable tasks
+(0-8 story points) are managed, tracked, and completed. It consolidates tasks
+from both standalone requests and project breakdowns into a unified workflow for
+team execution.
 
 ### 1.2 Core Objectives
 
-- Provide a unified view of all tasks regardless of origin (standalone or project-related)
+- Provide a unified view of all tasks regardless of origin (standalone or
+  project-related)
 - Enable efficient task workflow from backlog to completion
 - Support agile/sprint-based work methodology
 - Facilitate team collaboration and task handoffs
@@ -692,8 +696,8 @@ Tasks can be sorted by:
 
 ### 8.2 List View Layout
 
-**Table Format**:
-Columns: Checkbox, ID, Title, Assignee, Status, Points, Sprint, Due Date, Actions
+**Table Format**: Columns: Checkbox, ID, Title, Assignee, Status, Points,
+Sprint, Due Date, Actions
 
 **Features**:
 

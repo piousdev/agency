@@ -7,12 +7,13 @@
  * - Email notifications to PMs and requesters
  */
 
-import cron, { ScheduledTask } from 'node-cron';
+import { eq, and, lt } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
+import cron, { type ScheduledTask } from 'node-cron';
+
 import { db } from '../db';
-import { request, user } from '../db/schema';
-import { eq, and, lt, isNull, or, sql, inArray } from 'drizzle-orm';
 import { sendEmail } from './email';
+import { request } from '../db/schema';
 import {
   intakeAgingAlertTemplate,
   intakeAgingAlertText,
@@ -34,20 +35,31 @@ const AGING_THRESHOLDS: Record<string, number> = {
 const sentAlertCache = new Map<string, Date>();
 const ALERT_COOLDOWN_HOURS = 24; // Don't send duplicate alerts within 24 hours
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL !== undefined && process.env.NEXT_PUBLIC_APP_URL !== ''
+    ? process.env.NEXT_PUBLIC_APP_URL
+    : 'http://localhost:3000';
 
 /**
  * Get aging requests that exceed their stage thresholds
  */
-export async function getAgingRequests() {
-  const now = new Date();
-  const results: Array<{
+export async function getAgingRequests(): Promise<
+  {
     request: typeof request.$inferSelect;
     requester: { id: string; name: string | null; email: string } | null;
     assignedPm: { id: string; name: string | null; email: string } | null;
     daysInStage: number;
     threshold: number;
-  }> = [];
+  }[]
+> {
+  const now = new Date();
+  const results: {
+    request: typeof request.$inferSelect;
+    requester: { id: string; name: string | null; email: string } | null;
+    assignedPm: { id: string; name: string | null; email: string } | null;
+    daysInStage: number;
+    threshold: number;
+  }[] = [];
 
   for (const [stage, thresholdDays] of Object.entries(AGING_THRESHOLDS)) {
     const thresholdDate = new Date(now);
@@ -149,8 +161,8 @@ async function sendAgingAlert(agingRequest: {
   const socketAlert: AlertPayload = {
     id: nanoid(),
     type: alertType,
-    title: `Request Aging: ${req.requestNumber}`,
-    message: `"${req.title}" has been in ${req.stage.replace('_', ' ')} for ${daysInStage} days`,
+    title: `Request Aging: ${req.requestNumber ?? req.id}`,
+    message: `"${req.title}" has been in ${req.stage.replace('_', ' ')} for ${String(daysInStage)} days`,
     entityType: 'system',
     entityId: req.id,
     entityName: req.title,
@@ -162,29 +174,41 @@ async function sendAgingAlert(agingRequest: {
   broadcastAlert(socketAlert, { roles: ['admin', 'pm'] });
 
   // Send email to assigned PM (or all PMs if unassigned)
-  if (assignedPm?.email) {
+  if (assignedPm?.email !== undefined && assignedPm.email !== '') {
     try {
       await sendEmail({
         to: assignedPm.email,
-        subject: `[Action Required] Request ${req.requestNumber} aging alert`,
+        subject: `[Action Required] Request ${req.requestNumber ?? req.id} aging alert`,
         html: intakeAgingAlertTemplate({
-          recipientName: assignedPm.name || 'Project Manager',
+          recipientName:
+            assignedPm.name !== null && assignedPm.name !== ''
+              ? assignedPm.name
+              : 'Project Manager',
           requestTitle: req.title,
-          requestNumber: req.requestNumber || req.id,
+          requestNumber: req.requestNumber ?? req.id,
           stage: req.stage,
           daysInStage,
           priority: req.priority,
-          requesterName: requester?.name || 'Unknown',
+          requesterName:
+            requester?.name !== null && requester?.name !== ''
+              ? requester.name
+              : 'Unknown',
           requestUrl,
         }),
         text: intakeAgingAlertText({
-          recipientName: assignedPm.name || 'Project Manager',
+          recipientName:
+            assignedPm.name !== null && assignedPm.name !== ''
+              ? assignedPm.name
+              : 'Project Manager',
           requestTitle: req.title,
-          requestNumber: req.requestNumber || req.id,
+          requestNumber: req.requestNumber ?? req.id,
           stage: req.stage,
           daysInStage,
           priority: req.priority,
-          requesterName: requester?.name || 'Unknown',
+          requesterName:
+            requester?.name !== null && requester?.name !== ''
+              ? requester.name
+              : 'Unknown',
           requestUrl,
         }),
       });
@@ -195,7 +219,7 @@ async function sendAgingAlert(agingRequest: {
 
   markAlertSent(req.id, 'aging');
   console.log(
-    `Sent aging alert for request ${req.requestNumber} (${daysInStage} days in ${req.stage})`
+    `Sent aging alert for request ${req.requestNumber ?? req.id} (${String(daysInStage)} days in ${req.stage})`
   );
 }
 
@@ -214,7 +238,7 @@ export async function runAgingCheck(): Promise<{ checked: number; alerted: numbe
   }
 
   console.log(
-    `Aging check complete: ${agingRequests.length} requests checked, ${alertedCount} alerts sent`
+    `Aging check complete: ${String(agingRequests.length)} requests checked, ${String(alertedCount)} alerts sent`
   );
 
   return {
@@ -377,12 +401,14 @@ export function startAgingCheckCron(schedule = '0 * * * *'): void {
     return;
   }
 
-  agingCheckJob = cron.schedule(schedule, async () => {
-    try {
-      await runAgingCheck();
-    } catch (error) {
-      console.error('Error running aging check:', error);
-    }
+  agingCheckJob = cron.schedule(schedule, () => {
+    void (async (): Promise<void> => {
+      try {
+        await runAgingCheck();
+      } catch (error) {
+        console.error('Error running aging check:', error);
+      }
+    })();
   });
 
   console.log(`Intake aging check cron job started (schedule: ${schedule})`);
@@ -393,7 +419,7 @@ export function startAgingCheckCron(schedule = '0 * * * *'): void {
  */
 export function stopAgingCheckCron(): void {
   if (agingCheckJob) {
-    agingCheckJob.stop();
+    void agingCheckJob.stop();
     agingCheckJob = null;
     console.log('Intake aging check cron job stopped');
   }

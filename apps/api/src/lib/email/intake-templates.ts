@@ -47,7 +47,7 @@ export function intakeAgingAlertTemplate(options: {
     <div class="content">
       <p>Hi ${recipientName},</p>
 
-      <p>The following intake request has been in the <strong>${stageLabels[stage] || stage}</strong> stage for <strong>${daysInStage} days</strong> and requires attention:</p>
+      <p>The following intake request has been in the <strong>${stageLabels[stage] ?? stage}</strong> stage for <strong>${String(daysInStage)} days</strong> and requires attention:</p>
 
       <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -57,11 +57,11 @@ export function intakeAgingAlertTemplate(options: {
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Stage:</td>
-            <td style="padding: 8px 0;">${stageLabels[stage] || stage}</td>
+            <td style="padding: 8px 0;">${stageLabels[stage] ?? stage}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Days in Stage:</td>
-            <td style="padding: 8px 0; color: ${urgencyColor}; font-weight: 600;">${daysInStage} days</td>
+            <td style="padding: 8px 0; color: ${urgencyColor}; font-weight: 600;">${String(daysInStage)} days</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Priority:</td>
@@ -85,7 +85,7 @@ export function intakeAgingAlertTemplate(options: {
 
     <div class="footer">
       <p>This is an automated notification from the Intake Pipeline system.</p>
-      <p>&copy; ${new Date().getFullYear()} Skyll Platform. All rights reserved.</p>
+      <p>&copy; ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.</p>
     </div>
   `;
 
@@ -117,11 +117,11 @@ Hi ${options.recipientName},
 
 REQUEST AGING ALERT
 
-The following intake request has been in the ${stageLabels[options.stage] || options.stage} stage for ${options.daysInStage} days and requires attention:
+The following intake request has been in the ${stageLabels[options.stage] ?? options.stage} stage for ${String(options.daysInStage)} days and requires attention:
 
 Request: ${options.requestNumber} - ${options.requestTitle}
-Stage: ${stageLabels[options.stage] || options.stage}
-Days in Stage: ${options.daysInStage} days
+Stage: ${stageLabels[options.stage] ?? options.stage}
+Days in Stage: ${String(options.daysInStage)} days
 Priority: ${options.priority}
 Requester: ${options.requesterName}
 
@@ -182,18 +182,18 @@ export function intakeStageChangeTemplate(options: {
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">From Stage:</td>
-            <td style="padding: 8px 0;">${stageLabels[fromStage] || fromStage}</td>
+            <td style="padding: 8px 0;">${stageLabels[fromStage] ?? fromStage}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">To Stage:</td>
-            <td style="padding: 8px 0; font-weight: 600; color: #2563eb;">${stageLabels[toStage] || toStage}</td>
+            <td style="padding: 8px 0; font-weight: 600; color: #2563eb;">${stageLabels[toStage] ?? toStage}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Changed By:</td>
             <td style="padding: 8px 0;">${actorName}</td>
           </tr>
           ${
-            reason
+            reason !== undefined && reason !== ''
               ? `
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Reason:</td>
@@ -212,7 +212,7 @@ export function intakeStageChangeTemplate(options: {
 
     <div class="footer">
       <p>This is an automated notification from the Intake Pipeline system.</p>
-      <p>&copy; ${new Date().getFullYear()} Skyll Platform. All rights reserved.</p>
+      <p>&copy; ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.</p>
     </div>
   `;
 
@@ -275,7 +275,7 @@ export function intakeConvertedTemplate(options: {
 
     <div class="footer">
       <p>This is an automated notification from the Intake Pipeline system.</p>
-      <p>&copy; ${new Date().getFullYear()} Skyll Platform. All rights reserved.</p>
+      <p>&copy; ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.</p>
     </div>
   `;
 
@@ -330,11 +330,11 @@ export function intakeEstimatedTemplate(options: {
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Story Points:</td>
-            <td style="padding: 8px 0; font-weight: 600; color: #2563eb;">${storyPoints}</td>
+            <td style="padding: 8px 0; font-weight: 600; color: #2563eb;">${String(storyPoints)}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Confidence:</td>
-            <td style="padding: 8px 0;">${confidenceLabels[confidence] || confidence}</td>
+            <td style="padding: 8px 0;">${confidenceLabels[confidence] ?? confidence}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #6b7280;">Estimated By:</td>
@@ -354,7 +354,7 @@ export function intakeEstimatedTemplate(options: {
 
     <div class="footer">
       <p>This is an automated notification from the Intake Pipeline system.</p>
-      <p>&copy; ${new Date().getFullYear()} Skyll Platform. All rights reserved.</p>
+      <p>&copy; ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.</p>
     </div>
   `;
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+
 import { BentoCard, BentoCardContent, BentoCardHeader } from '@/components/ui/bento-grid';
 
 interface TeamCapacityChartProps {
@@ -21,7 +22,7 @@ export function TeamCapacityChart({ available, overloaded, total }: TeamCapacity
   return (
     <BentoCard
       className="h-full"
-      aria-label={`Team capacity: ${available} available, ${busy} busy, ${overloaded} overloaded out of ${total} total`}
+      aria-label={`Team capacity: ${String(available)} available, ${String(busy)} busy, ${String(overloaded)} overloaded out of ${String(total)} total`}
     >
       <BentoCardHeader>
         <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
@@ -45,7 +46,7 @@ export function TeamCapacityChart({ available, overloaded, total }: TeamCapacity
                 className="motion-reduce:animate-none"
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${String(index)}`} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip

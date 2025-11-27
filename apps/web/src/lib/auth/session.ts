@@ -1,6 +1,11 @@
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { cache } from 'react';
+
+import { redirect } from 'next/navigation';
+
+import { serverFetch } from '../api-client';
+import { checkUserPermission } from './permission-checks';
+
+import type { Permission } from './permissions-constants';
 
 /**
  * Session user type with all available fields
@@ -15,6 +20,7 @@ export interface SessionUser {
   createdAt: string;
   updatedAt: string;
   isInternal?: boolean;
+  role?: string;
   expiresAt?: string | null;
 }
 
@@ -63,32 +69,25 @@ export interface SessionData {
  */
 export const getSession = cache(async (): Promise<SessionData | null> => {
   try {
-    const headersList = await headers();
-
     // Call BetterAuth via Hono API to validate session
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-session`, {
-      headers: {
-        cookie: headersList.get('cookie') || '',
-      },
-      cache: 'no-store', // Always get fresh session data
-    });
+    const response = await serverFetch('/api/auth/get-session');
 
     if (!response.ok) {
       return null;
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as Partial<SessionData>;
 
     // BetterAuth returns { session, user } structure
     // Return the full data with both session and user
-    if (!data || !data.session || !data.user) {
+    if (!data.session || !data.user) {
       return null;
     }
 
     return {
       session: data.session,
       user: data.user,
-    };
+    } as SessionData;
   } catch (error) {
     console.error('Failed to get session:', error);
     return null;
@@ -123,9 +122,7 @@ export async function requireAuth(redirectTo?: string): Promise<SessionData> {
 export async function requireRole(requiredRole: string): Promise<SessionData> {
   const session = await requireAuth();
 
-  // TODO: Implement role checking once RBAC is fully integrated
-  // For now, we check the isInternal flag
-  if (requiredRole === 'internal' && !session.user.isInternal) {
+  if (session.user.role !== requiredRole) {
     throw new Error('Insufficient permissions');
   }
 
@@ -136,14 +133,15 @@ export async function requireRole(requiredRole: string): Promise<SessionData> {
  * Check if user has permission (from JSONB permissions field)
  * Use this for fine-grained permission checks
  *
- * @param _permission - Permission string to check (currently unused until RBAC is implemented)
+ * @param permission - Permission string to check
  */
-export async function requirePermission(_permission: string): Promise<SessionData> {
+export async function requirePermission(permission: Permission): Promise<SessionData> {
   const session = await requireAuth();
+  if (session.user.isInternal) return session;
 
-  // TODO: Implement permission checking once RBAC is fully integrated
-  // This will check the user's roles and their associated permissions
+  const hasPermission = await checkUserPermission(session.user.id, permission);
 
+  if (!hasPermission) throw new Error(`Permission denied: ${permission}`);
   return session;
 }
 
@@ -154,6 +152,20 @@ export async function requirePermission(_permission: string): Promise<SessionDat
 export async function requireUser(redirectTo?: string): Promise<SessionUser> {
   const session = await requireAuth(redirectTo);
   return session.user;
+}
+
+/**
+ * Require internal user - redirects to dashboard if not internal
+ * Use this for pages that require internal access
+ */
+export async function requireInternalUser(redirectTo?: string): Promise<SessionUser> {
+  const user = await requireUser(redirectTo);
+
+  if (!user.isInternal) {
+    redirect('/dashboard');
+  }
+
+  return user;
 }
 
 /**

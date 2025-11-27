@@ -43,5 +43,5 @@ export const markAllNotificationsReadSchema = z.object({
  * Schema for snoozing a notification
  */
 export const snoozeNotificationSchema = z.object({
-  snoozedUntil: z.string().datetime(), // ISO 8601 datetime string
+  snoozedUntil: z.iso.datetime(), // ISO 8601 datetime string
 });

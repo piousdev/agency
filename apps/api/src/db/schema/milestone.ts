@@ -1,4 +1,5 @@
 import { index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+
 import { milestoneStatusEnum } from './enums';
 import { project } from './project';
 

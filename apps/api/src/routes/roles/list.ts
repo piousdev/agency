@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq, desc, asc, count } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { role } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -28,11 +29,17 @@ app.get(
       const whereClause = roleType !== 'all' ? eq(role.roleType, roleType) : undefined;
 
       // Determine sort column
-      const sortColumn = {
+      type ValidSortField = 'name' | 'roleType' | 'createdAt';
+      const validSortFields: ValidSortField[] = ['name', 'roleType', 'createdAt'];
+      const isValidSort = validSortFields.includes(sortBy as ValidSortField);
+      const sortField: ValidSortField = isValidSort ? (sortBy as ValidSortField) : 'createdAt';
+
+      const sortColumnMap = {
         name: role.name,
         roleType: role.roleType,
         createdAt: role.createdAt,
-      }[sortBy];
+      } as const;
+      const sortColumn = sortColumnMap[sortField];
 
       // Query roles with pagination
       const offset = (page - 1) * pageSize;

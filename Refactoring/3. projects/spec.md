@@ -13,7 +13,10 @@
 
 ### 1.1 Primary Purpose
 
-The Projects navigation manages large work initiatives (13+ story points) that require breakdown into smaller, manageable tasks. It provides a structured environment for planning, executing, and tracking complex deliverables that span multiple sprints and involve multiple team members.
+The Projects navigation manages large work initiatives (13+ story points) that
+require breakdown into smaller, manageable tasks. It provides a structured
+environment for planning, executing, and tracking complex deliverables that span
+multiple sprints and involve multiple team members.
 
 ### 1.2 Core Objectives
 
@@ -94,8 +97,8 @@ The Projects navigation manages large work initiatives (13+ story points) that r
 | Delete projects        | ✓     | ✗     | ✗    | ✗       |
 | View financials        | ✓     | ✓     | ✗    | ✓\*\*\* |
 
-\*PM creates from routed Intake requests
-**PM can only edit projects assigned to them \***Client sees only their project budgets
+\*PM creates from routed Intake requests **PM can only edit projects assigned to
+them \***Client sees only their project budgets
 
 ---
 
@@ -1627,7 +1630,8 @@ CPI < 1.0: Over budget
 
 ## 20. Glossary
 
-**Project**: Large initiative (13+ story points) requiring breakdown into smaller tasks
+**Project**: Large initiative (13+ story points) requiring breakdown into
+smaller tasks
 
 **Breakdown**: Process of converting project into 0-8 point tasks
 
@@ -1645,7 +1649,8 @@ CPI < 1.0: Over budget
 
 **Deliverable**: Tangible output from project
 
-**Critical Path**: Sequence of dependent tasks determining minimum project duration
+**Critical Path**: Sequence of dependent tasks determining minimum project
+duration
 
 ---
 

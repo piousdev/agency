@@ -1,6 +1,7 @@
-import { Hono } from 'hono';
 import { eq, desc } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -45,7 +46,7 @@ app.get('/team', requireAuth(), requireInternal(), async (c) => {
 
     // Transform data to include capacity status and project count
     const transformedTeamMembers = teamMembers.map((member) => {
-      const capacity = member.capacityPercentage ?? 0;
+      const capacity = member.capacityPercentage;
       let status: 'available' | 'at_capacity' | 'overloaded';
 
       if (capacity < 80) {

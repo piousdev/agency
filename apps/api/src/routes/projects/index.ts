@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { AuthVariables } from '../../middleware/auth';
+
 import activityRoutes from './activity';
 import assignRoutes from './assign';
 import commentsRoutes from './comments';
@@ -9,6 +9,8 @@ import getRoutes from './get';
 import listRoutes from './list';
 import updateRoutes from './update';
 import updateStatusRoutes from './update-status';
+
+import type { AuthVariables } from '../../middleware/auth';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 

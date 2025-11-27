@@ -2,11 +2,14 @@
 
 ## Why
 
-The project currently lacks a standardized approach to versioning and changelog management. As we prepare for production deployment and potential future publishing of packages, we need:
+The project currently lacks a standardized approach to versioning and changelog
+management. As we prepare for production deployment and potential future
+publishing of packages, we need:
 
 - **Clear version tracking** - Know which version is deployed and what changed
 - **Automated changelogs** - Generate human-readable changelogs from changes
-- **Monorepo versioning** - Handle independent versioning for `@repo/web` and `@repo/api`
+- **Monorepo versioning** - Handle independent versioning for `@repo/web` and
+  `@repo/api`
 - **Release automation** - Streamline the release process with tooling
 - **Industry standards** - Follow Turborepo and monorepo best practices
 

@@ -6,14 +6,17 @@
  * Architecture: Server-First - data fetched on server, minimal client JavaScript
  */
 
-import Link from 'next/link';
 import { Suspense } from 'react';
+
+import Link from 'next/link';
+
 import { Button } from '@/components/ui/button';
 import { listUsers } from '@/lib/api/users';
 import { requireRole } from '@/lib/auth/session';
+
 import { UsersFilters } from './filters';
-import { UsersTable } from './table';
 import { UsersTableSkeleton } from './skeleton';
+import { UsersTable } from './table';
 
 export const metadata = {
   title: 'User Management | Admin',
@@ -38,13 +41,13 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
   // Parse query parameters
-  const page = parseInt(params.page || '1', 10);
-  const pageSize = parseInt(params.pageSize || '20', 10);
+  const page = parseInt(params.page ?? '1', 10);
+  const pageSize = parseInt(params.pageSize ?? '20', 10);
   const sortBy =
-    (params.sortBy as 'name' | 'email' | 'createdAt' | 'updatedAt' | undefined) || 'createdAt';
-  const sortOrder = (params.sortOrder as 'asc' | 'desc' | undefined) || 'desc';
+    (params.sortBy as 'name' | 'email' | 'createdAt' | 'updatedAt' | undefined) ?? 'createdAt';
+  const sortOrder = (params.sortOrder as 'asc' | 'desc' | undefined) ?? 'desc';
   const search = params.search;
-  const isInternal = (params.isInternal as 'all' | 'true' | 'false' | undefined) || 'all';
+  const isInternal = (params.isInternal as 'all' | 'true' | 'false' | undefined) ?? 'all';
 
   return (
     <div className="container mx-auto py-8">
@@ -68,7 +71,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
 
       {/* Users Table with Suspense */}
       <Suspense
-        key={`${page}-${pageSize}-${sortBy}-${sortOrder}-${search}-${isInternal}`}
+        key={`${String(page)}-${String(pageSize)}-${sortBy}-${sortOrder}-${search ?? ''}-${isInternal}`}
         fallback={<UsersTableSkeleton />}
       >
         <UsersTableData

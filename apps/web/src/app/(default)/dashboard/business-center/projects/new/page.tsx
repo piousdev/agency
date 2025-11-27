@@ -1,10 +1,12 @@
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { requireUser } from '@/lib/auth/session';
-import { listClients } from '@/lib/api/clients';
-import { ProjectForm } from '@/components/business-center/forms';
+import { redirect } from 'next/navigation';
+
 import { IconArrowLeft } from '@tabler/icons-react';
+
+import { ProjectForm } from '@/components/business-center/forms';
 import { Button } from '@/components/ui/button';
+import { listClients } from '@/lib/api/clients';
+import { requireUser } from '@/lib/auth/session';
 
 /**
  * New Project Page
@@ -33,7 +35,7 @@ const validStatuses = [
 
 export default async function NewProjectPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const defaultStatus = validStatuses.includes(params.status || '') ? params.status : undefined;
+  const defaultStatus = validStatuses.includes(params.status) ? params.status : undefined;
   // Server-side authentication
   const user = await requireUser();
 

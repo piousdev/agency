@@ -1,5 +1,6 @@
-import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
+
 import { db } from '../../db';
 import { userDashboardPreferences, type WidgetLayout } from '../../db/schema';
 import { requireAuth, type AuthVariables } from '../../middleware/auth';
@@ -116,8 +117,8 @@ app.get('/', requireAuth(), async (c) => {
 
     if (!preferences) {
       // Return default layout based on user type (internal vs client)
-      const layoutKey = currentUser.isInternal ? 'developer' : 'client';
-      const defaultLayout = DEFAULT_LAYOUTS[layoutKey] || DEFAULT_LAYOUTS.developer;
+      const layoutKey: 'developer' | 'client' = currentUser.isInternal ? 'developer' : 'client';
+      const defaultLayout = DEFAULT_LAYOUTS[layoutKey];
 
       return c.json({
         success: true,
@@ -133,7 +134,7 @@ app.get('/', requireAuth(), async (c) => {
       success: true,
       data: {
         layout: preferences.layout,
-        collapsedWidgets: preferences.collapsedWidgets || [],
+        collapsedWidgets: preferences.collapsedWidgets ?? [],
         isDefault: false,
       },
     });

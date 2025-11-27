@@ -1,6 +1,8 @@
 import { Server as SocketIOServer, type Socket } from 'socket.io';
-import type { Server as HTTPServer } from 'node:http';
+
 import { auth } from './auth.js';
+
+import type { Server as HTTPServer } from 'node:http';
 
 // Socket.IO server instance
 let io: SocketIOServer | null = null;
@@ -138,7 +140,7 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
     httpServer,
     {
       cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+        origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000',
         credentials: true,
       },
       // Connection settings
@@ -147,12 +149,14 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
     }
   );
 
-  // Authentication middleware
+  // Authentication middleware - using async IIFE with explicit handling
+  /* eslint-disable @typescript-eslint/no-misused-promises, n/callback-return */
   io.use(async (socket, next) => {
     try {
       const cookies = socket.handshake.headers.cookie;
-      if (!cookies) {
-        return next(new Error('Authentication required'));
+      if (cookies === undefined || cookies === '') {
+        next(new Error('Authentication required'));
+        return;
       }
 
       // Parse session from cookies using Better-Auth
@@ -164,21 +168,29 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
 
       const session = await auth.api.getSession({ headers: request.headers });
 
-      if (!session?.user) {
-        return next(new Error('Invalid session'));
+      if (session?.user === undefined) {
+        next(new Error('Invalid session'));
+        return;
       }
 
-      // Attach user data to socket
-      socket.data.userId = session.user.id;
-      socket.data.userRole = session.user.isInternal ? 'internal' : 'user';
-      socket.data.userName = session.user.name || 'Unknown';
+      // Attach user data to socket - session.user is typed from Better-Auth
+      const user = session.user as {
+        id: string;
+        isInternal?: boolean;
+        name?: string | null;
+      };
+      const socketData = socket.data as SocketData;
+      socketData.userId = user.id;
+      socketData.userRole = user.isInternal === true ? 'internal' : 'user';
+      socketData.userName = user.name ?? 'Unknown';
 
       next();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Socket authentication error:', error);
       next(new Error('Authentication failed'));
     }
   });
+  /* eslint-enable @typescript-eslint/no-misused-promises, n/callback-return */
 
   // Connection handler
   io.on(
@@ -188,10 +200,10 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
       console.log(`Socket connected: ${userName} (${userId}) - role: ${userRole}`);
 
       // Join user-specific room
-      socket.join(`user:${userId}`);
+      void socket.join(`user:${userId}`);
 
       // Join role-based room
-      socket.join(`role:${userRole}`);
+      void socket.join(`role:${userRole}`);
 
       // Emit connected event
       socket.emit('connected', {
@@ -207,48 +219,48 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
         const targetRoleIndex = roleHierarchy.indexOf(role);
 
         if (targetRoleIndex >= userRoleIndex) {
-          socket.join(`role:${role}`);
+          void socket.join(`role:${role}`);
           console.log(`${userName} subscribed to role: ${role}`);
         }
       });
 
       // Handle project subscription
       socket.on('subscribe:project', (projectId: string) => {
-        socket.join(`project:${projectId}`);
+        void socket.join(`project:${projectId}`);
         console.log(`${userName} subscribed to project: ${projectId}`);
       });
 
       // Handle project unsubscription
       socket.on('unsubscribe:project', (projectId: string) => {
-        socket.leave(`project:${projectId}`);
+        void socket.leave(`project:${projectId}`);
         console.log(`${userName} unsubscribed from project: ${projectId}`);
       });
 
       // Handle intake pipeline subscription (internal users only)
       socket.on('subscribe:intake', () => {
         if (userRole === 'internal') {
-          socket.join('intake:all');
+          void socket.join('intake:all');
           console.log(`${userName} subscribed to intake pipeline`);
         }
       });
 
       // Handle intake pipeline unsubscription
       socket.on('unsubscribe:intake', () => {
-        socket.leave('intake:all');
+        void socket.leave('intake:all');
         console.log(`${userName} unsubscribed from intake pipeline`);
       });
 
       // Handle intake stage-specific subscription
       socket.on('subscribe:intake-stage', (stage: string) => {
         if (userRole === 'internal') {
-          socket.join(`intake:stage:${stage}`);
+          void socket.join(`intake:stage:${stage}`);
           console.log(`${userName} subscribed to intake stage: ${stage}`);
         }
       });
 
       // Handle intake stage-specific unsubscription
       socket.on('unsubscribe:intake-stage', (stage: string) => {
-        socket.leave(`intake:stage:${stage}`);
+        void socket.leave(`intake:stage:${stage}`);
         console.log(`${userName} unsubscribed from intake stage: ${stage}`);
       });
 
@@ -261,7 +273,7 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
 
       // Handle alert snooze
       socket.on('alert:snooze', ({ alertId, duration }) => {
-        console.log(`${userName} snoozed alert ${alertId} for ${duration}ms`);
+        console.log(`${userName} snoozed alert ${alertId} for ${String(duration)}ms`);
         // Could store snooze state in Redis/DB and re-emit after duration
       });
 
@@ -308,23 +320,23 @@ export function broadcastAlert(
   const { roles, userIds, projectIds } = options;
 
   // Broadcast to roles
-  if (roles?.length) {
+  if (roles !== undefined && roles.length > 0) {
     roles.forEach((role) => {
-      io!.to(`role:${role}`).emit('alert', alert);
+      io.to(`role:${role}`).emit('alert', alert);
     });
   }
 
   // Broadcast to specific users
-  if (userIds?.length) {
+  if (userIds !== undefined && userIds.length > 0) {
     userIds.forEach((userId) => {
-      io!.to(`user:${userId}`).emit('alert', alert);
+      io.to(`user:${userId}`).emit('alert', alert);
     });
   }
 
   // Broadcast to project rooms
-  if (projectIds?.length) {
+  if (projectIds !== undefined && projectIds.length > 0) {
     projectIds.forEach((projectId) => {
-      io!.to(`project:${projectId}`).emit('alert', alert);
+      io.to(`project:${projectId}`).emit('alert', alert);
     });
   }
 }
@@ -349,10 +361,10 @@ export function broadcastActivity(
   const { roles, userIds, projectIds, excludeUserId } = options;
 
   // Broadcast to roles (excluding the user who triggered the activity)
-  if (roles?.length) {
+  if (roles !== undefined && roles.length > 0) {
     roles.forEach((role) => {
-      const room = io!.to(`role:${role}`);
-      if (excludeUserId) {
+      const room = io.to(`role:${role}`);
+      if (excludeUserId !== undefined && excludeUserId !== '') {
         room.except(`user:${excludeUserId}`).emit('activity', activity);
       } else {
         room.emit('activity', activity);
@@ -361,19 +373,19 @@ export function broadcastActivity(
   }
 
   // Broadcast to specific users
-  if (userIds?.length) {
+  if (userIds !== undefined && userIds.length > 0) {
     userIds.forEach((userId) => {
       if (userId !== excludeUserId) {
-        io!.to(`user:${userId}`).emit('activity', activity);
+        io.to(`user:${userId}`).emit('activity', activity);
       }
     });
   }
 
   // Broadcast to project rooms
-  if (projectIds?.length) {
+  if (projectIds !== undefined && projectIds.length > 0) {
     projectIds.forEach((projectId) => {
-      const room = io!.to(`project:${projectId}`);
-      if (excludeUserId) {
+      const room = io.to(`project:${projectId}`);
+      if (excludeUserId !== undefined && excludeUserId !== '') {
         room.except(`user:${excludeUserId}`).emit('activity', activity);
       } else {
         room.emit('activity', activity);
@@ -407,13 +419,13 @@ export function broadcastIntakeCreated(
   payload: IntakeRequestPayload,
   options?: { excludeUserId?: string }
 ): void {
-  if (!io) {
+  if (io === null) {
     console.warn('Socket.IO not initialized, cannot broadcast intake:created');
     return;
   }
 
   const room = io.to('intake:all').to(`intake:stage:${payload.stage}`);
-  if (options?.excludeUserId) {
+  if (options?.excludeUserId !== undefined && options.excludeUserId !== '') {
     room.except(`user:${options.excludeUserId}`).emit('intake:created', payload);
   } else {
     room.emit('intake:created', payload);
@@ -427,13 +439,13 @@ export function broadcastIntakeUpdated(
   payload: IntakeRequestPayload,
   options?: { excludeUserId?: string }
 ): void {
-  if (!io) {
+  if (io === null) {
     console.warn('Socket.IO not initialized, cannot broadcast intake:updated');
     return;
   }
 
   const room = io.to('intake:all').to(`intake:stage:${payload.stage}`);
-  if (options?.excludeUserId) {
+  if (options?.excludeUserId !== undefined && options.excludeUserId !== '') {
     room.except(`user:${options.excludeUserId}`).emit('intake:updated', payload);
   } else {
     room.emit('intake:updated', payload);
@@ -447,7 +459,7 @@ export function broadcastIntakeStageChanged(
   payload: IntakeStageChangedPayload,
   options?: { excludeUserId?: string }
 ): void {
-  if (!io) {
+  if (io === null) {
     console.warn('Socket.IO not initialized, cannot broadcast intake:stage-changed');
     return;
   }
@@ -458,7 +470,7 @@ export function broadcastIntakeStageChanged(
     .to(`intake:stage:${payload.fromStage}`)
     .to(`intake:stage:${payload.toStage}`);
 
-  if (options?.excludeUserId) {
+  if (options?.excludeUserId !== undefined && options.excludeUserId !== '') {
     room.except(`user:${options.excludeUserId}`).emit('intake:stage-changed', payload);
   } else {
     room.emit('intake:stage-changed', payload);
@@ -472,7 +484,7 @@ export function broadcastIntakeEstimated(
   payload: IntakeEstimatedPayload,
   options?: { excludeUserId?: string }
 ): void {
-  if (!io) {
+  if (io === null) {
     console.warn('Socket.IO not initialized, cannot broadcast intake:estimated');
     return;
   }
@@ -480,7 +492,7 @@ export function broadcastIntakeEstimated(
   // Broadcast to all intake subscribers and the ready stage (auto-transitions to ready)
   const room = io.to('intake:all').to('intake:stage:estimation').to('intake:stage:ready');
 
-  if (options?.excludeUserId) {
+  if (options?.excludeUserId !== undefined && options.excludeUserId !== '') {
     room.except(`user:${options.excludeUserId}`).emit('intake:estimated', payload);
   } else {
     room.emit('intake:estimated', payload);
@@ -494,13 +506,13 @@ export function broadcastIntakeConverted(
   payload: IntakeConvertedPayload,
   options?: { excludeUserId?: string }
 ): void {
-  if (!io) {
+  if (io === null) {
     console.warn('Socket.IO not initialized, cannot broadcast intake:converted');
     return;
   }
 
   const room = io.to('intake:all').to('intake:stage:ready');
-  if (options?.excludeUserId) {
+  if (options?.excludeUserId !== undefined && options.excludeUserId !== '') {
     room.except(`user:${options.excludeUserId}`).emit('intake:converted', payload);
   } else {
     room.emit('intake:converted', payload);
@@ -514,20 +526,20 @@ export function broadcastIntakeAssigned(
   payload: IntakeAssignedPayload,
   options?: { excludeUserId?: string; notifyAssignee?: boolean }
 ): void {
-  if (!io) {
+  if (io === null) {
     console.warn('Socket.IO not initialized, cannot broadcast intake:assigned');
     return;
   }
 
   const room = io.to('intake:all');
-  if (options?.excludeUserId) {
+  if (options?.excludeUserId !== undefined && options.excludeUserId !== '') {
     room.except(`user:${options.excludeUserId}`).emit('intake:assigned', payload);
   } else {
     room.emit('intake:assigned', payload);
   }
 
   // Also notify the assigned PM directly
-  if (options?.notifyAssignee && payload.assignedPmId) {
+  if (options?.notifyAssignee === true && payload.assignedPmId !== '') {
     io.to(`user:${payload.assignedPmId}`).emit('intake:assigned', payload);
   }
 }

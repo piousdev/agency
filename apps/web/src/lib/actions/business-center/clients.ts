@@ -1,10 +1,13 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requirePermission, Permissions } from '@/lib/auth/permissions';
+
 import { createClient, updateClient } from '@/lib/api/clients';
-import { withErrorHandling, type ActionResult } from './errors';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createClientSchema, updateClientSchema } from '@/lib/schemas';
+
+import { withErrorHandling, type ActionResult } from './errors';
+
 
 /**
  * Create a new client
@@ -32,9 +35,9 @@ export async function createClientAction(
   // Validate with Zod
   const parsed = createClientSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
@@ -99,9 +102,9 @@ export async function updateClientFullAction(
   // Validate with Zod
   const parsed = updateClientSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {

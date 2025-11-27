@@ -3,14 +3,14 @@
 import { getAuthHeaders, getApiUrl } from '@/lib/api/requests/api-utils';
 
 export interface IntakeAnalytics {
-  stageDistribution: Array<{ stage: string; count: number }>;
-  requestsByType: Array<{ type: string; count: number }>;
+  stageDistribution: { stage: string; count: number }[];
+  requestsByType: { type: string; count: number }[];
   agingRequests: Record<string, number>;
-  throughput: Array<{ week: string; count: number }>;
+  throughput: { week: string; count: number }[];
   avgTimeInStage: Record<string, number>;
-  estimationConfidence: Array<{ confidence: string; count: number }>;
-  storyPointsDistribution: Array<{ storyPoints: number; count: number }>;
-  weeklyNewRequests: Array<{ week: string; count: number }>;
+  estimationConfidence: { confidence: string; count: number }[];
+  storyPointsDistribution: { storyPoints: number; count: number }[];
+  weeklyNewRequests: { week: string; count: number }[];
   summary: {
     totalActive: number;
     totalAging: number;
@@ -35,25 +35,32 @@ export async function getIntakeAnalytics(): Promise<AnalyticsResult> {
 
     const response = await fetch(`${apiUrl}/api/requests/analytics`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders,
-      },
+      headers: Object.assign({}, { 'Content-Type': 'application/json' }, authHeaders),
       cache: 'no-store',
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      let errorData: { error?: string } = {};
+      try {
+        errorData = await response.json() as { error?: string };
+      } catch {
+        // Ignore JSON parse errors
+      }
       return {
         success: false,
-        error: errorData.error || `Failed to fetch analytics: ${response.status}`,
+        error: errorData.error ?? `Failed to fetch analytics: ${String(response.status)}`,
       };
     }
 
-    const data = await response.json();
+    const data = await response.json() as AnalyticsResult;
     return data;
-  } catch (error) {
-    console.error('Error fetching analytics:', error);
-    return { success: false, error: 'Failed to fetch analytics' };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('Error fetching analytics:', errorMessage);
+    return {
+      success: false,
+      error: `Failed to fetch analytics: ${errorMessage}`,
+    };
   }
 }

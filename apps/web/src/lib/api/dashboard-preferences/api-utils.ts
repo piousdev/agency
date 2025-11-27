@@ -11,7 +11,7 @@ export async function getAuthHeaders(): Promise<HeadersInit> {
   const headersList = await headers();
   return {
     'Content-Type': 'application/json',
-    cookie: headersList.get('cookie') || '',
+    cookie: headersList.get('cookie'),
   };
 }
 
@@ -19,5 +19,6 @@ export async function getAuthHeaders(): Promise<HeadersInit> {
  * Build API URL
  */
 export function buildApiUrl(path: string): string {
-  return `${process.env.NEXT_PUBLIC_API_URL}/api/dashboard-preferences${path}`;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
+  return `${apiUrl}/api/dashboard-preferences${path}`;
 }

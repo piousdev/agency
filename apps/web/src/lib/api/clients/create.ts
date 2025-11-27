@@ -4,8 +4,9 @@
  */
 
 import { getAuthHeaders } from './api-utils';
-import type { CreateClientInput } from '@/lib/schemas';
+
 import type { Client } from './types';
+import type { CreateClientInput } from '@/lib/schemas';
 
 export interface CreateClientResponse {
   success: boolean;
@@ -23,19 +24,20 @@ export interface CreateClientResponse {
  */
 export async function createClient(data: CreateClientInput): Promise<CreateClientResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/clients`, {
+  const response = await fetch(`${apiUrl}/api/clients`, {
     method: 'POST',
     headers: authHeaders,
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as CreateClientResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to create client');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as CreateClientResponse;
 }

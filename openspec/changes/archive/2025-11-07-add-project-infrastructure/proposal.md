@@ -2,7 +2,10 @@
 
 ## Why
 
-The Skyll Platform requires a solid foundation to support scalable development of client management, project tracking, and service delivery features. We need to establish the core infrastructure before implementing authentication and business logic.
+The Skyll Platform requires a solid foundation to support scalable development
+of client management, project tracking, and service delivery features. We need
+to establish the core infrastructure before implementing authentication and
+business logic.
 
 This proposal sets up:
 
@@ -12,13 +15,17 @@ This proposal sets up:
 - Development tooling for type safety, linting, and testing
 - Deployment configuration for Fly.io hosting
 
-**Why now**: This is the foundational setup that all other features depend on. Must be done before implementing authentication or any business features.
+**Why now**: This is the foundational setup that all other features depend on.
+Must be done before implementing authentication or any business features.
 
 **Why this matters**:
 
-- Next.js 16 includes Turbopack (stable), React 19.2 support, and async request APIs
-- Proper monorepo structure prevents code duplication and enables shared packages
-- Drizzle ORM with Neon provides type-safe database access at scale (1M+ users target)
+- Next.js 16 includes Turbopack (stable), React 19.2 support, and async request
+  APIs
+- Proper monorepo structure prevents code duplication and enables shared
+  packages
+- Drizzle ORM with Neon provides type-safe database access at scale (1M+ users
+  target)
 
 ## What Changes
 

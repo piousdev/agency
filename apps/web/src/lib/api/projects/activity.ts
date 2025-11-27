@@ -92,5 +92,5 @@ export async function getProjectActivity(
     throw new Error(`Failed to fetch activity: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as ActivityResponse;
 }

@@ -1,7 +1,9 @@
+import { IconBuilding, IconCircleCheck, IconUsers } from '@tabler/icons-react';
 import { format, formatDistanceToNow } from 'date-fns';
+
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { IconBuilding, IconCircleCheck, IconUsers } from '@tabler/icons-react';
+
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface CompletedTimelineViewProps {
@@ -25,7 +27,7 @@ export function CompletedTimelineView({ projects }: CompletedTimelineViewProps) 
   return (
     <div className="space-y-4">
       {projects.map((project, index) => {
-        const deliveredDate = new Date(project.deliveredAt || project.updatedAt);
+        const deliveredDate = new Date(project.deliveredAt ?? project.updatedAt);
         const isRecent =
           index === 0 || deliveredDate > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -54,26 +56,25 @@ export function CompletedTimelineView({ projects }: CompletedTimelineViewProps) 
                     </div>
                     <Badge
                       variant={
-                        projectTypeColors[project.client?.type as keyof typeof projectTypeColors] ||
-                        'secondary'
+                        projectTypeColors[project.client.type as keyof typeof projectTypeColors]
                       }
                     >
-                      {project.client?.type === 'creative'
+                      {project.client.type === 'creative'
                         ? 'Content'
-                        : project.client?.type || 'N/A'}
+                        : project.client.type || 'N/A'}
                     </Badge>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <IconBuilding className="h-4 w-4" />
-                      <span>{project.client?.name || 'N/A'}</span>
+                      <span>{project.client.name || 'N/A'}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <IconUsers className="h-4 w-4" />
                       <span>
-                        {project.assignees && project.assignees.length > 0
-                          ? `${project.assignees.length} team ${project.assignees.length === 1 ? 'member' : 'members'}`
+                        {project.assignees.length > 0
+                          ? `${String(project.assignees.length)} team ${project.assignees.length === 1 ? 'member' : 'members'}`
                           : 'No team'}
                       </span>
                     </div>
@@ -88,7 +89,7 @@ export function CompletedTimelineView({ projects }: CompletedTimelineViewProps) 
                     </span>
                   </div>
 
-                  {project.assignees && project.assignees.length > 0 && (
+                  {project.assignees.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {project.assignees.slice(0, 5).map((assignee) => (
                         <Badge key={assignee.id} variant="outline" className="text-xs">

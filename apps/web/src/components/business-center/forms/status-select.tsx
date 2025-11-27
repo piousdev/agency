@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef } from 'react';
+
 import {
   Select,
   SelectContent,
@@ -8,13 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
 import {
   projectStatusOptions,
   ticketStatusOptions,
   type ProjectStatus,
   type TicketStatus,
 } from '@/lib/schemas';
+import { cn } from '@/lib/utils';
 
 type StatusType = 'project' | 'ticket';
 

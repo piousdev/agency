@@ -1,25 +1,31 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
 import { IconPlus, IconChevronDown } from '@tabler/icons-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ViewSwitcher, type ViewMode } from '@/components/business-center/view-switcher';
+
 import { EditClientDialog, DeleteClientDialog } from '@/components/business-center/dialogs';
+import { ViewSwitcher, type ViewMode } from '@/components/business-center/view-switcher';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
+import { clientTypeOptions } from '@/lib/schemas';
+
 import { BusinessCenterHeader } from '../components/header';
-import { ClientsTableView } from './views/table-view';
 import { ClientsCardsView } from './views/cards-view';
 import { ClientsKanbanView } from './views/kanban-view';
-import { PermissionGate, Permissions } from '@/lib/hooks/use-permissions';
+import { ClientsTableView } from './views/table-view';
+
 import type { Client } from '@/lib/api/clients/types';
-import { clientTypeOptions } from '@/lib/schemas';
+
 
 type ClientType = 'all' | 'software' | 'creative' | 'full_service';
 
@@ -108,22 +114,22 @@ export function ClientsClient({ clients, allClients }: ClientsClientProps) {
     const headers = ['Name', 'Type', 'Email', 'Phone', 'Website', 'Status', 'Created'];
     const rows = filteredClients.map((c) => [
       c.name,
-      clientTypeOptions.find((opt) => opt.value === c.type)?.label || c.type,
+      clientTypeOptions.find((opt) => opt.value === c.type)?.label ?? c.type,
       c.email,
-      c.phone || '',
-      c.website || '',
+      c.phone,
+      c.website,
       c.active ? 'Active' : 'Inactive',
       new Date(c.createdAt).toLocaleDateString(),
     ]);
 
     const csv = [headers, ...rows]
-      .map((row) => row.map((cell) => `"${cell}"`).join(','))
+      .map((row) => row.map((cell) => `"${cell ?? ''}"`).join(','))
       .join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `clients-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `clients-${new Date().toISOString().split('T')[0] ?? 'export'}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

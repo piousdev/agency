@@ -1,6 +1,5 @@
 'use client';
 
-import { type Table } from '@tanstack/react-table';
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -8,6 +7,8 @@ import {
   IconChevronsRight,
   IconLoader2,
 } from '@tabler/icons-react';
+
+
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -16,8 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { CursorPaginationState } from './types';
 import { cn } from '@/lib/utils';
+
+import type { CursorPaginationState } from './types';
+import type { Table } from '@tanstack/react-table';
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -25,12 +28,14 @@ interface DataTablePaginationProps<TData> {
   className?: string;
 }
 
+const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100];
+
 /**
  * Standard offset-based pagination controls
  */
 export function DataTablePagination<TData>({
   table,
-  pageSizeOptions = [10, 20, 30, 50, 100],
+  pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   className,
 }: DataTablePaginationProps<TData>) {
   const { pageSize, pageIndex } = table.getState().pagination;
@@ -63,7 +68,7 @@ export function DataTablePagination<TData>({
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select
-            value={`${pageSize}`}
+            value={String(pageSize)}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
@@ -73,7 +78,7 @@ export function DataTablePagination<TData>({
             </SelectTrigger>
             <SelectContent side="top">
               {pageSizeOptions.map((size) => (
-                <SelectItem key={size} value={`${size}`}>
+                <SelectItem key={size} value={String(size)}>
                   {size}
                 </SelectItem>
               ))}

@@ -1,6 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+
+import { IconLoader2 } from '@tabler/icons-react';
+
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -16,8 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { IconLoader2 } from '@tabler/icons-react';
 
 interface StatusOption {
   value: string;

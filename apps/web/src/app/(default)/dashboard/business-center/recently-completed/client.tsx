@@ -1,16 +1,20 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+
 import { IconList, IconLayoutGrid, IconChevronDown } from '@tabler/icons-react';
-import { Button } from '@/components/ui/button';
+
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
-import { CompletedTableView } from './views/table-view';
+import { Separator } from '@/components/ui/separator';
+
 import { CompletedCardsView } from './views/cards-view';
+import { CompletedTableView } from './views/table-view';
 import { CompletedTimelineView } from './views/timeline-view';
 import { BusinessCenterHeader } from '../components/header';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface RecentlyCompletedClientProps {
   projects: ProjectWithRelations[];
@@ -27,12 +31,12 @@ export function RecentlyCompletedClient({ projects }: RecentlyCompletedClientPro
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {
       // Filter by project type
-      if (projectType === 'content' && p.client?.type !== 'creative') return false;
-      if (projectType === 'software' && p.client?.type !== 'software') return false;
+      if (projectType === 'content' && p.client.type !== 'creative') return false;
+      if (projectType === 'software' && p.client.type !== 'software') return false;
 
       // Filter by time range
       if (timeRange !== 'all') {
-        const deliveredDate = new Date(p.deliveredAt || p.updatedAt);
+        const deliveredDate = new Date(p.deliveredAt ?? p.updatedAt);
         const now = new Date();
         const daysAgo = timeRange === 'last7' ? 7 : timeRange === 'last30' ? 30 : 90;
         const cutoff = new Date(now.setDate(now.getDate() - daysAgo));
@@ -198,8 +202,8 @@ export function RecentlyCompletedClient({ projects }: RecentlyCompletedClientPro
     const headers = ['Name', 'Client', 'Type', 'Completed Date'];
     const rows = filteredProjects.map((p) => [
       p.name,
-      p.client?.name || 'Unknown',
-      p.client?.type || 'Unknown',
+      p.client.name,
+      p.client.type || 'Unknown',
       p.deliveredAt
         ? new Date(p.deliveredAt).toLocaleDateString()
         : new Date(p.updatedAt).toLocaleDateString(),
@@ -212,7 +216,7 @@ export function RecentlyCompletedClient({ projects }: RecentlyCompletedClientPro
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `completed-projects-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `completed-projects-${new Date().toISOString().split('T')[0] ?? 'export'}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

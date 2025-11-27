@@ -65,7 +65,7 @@ export interface DataTableConfig {
  */
 export interface DataTableProps<TData> {
   /** Column definitions */
-  columns: ColumnDef<TData, unknown>[];
+  columns: ColumnDef<TData>[];
   /** Data to display */
   data: TData[];
   /** Configuration options */
@@ -174,6 +174,6 @@ export interface DataTableColumnMeta {
 }
 
 declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData extends unknown, TValue> extends DataTableColumnMeta {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-object-type
+  interface ColumnMeta<TData, TValue> extends DataTableColumnMeta {}
 }

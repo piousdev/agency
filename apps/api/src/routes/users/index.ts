@@ -1,15 +1,17 @@
 import { Hono } from 'hono';
-import { type AuthVariables } from '../../middleware/auth';
-import listRoutes from './list';
-import getRoutes from './get';
-import updateRoutes from './update';
-import deleteRoutes from './delete';
-import internalStatusRoutes from './internal-status';
-import expirationRoutes from './expiration';
-import rolesRoutes from './roles';
-import permissionsRoutes from './permissions';
+
 import capacityRoutes from './capacity';
+import deleteRoutes from './delete';
+import expirationRoutes from './expiration';
+import getRoutes from './get';
+import internalStatusRoutes from './internal-status';
+import listRoutes from './list';
+import permissionsRoutes from './permissions';
+import rolesRoutes from './roles';
 import teamRoutes from './team';
+import updateRoutes from './update';
+
+import type { AuthVariables } from '../../middleware/auth';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 

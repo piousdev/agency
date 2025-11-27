@@ -1,5 +1,6 @@
-import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { redirect, notFound } from 'next/navigation';
+
 import {
   IconArrowLeft,
   IconPencil,
@@ -16,17 +17,18 @@ import {
   IconTrendingUp,
   IconLink,
 } from '@tabler/icons-react';
-import { requireUser } from '@/lib/auth/session';
+
+import { ProjectDetailSections } from '@/components/projects';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   getProject,
   getProjectComments,
   getProjectFiles,
   getProjectActivity,
 } from '@/lib/api/projects';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ProjectDetailSections } from '@/components/projects';
+import { requireUser } from '@/lib/auth/session';
 import { projectStatusOptions } from '@/lib/schemas/project';
 import { cn } from '@/lib/utils';
 
@@ -45,7 +47,7 @@ const statusConfig: Record<string, { bg: string; text: string; dot: string }> = 
 
 function formatDate(date: string | null | undefined, fallback = 'Not set') {
   if (!date) return fallback;
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString('en-BE', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -101,7 +103,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     dot: 'bg-slate-400',
   };
 
-  const hasLinks = project.repositoryUrl || project.stagingUrl || project.productionUrl;
+  const hasLinks = project.repositoryUrl ?? project.stagingUrl ?? project.productionUrl;
 
   return (
     <div className="min-h-screen">
@@ -133,13 +135,13 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <IconBuilding className="h-3.5 w-3.5" />
-                  {project.client?.name ?? 'No client'}
+                  {project.client.name || 'No client'}
                 </span>
                 <span className="text-border">•</span>
                 <span className="flex items-center gap-1.5">
                   <IconUsers className="h-3.5 w-3.5" />
-                  {project.assignees?.length ?? 0} member
-                  {(project.assignees?.length ?? 0) !== 1 ? 's' : ''}
+                  {project.assignees.length} member
+                  {(project.assignees.length) !== 1 ? 's' : ''}
                 </span>
                 <span className="text-border">•</span>
                 <span className="flex items-center gap-1.5">
@@ -179,7 +181,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted/50">
                 <div
                   className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary/80 to-primary transition-all duration-500"
-                  style={{ width: `${project.completionPercentage}%` }}
+                  style={{ width: `${String(project.completionPercentage)}%` }}
                 />
               </div>
               {/* Progress milestones */}
@@ -369,12 +371,12 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                   Team
                 </h3>
                 <span className="text-xs text-muted-foreground tabular-nums">
-                  {project.assignees?.length ?? 0} member
-                  {(project.assignees?.length ?? 0) !== 1 ? 's' : ''}
+                  {project.assignees.length} member
+                  {(project.assignees.length) !== 1 ? 's' : ''}
                 </span>
               </div>
 
-              {project.assignees && project.assignees.length > 0 ? (
+              {project.assignees.length > 0 ? (
                 <div className="space-y-3">
                   {project.assignees.map((member) => (
                     <div key={member.id} className="flex items-center gap-3">
@@ -414,9 +416,9 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                   <IconBuilding className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium truncate">{project.client?.name ?? 'Unknown'}</p>
+                  <p className="font-medium truncate">{project.client.name}</p>
                   <p className="text-xs text-muted-foreground capitalize">
-                    {project.client?.type ?? 'Unknown'}
+                    {project.client.type || 'Unknown'}
                   </p>
                 </div>
               </div>

@@ -1,16 +1,20 @@
 import { relations } from 'drizzle-orm';
+
 import { account } from './account';
 import { activity } from './activity';
 import { checklist, checklistItem } from './checklist';
 import { client } from './client';
 import { clientContact } from './client-contact';
 import { comment } from './comment';
+import { userDashboardPreferences, widgetConfiguration } from './dashboard-preferences';
 import { file } from './file';
 import { invitation } from './invitation';
 import { label, projectLabel, ticketLabel } from './label';
 import { milestone } from './milestone';
+import { notification } from './notification';
 import { project } from './project';
 import { projectAssignment } from './project-assignment';
+import { request, requestAttachment, requestHistory } from './request';
 import { role } from './role';
 import { roleAssignment } from './role-assignment';
 import { session } from './session';
@@ -19,9 +23,6 @@ import { ticket, ticketActivity } from './ticket';
 import { user } from './user';
 import { userToClient } from './user-to-client';
 import { projectWatcher, ticketWatcher } from './watcher';
-import { userDashboardPreferences, widgetConfiguration } from './dashboard-preferences';
-import { notification } from './notification';
-import { request, requestAttachment, requestHistory } from './request';
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useCallback, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link, { type LinkProps } from 'next/link';
+import { useRouter } from 'next/navigation';
 
 /**
  * Routes to prefetch proactively for the overview dashboard.

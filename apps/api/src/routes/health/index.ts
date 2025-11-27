@@ -1,8 +1,10 @@
 import { Hono } from 'hono';
-import { type AuthVariables } from '../../middleware/auth.js';
+
 import basicRoutes from './basic.js';
-import readyRoutes from './ready.js';
 import liveRoutes from './live.js';
+import readyRoutes from './ready.js';
+
+import type { AuthVariables } from '../../middleware/auth.js';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 

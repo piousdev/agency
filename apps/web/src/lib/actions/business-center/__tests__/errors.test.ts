@@ -4,6 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { ActionError, withErrorHandling, formatApiError, type ActionResult } from '../errors';
 
 // Mock the permissions module
@@ -190,9 +191,7 @@ describe('ActionResult type', () => {
     };
 
     expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.id).toBe('123');
-    }
+    expect((result as { success: true; data: { id: string } }).data.id).toBe('123');
   });
 
   it('should support failure result with error', () => {
@@ -202,9 +201,7 @@ describe('ActionResult type', () => {
     };
 
     expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toBe('Something went wrong');
-    }
+    expect((result as { success: false; error: string }).error).toBe('Something went wrong');
   });
 
   it('should support failure result with code', () => {
@@ -215,14 +212,16 @@ describe('ActionResult type', () => {
     };
 
     expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toBe('Permission denied');
-      expect(result.code).toBe('PERMISSION_DENIED');
-    }
+    expect((result as { success: false; error: string; code?: string }).error).toBe(
+      'Permission denied'
+    );
+    expect((result as { success: false; error: string; code?: string }).code).toBe(
+      'PERMISSION_DENIED'
+    );
   });
 
   it('should support void ActionResult', () => {
-    const result: ActionResult<void> = {
+    const result: ActionResult = {
       success: true,
       data: undefined,
     };

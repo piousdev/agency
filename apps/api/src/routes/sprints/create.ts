@@ -2,10 +2,11 @@
  * Create sprint API route
  */
 
+import { eq, desc } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
-import { eq, desc } from 'drizzle-orm';
+
 import { db } from '../../db/index.js';
 import { sprint } from '../../db/schema/sprint.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth.js';
@@ -24,20 +25,27 @@ app.post('/', requireAuth(), requireInternal(), async (c) => {
   }
 
   try {
-    const body = await c.req.json();
-    const { projectId, name, goal, status, startDate, endDate, plannedPoints, sprintNumber } = body;
+    const body: unknown = await c.req.json();
+    const projectId = (body as Record<string, unknown>).projectId as string | undefined;
+    const name = (body as Record<string, unknown>).name as string | undefined;
+    const goal = (body as Record<string, unknown>).goal as string | undefined;
+    const status = (body as Record<string, unknown>).status as string | undefined;
+    const startDate = (body as Record<string, unknown>).startDate as string | undefined;
+    const endDate = (body as Record<string, unknown>).endDate as string | undefined;
+    const plannedPoints = (body as Record<string, unknown>).plannedPoints as number | undefined;
+    const sprintNumber = (body as Record<string, unknown>).sprintNumber as number | undefined;
 
     // Validate required fields
-    if (!projectId) {
+    if (projectId === undefined || projectId === '') {
       return c.json({ success: false, message: 'Project ID is required' }, 400);
     }
-    if (!name || name.trim().length === 0) {
+    if (name === undefined || name.trim().length === 0) {
       return c.json({ success: false, message: 'Name is required' }, 400);
     }
 
     // Auto-generate sprint number if not provided
     let finalSprintNumber = sprintNumber;
-    if (!finalSprintNumber) {
+    if (finalSprintNumber === undefined) {
       const lastSprint = await db.query.sprint.findFirst({
         where: eq(sprint.projectId, projectId),
         orderBy: [desc(sprint.sprintNumber)],
@@ -54,10 +62,10 @@ app.post('/', requireAuth(), requireInternal(), async (c) => {
         id,
         projectId,
         name: name.trim(),
-        goal: goal?.trim() || null,
-        status: status || 'planning',
-        startDate: startDate ? new Date(startDate) : null,
-        endDate: endDate ? new Date(endDate) : null,
+        goal: goal !== undefined && goal.trim() !== '' ? goal.trim() : null,
+        status: status ?? 'planning',
+        startDate: startDate !== undefined ? new Date(startDate) : null,
+        endDate: endDate !== undefined ? new Date(endDate) : null,
         plannedPoints: plannedPoints ?? 0,
         completedPoints: 0,
         sprintNumber: finalSprintNumber,

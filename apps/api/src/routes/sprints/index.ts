@@ -3,11 +3,12 @@
  */
 
 import { Hono } from 'hono';
-import list from './list.js';
-import get from './get.js';
+
 import create from './create.js';
-import update from './update.js';
 import del from './delete.js';
+import get from './get.js';
+import list from './list.js';
+import update from './update.js';
 
 const app = new Hono();
 

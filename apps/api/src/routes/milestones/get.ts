@@ -2,8 +2,9 @@
  * Get milestone API route
  */
 
-import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
+
 import { db } from '../../db/index.js';
 import { milestone } from '../../db/schema/milestone.js';
 import { requireAuth, requireInternal } from '../../middleware/auth.js';

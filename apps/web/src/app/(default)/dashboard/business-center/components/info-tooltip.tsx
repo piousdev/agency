@@ -1,6 +1,7 @@
 'use client';
 
 import { IconInfoCircle } from '@tabler/icons-react';
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface InfoTooltipProps {

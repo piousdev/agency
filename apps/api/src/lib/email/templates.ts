@@ -131,7 +131,7 @@ export function emailVerificationTemplate(userName: string, verificationUrl: str
 
     <div class="footer">
       <p>If you have any questions, please contact our support team.</p>
-      <p>&copy; ${new Date().getFullYear()} Skyll Platform. All rights reserved.</p>
+      <p>&copy; ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.</p>
     </div>
   `;
 
@@ -156,7 +156,7 @@ If you didn't create an account, you can safely ignore this email.
 
 If you have any questions, please contact our support team.
 
-© ${new Date().getFullYear()} Skyll Platform. All rights reserved.
+© ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.
   `.trim();
 }
 
@@ -189,7 +189,7 @@ export function passwordResetTemplate(userName: string, resetUrl: string): strin
 
     <div class="footer">
       <p>If you have any questions, please contact our support team.</p>
-      <p>&copy; ${new Date().getFullYear()} Skyll Platform. All rights reserved.</p>
+      <p>&copy; ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.</p>
     </div>
   `;
 
@@ -211,6 +211,6 @@ This link will expire in 1 hour.
 
 If you didn't request a password reset, please ignore this email or contact support if you're concerned.
 
-© ${new Date().getFullYear()} Skyll Platform. All rights reserved.
+© ${String(new Date().getFullYear())} Skyll Platform. All rights reserved.
   `.trim();
 }

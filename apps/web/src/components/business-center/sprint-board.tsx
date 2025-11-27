@@ -1,27 +1,31 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import {
+  IconGripVertical,
+  IconDotsVertical,
+  IconEye,
+  
+  IconUser,
+  IconTag,
+  IconClock,
+} from '@tabler/icons-react';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import {
-  IconGripVertical,
-  IconDotsVertical,
-  IconEye,
-  IconEdit,
-  IconUser,
-  IconTag,
-  IconClock,
-} from '@tabler/icons-react';
+
+
 import type { Sprint } from '@/lib/api/sprints/types';
 
 /**
@@ -39,11 +43,11 @@ interface SprintTicket {
     name: string | null;
     image: string | null;
   } | null;
-  labels?: Array<{
+  labels?: {
     id: string;
     name: string;
     color: string;
-  }>;
+  }[];
 }
 
 interface SprintBoardColumn {
@@ -137,10 +141,10 @@ export function SprintBoard({
   const columnStats = useMemo(() => {
     const stats: Record<string, { count: number; points: number }> = {};
     columns.forEach((col) => {
-      const colTickets = ticketsByColumn[col.id] || [];
+      const colTickets = ticketsByColumn[col.id];
       stats[col.id] = {
         count: colTickets.length,
-        points: colTickets.reduce((sum, t) => sum + (t.storyPoints || 0), 0),
+        points: colTickets.reduce((sum, t) => sum + (t.storyPoints ?? 0), 0),
       };
     });
     return stats;
@@ -163,7 +167,7 @@ export function SprintBoard({
         <div>
           <h3 className="font-semibold">{sprint.name}</h3>
           <p className="text-sm text-muted-foreground">
-            {tickets.length} tickets · {tickets.reduce((sum, t) => sum + (t.storyPoints || 0), 0)}{' '}
+            {tickets.length} tickets · {tickets.reduce((sum, t) => sum + (t.storyPoints ?? 0), 0)}{' '}
             points
           </p>
         </div>
@@ -176,7 +180,7 @@ export function SprintBoard({
             <BoardColumn
               key={column.id}
               column={column}
-              tickets={ticketsByColumn[column.id] || []}
+              tickets={ticketsByColumn[column.id]}
               stats={columnStats[column.id]}
               movingTicketId={movingTicketId}
               canEdit={canEdit}
@@ -214,13 +218,13 @@ function BoardColumn({
   onMoveTicket,
 }: BoardColumnProps) {
   return (
-    <div className={cn('w-72 shrink-0 rounded-lg', column.color || 'bg-muted/50')}>
+    <div className={cn('w-72 shrink-0 rounded-lg', column.color ?? 'bg-muted/50')}>
       {/* Column Header */}
       <div className="p-3 border-b bg-background/50 rounded-t-lg">
         <div className="flex items-center justify-between">
           <h4 className="font-medium text-sm">{column.title}</h4>
           <Badge variant="secondary" className="text-xs">
-            {stats?.count || 0}
+            {stats?.count}
           </Badge>
         </div>
         {stats && stats.points > 0 && (
@@ -279,7 +283,18 @@ function BoardTicketCard({
       <CardContent className="p-3 space-y-2">
         {/* Header with drag handle and menu */}
         <div className="flex items-start justify-between gap-2">
-          <div className="flex items-start gap-2 flex-1 min-w-0" onClick={onClick}>
+          <div
+            className="flex items-start gap-2 flex-1 min-w-0"
+            onClick={onClick}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick();
+              }
+            }}
+            role="button"
+            tabIndex={0}
+          >
             {canEdit && (
               <IconGripVertical className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5 cursor-grab" />
             )}
@@ -346,7 +361,7 @@ function BoardTicketCard({
               <div
                 className={cn(
                   'w-2 h-2 rounded-full',
-                  priorityColors[ticket.priority] || 'bg-gray-400'
+                  priorityColors[ticket.priority] ?? 'bg-gray-400'
                 )}
                 title={ticket.priority}
               />
@@ -363,9 +378,9 @@ function BoardTicketCard({
           {/* Assignee */}
           {ticket.assignee ? (
             <Avatar className="h-5 w-5">
-              <AvatarImage src={ticket.assignee.image || undefined} />
+              <AvatarImage src={ticket.assignee.image ?? undefined} />
               <AvatarFallback className="text-[10px]">
-                {ticket.assignee.name?.charAt(0) || '?'}
+                {ticket.assignee.name?.charAt(0) ?? '?'}
               </AvatarFallback>
             </Avatar>
           ) : (

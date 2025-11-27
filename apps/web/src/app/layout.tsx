@@ -1,11 +1,13 @@
-import type { Metadata, Viewport } from 'next';
-import { dmsans, fraunces, jetbrainMono } from '@/config/font';
 import '@/styles/globals.css';
-import type React from 'react';
+
 import { ThemeProvider } from '@/components/provider/theme';
 import { SentryInit } from '@/components/sentry-init';
 import { Toaster } from '@/components/ui/sonner';
+import { dmsans, fraunces, jetbrainMono } from '@/config/font';
 import { cn } from '@/lib/utils';
+
+import type { Metadata, Viewport } from 'next';
+import type React from 'react';
 
 export const metadata: Metadata = {
   title: {
@@ -24,10 +26,10 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Skyll' }],
   creator: 'Skyll',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'en_BE',
     url: '/',
     title: 'Skyll - We Build What You Imagine',
     description:

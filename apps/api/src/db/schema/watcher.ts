@@ -1,7 +1,8 @@
 import { index, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core';
-import { user } from './user';
+
 import { project } from './project';
 import { ticket } from './ticket';
+import { user } from './user';
 
 /**
  * Watcher/Subscriber table for projects

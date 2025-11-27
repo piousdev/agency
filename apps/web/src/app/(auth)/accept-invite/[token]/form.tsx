@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useId } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,8 +14,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
-import type { InvitationData } from '@/lib/api/invitations';
+
 import { type AcceptInviteState, acceptInviteAction } from './actions';
+
+import type { InvitationData } from '@/lib/api/invitations';
 
 interface AcceptInviteFormProps {
   token: string;
@@ -47,7 +50,7 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
       </CardHeader>
       <form action={formAction}>
         <CardContent className="space-y-4">
-          {state?.errors?._form && (
+          {state.errors?._form && (
             <div className="rounded-md p-3 text-sm border border-error bg-error/10 text-error-foreground">
               {state.errors._form.join(', ')}
             </div>
@@ -61,10 +64,10 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
               type="text"
               placeholder="John Doe"
               disabled={isPending}
-              className={state?.errors?.name ? 'border border-error focus-visible:ring-error' : ''}
+              className={state.errors?.name ? 'border border-error focus-visible:ring-error' : ''}
               required
             />
-            {state?.errors?.name && (
+            {state.errors?.name && (
               <p className="text-sm text-error">{state.errors.name.join(', ')}</p>
             )}
           </div>
@@ -93,12 +96,12 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
               placeholder="Create a strong password"
               disabled={isPending}
               className={
-                state?.errors?.password ? 'border border-error focus-visible:ring-error' : ''
+                state.errors?.password ? 'border border-error focus-visible:ring-error' : ''
               }
               showStrengthIndicator={true}
               required
             />
-            {state?.errors?.password && (
+            {state.errors?.password && (
               <p className="text-sm text-error">{state.errors.password.join(', ')}</p>
             )}
           </div>
@@ -111,12 +114,12 @@ export function AcceptInviteForm({ token, invitation }: AcceptInviteFormProps) {
               placeholder="Confirm your password"
               disabled={isPending}
               className={
-                state?.errors?.confirmPassword ? 'border border-error focus-visible:ring-error' : ''
+                state.errors?.confirmPassword ? 'border border-error focus-visible:ring-error' : ''
               }
               showStrengthIndicator={false}
               required
             />
-            {state?.errors?.confirmPassword && (
+            {state.errors?.confirmPassword && (
               <p className="text-sm text-error">{state.errors.confirmPassword.join(', ')}</p>
             )}
           </div>

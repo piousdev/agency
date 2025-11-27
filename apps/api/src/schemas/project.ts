@@ -63,7 +63,7 @@ export const updateProjectCompletionSchema = z.object({
  * Schema for updating project delivery date
  */
 export const updateProjectDeliverySchema = z.object({
-  deliveredAt: z.string().datetime().nullable(),
+  deliveredAt: z.iso.datetime().nullable(),
 });
 
 /**
@@ -85,12 +85,12 @@ export const createProjectSchema = z.object({
     ])
     .default('proposal'),
   completionPercentage: z.coerce.number().int().min(0).max(100).default(0),
-  repositoryUrl: z.string().url().max(2048).optional().or(z.literal('')),
-  productionUrl: z.string().url().max(2048).optional().or(z.literal('')),
-  stagingUrl: z.string().url().max(2048).optional().or(z.literal('')),
+  repositoryUrl: z.url().max(2048).optional().or(z.literal('')),
+  productionUrl: z.url().max(2048).optional().or(z.literal('')),
+  stagingUrl: z.url().max(2048).optional().or(z.literal('')),
   notes: z.string().optional(),
-  startedAt: z.string().datetime().optional().nullable(),
-  deliveredAt: z.string().datetime().optional().nullable(),
+  startedAt: z.iso.datetime().optional().nullable(),
+  deliveredAt: z.iso.datetime().optional().nullable(),
 });
 
 /**
@@ -112,10 +112,10 @@ export const updateProjectSchema = z.object({
     ])
     .optional(),
   completionPercentage: z.coerce.number().int().min(0).max(100).optional(),
-  repositoryUrl: z.string().url().max(2048).optional().nullable().or(z.literal('')),
-  productionUrl: z.string().url().max(2048).optional().nullable().or(z.literal('')),
-  stagingUrl: z.string().url().max(2048).optional().nullable().or(z.literal('')),
+  repositoryUrl: z.url().max(2048).optional().nullable().or(z.literal('')),
+  productionUrl: z.url().max(2048).optional().nullable().or(z.literal('')),
+  stagingUrl: z.url().max(2048).optional().nullable().or(z.literal('')),
   notes: z.string().optional().nullable(),
-  startedAt: z.string().datetime().optional().nullable(),
-  deliveredAt: z.string().datetime().optional().nullable(),
+  startedAt: z.iso.datetime().optional().nullable(),
+  deliveredAt: z.iso.datetime().optional().nullable(),
 });

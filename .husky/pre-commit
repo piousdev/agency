@@ -1,1 +1,5 @@
-npx lint-staged
+# Run lint-staged to check and auto-fix staged files
+# This will fail the commit if:
+# - ESLint finds any warnings or errors (--max-warnings=0)
+# - Prettier cannot format files
+pnpm exec lint-staged

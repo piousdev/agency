@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { UserResponse } from './types';
 
 /**
@@ -16,15 +17,15 @@ import type { UserResponse } from './types';
 export async function getUser(userId: string): Promise<UserResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/${userId}`, {
     headers: authHeaders,
     cache: 'no-store',
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch user');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to fetch user');
   }
 
-  return response.json();
+  return (await response.json()) as UserResponse;
 }

@@ -1,6 +1,8 @@
 'use client';
-import Link from 'next/link';
 import { Suspense } from 'react';
+
+import Link from 'next/link';
+
 import { UserMenu } from '@/components/auth/user-menu';
 import Help from '@/components/default/dashboard/navigation/header/help';
 import Settings from '@/components/default/dashboard/navigation/header/settings';
@@ -23,10 +25,11 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
-import { KeyboardShortcuts } from '../../shortcuts';
+
 import { CommandPalette } from './command-palette';
 import { Notifications } from './notifications';
 import { ThemeToggle } from './theme-toggle';
+import { KeyboardShortcuts } from '../../common/shortcuts';
 
 function UserMenuSkeleton() {
   return <Skeleton className="size-6 rounded-full" />;
@@ -68,7 +71,7 @@ export function DefaultHeader() {
             <BreadcrumbList>
               {visible.map((breadcrumb, index) => {
                 // Check if we need to show ellipsis after first item
-                const showEllipsisAfter = index === 0 && hidden.length > 0;
+                const showEllipsisAfter = index === 0  || hidden.length > 0;
 
                 return (
                   <div key={breadcrumb.href} className="contents">

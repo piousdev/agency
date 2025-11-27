@@ -4,6 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+
 import {
   requestTypeSchema,
   requestStageSchema,
@@ -130,8 +131,8 @@ describe('createRequestSchema', () => {
     expect(result.success).toBe(false);
 
     if (!result.success) {
-      const errors = result.error.flatten().fieldErrors;
-      expect(errors.title).toBeDefined();
+      const error = result.error.issues.find((issue) => issue.path.includes('title'));
+      expect(error).toBeDefined();
     }
   });
 
@@ -162,8 +163,8 @@ describe('createRequestSchema', () => {
     expect(result.success).toBe(false);
 
     if (!result.success) {
-      const errors = result.error.flatten().fieldErrors;
-      expect(errors.description).toBeDefined();
+      const error = result.error.issues.find((issue) => issue.path.includes('description'));
+      expect(error).toBeDefined();
     }
   });
 
@@ -519,7 +520,7 @@ describe('getRoutingRecommendation', () => {
 
   describe('type coverage', () => {
     it('should apply points-based routing for all non-change_request types', () => {
-      const types: Array<'bug' | 'feature' | 'enhancement' | 'support' | 'other'> = [
+      const types: ('bug' | 'feature' | 'enhancement' | 'support' | 'other')[] = [
         'bug',
         'feature',
         'enhancement',

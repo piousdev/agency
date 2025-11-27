@@ -1,7 +1,7 @@
 // Proxy authentication requests to the Hono API backend
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const backendUrl = `${process.env.NEXT_PUBLIC_API_URL}${url.pathname}${url.search}`;
+  const backendUrl = `${String(process.env.NEXT_PUBLIC_API_URL)}${url.pathname}${url.search}`;
 
   return fetch(backendUrl, {
     method: 'GET',
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const url = new URL(request.url);
-  const backendUrl = `${process.env.NEXT_PUBLIC_API_URL}${url.pathname}${url.search}`;
+  const backendUrl = `${String(process.env.NEXT_PUBLIC_API_URL)}${url.pathname}${url.search}`;
 
   return fetch(backendUrl, {
     method: 'POST',

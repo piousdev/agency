@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import Link from 'next/link';
+
 import * as Sentry from '@sentry/nextjs';
 import { IconRefresh, IconLogin } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 
 /**

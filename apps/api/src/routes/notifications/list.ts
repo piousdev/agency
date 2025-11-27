@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq, desc, asc, and, count } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { notification } from '../../db/schema';
 import { requireAuth, type AuthVariables } from '../../middleware/auth';
@@ -15,7 +16,10 @@ const app = new Hono<{ Variables: AuthVariables }>();
  * Protected: Requires authentication
  */
 app.get('/', requireAuth(), zValidator('query', listNotificationsQuerySchema), async (c) => {
-  const user = c.get('user')!;
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
   const query = c.req.valid('query');
   const { page, pageSize, sortOrder, type, unreadOnly, entityType } = query;
 
@@ -96,7 +100,10 @@ app.get('/', requireAuth(), zValidator('query', listNotificationsQuerySchema), a
  * Protected: Requires authentication
  */
 app.get('/unread-count', requireAuth(), async (c) => {
-  const user = c.get('user')!;
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
 
   try {
     const result = await db

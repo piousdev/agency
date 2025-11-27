@@ -1,19 +1,21 @@
 import Link from 'next/link';
+
+import { IconCalendar, IconChevronLeft, IconChevronRight, IconPlus } from '@tabler/icons-react';
 import {
   format,
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
   isSameDay,
-  addMonths,
-  subMonths,
+  
+  
 } from 'date-fns';
-import { IconCalendar, IconChevronLeft, IconChevronRight, IconPlus } from '@tabler/icons-react';
-import { Badge } from '@/components/ui/badge';
+
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { requireUser } from '@/lib/auth/session';
 import { listProjects } from '@/lib/api/projects';
+import { requireUser } from '@/lib/auth/session';
 
 const statusColors: Record<string, string> = {
   proposal: 'bg-yellow-500',
@@ -38,18 +40,16 @@ export default async function ProjectCalendarViewPage() {
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   // Group projects by delivery date
-  const projectsByDate = projectsWithDates.reduce(
+  const projectsByDate = projectsWithDates.reduce<Record<string, typeof projects>>(
     (acc, project) => {
       if (project.deliveredAt) {
         const dateKey = format(new Date(project.deliveredAt), 'yyyy-MM-dd');
-        if (!acc[dateKey]) {
-          acc[dateKey] = [];
-        }
+        acc[dateKey] ??= [];
         acc[dateKey].push(project);
       }
       return acc;
     },
-    {} as Record<string, typeof projects>
+    {}
   );
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -111,13 +111,13 @@ export default async function ProjectCalendarViewPage() {
           <div className="grid grid-cols-7 gap-1">
             {/* Empty cells for days before the first of the month */}
             {Array.from({ length: firstDayOfWeek }).map((_, index) => (
-              <div key={`empty-${index}`} className="min-h-[100px] bg-muted/20 rounded-lg" />
+              <div key={`empty-${String(index)}`} className="min-h-[100px] bg-muted/20 rounded-lg" />
             ))}
 
             {/* Days of the month */}
             {daysInMonth.map((day) => {
               const dateKey = format(day, 'yyyy-MM-dd');
-              const dayProjects = projectsByDate[dateKey] || [];
+              const dayProjects = projectsByDate[dateKey];
               const isToday = isSameDay(day, today);
 
               return (

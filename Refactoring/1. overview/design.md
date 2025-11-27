@@ -13,7 +13,10 @@
 
 ### 1.1 Purpose of This Document
 
-This document describes the structural design, layout, and feature organization of the Overview navigation without specifying visual styling, colors, or specific implementation details. It serves as a blueprint for UI/UX designers and developers.
+This document describes the structural design, layout, and feature organization
+of the Overview navigation without specifying visual styling, colors, or
+specific implementation details. It serves as a blueprint for UI/UX designers
+and developers.
 
 ### 1.2 Design Principles
 
@@ -995,7 +998,8 @@ Widgets come in three standard sizes that can be selected during customization:
 
 ### 4.16 Focus Mode Interface
 
-**Activation**: Click "Enable Focus Mode" button in Quick Actions or keyboard shortcut
+**Activation**: Click "Enable Focus Mode" button in Quick Actions or keyboard
+shortcut
 
 **Layout**:
 

@@ -1,6 +1,7 @@
 import { readdirSync, statSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { scanMDXDirectory, type MDXFile } from './mdx';
+
+import { scanMDXDirectory } from './mdx';
 
 /**
  * Changelog Version Entry
@@ -53,9 +54,9 @@ function formatDateLong(date: Date): string {
   // Add ordinal suffix
   const suffix = ['th', 'st', 'nd', 'rd'];
   const v = day % 100;
-  const ordinal = suffix[(v - 20) % 10] || suffix[v] || suffix[0];
+  const ordinal = suffix[(v - 20) % 10] ?? suffix[v] ?? suffix[0];
 
-  return `${day}${ordinal} ${month} ${year}`;
+  return `${String(day)}${String(ordinal)} ${month} ${String(year)}`;
 }
 
 /**
@@ -66,7 +67,7 @@ export function getCurrentDateSlug(): string {
   const day = String(now.getDate()).padStart(2, '0');
   const month = String(now.getMonth() + 1).padStart(2, '0');
   const year = now.getFullYear();
-  return `${day}-${month}-${year}`;
+  return `${day}-${month}-${String(year)}`;
 }
 
 /**
@@ -107,7 +108,7 @@ export function getChangelogVersions(): ChangelogVersion[] {
 
       const version = indexFile.metadata.version as string | undefined;
       const releaseName = indexFile.metadata.releaseName as string | undefined;
-      const title = indexFile.metadata.title as string;
+      const title = indexFile.metadata.title;
 
       versions.push({
         dateSlug: entry,
@@ -131,7 +132,7 @@ export function getChangelogVersions(): ChangelogVersion[] {
  */
 export function findVersionBySlug(slug: string): ChangelogVersion | null {
   const versions = getChangelogVersions();
-  return versions.find((v) => v.dateSlug === slug) || null;
+  return versions.find((v) => v.dateSlug === slug) ?? null;
 }
 
 /**
@@ -149,8 +150,8 @@ export function getAdjacentVersions(slug: string): {
   }
 
   return {
-    prev: versions[currentIndex + 1] || null, // Older version
-    next: versions[currentIndex - 1] || null, // Newer version
+    prev: versions[currentIndex + 1] ?? null, // Older version
+    next: versions[currentIndex - 1] ?? null, // Newer version
   };
 }
 
@@ -168,7 +169,7 @@ export function generateChangelogTemplate(options: {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  const dateSlug = `${day}-${month}-${year}`;
+  const dateSlug = `${day}-${month}-${String(year)}`;
 
   const formattedDate = formatDateLong(date);
   const title = `v${version} ${releaseName}`;
@@ -177,7 +178,7 @@ export function generateChangelogTemplate(options: {
 title: ${title}
 version: ${version}
 releaseName: ${releaseName}
-date: ${date.toISOString().split('T')[0]}
+date: ${String(date.toISOString().split('T')[0])}
 description: ${releaseName} for version ${version}
 ---
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": ["NODE_ENV", "CI", "NEXT_RUNTIME"],
   "globalPassThroughEnv": ["PORT"],
   "tasks": {
     "build": {
@@ -13,7 +13,8 @@
         "SENTRY_DSN",
         "SENTRY_ORG",
         "SENTRY_PROJECT",
-        "SENTRY_AUTH_TOKEN"
+        "SENTRY_AUTH_TOKEN",
+        "SENTRY_DEBUG"
       ]
     },
     "dev": {
@@ -36,6 +37,7 @@
         "SENTRY_TRACES_SAMPLE_RATE",
         "SENTRY_ENABLE_TRACING",
         "SENTRY_SEND_IN_DEV",
+        "SENTRY_DEBUG",
         "R2_ACCOUNT_ID",
         "R2_ACCESS_KEY_ID",
         "R2_SECRET_ACCESS_KEY",

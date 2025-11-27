@@ -1,5 +1,5 @@
-import { TwoFactorManagement } from '@/components/default/dashboard/security-2fa';
-import { SessionsManager } from '@/components/default/dashboard/security-sessions';
+import { TwoFactorManagement } from '@/components/default/dashboard/common/security-2fa';
+import { SessionsManager } from '@/components/default/dashboard/common/security-sessions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Page() {
@@ -125,7 +125,7 @@ export default function Page() {
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <p className="text-muted-foreground">
-                Customize your sidebar layout by reordering sections or hiding ones you don't use
+                Customize your sidebar layout by reordering sections or hiding ones you don&apos;t use
                 frequently. Access customization from the sidebar footer.
               </p>
               <ul className="ml-4 list-disc space-y-1 text-muted-foreground">

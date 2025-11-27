@@ -1,8 +1,9 @@
-import { Hono } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { z } from 'zod';
+
 import { db } from '../../db';
 import { label } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -66,6 +67,12 @@ app.patch(
         .where(eq(label.id, labelId))
         .returning();
 
+      if (!updatedLabel) {
+        throw new HTTPException(500, {
+          message: 'Failed to update label',
+        });
+      }
+
       // Log activity for label update
       await logEntityChange(
         {
@@ -74,7 +81,7 @@ app.patch(
           actorId: currentUser.id,
         },
         existingLabel,
-        updatedLabel!
+        updatedLabel
       );
 
       return c.json({

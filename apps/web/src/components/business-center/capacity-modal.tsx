@@ -1,7 +1,9 @@
 'use client';
 
-import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react';
 import { useActionState, useId } from 'react';
+
+import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react';
+
 import { updateCapacityAction } from '@/app/(default)/dashboard/business-center/actions';
 import { Button } from '@/components/ui/button';
 import {
@@ -43,8 +45,7 @@ export function CapacityModal({
   const capacityId = useId();
 
   // Get the capacity value from form for showing warnings
-  const handleCapacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
+  const handleCapacityChange = (_e: React.ChangeEvent<HTMLInputElement>) => {
     // Warning logic is handled by checking the value in the render
   };
 

@@ -1,50 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SprintForm } from './forms/sprint-form';
-import { toast } from 'sonner';
-import {
-  getSprintStatusColor,
-  calculateSprintProgress,
-  calculateDaysRemaining,
-  type SprintStatus,
-} from '@/lib/schemas/sprint';
-import type { Sprint } from '@/lib/api/sprints/types';
-import {
-  createSprintAction,
-  updateSprintAction,
-  deleteSprintAction,
-  startSprintAction,
-  completeSprintAction,
-} from '@/lib/actions/business-center/sprints';
+
 import {
   IconPlus,
   IconDotsVertical,
@@ -58,8 +15,57 @@ import {
   IconBan,
   IconClock,
 } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
 import { formatDistanceToNow, format } from 'date-fns';
+import { toast } from 'sonner';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Progress } from '@/components/ui/progress';
+import {
+  createSprintAction,
+  updateSprintAction,
+  deleteSprintAction,
+  startSprintAction,
+  completeSprintAction,
+} from '@/lib/actions/business-center/sprints';
+import {
+  getSprintStatusColor,
+  calculateSprintProgress,
+  calculateDaysRemaining,
+  type SprintStatus,
+} from '@/lib/schemas/sprint';
+import { cn } from '@/lib/utils';
+
+import { SprintForm } from './forms/sprint-form';
+
+import type { Sprint } from '@/lib/api/sprints/types';
+
+
 
 interface SprintListProps {
   sprints: Sprint[];
@@ -89,17 +95,23 @@ export function SprintList({
   const handleCreateSubmit = async (formData: FormData) => {
     const result = await createSprintAction(formData);
     if (result.success && result.sprintId) {
+      const goal = formData.get('goal');
+      const status = formData.get('status');
+      const startDate = formData.get('startDate');
+      const endDate = formData.get('endDate');
+      const sprintNumber = formData.get('sprintNumber');
+
       const newSprint: Sprint = {
         id: result.sprintId,
         projectId,
         name: formData.get('name') as string,
-        goal: (formData.get('goal') as string) || null,
-        status: (formData.get('status') as SprintStatus) || 'planning',
-        startDate: (formData.get('startDate') as string) || null,
-        endDate: (formData.get('endDate') as string) || null,
-        plannedPoints: parseInt(formData.get('plannedPoints') as string) || 0,
+        goal: goal && typeof goal === 'string' ? goal : null,
+        status: (status && typeof status === 'string' ? status : 'planning') as SprintStatus,
+        startDate: startDate && typeof startDate === 'string' ? startDate : null,
+        endDate: endDate && typeof endDate === 'string' ? endDate : null,
+        plannedPoints: parseInt(formData.get('plannedPoints') as string),
         completedPoints: 0,
-        sprintNumber: parseInt(formData.get('sprintNumber') as string) || null,
+        sprintNumber: sprintNumber && typeof sprintNumber === 'string' ? parseInt(sprintNumber) : null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -114,18 +126,26 @@ export function SprintList({
 
     const result = await updateSprintAction(editingSprint.id, projectId, formData);
     if (result.success) {
+      const name = formData.get('name');
+      const goal = formData.get('goal');
+      const status = formData.get('status');
+      const startDate = formData.get('startDate');
+      const endDate = formData.get('endDate');
+      const plannedPoints = formData.get('plannedPoints');
+      const sprintNumber = formData.get('sprintNumber');
+
       setSprints((prev) =>
         prev.map((s) =>
           s.id === editingSprint.id
             ? {
                 ...s,
-                name: (formData.get('name') as string) || s.name,
-                goal: (formData.get('goal') as string) || s.goal,
-                status: (formData.get('status') as SprintStatus) || s.status,
-                startDate: (formData.get('startDate') as string) || s.startDate,
-                endDate: (formData.get('endDate') as string) || s.endDate,
-                plannedPoints: parseInt(formData.get('plannedPoints') as string) || s.plannedPoints,
-                sprintNumber: parseInt(formData.get('sprintNumber') as string) || s.sprintNumber,
+                name: name && typeof name === 'string' ? name : s.name,
+                goal: goal && typeof goal === 'string' ? goal : s.goal,
+                status: (status && typeof status === 'string' ? status : s.status) as SprintStatus,
+                startDate: startDate && typeof startDate === 'string' ? startDate : s.startDate,
+                endDate: endDate && typeof endDate === 'string' ? endDate : s.endDate,
+                plannedPoints: plannedPoints && typeof plannedPoints === 'string' ? parseInt(plannedPoints) : s.plannedPoints,
+                sprintNumber: sprintNumber && typeof sprintNumber === 'string' ? parseInt(sprintNumber) : s.sprintNumber,
                 updatedAt: new Date().toISOString(),
               }
             : s
@@ -146,7 +166,7 @@ export function SprintList({
         setSprints((prev) => prev.filter((s) => s.id !== deletingSprint.id));
         toast.success('Sprint deleted successfully');
       } else {
-        toast.error(result.error || 'Failed to delete sprint');
+        toast.error(result.error ?? 'Failed to delete sprint');
       }
     } catch {
       toast.error('Failed to delete sprint');
@@ -168,7 +188,7 @@ export function SprintList({
         );
         toast.success('Sprint started');
       } else {
-        toast.error(result.error || 'Failed to start sprint');
+        toast.error(result.error ?? 'Failed to start sprint');
       }
     } catch {
       toast.error('Failed to start sprint');
@@ -191,7 +211,7 @@ export function SprintList({
         );
         toast.success('Sprint completed');
       } else {
-        toast.error(result.error || 'Failed to complete sprint');
+        toast.error(result.error ?? 'Failed to complete sprint');
       }
     } catch {
       toast.error('Failed to complete sprint');
@@ -434,7 +454,7 @@ function SprintCard({
                   Complete Sprint
                 </DropdownMenuItem>
               )}
-              {(onStart || onComplete) && <DropdownMenuSeparator />}
+              {(onStart ?? onComplete) && <DropdownMenuSeparator />}
               <DropdownMenuItem onClick={onEdit}>
                 <IconEdit className="h-4 w-4 mr-2" />
                 Edit
@@ -458,7 +478,7 @@ function SprintCard({
             <span className="text-muted-foreground">
               {sprint.completedPoints} / {sprint.plannedPoints} points
             </span>
-            <span className="font-medium">{progress}%</span>
+            <span className="font-medium">{String(progress)}%</span>
           </div>
           <Progress value={progress} className="h-2" />
         </div>
@@ -485,10 +505,10 @@ function SprintCard({
           >
             <IconClock className="h-3 w-3" />
             {daysRemaining !== null && daysRemaining < 0
-              ? `${Math.abs(daysRemaining)} days overdue`
+              ? `${String(Math.abs(daysRemaining))} days overdue`
               : daysRemaining === 0
                 ? 'Ends today'
-                : `${daysRemaining} days remaining`}
+                : `${String(daysRemaining)} days remaining`}
           </span>
         )}
         {sprint.status === 'completed' && sprint.endDate && (

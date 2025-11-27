@@ -54,7 +54,8 @@ API_URL=https://api.skyll.com k6 run tests/performance/api-load-test.js
 
 ## Writing Tests
 
-See [k6 Documentation](https://k6.io/docs/) for more information on writing performance tests.
+See [k6 Documentation](https://k6.io/docs/) for more information on writing
+performance tests.
 
 ## Thresholds
 

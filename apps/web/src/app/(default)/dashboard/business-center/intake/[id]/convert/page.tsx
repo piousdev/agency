@@ -1,9 +1,11 @@
 import { Suspense } from 'react';
+
 import { notFound, redirect } from 'next/navigation';
-import { requireAuth } from '@/lib/auth/session';
+
+import { RoutingForm } from '@/components/default/dashboard/business-center/intake/routing-form';
 import { getRequest } from '@/lib/actions/business-center/requests';
 import { listProjects } from '@/lib/api/projects/list';
-import { RoutingForm } from '@/components/dashboard/business-center/intake/routing-form';
+import { requireAuth } from '@/lib/auth/session';
 
 export const metadata = {
   title: 'Convert Request - Intake Pipeline',
@@ -26,7 +28,7 @@ function ConvertSkeleton() {
 async function ConvertData({ id }: { id: string }) {
   const [requestResult, projectsResult] = await Promise.all([getRequest(id), listProjects({})]);
 
-  if (!requestResult.success || !requestResult.data) {
+  if (!requestResult.success) {
     notFound();
   }
 

@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq, desc, asc, and, count } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { ticket } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -38,34 +39,43 @@ app.get(
       // Build WHERE clause
       const whereConditions = [];
 
-      if (type) {
+      if (type !== undefined && type !== '') {
         whereConditions.push(eq(ticket.type, type));
       }
-      if (status) {
+      if (status !== undefined && status !== '') {
         whereConditions.push(eq(ticket.status, status));
       }
-      if (priority) {
+      if (priority !== undefined && priority !== '') {
         whereConditions.push(eq(ticket.priority, priority));
       }
-      if (assignedToId) {
+      if (assignedToId !== undefined && assignedToId !== '') {
         whereConditions.push(eq(ticket.assignedToId, assignedToId));
       }
-      if (clientId) {
+      if (clientId !== undefined && clientId !== '') {
         whereConditions.push(eq(ticket.clientId, clientId));
       }
-      if (projectId) {
+      if (projectId !== undefined && projectId !== '') {
         whereConditions.push(eq(ticket.projectId, projectId));
       }
 
       const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-      // Determine sort column
-      const sortColumn = {
-        createdAt: ticket.createdAt,
-        updatedAt: ticket.updatedAt,
-        priority: ticket.priority,
-        status: ticket.status,
-      }[sortBy];
+      // Determine sort column safely
+      let sortColumn;
+      switch (sortBy) {
+        case 'createdAt':
+          sortColumn = ticket.createdAt;
+          break;
+        case 'updatedAt':
+          sortColumn = ticket.updatedAt;
+          break;
+        case 'priority':
+          sortColumn = ticket.priority;
+          break;
+        case 'status':
+          sortColumn = ticket.status;
+          break;
+      }
 
       // Query tickets with pagination
       const offset = (page - 1) * pageSize;

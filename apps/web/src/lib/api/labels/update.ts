@@ -3,8 +3,9 @@
  */
 
 import { getAuthHeaders } from './api-utils';
-import type { UpdateLabelInput } from '@/lib/schemas/label';
+
 import type { LabelResponse } from './types';
+import type { UpdateLabelInput } from '@/lib/schemas/label';
 
 /**
  * Update an existing label
@@ -16,19 +17,20 @@ import type { LabelResponse } from './types';
  */
 export async function updateLabel(labelId: string, data: UpdateLabelInput): Promise<LabelResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/labels/${labelId}`, {
+  const response = await fetch(`${apiUrl}/api/labels/${labelId}`, {
     method: 'PATCH',
     headers: authHeaders,
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as LabelResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to update label');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as LabelResponse;
 }

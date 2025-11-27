@@ -4,6 +4,14 @@
  */
 
 import { describe, it, expect } from 'vitest';
+
+import {
+  createClientSchema,
+  updateClientSchema,
+  updateClientStatusSchema,
+  bulkClientOperationSchema,
+  clientTypeValues,
+} from '../client';
 import {
   createProjectSchema,
   updateProjectSchema,
@@ -24,13 +32,6 @@ import {
   ticketStatusValues,
   ticketPriorityValues,
 } from '../ticket';
-import {
-  createClientSchema,
-  updateClientSchema,
-  updateClientStatusSchema,
-  bulkClientOperationSchema,
-  clientTypeValues,
-} from '../client';
 
 describe('Project Schemas', () => {
   describe('createProjectSchema', () => {
@@ -52,9 +53,10 @@ describe('Project Schemas', () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        const errors = result.error.flatten().fieldErrors;
-        expect(errors.name).toBeDefined();
-        expect(errors.clientId).toBeDefined();
+        const nameError = result.error.issues.find((issue) => issue.path.includes('name'));
+        const clientIdError = result.error.issues.find((issue) => issue.path.includes('clientId'));
+        expect(nameError).toBeDefined();
+        expect(clientIdError).toBeDefined();
       }
     });
 
@@ -242,10 +244,12 @@ describe('Ticket Schemas', () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        const errors = result.error.flatten().fieldErrors;
-        expect(errors.title).toBeDefined();
-        expect(errors.description).toBeDefined();
-        expect(errors.clientId).toBeDefined();
+        const titleError = result.error.issues.find((issue) => issue.path.includes('title'));
+        const descriptionError = result.error.issues.find((issue) => issue.path.includes('description'));
+        const clientIdError = result.error.issues.find((issue) => issue.path.includes('clientId'));
+        expect(titleError).toBeDefined();
+        expect(descriptionError).toBeDefined();
+        expect(clientIdError).toBeDefined();
       }
     });
 
@@ -402,7 +406,7 @@ describe('Ticket Schemas', () => {
 
     it('should limit to 100 tickets', () => {
       const result = bulkTicketOperationSchema.safeParse({
-        ticketIds: Array.from({ length: 101 }, (_, i) => `ticket-${i}`),
+        ticketIds: Array.from({ length: 101 }, (_, i) => `ticket-${String(i)}`),
         operation: 'update_status',
       });
       expect(result.success).toBe(false);
@@ -438,9 +442,10 @@ describe('Client Schemas', () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        const errors = result.error.flatten().fieldErrors;
-        expect(errors.name).toBeDefined();
-        expect(errors.email).toBeDefined();
+        const nameError = result.error.issues.find((issue) => issue.path.includes('name'));
+        const emailError = result.error.issues.find((issue) => issue.path.includes('email'));
+        expect(nameError).toBeDefined();
+        expect(emailError).toBeDefined();
       }
     });
 

@@ -1,29 +1,23 @@
-import { redirect } from 'next/navigation';
-import { OverviewDashboard } from '@/components/dashboard/business-center/overview';
+import { OverviewDashboard } from '@/components/default/dashboard/business-center/overview';
 import { getOverviewData } from '@/lib/actions/business-center/overview';
-import { requireUser } from '@/lib/auth/session';
-
-import { getUserRole } from '@/lib/api/users/get-role';
+import { requireInternalUser } from '@/lib/auth/session';
 
 /**
- * Business Center page - internal users only
+ * Next.js Server Component: Fetches the current session user and overview data, then passes them to the OverviewDashboard component.
+ *
+ * @returns {Promise<React.JSX.Element>} The rendered dashboard page for internals ONLY.
  */
-export default async function BusinessCenterPage() {
-  const user = await requireUser();
-
-  if (!user.isInternal) redirect('/dashboard');
-
-  const [userRole, overviewData] = await Promise.all([
-    getUserRole(user.id),
-    getOverviewData(user.id),
-  ]);
+export default async function OverviewDashboardPage(): Promise<React.JSX.Element> {
+  const user = await requireInternalUser();
+  const overviewData = await getOverviewData(user);
 
   return (
     <OverviewDashboard
       userId={user.id}
-      userName={user.name ?? undefined}
-      userRole={userRole}
+      userName={user.name}
+      userRole={user.role}
       initialData={overviewData}
+      data-testid="overview-dashboard-page"
     />
   );
 }

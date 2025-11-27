@@ -4,6 +4,7 @@
  */
 
 import { cookies } from 'next/headers';
+
 import type {
   Milestone,
   MilestoneWithProject,
@@ -16,7 +17,7 @@ import type {
 async function getAuthHeaders(): Promise<HeadersInit> {
   const cookieStore = await cookies();
   const sessionToken =
-    cookieStore.get('better-auth.session_token')?.value ||
+    cookieStore.get('better-auth.session_token')?.value ??
     cookieStore.get('__Secure-better-auth.session_token')?.value;
 
   return {
@@ -36,22 +37,20 @@ export async function listMilestones(
   const params = new URLSearchParams({ projectId });
   if (options?.status) params.set('status', options.status);
   if (options?.sort) params.set('sort', options.sort);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/milestones?${params.toString()}`,
-    {
-      headers: authHeaders,
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${apiUrl}/api/milestones?${params.toString()}`, {
+    headers: authHeaders,
+    cache: 'no-store',
+  });
 
-  const result = await response.json();
+  const result = (await response.json()) as MilestonesListResponse & { message: string };
 
   if (!response.ok) {
-    return { success: false, data: [], message: result.message || 'Failed to list milestones' };
+    return { success: false, data: [], message: result.message };
   }
 
-  return result;
+  return result as MilestonesListResponse;
 }
 
 /**
@@ -59,19 +58,20 @@ export async function listMilestones(
  */
 export async function getMilestone(id: string): Promise<MilestoneResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/milestones/${id}`, {
+  const response = await fetch(`${apiUrl}/api/milestones/${id}`, {
     headers: authHeaders,
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as MilestoneResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to get milestone');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as MilestoneResponse;
 }
 
 /**
@@ -81,18 +81,19 @@ export async function createMilestone(
   data: CreateMilestoneInput
 ): Promise<{ success: boolean; data?: Milestone; message?: string }> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/milestones`, {
+  const response = await fetch(`${apiUrl}/api/milestones`, {
     method: 'POST',
     headers: authHeaders,
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { success: boolean; data?: Milestone; message: string };
 
   if (!response.ok) {
-    return { success: false, message: result.message || 'Failed to create milestone' };
+    return { success: false, message: result.message };
   }
 
   return result;
@@ -106,18 +107,19 @@ export async function updateMilestone(
   data: UpdateMilestoneInput
 ): Promise<{ success: boolean; data?: Milestone; message?: string }> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/milestones/${id}`, {
+  const response = await fetch(`${apiUrl}/api/milestones/${id}`, {
     method: 'PATCH',
     headers: authHeaders,
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { success: boolean; data?: Milestone; message: string };
 
   if (!response.ok) {
-    return { success: false, message: result.message || 'Failed to update milestone' };
+    return { success: false, message: result.message };
   }
 
   return result;
@@ -128,17 +130,18 @@ export async function updateMilestone(
  */
 export async function deleteMilestone(id: string): Promise<{ success: boolean; message?: string }> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/milestones/${id}`, {
+  const response = await fetch(`${apiUrl}/api/milestones/${id}`, {
     method: 'DELETE',
     headers: authHeaders,
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { success: boolean; message: string };
 
   if (!response.ok) {
-    return { success: false, message: result.message || 'Failed to delete milestone' };
+    return { success: false, message: result.message };
   }
 
   return result;

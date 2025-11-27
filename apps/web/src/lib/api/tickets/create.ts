@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { CreateTicketInput, TicketResponse } from './types';
 
 /**
@@ -19,16 +20,20 @@ export async function createTicket(
   try {
     const authHeaders = await getAuthHeaders();
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets`, {
+    const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/tickets`, {
       method: 'POST',
       headers: authHeaders,
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
+    const result = (await response.json()) as { message?: string; data?: TicketResponse['data'] };
 
     if (!response.ok) {
-      return { success: false, error: result.message || 'Failed to create ticket' };
+      return { success: false, error: result.message ?? 'Failed to create ticket' };
+    }
+
+    if (!result.data) {
+      return { success: false, error: 'No data returned from server' };
     }
 
     return { success: true, data: result.data };

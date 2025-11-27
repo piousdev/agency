@@ -1,16 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+
+import { IconPlus, IconDotsVertical, IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
+
+import { LabelForm } from '@/components/business-center/forms';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,20 +17,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LabelForm } from '@/components/business-center/forms';
 import {
   createLabelAction,
   updateLabelAction,
   deleteLabelAction,
 } from '@/lib/actions/business-center/labels';
+
 import type { Label } from '@/lib/api/labels';
-import { IconPlus, IconDotsVertical, IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
+
 
 interface LabelsClientProps {
   initialLabels: Label[];
@@ -42,7 +47,7 @@ interface LabelsClientProps {
 
 export function LabelsClient({ initialLabels }: LabelsClientProps) {
   const router = useRouter();
-  const [labels] = useState<Label[]>(initialLabels);
+  const labels = initialLabels;
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editingLabel, setEditingLabel] = useState<Label | null>(null);
   const [deletingLabel, setDeletingLabel] = useState<Label | null>(null);

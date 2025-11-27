@@ -2,7 +2,8 @@
 
 ## Overview
 
-The Intake Pipeline is a 4-stage workflow system for processing incoming work requests before they become Projects or Tickets.
+The Intake Pipeline is a 4-stage workflow system for processing incoming work
+requests before they become Projects or Tickets.
 
 ## Architecture
 
@@ -12,7 +13,14 @@ The Intake Pipeline is a 4-stage workflow system for processing incoming work re
 
 ```typescript
 // Request type - what kind of work is being requested
-requestTypeEnum: ['bug', 'feature', 'enhancement', 'change_request', 'support', 'other'];
+requestTypeEnum: [
+  'bug',
+  'feature',
+  'enhancement',
+  'change_request',
+  'support',
+  'other',
+];
 
 // Request stage - pipeline workflow stages
 requestStageEnum: ['in_treatment', 'on_hold', 'estimation', 'ready'];
@@ -197,7 +205,14 @@ export const intakeKeys = {
 const requestFormSchema = z.object({
   // Step 1: Basic Info
   title: z.string().min(1).max(500),
-  type: z.enum(['bug', 'feature', 'enhancement', 'change_request', 'support', 'other']),
+  type: z.enum([
+    'bug',
+    'feature',
+    'enhancement',
+    'change_request',
+    'support',
+    'other',
+  ]),
   priority: z.enum(['low', 'medium', 'high', 'critical']),
 
   // Step 2: Description

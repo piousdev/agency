@@ -1,11 +1,12 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { request } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { listRequestsQuerySchema } from '../../schemas/request';
-import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -38,11 +39,11 @@ app.get(
         conditions.push(eq(request.priority, query.priority));
       }
 
-      if (query.assignedPmId) {
+      if (query.assignedPmId !== undefined && query.assignedPmId !== '') {
         conditions.push(eq(request.assignedPmId, query.assignedPmId));
       }
 
-      if (query.clientId) {
+      if (query.clientId !== undefined && query.clientId !== '') {
         conditions.push(eq(request.clientId, query.clientId));
       }
 
@@ -54,7 +55,7 @@ app.get(
         conditions.push(eq(request.isCancelled, query.isCancelled === 'true'));
       }
 
-      if (query.search) {
+      if (query.search !== undefined && query.search !== '') {
         conditions.push(
           or(
             ilike(request.title, `%${query.search}%`),
@@ -70,7 +71,7 @@ app.get(
         updatedAt: request.updatedAt,
         priority: request.priority,
         stageEnteredAt: request.stageEnteredAt,
-      }[query.sortBy || 'createdAt'];
+      }[query.sortBy ?? 'createdAt'];
 
       const orderDirection = query.sortOrder === 'asc' ? asc : desc;
 

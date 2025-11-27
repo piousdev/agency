@@ -1,9 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import type { TeamMember } from '@/lib/api/users/types';
+
 import { AssignModal } from './assign-modal';
+
+import type { TeamMember } from '@/lib/api/users/types';
+
+// Constant for default empty array to avoid re-renders
+const EMPTY_ASSIGNEES: string[] = [];
 
 /**
  * Assign Trigger Props
@@ -28,7 +34,7 @@ export function AssignTrigger({
   entityType,
   entityId,
   entityName,
-  currentAssignees = [],
+  currentAssignees = EMPTY_ASSIGNEES,
   teamMembers,
   buttonText = 'Assign',
   buttonVariant = 'outline',

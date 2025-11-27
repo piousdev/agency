@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import {
   IconAlertTriangle,
   IconCalendar,
@@ -19,7 +21,7 @@ import {
   startOfToday,
   startOfWeek,
 } from 'date-fns';
-import { useState } from 'react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,12 +29,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
-import type { TeamMember } from '@/lib/api/users/types';
+
 import { BusinessCenterHeader } from '../components/header';
 import { DeliverableCalendarView } from './views/calendar-view';
 import { DeliverableTableView } from './views/table-view';
 import { DeliverableTimelineView } from './views/timeline-view';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
+import type { TeamMember } from '@/lib/api/users/types';
 
 type ViewMode = 'timeline' | 'table' | 'calendar';
 type TimeFilter = 'all' | 'overdue' | 'today' | 'this_week' | 'this_month' | 'upcoming';
@@ -111,15 +115,15 @@ export function DeliverablesClient({
   const weekStart = startOfWeek(today, { weekStartsOn: 1 });
   const filteredProjects = allProjects.filter((project) => {
     // Filter by project type
-    if (projectType === 'content' && project.client?.type !== 'creative') return false;
-    if (projectType === 'software' && project.client?.type !== 'software') return false;
+    if (projectType === 'content' && project.client.type !== 'creative') return false;
+    if (projectType === 'software' && project.client.type !== 'software') return false;
 
     // Filter by status
     if (selectedStatuses.length > 0 && !selectedStatuses.includes(project.status)) return false;
 
     // Filter by assignee
     if (selectedAssignees.length > 0) {
-      const hasAssignee = project.assignees?.some((a) => selectedAssignees.includes(a.id));
+      const hasAssignee = project.assignees.some((a) => selectedAssignees.includes(a.id));
       if (!hasAssignee) return false;
     }
 
@@ -404,7 +408,7 @@ export function DeliverablesClient({
               const member = teamMembers.find((m) => m.id === id);
               return (
                 <Badge key={id} variant="secondary" className="gap-1">
-                  {member?.name || id}
+                  {member?.name ?? id}
                   <IconX className="h-3 w-3 cursor-pointer" onClick={() => toggleAssignee(id)} />
                 </Badge>
               );

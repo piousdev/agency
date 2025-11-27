@@ -1,6 +1,5 @@
 'use client';
 
-import { type Column } from '@tanstack/react-table';
 import {
   IconArrowDown,
   IconArrowUp,
@@ -10,6 +9,8 @@ import {
   IconPin,
   IconPinnedOff,
 } from '@tabler/icons-react';
+
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -19,6 +20,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+
+import type { Column } from '@tanstack/react-table';
 
 interface DataTableColumnHeaderProps<TData, TValue> {
   column: Column<TData, TValue>;
@@ -86,6 +89,14 @@ export function DataTableColumnHeader<TData, TValue>({
             e.stopPropagation();
             e.preventDefault();
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              e.preventDefault();
+            }
+          }}
+          role="button"
+          tabIndex={0}
         >
           <IconGripVertical className="h-4 w-4" />
         </div>
@@ -187,7 +198,7 @@ export function DataTableColumnHeader<TData, TValue>({
 /**
  * Get common pinning styles for a column
  */
-export function getColumnPinningStyles<TData>(column: Column<TData, unknown>): React.CSSProperties {
+export function getColumnPinningStyles<TData>(column: Column<TData>): React.CSSProperties {
   const isPinned = column.getIsPinned();
   const isLastLeftPinned = isPinned === 'left' && column.getIsLastColumn('left');
   const isFirstRightPinned = isPinned === 'right' && column.getIsFirstColumn('right');
@@ -198,8 +209,8 @@ export function getColumnPinningStyles<TData>(column: Column<TData, unknown>): R
       : isFirstRightPinned
         ? 'inset 4px 0 4px -4px rgba(0, 0, 0, 0.1)'
         : undefined,
-    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
-    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+    left: isPinned === 'left' ? `${String(column.getStart('left'))}px` : undefined,
+    right: isPinned === 'right' ? `${String(column.getAfter('right'))}px` : undefined,
     position: isPinned ? 'sticky' : 'relative',
     width: column.getSize(),
     zIndex: isPinned ? 1 : 0,

@@ -64,7 +64,8 @@
 ### 2.2 Core Project Data Model
 
 - [ ] Implement project ID generation
-- [ ] Define project status enum (Planning, Active, In Review, Completed, On Hold)
+- [ ] Define project status enum (Planning, Active, In Review, Completed, On
+      Hold)
 - [ ] Define priority enum (Low, Medium, High, Critical)
 - [ ] Define milestone status enum
 - [ ] Define deliverable status enum
@@ -284,7 +285,8 @@
 ### 5.1 Project List View
 
 - [ ] Create list view component (table format)
-- [ ] Display columns: ID, Name/Client, Status, Progress, Due Date, Health, PM, Actions
+- [ ] Display columns: ID, Name/Client, Status, Progress, Due Date, Health, PM,
+      Actions
 - [ ] Implement sortable columns
 - [ ] Implement row selection
 - [ ] Implement row click to open details

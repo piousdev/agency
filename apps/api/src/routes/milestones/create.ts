@@ -5,6 +5,7 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db/index.js';
 import { milestone } from '../../db/schema/milestone.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth.js';
@@ -23,14 +24,19 @@ app.post('/', requireAuth(), requireInternal(), async (c) => {
   }
 
   try {
-    const body = await c.req.json();
-    const { projectId, name, description, status, dueDate, sortOrder } = body;
+    const body: unknown = await c.req.json();
+    const projectId = (body as Record<string, unknown>).projectId as string | undefined;
+    const name = (body as Record<string, unknown>).name as string | undefined;
+    const description = (body as Record<string, unknown>).description as string | undefined;
+    const status = (body as Record<string, unknown>).status as string | undefined;
+    const dueDate = (body as Record<string, unknown>).dueDate as string | undefined;
+    const sortOrder = (body as Record<string, unknown>).sortOrder as number | undefined;
 
     // Validate required fields
-    if (!projectId) {
+    if (projectId === undefined || projectId === '') {
       return c.json({ success: false, message: 'Project ID is required' }, 400);
     }
-    if (!name || name.trim().length === 0) {
+    if (name === undefined || name.trim().length === 0) {
       return c.json({ success: false, message: 'Name is required' }, 400);
     }
 
@@ -43,9 +49,9 @@ app.post('/', requireAuth(), requireInternal(), async (c) => {
         id,
         projectId,
         name: name.trim(),
-        description: description?.trim() || null,
-        status: status || 'pending',
-        dueDate: dueDate ? new Date(dueDate) : null,
+        description: description !== undefined && description.trim() !== '' ? description.trim() : null,
+        status: status ?? 'pending',
+        dueDate: dueDate !== undefined ? new Date(dueDate) : null,
         sortOrder: sortOrder ?? 0,
         createdAt: now,
         updatedAt: now,

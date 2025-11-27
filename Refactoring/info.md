@@ -1,4 +1,5 @@
-Excellent! So **Overview** is a **role-based dashboard** that shows contextually relevant information based on who's logged in.
+Excellent! So **Overview** is a **role-based dashboard** that shows contextually
+relevant information based on who's logged in.
 
 ## Overview (Role-Based Dashboard)
 

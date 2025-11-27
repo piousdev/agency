@@ -4,7 +4,9 @@
  */
 
 import 'dotenv/config';
-import { db } from './index.js';
+import { eq, ne } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
+
 import {
   client,
   user,
@@ -18,10 +20,19 @@ import {
   request,
   requestHistory,
   userDashboardPreferences,
+  activity,
+  notification,
 } from './schema/index.js';
+
+import { db } from './index.js';
+
 import type { WidgetLayout } from './schema/dashboard-preferences.js';
-import { eq, ne } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
+
+// Type for seeded user records
+type SeededUser = typeof user.$inferSelect;
+type SeededClient = typeof client.$inferSelect;
+type SeededProject = typeof project.$inferSelect;
+type SeededTicket = typeof ticket.$inferSelect;
 
 /**
  * Default Role Permissions
@@ -85,13 +96,11 @@ const clientPermissions = [
  * Convert permission array to Record<string, boolean>
  */
 function permissionsToRecord(perms: string[]): Record<string, boolean> {
-  return perms.reduce(
-    (acc, perm) => {
-      acc[perm] = true;
-      return acc;
-    },
-    {} as Record<string, boolean>
-  );
+  return perms.reduce<Record<string, boolean>>((acc, perm) => {
+    // eslint-disable-next-line security/detect-object-injection
+    acc[perm] = true;
+    return acc;
+  }, {});
 }
 
 /**
@@ -128,11 +137,13 @@ const SEED_CONFIG = {
 /**
  * Clear existing data (preserves admin user)
  */
-async function clearData() {
+async function clearData(): Promise<void> {
   console.log('🗑️  Clearing existing data...');
 
   const adminEmail = process.env.ADMIN_EMAIL;
 
+  await db.delete(notification);
+  await db.delete(activity);
   await db.delete(requestHistory);
   await db.delete(request);
   await db.delete(projectAssignment);
@@ -144,7 +155,7 @@ async function clearData() {
   await db.delete(userDashboardPreferences);
 
   // Delete all users EXCEPT the admin
-  if (adminEmail) {
+  if (adminEmail !== undefined && adminEmail !== '') {
     await db.delete(user).where(ne(user.email, adminEmail));
     console.log(`✅ Data cleared (preserved admin: ${adminEmail})\n`);
   } else {
@@ -156,7 +167,7 @@ async function clearData() {
 /**
  * Seed Default Roles
  */
-async function seedRoles() {
+async function seedRoles(): Promise<Record<string, string>> {
   console.log('🎭 Seeding roles...');
 
   // Clear existing roles first
@@ -203,7 +214,7 @@ async function seedRoles() {
   }
 
   console.log(
-    `✅ Created ${Object.keys(createdRoles).length} default roles (admin, editor, viewer, client)\n`
+    `✅ Created ${String(Object.keys(createdRoles).length)} default roles (admin, editor, viewer, client)\n`
   );
 
   return createdRoles;
@@ -213,17 +224,17 @@ async function seedRoles() {
  * Seed Role Assignments
  */
 async function seedRoleAssignments(
-  internalUsers: any[],
-  clientUsers: any[],
+  internalUsers: SeededUser[],
+  clientUsers: SeededUser[],
   roles: Record<string, string>
-) {
+): Promise<void> {
   console.log('🔐 Seeding role assignments...');
 
   let assignmentCount = 0;
 
   // Assign editor role to all internal users
-  const editorRoleId = roles['editor'];
-  if (editorRoleId) {
+  const editorRoleId = roles.editor;
+  if (editorRoleId !== undefined && editorRoleId !== '') {
     for (const internalUser of internalUsers) {
       await db.insert(roleAssignment).values({
         id: nanoid(),
@@ -236,8 +247,8 @@ async function seedRoleAssignments(
   }
 
   // Assign client role to all client users
-  const clientRoleId = roles['client'];
-  if (clientRoleId) {
+  const clientRoleId = roles.client;
+  if (clientRoleId !== undefined && clientRoleId !== '') {
     for (const clientUser of clientUsers) {
       await db.insert(roleAssignment).values({
         id: nanoid(),
@@ -251,10 +262,15 @@ async function seedRoleAssignments(
 
   // Assign admin role to the admin user if exists
   const adminEmail = process.env.ADMIN_EMAIL;
-  const adminRoleId = roles['admin'];
-  if (adminEmail && adminRoleId) {
+  const adminRoleId = roles.admin;
+  if (
+    adminEmail !== undefined &&
+    adminEmail !== '' &&
+    adminRoleId !== undefined &&
+    adminRoleId !== ''
+  ) {
     const [adminUser] = await db.select().from(user).where(eq(user.email, adminEmail));
-    if (adminUser) {
+    if (adminUser !== undefined) {
       await db.insert(roleAssignment).values({
         id: nanoid(),
         userId: adminUser.id,
@@ -266,7 +282,7 @@ async function seedRoleAssignments(
     }
   }
 
-  console.log(`✅ Created ${assignmentCount} role assignments\n`);
+  console.log(`✅ Created ${String(assignmentCount)} role assignments\n`);
 }
 
 /**
@@ -297,29 +313,37 @@ const lastNames = [
   'Martinez',
 ];
 
-function generateName() {
+function generateName(): string {
   const first = firstNames[Math.floor(Math.random() * firstNames.length)];
   const last = lastNames[Math.floor(Math.random() * lastNames.length)];
-  return `${first} ${last}`;
+  return `${String(first)} ${String(last)}`;
 }
 
-function generateEmail(name: string, index: number) {
+function generateEmail(name: string, index: number): string {
   const timestamp = Date.now();
-  return name.toLowerCase().replace(' ', '.') + `.${timestamp}.${index}@example.com`;
+  return (
+    name.toLowerCase().replace(' ', '.') + `.${String(timestamp)}.${String(index)}@example.com`
+  );
 }
 
 /**
  * Seed Users
  */
-async function seedUsers() {
+async function seedUsers(): Promise<{
+  internalUsers: SeededUser[];
+  clientUsers: SeededUser[];
+}> {
   console.log('👥 Seeding users...');
 
-  const users: any[] = [];
+  const users: SeededUser[] = [];
 
   // Internal team members (with BetterAuth fields)
   for (let i = 0; i < SEED_CONFIG.internalUsers; i++) {
     const name = generateName();
     const email = generateEmail(name, i);
+
+    // eslint-disable-next-line security/detect-object-injection
+    const capacity = [50, 75, 85, 100, 120, 150][i] ?? 80;
 
     const [newUser] = await db
       .insert(user)
@@ -329,13 +353,13 @@ async function seedUsers() {
         email,
         emailVerified: true,
         isInternal: true,
-        capacityPercentage: [50, 75, 85, 100, 120, 150][i] || 80, // Varied capacities
+        capacityPercentage: capacity,
         createdAt: new Date(),
         updatedAt: new Date(),
       })
       .returning();
 
-    users.push(newUser);
+    if (newUser) users.push(newUser);
   }
 
   // Client users
@@ -357,11 +381,11 @@ async function seedUsers() {
       })
       .returning();
 
-    users.push(newUser);
+    if (newUser) users.push(newUser);
   }
 
   console.log(
-    `✅ Created ${users.length} users (${SEED_CONFIG.internalUsers} internal, ${SEED_CONFIG.clientUsers} clients)\n`
+    `✅ Created ${String(users.length)} users (${String(SEED_CONFIG.internalUsers)} internal, ${String(SEED_CONFIG.clientUsers)} clients)\n`
   );
 
   return {
@@ -373,10 +397,14 @@ async function seedUsers() {
 /**
  * Seed Clients (companies)
  */
-async function seedClients(clientUsers: any[]) {
+async function seedClients(clientUsers: SeededUser[]): Promise<{
+  creativeClients: SeededClient[];
+  softwareClients: SeededClient[];
+  fullServiceClients: SeededClient[];
+}> {
   console.log('🏢 Seeding clients...');
 
-  const clients: any[] = [];
+  const clients: SeededClient[] = [];
   const companyNames = [
     'Acme Studios',
     'Creative Co',
@@ -390,7 +418,7 @@ async function seedClients(clientUsers: any[]) {
 
   // Creative clients
   for (let i = 0; i < SEED_CONFIG.creativeClients; i++) {
-    const companyName = companyNames[i]!;
+    const companyName = companyNames[i] ?? 'Company';
     const [newClient] = await db
       .insert(client)
       .values({
@@ -405,7 +433,7 @@ async function seedClients(clientUsers: any[]) {
 
     // Link client user
     const clientUser = clientUsers[userIndex];
-    if (clientUser && newClient) {
+    if (clientUser !== undefined && newClient !== undefined) {
       await db.insert(userToClient).values({
         id: nanoid(),
         userId: clientUser.id,
@@ -414,12 +442,12 @@ async function seedClients(clientUsers: any[]) {
       userIndex++;
     }
 
-    if (newClient) clients.push(newClient);
+    if (newClient !== undefined) clients.push(newClient);
   }
 
   // Software clients
   for (let i = 0; i < SEED_CONFIG.softwareClients; i++) {
-    const companyName = companyNames[SEED_CONFIG.creativeClients + i]!;
+    const companyName = companyNames[SEED_CONFIG.creativeClients + i] ?? 'Company';
     const [newClient] = await db
       .insert(client)
       .values({
@@ -433,7 +461,7 @@ async function seedClients(clientUsers: any[]) {
       .returning();
 
     const clientUser = clientUsers[userIndex];
-    if (clientUser && newClient) {
+    if (clientUser !== undefined && newClient !== undefined) {
       await db.insert(userToClient).values({
         id: nanoid(),
         userId: clientUser.id,
@@ -442,13 +470,13 @@ async function seedClients(clientUsers: any[]) {
       userIndex++;
     }
 
-    if (newClient) clients.push(newClient);
+    if (newClient !== undefined) clients.push(newClient);
   }
 
   // Full-service clients
   for (let i = 0; i < SEED_CONFIG.fullServiceClients; i++) {
     const companyName =
-      companyNames[SEED_CONFIG.creativeClients + SEED_CONFIG.softwareClients + i]!;
+      companyNames[SEED_CONFIG.creativeClients + SEED_CONFIG.softwareClients + i] ?? 'Company';
     const [newClient] = await db
       .insert(client)
       .values({
@@ -462,7 +490,7 @@ async function seedClients(clientUsers: any[]) {
       .returning();
 
     const clientUser = clientUsers[userIndex];
-    if (clientUser && newClient) {
+    if (clientUser !== undefined && newClient !== undefined) {
       await db.insert(userToClient).values({
         id: nanoid(),
         userId: clientUser.id,
@@ -471,10 +499,10 @@ async function seedClients(clientUsers: any[]) {
       userIndex++;
     }
 
-    if (newClient) clients.push(newClient);
+    if (newClient !== undefined) clients.push(newClient);
   }
 
-  console.log(`✅ Created ${clients.length} clients\n`);
+  console.log(`✅ Created ${String(clients.length)} clients\n`);
 
   return {
     creativeClients: clients.slice(0, SEED_CONFIG.creativeClients),
@@ -489,10 +517,13 @@ async function seedClients(clientUsers: any[]) {
 /**
  * Seed Tickets
  */
-async function seedTickets(clients: any[], internalUsers: any[]) {
+async function seedTickets(
+  clients: SeededClient[],
+  internalUsers: SeededUser[]
+): Promise<SeededTicket[]> {
   console.log('🎫 Seeding tickets...');
 
-  const tickets: any[] = [];
+  const tickets: SeededTicket[] = [];
   const priorities = ['low', 'medium', 'high', 'critical'];
   const ticketTitles = [
     'New campaign creative needed',
@@ -508,16 +539,18 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
   // Get admin user to assign tickets to them
   const adminEmail = process.env.ADMIN_EMAIL;
   let adminUser = null;
-  if (adminEmail) {
+  if (adminEmail !== undefined && adminEmail !== '') {
     const [foundAdmin] = await db.select().from(user).where(eq(user.email, adminEmail));
     adminUser = foundAdmin;
   }
 
   // Unassigned intake tickets
   for (let i = 0; i < SEED_CONFIG.intakeTicketsUnassigned; i++) {
-    const ticketTitle = ticketTitles[i % ticketTitles.length]!;
-    const clientForTicket = clients[i % clients.length]!;
-    const creatorUser = internalUsers[0]!;
+    const ticketTitle = ticketTitles[i % ticketTitles.length] ?? 'Ticket';
+    const clientForTicket = clients[i % clients.length];
+    if (!clientForTicket) continue;
+    const creatorUser = internalUsers[0];
+    if (!creatorUser) continue;
     const [newTicket] = await db
       .insert(ticket)
       .values({
@@ -534,16 +567,19 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newTicket) tickets.push(newTicket);
+    if (newTicket !== undefined) tickets.push(newTicket);
   }
 
   // Assigned intake tickets
   for (let i = 0; i < SEED_CONFIG.intakeTicketsAssigned; i++) {
     const ticketTitle =
-      ticketTitles[(SEED_CONFIG.intakeTicketsUnassigned + i) % ticketTitles.length]!;
-    const clientForTicket = clients[i % clients.length]!;
-    const assignee = internalUsers[i % internalUsers.length]!;
-    const creatorUser = internalUsers[0]!;
+      ticketTitles[(SEED_CONFIG.intakeTicketsUnassigned + i) % ticketTitles.length] ?? 'Ticket';
+    const clientForTicket = clients[i % clients.length];
+    if (!clientForTicket) continue;
+    const assignee = internalUsers[i % internalUsers.length];
+    if (!assignee) continue;
+    const creatorUser = internalUsers[0];
+    if (!creatorUser) continue;
     const [newTicket] = await db
       .insert(ticket)
       .values({
@@ -561,7 +597,7 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newTicket) tickets.push(newTicket);
+    if (newTicket !== undefined) tickets.push(newTicket);
   }
 
   // Create tickets assigned to admin user with due dates (for "My Work Today" and "Upcoming Deadlines")
@@ -588,20 +624,25 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
       null, // No due date
     ];
 
-    console.log(`   → Creating tasks assigned to admin: ${adminEmail}`);
+    console.log(`   → Creating tasks assigned to admin: ${adminEmail ?? ''}`);
 
     for (let i = 0; i < adminTaskTitles.length; i++) {
+      const taskTitle = adminTaskTitles[i] ?? 'Admin Task';
       const status = i < 3 ? 'in_progress' : 'open';
       const [newTicket] = await db
         .insert(ticket)
         .values({
           id: nanoid(),
-          title: adminTaskTitles[i]!,
-          description: `Admin task: ${adminTaskTitles[i]}. This task needs attention.`,
+          title: taskTitle,
+          description: `Admin task: ${taskTitle}. This task needs attention.`,
           type: 'task',
           status,
-          priority: priorities[i % priorities.length] as 'low' | 'medium' | 'high' | 'critical',
-          clientId: clients[i % clients.length]!.id,
+          priority: (priorities[i % priorities.length] ?? 'medium') as
+            | 'low'
+            | 'medium'
+            | 'high'
+            | 'critical',
+          clientId: clients[i % clients.length]?.id ?? '',
           assignedToId: adminUser.id,
           createdById: adminUser.id,
           dueAt: dueDates[i] ?? null,
@@ -610,12 +651,12 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
         })
         .returning();
 
-      if (newTicket) tickets.push(newTicket);
+      if (newTicket !== undefined) tickets.push(newTicket);
     }
   }
 
   console.log(
-    `✅ Created ${tickets.length} tickets (${SEED_CONFIG.intakeTicketsUnassigned} unassigned, ${SEED_CONFIG.intakeTicketsAssigned} assigned${adminUser ? ', 8 admin tasks' : ''})\n`
+    `✅ Created ${String(tickets.length)} tickets (${String(SEED_CONFIG.intakeTicketsUnassigned)} unassigned, ${String(SEED_CONFIG.intakeTicketsAssigned)} assigned${adminUser !== undefined ? ', 8 admin tasks' : ''})\n`
   );
 
   return tickets;
@@ -624,10 +665,13 @@ async function seedTickets(clients: any[], internalUsers: any[]) {
 /**
  * Seed Projects
  */
-async function seedProjects(clients: any[], internalUsers: any[]) {
+async function seedProjects(
+  clients: SeededClient[],
+  _internalUsers: SeededUser[]
+): Promise<SeededProject[]> {
   console.log('📁 Seeding projects...');
 
-  const projects: any[] = [];
+  const projects: SeededProject[] = [];
   const projectNames = [
     'Q4 Marketing Campaign',
     'Brand Refresh Initiative',
@@ -660,8 +704,9 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
 
   // Creative Projects - Pre-Production (proposal or early dev <30%)
   for (let i = 0; i < SEED_CONFIG.creativeProjectsPreProd; i++) {
-    const projectName = projectNames[nameIndex++]!;
-    const clientForProject = clients[i % SEED_CONFIG.creativeClients]!;
+    const projectName = projectNames[nameIndex++] ?? 'Project';
+    const clientForProject = clients[i % SEED_CONFIG.creativeClients];
+    if (!clientForProject) continue;
     const [newProject] = await db
       .insert(project)
       .values({
@@ -678,13 +723,14 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Creative Projects - In-Production (30-79%) with scheduled deliveries
   for (let i = 0; i < SEED_CONFIG.creativeProjectsInProd; i++) {
-    const projectName = projectNames[nameIndex++]!;
-    const clientForProject = clients[i % SEED_CONFIG.creativeClients]!;
+    const projectName = projectNames[nameIndex++] ?? 'Project';
+    const clientForProject = clients[i % SEED_CONFIG.creativeClients];
+    if (!clientForProject) continue;
     // Schedule deliveries: 5, 10, 15 days from now
     const deliveryDaysFromNow = (i + 1) * 5;
     const deliveryDate = new Date(Date.now() + deliveryDaysFromNow * 24 * 60 * 60 * 1000);
@@ -705,13 +751,14 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Creative Projects - Post-Production (in_review or >=80%)
   for (let i = 0; i < SEED_CONFIG.creativeProjectsPostProd; i++) {
-    const projectName = projectNames[nameIndex++]!;
-    const clientForProject = clients[i % SEED_CONFIG.creativeClients]!;
+    const projectName = projectNames[nameIndex++] ?? 'Project';
+    const clientForProject = clients[i % SEED_CONFIG.creativeClients];
+    if (!clientForProject) continue;
     const [newProject] = await db
       .insert(project)
       .values({
@@ -728,14 +775,15 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Software Projects - Design
   for (let i = 0; i < SEED_CONFIG.softwareProjectsDesign; i++) {
-    const projectName = projectNames[nameIndex++]!;
+    const projectName = projectNames[nameIndex++] ?? 'Project';
     const clientForProject =
-      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)]!;
+      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)];
+    if (!clientForProject) continue;
     const [newProject] = await db
       .insert(project)
       .values({
@@ -752,7 +800,7 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Software Projects - Development with scheduled deliveries
@@ -760,9 +808,10 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
     // Schedule deliveries: 7, 14, 21 days from now
     const deliveryDaysFromNow = (i + 1) * 7;
     const deliveryDate = new Date(Date.now() + deliveryDaysFromNow * 24 * 60 * 60 * 1000);
-    const projectName = projectNames[nameIndex++]!;
+    const projectName = projectNames[nameIndex++] ?? 'Project';
     const clientForProject =
-      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)]!;
+      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)];
+    if (!clientForProject) continue;
 
     const [newProject] = await db
       .insert(project)
@@ -780,14 +829,15 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Software Projects - Testing
   for (let i = 0; i < SEED_CONFIG.softwareProjectsTesting; i++) {
-    const projectName = projectNames[nameIndex++]!;
+    const projectName = projectNames[nameIndex++] ?? 'Project';
     const clientForProject =
-      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)]!;
+      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)];
+    if (!clientForProject) continue;
     const [newProject] = await db
       .insert(project)
       .values({
@@ -804,14 +854,15 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Software Projects - Delivery
   for (let i = 0; i < SEED_CONFIG.softwareProjectsDelivery; i++) {
-    const projectName = projectNames[nameIndex++]!;
+    const projectName = projectNames[nameIndex++] ?? 'Project';
     const clientForProject =
-      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)]!;
+      clients[SEED_CONFIG.creativeClients + (i % SEED_CONFIG.softwareClients)];
+    if (!clientForProject) continue;
     const [newProject] = await db
       .insert(project)
       .values({
@@ -828,15 +879,16 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Completed Projects (last 14 days)
   for (let i = 0; i < SEED_CONFIG.completedProjects; i++) {
     const daysAgo = Math.floor(Math.random() * 14); // 0-13 days ago
     const deliveryDate = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
-    const projectName = projectNames[nameIndex++ % projectNames.length]!;
-    const clientForProject = clients[i % clients.length]!;
+    const projectName = projectNames[nameIndex++ % projectNames.length] ?? 'Project';
+    const clientForProject = clients[i % clients.length];
+    if (!clientForProject) continue;
 
     const [newProject] = await db
       .insert(project)
@@ -854,15 +906,17 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
   // Projects with upcoming deliveries
   for (let i = 0; i < SEED_CONFIG.upcomingDeliveries.length; i++) {
-    const daysUntilDelivery = SEED_CONFIG.upcomingDeliveries[i]!;
+    // eslint-disable-next-line security/detect-object-injection
+    const daysUntilDelivery = SEED_CONFIG.upcomingDeliveries[i] ?? 7;
     const deliveryDate = new Date(Date.now() + daysUntilDelivery * 24 * 60 * 60 * 1000);
-    const projectName = projectNames[nameIndex++ % projectNames.length]!;
-    const clientForProject = clients[i % clients.length]!;
+    const projectName = projectNames[nameIndex++ % projectNames.length] ?? 'Project';
+    const clientForProject = clients[i % clients.length];
+    if (!clientForProject) continue;
 
     const [newProject] = await db
       .insert(project)
@@ -880,10 +934,10 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
       })
       .returning();
 
-    if (newProject) projects.push(newProject);
+    if (newProject !== undefined) projects.push(newProject);
   }
 
-  console.log(`✅ Created ${projects.length} projects\n`);
+  console.log(`✅ Created ${String(projects.length)} projects\n`);
 
   return projects;
 }
@@ -891,7 +945,10 @@ async function seedProjects(clients: any[], internalUsers: any[]) {
 /**
  * Seed Project Assignments
  */
-async function seedProjectAssignments(projects: any[], internalUsers: any[]) {
+async function seedProjectAssignments(
+  projects: SeededProject[],
+  internalUsers: SeededUser[]
+): Promise<void> {
   console.log('🔗 Seeding project assignments...');
 
   let assignmentCount = 0;
@@ -918,16 +975,16 @@ async function seedProjectAssignments(projects: any[], internalUsers: any[]) {
     }
   }
 
-  console.log(`✅ Created ${assignmentCount} project assignments\n`);
+  console.log(`✅ Created ${String(assignmentCount)} project assignments\n`);
 }
 
 /**
  * Seed Sprints for active projects
  */
-async function seedSprints(projects: any[]) {
+async function seedSprints(projects: SeededProject[]): Promise<(typeof sprint.$inferSelect)[]> {
   console.log('🏃 Seeding sprints...');
 
-  const sprints: any[] = [];
+  const sprints: (typeof sprint.$inferSelect)[] = [];
   const now = new Date();
 
   // Get active software projects for sprints (in_development status)
@@ -959,8 +1016,8 @@ async function seedSprints(projects: any[]) {
         .values({
           id: nanoid(),
           projectId: proj.id,
-          name: `Sprint ${i}`,
-          goal: sprintGoals[(i - 1) % sprintGoals.length],
+          name: `Sprint ${String(i)}`,
+          goal: sprintGoals[(i - 1) % sprintGoals.length] ?? 'Sprint goal',
           status: 'completed',
           startDate,
           endDate,
@@ -972,7 +1029,7 @@ async function seedSprints(projects: any[]) {
         })
         .returning();
 
-      if (newSprint) sprints.push(newSprint);
+      if (newSprint !== undefined) sprints.push(newSprint);
     }
 
     // Create current active sprint
@@ -1026,17 +1083,20 @@ async function seedSprints(projects: any[]) {
     if (planningSprint) sprints.push(planningSprint);
   }
 
-  console.log(`✅ Created ${sprints.length} sprints\n`);
+  console.log(`✅ Created ${String(sprints.length)} sprints\n`);
   return sprints;
 }
 
 /**
  * Seed Requests (Intake Pipeline)
  */
-async function seedRequests(clients: any[], internalUsers: any[]) {
+async function seedRequests(
+  clients: SeededClient[],
+  internalUsers: SeededUser[]
+): Promise<(typeof request.$inferSelect)[]> {
   console.log('📋 Seeding intake requests...');
 
-  const requests: any[] = [];
+  const requests: (typeof request.$inferSelect)[] = [];
   const now = new Date();
 
   const requestTitles = {
@@ -1079,7 +1139,7 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   };
 
   const priorities = ['low', 'medium', 'high', 'critical'] as const;
-  const stages = ['in_treatment', 'on_hold', 'estimation', 'ready'] as const;
+  const _stages = ['in_treatment', 'on_hold', 'estimation', 'ready'] as const;
   const confidences = ['low', 'medium', 'high'] as const;
   const storyPoints = [1, 2, 3, 5, 8, 13, 21];
 
@@ -1089,26 +1149,27 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   const createRequest = async (config: {
     title: string;
     type: 'feature' | 'bug' | 'enhancement' | 'change_request' | 'support' | 'other';
-    stage: (typeof stages)[number];
+    stage: (typeof _stages)[number];
     priority: (typeof priorities)[number];
-    client: any;
-    requester: any;
-    assignedPm?: any;
-    estimator?: any;
+    client: SeededClient;
+    requester: SeededUser;
+    assignedPm?: SeededUser;
+    estimator?: SeededUser;
     daysAgo: number;
     stageHours?: number;
     estimated?: boolean;
     onHold?: boolean;
-  }) => {
+  }): Promise<void> => {
     const createdAt = new Date(now.getTime() - config.daysAgo * 24 * 60 * 60 * 1000);
-    const stageEnteredAt = config.stageHours
-      ? new Date(now.getTime() - config.stageHours * 60 * 60 * 1000)
-      : createdAt;
+    const stageEnteredAt =
+      config.stageHours !== undefined && config.stageHours !== 0
+        ? new Date(now.getTime() - config.stageHours * 60 * 60 * 1000)
+        : createdAt;
 
     const requestId = nanoid();
     const reqNum = `REQ-${String(requestNumber++).padStart(4, '0')}`;
 
-    const requestData: any = {
+    const requestData: typeof request.$inferInsert = {
       id: requestId,
       requestNumber: reqNum,
       title: config.title,
@@ -1134,8 +1195,8 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
           ? 'Additional context: This is a high-visibility request from the client.'
           : null,
       requesterId: config.requester.id,
-      assignedPmId: config.assignedPm?.id || null,
-      estimatorId: config.estimator?.id || null,
+      assignedPmId: config.assignedPm?.id ?? null,
+      estimatorId: config.estimator?.id ?? null,
       clientId: config.client.id,
       tags:
         config.type === 'bug'
@@ -1148,7 +1209,7 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
     };
 
     // Add estimation data if estimated
-    if (config.estimated || config.stage === 'ready') {
+    if (config.estimated === true || config.stage === 'ready') {
       requestData.storyPoints = storyPoints[Math.floor(Math.random() * storyPoints.length)];
       requestData.confidence = confidences[Math.floor(Math.random() * confidences.length)];
       requestData.estimationNotes =
@@ -1157,7 +1218,7 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
     }
 
     // Add hold data if on hold
-    if (config.onHold || config.stage === 'on_hold') {
+    if (config.onHold === true || config.stage === 'on_hold') {
       requestData.holdReason = 'Awaiting additional information from client';
       requestData.holdStartedAt = stageEnteredAt;
     }
@@ -1165,7 +1226,7 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
     const [newRequest] = await db.insert(request).values(requestData).returning();
 
     // Create history entry for creation
-    if (newRequest) {
+    if (newRequest !== undefined) {
       await db.insert(requestHistory).values({
         id: nanoid(),
         requestId: newRequest.id,
@@ -1180,7 +1241,7 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
         await db.insert(requestHistory).values({
           id: nanoid(),
           requestId: newRequest.id,
-          actorId: config.assignedPm?.id || config.requester.id,
+          actorId: config.assignedPm?.id ?? config.requester.id,
           action: 'stage_changed',
           metadata: { oldStage: 'in_treatment', newStage: config.stage },
           createdAt: stageEnteredAt,
@@ -1195,13 +1256,16 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   // 3 fresh requests (< 24 hours)
   for (let i = 0; i < 3; i++) {
     const titles = requestTitles.feature;
+    const client = clients[i % clients.length];
+    const requester = internalUsers[i % internalUsers.length];
+    if (!client || !requester) continue;
     await createRequest({
-      title: titles[i % titles.length]!,
+      title: titles[i % titles.length] ?? 'Request',
       type: 'feature',
       stage: 'in_treatment',
-      priority: priorities[i % priorities.length]!,
-      client: clients[i % clients.length]!,
-      requester: internalUsers[i % internalUsers.length]!,
+      priority: priorities[i % priorities.length] ?? 'medium',
+      client,
+      requester,
       daysAgo: 0,
       stageHours: Math.floor(Math.random() * 12),
     });
@@ -1210,13 +1274,19 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   // 2 requests approaching threshold (24-36 hours)
   for (let i = 0; i < 2; i++) {
     const titles = requestTitles.bug;
+    const client = clients[(i + 1) % clients.length];
+
+    const requester = internalUsers[(i + 1) % internalUsers.length];
+
+    if (!client || !requester) continue;
+
     await createRequest({
-      title: titles[i % titles.length]!,
+      title: titles[i % titles.length] ?? 'Title',
       type: 'bug',
       stage: 'in_treatment',
       priority: 'high',
-      client: clients[(i + 1) % clients.length]!,
-      requester: internalUsers[(i + 1) % internalUsers.length]!,
+      client,
+      requester,
       assignedPm: internalUsers[0],
       daysAgo: 1,
       stageHours: 30,
@@ -1226,13 +1296,19 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   // 2 aging requests (> 48 hours - critical threshold)
   for (let i = 0; i < 2; i++) {
     const titles = requestTitles.enhancement;
+    const client = clients[(i + 2) % clients.length];
+
+    const requester = internalUsers[(i + 2) % internalUsers.length];
+
+    if (!client || !requester) continue;
+
     await createRequest({
-      title: titles[i % titles.length]!,
+      title: titles[i % titles.length] ?? 'Title',
       type: 'enhancement',
       stage: 'in_treatment',
       priority: 'critical',
-      client: clients[(i + 2) % clients.length]!,
-      requester: internalUsers[(i + 2) % internalUsers.length]!,
+      client,
+      requester,
       assignedPm: internalUsers[1],
       daysAgo: 3,
       stageHours: 60,
@@ -1243,13 +1319,19 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   // 2 recent holds
   for (let i = 0; i < 2; i++) {
     const titles = requestTitles.change_request;
+    const client = clients[i % clients.length];
+
+    const requester = internalUsers[i % internalUsers.length];
+
+    if (!client || !requester) continue;
+
     await createRequest({
-      title: titles[i % titles.length]!,
+      title: titles[i % titles.length] ?? 'Title',
       type: 'change_request',
       stage: 'on_hold',
       priority: 'medium',
-      client: clients[i % clients.length]!,
-      requester: internalUsers[i % internalUsers.length]!,
+      client,
+      requester,
       assignedPm: internalUsers[0],
       daysAgo: 2,
       stageHours: 24,
@@ -1258,30 +1340,42 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   }
 
   // 1 aging hold (> 7 days)
-  await createRequest({
-    title: requestTitles.support[0]!,
-    type: 'support',
-    stage: 'on_hold',
-    priority: 'low',
-    client: clients[0]!,
-    requester: internalUsers[0]!,
-    assignedPm: internalUsers[1],
-    daysAgo: 10,
-    stageHours: 200,
-    onHold: true,
-  });
+  {
+    const client = clients[0];
+    const requester = internalUsers[0];
+    if (client && requester) {
+      await createRequest({
+        title: requestTitles.support[0] ?? 'Request',
+        type: 'support',
+        stage: 'on_hold',
+        priority: 'low',
+        client,
+        requester,
+        assignedPm: internalUsers[1],
+        daysAgo: 10,
+        stageHours: 200,
+        onHold: true,
+      });
+    }
+  }
 
   // STAGE 3: Estimation (Awaiting story points)
   // 3 fresh estimation requests
   for (let i = 0; i < 3; i++) {
     const titles = requestTitles.feature;
+    const client = clients[(i + 1) % clients.length];
+
+    const requester = internalUsers[i % internalUsers.length];
+
+    if (!client || !requester) continue;
+
     await createRequest({
-      title: titles[(i + 3) % titles.length]!,
+      title: titles[(i + 3) % titles.length] ?? 'Title',
       type: 'feature',
       stage: 'estimation',
-      priority: priorities[(i + 1) % priorities.length]!,
-      client: clients[(i + 1) % clients.length]!,
-      requester: internalUsers[i % internalUsers.length]!,
+      priority: priorities[(i + 1) % priorities.length] ?? 'medium',
+      client,
+      requester,
       assignedPm: internalUsers[0],
       estimator: internalUsers[(i + 1) % internalUsers.length],
       daysAgo: 1,
@@ -1292,13 +1386,19 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   // 2 aging estimation (> 24 hours)
   for (let i = 0; i < 2; i++) {
     const titles = requestTitles.enhancement;
+    const client = clients[(i + 2) % clients.length];
+
+    const requester = internalUsers[(i + 1) % internalUsers.length];
+
+    if (!client || !requester) continue;
+
     await createRequest({
-      title: titles[(i + 2) % titles.length]!,
+      title: titles[(i + 2) % titles.length] ?? 'Title',
       type: 'enhancement',
       stage: 'estimation',
       priority: 'high',
-      client: clients[(i + 2) % clients.length]!,
-      requester: internalUsers[(i + 1) % internalUsers.length]!,
+      client,
+      requester,
       assignedPm: internalUsers[1],
       estimator: internalUsers[(i + 2) % internalUsers.length],
       daysAgo: 2,
@@ -1310,13 +1410,19 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   // 4 ready requests with various story points
   for (let i = 0; i < 4; i++) {
     const titles = requestTitles.feature;
+    const client = clients[i % clients.length];
+
+    const requester = internalUsers[i % internalUsers.length];
+
+    if (!client || !requester) continue;
+
     await createRequest({
-      title: titles[(i + 4) % titles.length]!,
+      title: titles[(i + 4) % titles.length] ?? 'Title',
       type: i < 2 ? 'feature' : 'enhancement',
       stage: 'ready',
-      priority: priorities[i % priorities.length]!,
-      client: clients[i % clients.length]!,
-      requester: internalUsers[i % internalUsers.length]!,
+      priority: priorities[i % priorities.length] ?? 'medium',
+      client,
+      requester,
       assignedPm: internalUsers[0],
       estimator: internalUsers[1],
       daysAgo: 1,
@@ -1328,13 +1434,19 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
   // 2 aging ready requests (> 12 hours)
   for (let i = 0; i < 2; i++) {
     const titles = requestTitles.bug;
+    const client = clients[(i + 1) % clients.length];
+
+    const requester = internalUsers[(i + 1) % internalUsers.length];
+
+    if (!client || !requester) continue;
+
     await createRequest({
-      title: titles[(i + 3) % titles.length]!,
+      title: titles[(i + 3) % titles.length] ?? 'Title',
       type: 'bug',
       stage: 'ready',
       priority: 'critical',
-      client: clients[(i + 1) % clients.length]!,
-      requester: internalUsers[(i + 1) % internalUsers.length]!,
+      client,
+      requester,
       assignedPm: internalUsers[1],
       estimator: internalUsers[0],
       daysAgo: 1,
@@ -1343,7 +1455,7 @@ async function seedRequests(clients: any[], internalUsers: any[]) {
     });
   }
 
-  console.log(`✅ Created ${requests.length} intake requests\n`);
+  console.log(`✅ Created ${String(requests.length)} intake requests\n`);
   console.log('   → In Treatment: 7 requests (3 fresh, 2 approaching, 2 aging)');
   console.log('   → On Hold: 3 requests (2 recent, 1 aging)');
   console.log('   → Estimation: 5 requests (3 fresh, 2 aging)');
@@ -1411,7 +1523,10 @@ const DEFAULT_LAYOUTS: Record<string, WidgetLayout[]> = {
 /**
  * Seed Dashboard Preferences
  */
-async function seedDashboardPreferences(internalUsers: any[], clientUsers: any[]) {
+async function seedDashboardPreferences(
+  internalUsers: SeededUser[],
+  clientUsers: SeededUser[]
+): Promise<void> {
   console.log('📊 Seeding dashboard preferences...');
 
   let prefsCount = 0;
@@ -1438,9 +1553,9 @@ async function seedDashboardPreferences(internalUsers: any[], clientUsers: any[]
 
   // Seed admin preferences for admin user if exists
   const adminEmail = process.env.ADMIN_EMAIL;
-  if (adminEmail) {
+  if (adminEmail !== undefined && adminEmail !== '') {
     const [adminUser] = await db.select().from(user).where(eq(user.email, adminEmail));
-    if (adminUser) {
+    if (adminUser !== undefined) {
       await db.insert(userDashboardPreferences).values({
         userId: adminUser.id,
         layout: DEFAULT_LAYOUTS.admin,
@@ -1451,13 +1566,417 @@ async function seedDashboardPreferences(internalUsers: any[], clientUsers: any[]
     }
   }
 
-  console.log(`✅ Created ${prefsCount} dashboard preferences\n`);
+  console.log(`✅ Created ${String(prefsCount)} dashboard preferences\n`);
+}
+
+/**
+ * Seed Activities for Recent Activity Widget
+ */
+async function seedActivities(
+  projects: SeededProject[],
+  internalUsers: SeededUser[],
+  tickets: SeededTicket[],
+  allClients: SeededClient[]
+): Promise<void> {
+  console.log('📝 Seeding activities...');
+
+  // Clear existing activities
+  await db.delete(activity);
+
+  let activityCount = 0;
+  const now = new Date();
+
+  const activityTypes = [
+    'created',
+    'updated',
+    'status_changed',
+    'assignee_added',
+    'comment_added',
+    'file_uploaded',
+    'priority_changed',
+  ] as const;
+
+  // Create activities for projects
+  for (const proj of projects.slice(0, 10)) {
+    const hoursAgo = Math.floor(Math.random() * 72); // Last 3 days
+    const actor = internalUsers[Math.floor(Math.random() * internalUsers.length)];
+    const activityType =
+      activityTypes[Math.floor(Math.random() * activityTypes.length)] ?? 'updated';
+
+    await db.insert(activity).values({
+      id: nanoid(),
+      entityType: 'project',
+      entityId: proj.id,
+      projectId: proj.id,
+      actorId: actor?.id ?? '',
+      type: activityType,
+      metadata: {
+        description: `${activityType.replace('_', ' ')} on "${proj.name}"`,
+        field: activityType === 'status_changed' ? 'status' : undefined,
+        oldValue: activityType === 'status_changed' ? 'proposal' : undefined,
+        newValue: activityType === 'status_changed' ? 'in_development' : undefined,
+      },
+      createdAt: new Date(now.getTime() - hoursAgo * 60 * 60 * 1000),
+    });
+    activityCount++;
+  }
+
+  // Create activities for tickets
+  for (const tkt of tickets.slice(0, 15)) {
+    const hoursAgo = Math.floor(Math.random() * 48); // Last 2 days
+    const actor = internalUsers[Math.floor(Math.random() * internalUsers.length)];
+    const activityType =
+      activityTypes[Math.floor(Math.random() * activityTypes.length)] ?? 'updated';
+
+    await db.insert(activity).values({
+      id: nanoid(),
+      entityType: 'ticket',
+      entityId: tkt.id,
+      actorId: actor?.id ?? '',
+      type: activityType,
+      metadata: {
+        description: `${activityType.replace('_', ' ')} on "${tkt.title}"`,
+        field: activityType === 'priority_changed' ? 'priority' : undefined,
+        oldValue: activityType === 'priority_changed' ? 'medium' : undefined,
+        newValue: activityType === 'priority_changed' ? 'high' : undefined,
+      },
+      createdAt: new Date(now.getTime() - hoursAgo * 60 * 60 * 1000),
+    });
+    activityCount++;
+  }
+
+  // Create activities for clients
+  for (const cl of allClients.slice(0, 5)) {
+    const hoursAgo = Math.floor(Math.random() * 120); // Last 5 days
+    const actor = internalUsers[Math.floor(Math.random() * internalUsers.length)];
+
+    await db.insert(activity).values({
+      id: nanoid(),
+      entityType: 'client',
+      entityId: cl.id,
+      actorId: actor?.id ?? '',
+      type: 'updated',
+      metadata: {
+        description: `Updated client "${cl.name}"`,
+      },
+      createdAt: new Date(now.getTime() - hoursAgo * 60 * 60 * 1000),
+    });
+    activityCount++;
+  }
+
+  // Create comment activities
+  for (let i = 0; i < 10; i++) {
+    const hoursAgo = Math.floor(Math.random() * 24); // Last day
+    const actor = internalUsers[Math.floor(Math.random() * internalUsers.length)];
+    const proj = projects[Math.floor(Math.random() * projects.length)];
+
+    await db.insert(activity).values({
+      id: nanoid(),
+      entityType: 'project',
+      entityId: proj?.id,
+      projectId: proj?.id,
+      actorId: actor?.id ?? '',
+      type: 'comment_added',
+      metadata: {
+        description: `Added a comment on "${proj?.name}"`,
+        commentId: nanoid(),
+      },
+      createdAt: new Date(now.getTime() - hoursAgo * 60 * 60 * 1000),
+    });
+    activityCount++;
+  }
+
+  // Create file upload activities
+  const fileNames = [
+    'design-mockup.fig',
+    'requirements.pdf',
+    'brand-assets.zip',
+    'sprint-report.xlsx',
+    'wireframes.sketch',
+  ];
+  for (let i = 0; i < 5; i++) {
+    const hoursAgo = Math.floor(Math.random() * 36);
+    const actor = internalUsers[Math.floor(Math.random() * internalUsers.length)];
+    const proj = projects[Math.floor(Math.random() * projects.length)];
+    const fileName = fileNames[i % fileNames.length] ?? 'file.txt';
+
+    await db.insert(activity).values({
+      id: nanoid(),
+      entityType: 'project',
+      entityId: proj?.id,
+      projectId: proj?.id,
+      actorId: actor?.id ?? '',
+      type: 'file_uploaded',
+      metadata: {
+        description: `Uploaded "${fileName}"`,
+        fileName,
+        fileId: nanoid(),
+      },
+      createdAt: new Date(now.getTime() - hoursAgo * 60 * 60 * 1000),
+    });
+    activityCount++;
+  }
+
+  console.log(`✅ Created ${String(activityCount)} activity records\n`);
+}
+
+/**
+ * Seed Notifications for users
+ */
+async function seedNotifications(
+  internalUsers: SeededUser[],
+  projects: SeededProject[],
+  tickets: SeededTicket[]
+): Promise<void> {
+  console.log('🔔 Seeding notifications...');
+
+  // Clear existing notifications
+  await db.delete(notification);
+
+  let notificationCount = 0;
+  const now = new Date();
+
+  // Get admin user to create notifications for them
+  const adminEmail = process.env.ADMIN_EMAIL;
+  let adminUser = null;
+  if (adminEmail !== undefined && adminEmail !== '') {
+    const [foundAdmin] = await db.select().from(user).where(eq(user.email, adminEmail));
+    adminUser = foundAdmin;
+  }
+
+  // Create notifications for admin user (the main test user)
+  if (adminUser) {
+    const notificationsData = [
+      // Assignment notifications
+      {
+        type: 'assignment' as const,
+        title: 'New task assigned',
+        message: 'You have been assigned to "Review Q4 marketing strategy"',
+        entityType: 'ticket' as const,
+        entityId: tickets[0]?.id,
+        actionUrl: `/dashboard/business-center/intake/${tickets[0]?.id ?? ''}`,
+        read: false,
+        hoursAgo: 1,
+      },
+      {
+        type: 'assignment' as const,
+        title: 'Project assignment',
+        message: `You have been added to the project "${projects[0]?.name ?? ''}"`,
+        entityType: 'project' as const,
+        entityId: projects[0]?.id,
+        actionUrl: `/dashboard/business-center/projects/${projects[0]?.id ?? ''}`,
+        read: false,
+        hoursAgo: 3,
+      },
+      // Comment notifications
+      {
+        type: 'comment' as const,
+        title: 'New comment on your task',
+        message: 'Emma Smith commented: "Great progress on this! Can you update the timeline?"',
+        entityType: 'ticket' as const,
+        entityId: tickets[1]?.id,
+        actionUrl: `/dashboard/business-center/intake/${tickets[1]?.id ?? ''}`,
+        read: false,
+        hoursAgo: 2,
+      },
+      {
+        type: 'reply' as const,
+        title: 'Reply to your comment',
+        message: 'Liam Johnson replied to your comment on "Web Platform Redesign"',
+        entityType: 'project' as const,
+        entityId: projects[1]?.id,
+        actionUrl: `/dashboard/business-center/projects/${projects[1]?.id ?? ''}`,
+        read: false,
+        hoursAgo: 5,
+      },
+      // Mention notification
+      {
+        type: 'mention' as const,
+        title: 'You were mentioned',
+        message: 'Olivia Williams mentioned you in a comment: "@admin please review this"',
+        entityType: 'ticket' as const,
+        entityId: tickets[2]?.id,
+        actionUrl: `/dashboard/business-center/intake/${tickets[2]?.id ?? ''}`,
+        read: false,
+        hoursAgo: 4,
+      },
+      // Status change notifications
+      {
+        type: 'status_change' as const,
+        title: 'Task status updated',
+        message: '"Code review for feature branch" has been moved to In Progress',
+        entityType: 'ticket' as const,
+        entityId: tickets[3]?.id,
+        actionUrl: `/dashboard/business-center/intake/${tickets[3]?.id ?? ''}`,
+        read: true,
+        hoursAgo: 8,
+      },
+      {
+        type: 'status_change' as const,
+        title: 'Project milestone reached',
+        message: `"${projects[2]?.name ?? ''}" is now at 80% completion`,
+        entityType: 'project' as const,
+        entityId: projects[2]?.id,
+        actionUrl: `/dashboard/business-center/projects/${projects[2]?.id ?? ''}`,
+        read: true,
+        hoursAgo: 12,
+      },
+      // Due date reminders
+      {
+        type: 'due_date_reminder' as const,
+        title: 'Task due tomorrow',
+        message: '"Finalize client proposal" is due in 24 hours',
+        entityType: 'ticket' as const,
+        entityId: tickets[4]?.id,
+        actionUrl: `/dashboard/business-center/intake/${tickets[4]?.id ?? ''}`,
+        read: false,
+        hoursAgo: 6,
+      },
+      {
+        type: 'due_date_reminder' as const,
+        title: 'Upcoming deadline',
+        message: `Project "${projects[3]?.name ?? ''}" delivery is scheduled in 3 days`,
+        entityType: 'project' as const,
+        entityId: projects[3]?.id,
+        actionUrl: `/dashboard/business-center/projects/${projects[3]?.id ?? ''}`,
+        read: true,
+        hoursAgo: 24,
+      },
+      // Overdue notification
+      {
+        type: 'overdue' as const,
+        title: 'Task overdue',
+        message: '"Update project documentation" is 2 days overdue',
+        entityType: 'ticket' as const,
+        entityId: tickets[5]?.id,
+        actionUrl: `/dashboard/business-center/intake/${tickets[5]?.id ?? ''}`,
+        read: false,
+        hoursAgo: 2,
+      },
+      // Project update
+      {
+        type: 'project_update' as const,
+        title: 'Project update',
+        message: `New milestone added to "${projects[4]?.name ?? ''}": Phase 2 Complete`,
+        entityType: 'project' as const,
+        entityId: projects[4]?.id,
+        actionUrl: `/dashboard/business-center/projects/${projects[4]?.id ?? ''}`,
+        read: true,
+        hoursAgo: 36,
+      },
+      // System notification
+      {
+        type: 'system' as const,
+        title: 'Weekly summary available',
+        message: 'Your weekly activity summary is ready. You completed 8 tasks this week.',
+        entityType: null,
+        entityId: null,
+        actionUrl: '/dashboard/business-center/analytics',
+        read: true,
+        hoursAgo: 48,
+      },
+    ];
+
+    const senders = internalUsers.slice(0, 4);
+
+    for (const notifData of notificationsData) {
+      const sender = senders[Math.floor(Math.random() * senders.length)];
+      const createdAt = new Date(now.getTime() - notifData.hoursAgo * 60 * 60 * 1000);
+
+      await db.insert(notification).values({
+        id: nanoid(),
+        recipientId: adminUser?.id,
+        senderId: notifData.type === 'system' ? null : (sender?.id ?? null),
+        type: notifData.type,
+        entityType: notifData.entityType,
+        entityId: notifData.entityId ?? null,
+        title: notifData.title,
+        message: notifData.message,
+        actionUrl: notifData.actionUrl,
+        read: notifData.read,
+        metadata: {},
+        createdAt,
+        updatedAt: createdAt,
+      });
+      notificationCount++;
+    }
+
+    console.log(
+      `   → Created ${String(notificationCount)} notifications for admin user (${adminEmail ?? ''})`
+    );
+  }
+
+  // Create some notifications for internal users
+  for (const internalUser of internalUsers.slice(0, 3)) {
+    const numNotifications = 2 + Math.floor(Math.random() * 4); // 2-5 notifications per user
+
+    for (let i = 0; i < numNotifications; i++) {
+      const types = ['assignment', 'comment', 'status_change', 'due_date_reminder'] as const;
+      const type = types[Math.floor(Math.random() * types.length)] ?? 'assignment';
+      const hoursAgo = Math.floor(Math.random() * 72);
+      const createdAt = new Date(now.getTime() - hoursAgo * 60 * 60 * 1000);
+      const targetTicket = tickets[Math.floor(Math.random() * Math.min(tickets.length, 10))];
+      const targetProject = projects[Math.floor(Math.random() * Math.min(projects.length, 10))];
+      const sender = internalUsers[Math.floor(Math.random() * internalUsers.length)];
+
+      const isTicketRelated = Math.random() > 0.5;
+      const entityType = isTicketRelated ? 'ticket' : 'project';
+      const entityId = isTicketRelated ? targetTicket?.id : targetProject?.id;
+      const entityName = isTicketRelated ? targetTicket?.title : targetProject?.name;
+
+      let title: string;
+      let message: string;
+      let actionUrl: string;
+
+      switch (type) {
+        case 'assignment':
+          title = `New ${entityType} assigned`;
+          message = `You have been assigned to "${String(entityName)}"`;
+          actionUrl = `/dashboard/business-center/${entityType === 'ticket' ? 'intake' : 'projects'}/${String(entityId)}`;
+          break;
+        case 'comment':
+          title = `New comment on ${entityType}`;
+          message = `${sender?.name ?? 'Someone'} commented on "${String(entityName)}"`;
+          actionUrl = `/dashboard/business-center/${entityType === 'ticket' ? 'intake' : 'projects'}/${String(entityId)}`;
+          break;
+        case 'status_change':
+          title = 'Status updated';
+          message = `"${String(entityName)}" status has been changed`;
+          actionUrl = `/dashboard/business-center/${entityType === 'ticket' ? 'intake' : 'projects'}/${String(entityId)}`;
+          break;
+        case 'due_date_reminder':
+          title = 'Deadline approaching';
+          message = `"${String(entityName)}" is due soon`;
+          actionUrl = `/dashboard/business-center/${entityType === 'ticket' ? 'intake' : 'projects'}/${String(entityId)}`;
+          break;
+      }
+
+      await db.insert(notification).values({
+        id: nanoid(),
+        recipientId: internalUser.id,
+        senderId: sender?.id ?? null,
+        type,
+        entityType: entityType,
+        entityId: entityId ?? null,
+        title,
+        message,
+        actionUrl,
+        read: Math.random() > 0.5,
+        metadata: {},
+        createdAt,
+        updatedAt: createdAt,
+      });
+      notificationCount++;
+    }
+  }
+
+  console.log(`✅ Created ${String(notificationCount)} total notifications\n`);
 }
 
 /**
  * Main seed function
  */
-async function seed() {
+async function seed(): Promise<void> {
   try {
     console.log('🌱 Starting Business Center seed...\n');
 
@@ -1472,7 +1991,7 @@ async function seed() {
     const { creativeClients, softwareClients, fullServiceClients } = await seedClients(clientUsers);
     const allClients = [...creativeClients, ...softwareClients, ...fullServiceClients];
 
-    await seedTickets(allClients, internalUsers);
+    const tickets = await seedTickets(allClients, internalUsers);
     const projects = await seedProjects(allClients, internalUsers);
     await seedProjectAssignments(projects, internalUsers);
     const sprints = await seedSprints(projects);
@@ -1482,23 +2001,31 @@ async function seed() {
     // Seed role assignments (after users are created)
     await seedRoleAssignments(internalUsers, clientUsers, roles);
 
+    // Seed activities for recent activity widget
+    await seedActivities(projects, internalUsers, tickets, allClients);
+
+    // Seed notifications for header notification bell
+    await seedNotifications(internalUsers, projects, tickets);
+
     console.log('✅ Seed completed successfully!\n');
     console.log('📊 Summary:');
-    console.log(`   - ${internalUsers.length} internal users (team members)`);
-    console.log(`   - ${clientUsers.length} client users`);
+    console.log(`   - ${String(internalUsers.length)} internal users (team members)`);
+    console.log(`   - ${String(clientUsers.length)} client users`);
     console.log(
-      `   - ${allClients.length} clients (${creativeClients.length} creative, ${softwareClients.length} software, ${fullServiceClients.length} full-service)`
+      `   - ${String(allClients.length)} clients (${String(creativeClients.length)} creative, ${String(softwareClients.length)} software, ${String(fullServiceClients.length)} full-service)`
     );
     console.log(
-      `   - ${SEED_CONFIG.intakeTicketsUnassigned + SEED_CONFIG.intakeTicketsAssigned} tickets`
+      `   - ${String(SEED_CONFIG.intakeTicketsUnassigned + SEED_CONFIG.intakeTicketsAssigned)} tickets`
     );
-    console.log(`   - ${projects.length} projects (various stages)`);
-    console.log(`   - ${sprints.length} sprints (completed, active, planning)`);
-    console.log(`   - ${intakeRequests.length} intake pipeline requests (all stages)`);
+    console.log(`   - ${String(projects.length)} projects (various stages)`);
+    console.log(`   - ${String(sprints.length)} sprints (completed, active, planning)`);
+    console.log(`   - ${String(intakeRequests.length)} intake pipeline requests (all stages)`);
     console.log(
-      `   - ${internalUsers.length + clientUsers.length + 1} dashboard preferences (per-user)`
+      `   - ${String(internalUsers.length + clientUsers.length + 1)} dashboard preferences (per-user)`
     );
     console.log(`   - 4 default roles (admin, editor, viewer, client)`);
+    console.log(`   - ~45 activity records (for recent activity widget)`);
+    console.log(`   - ~20 notifications (for header notification bell)`);
     console.log(`   - Team capacity: 50%, 75%, 85%, 100%, 120%, 150%\n`);
 
     console.log('🎯 Business Center is ready for testing!');
@@ -1520,4 +2047,4 @@ async function seed() {
 }
 
 // Run seed
-seed();
+void seed();

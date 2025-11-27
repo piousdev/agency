@@ -1,6 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+
+import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -16,9 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react';
+
+
 import type { TeamMember } from '@/lib/api/users/types';
 
 interface AssignmentDialogProps {
@@ -40,7 +44,7 @@ export function AssignmentDialog({
   onAssign,
   currentAssigneeId,
 }: AssignmentDialogProps) {
-  const [selectedUserId, setSelectedUserId] = useState<string>(currentAssigneeId || '');
+  const [selectedUserId, setSelectedUserId] = useState<string>(currentAssigneeId);
   const [isLoading, setIsLoading] = useState(false);
 
   const selectedMember = teamMembers.find((m) => m.id === selectedUserId);
@@ -103,8 +107,8 @@ export function AssignmentDialog({
               <IconAlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800 dark:text-yellow-200">
                 {selectedMember.status === 'at_capacity'
-                  ? `${selectedMember.name} is at capacity (${selectedMember.capacityPercentage}%). Consider this before assigning.`
-                  : `${selectedMember.name} is overloaded (${selectedMember.capacityPercentage}%). Assignment not recommended.`}
+                  ? `${selectedMember.name} is at capacity (${String(selectedMember.capacityPercentage)}%). Consider this before assigning.`
+                  : `${selectedMember.name} is overloaded (${String(selectedMember.capacityPercentage)}%). Assignment not recommended.`}
               </AlertDescription>
             </Alert>
           )}

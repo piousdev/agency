@@ -1,4 +1,6 @@
-Great question! Let me review my research and check if we're missing anything important for the Overview sections.Based on my research, here's what we're MISSING and should ADD to our Overview sections:
+Great question! Let me review my research and check if we're missing anything
+important for the Overview sections.Based on my research, here's what we're
+MISSING and should ADD to our Overview sections:
 
 ## Missing Elements from Research:
 

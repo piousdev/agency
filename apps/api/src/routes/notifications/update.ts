@@ -1,8 +1,9 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq, and, inArray } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { z } from 'zod';
+
 import { db } from '../../db';
 import { notification } from '../../db/schema';
 import { requireAuth, type AuthVariables } from '../../middleware/auth';
@@ -24,7 +25,10 @@ app.patch(
   zValidator('param', z.object({ id: z.string() })),
   zValidator('json', markNotificationReadSchema),
   async (c) => {
-    const user = c.get('user')!;
+    const user = c.get('user');
+    if (!user) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
     const { id } = c.req.valid('param');
     const { read } = c.req.valid('json');
 
@@ -78,7 +82,10 @@ app.patch(
   requireAuth(),
   zValidator('json', markAllNotificationsReadSchema),
   async (c) => {
-    const user = c.get('user')!;
+    const user = c.get('user');
+    if (!user) {
+      throw new HTTPException(401, { message: 'Unauthorized' });
+    }
     const { notificationIds } = c.req.valid('json');
 
     try {
@@ -124,7 +131,10 @@ app.patch(
  * Protected: Requires authentication
  */
 app.delete('/:id', requireAuth(), zValidator('param', z.object({ id: z.string() })), async (c) => {
-  const user = c.get('user')!;
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
   const { id } = c.req.valid('param');
 
   try {

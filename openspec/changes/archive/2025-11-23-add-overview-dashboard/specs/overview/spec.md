@@ -4,42 +4,50 @@
 
 ### Requirement: Role-Based Overview Dashboard
 
-The system SHALL provide a role-based Overview Dashboard as the primary landing page in the Business Center, displaying personalized widgets based on user role.
+The system SHALL provide a role-based Overview Dashboard as the primary landing
+page in the Business Center, displaying personalized widgets based on user role.
 
-The dashboard SHALL support the following roles: Admin, Project Manager, Developer, Designer, QA Tester, and Client.
+The dashboard SHALL support the following roles: Admin, Project Manager,
+Developer, Designer, QA Tester, and Client.
 
-Each role SHALL see only widgets relevant to their scope of work and permissions.
+Each role SHALL see only widgets relevant to their scope of work and
+permissions.
 
 #### Scenario: Admin views dashboard
 
 - **WHEN** an Admin user navigates to `/dashboard/business-center/overview`
-- **THEN** the dashboard displays Organization Health, Critical Alerts, Team Status, Intake Pipeline, Financial Snapshot, and Quick Actions widgets
+- **THEN** the dashboard displays Organization Health, Critical Alerts, Team
+  Status, Intake Pipeline, Financial Snapshot, and Quick Actions widgets
 - **AND** all system-wide metrics are visible
 
 #### Scenario: Developer views dashboard
 
 - **WHEN** a Developer user navigates to the Overview
-- **THEN** the dashboard displays My Work Today, Current Sprint, Blockers, Upcoming Deadlines, and Recent Activity widgets
+- **THEN** the dashboard displays My Work Today, Current Sprint, Blockers,
+  Upcoming Deadlines, and Recent Activity widgets
 - **AND** only their assigned tasks and relevant projects are visible
 
 #### Scenario: Client views dashboard
 
 - **WHEN** a Client user navigates to the Overview
-- **THEN** the dashboard displays their project status, invoice summary, and deliverables
+- **THEN** the dashboard displays their project status, invoice summary, and
+  deliverables
 - **AND** financial data is limited to their own account
 
 ---
 
 ### Requirement: Quick Actions Bar
 
-The system SHALL provide a Quick Actions Bar with role-specific action buttons for immediate access to common tasks.
+The system SHALL provide a Quick Actions Bar with role-specific action buttons
+for immediate access to common tasks.
 
 Actions SHALL be dynamically shown based on user permissions.
 
 #### Scenario: Admin quick actions
 
 - **WHEN** an Admin views the Quick Actions Bar
-- **THEN** they see: New Request, Create Task, Create Invoice, Add User, Generate Report
+- **THEN** they see: New Request, Create Task, Create Invoice, Add User,
+  Generate Report
 
 #### Scenario: Developer quick actions
 
@@ -55,12 +63,14 @@ Actions SHALL be dynamically shown based on user permissions.
 
 ### Requirement: Organization Health Widget
 
-The system SHALL display an Organization Health widget for Admin and PM roles showing aggregate system metrics.
+The system SHALL display an Organization Health widget for Admin and PM roles
+showing aggregate system metrics.
 
 #### Scenario: View organization metrics
 
 - **WHEN** an Admin or PM views the Organization Health widget
-- **THEN** they see: Active Projects count, Active Tasks count, Team Utilization %, Revenue MTD
+- **THEN** they see: Active Projects count, Active Tasks count, Team Utilization
+  %, Revenue MTD
 - **AND** each metric shows a trend indicator (up/down arrow with percentage)
 
 #### Scenario: Health status indicators
@@ -76,14 +86,16 @@ The system SHALL display an Organization Health widget for Admin and PM roles sh
 
 ### Requirement: Critical Alerts Widget
 
-The system SHALL display a Critical Alerts widget showing urgent issues requiring immediate attention.
+The system SHALL display a Critical Alerts widget showing urgent issues
+requiring immediate attention.
 
 Alerts SHALL be prioritized as Critical (red), Warning (yellow), or Info (blue).
 
 #### Scenario: View critical alerts
 
 - **WHEN** a user views the Critical Alerts widget
-- **THEN** they see alerts for: Projects over budget, Projects behind schedule, Overloaded team members, Overdue tasks
+- **THEN** they see alerts for: Projects over budget, Projects behind schedule,
+  Overloaded team members, Overdue tasks
 
 #### Scenario: Dismiss alert
 
@@ -105,12 +117,14 @@ Alerts SHALL be prioritized as Critical (red), Warning (yellow), or Info (blue).
 
 ### Requirement: My Work Today Widget
 
-The system SHALL display a My Work Today widget for individual contributors showing their assigned tasks.
+The system SHALL display a My Work Today widget for individual contributors
+showing their assigned tasks.
 
 #### Scenario: View assigned tasks
 
 - **WHEN** a user views the My Work Today widget
-- **THEN** they see their assigned tasks with: title, status, due date, story points, project name
+- **THEN** they see their assigned tasks with: title, status, due date, story
+  points, project name
 - **AND** tasks are sorted by due date by default
 
 #### Scenario: Filter tasks
@@ -129,12 +143,14 @@ The system SHALL display a My Work Today widget for individual contributors show
 
 ### Requirement: Current Sprint Widget
 
-The system SHALL display a Current Sprint widget showing sprint progress and metrics.
+The system SHALL display a Current Sprint widget showing sprint progress and
+metrics.
 
 #### Scenario: View sprint progress
 
 - **WHEN** a user views the Current Sprint widget
-- **THEN** they see: Sprint name, days remaining, story points completed vs committed, progress bar
+- **THEN** they see: Sprint name, days remaining, story points completed vs
+  committed, progress bar
 - **AND** a mini burndown chart visualization
 
 #### Scenario: Sprint health indicators
@@ -150,14 +166,16 @@ The system SHALL display a Current Sprint widget showing sprint progress and met
 
 ### Requirement: Dashboard Customization
 
-The system SHALL allow users to customize their dashboard layout through drag-and-drop reordering.
+The system SHALL allow users to customize their dashboard layout through
+drag-and-drop reordering.
 
 User layout preferences SHALL be persisted across sessions.
 
 #### Scenario: Enter edit mode
 
 - **WHEN** a user clicks the "Customize" button
-- **THEN** the dashboard enters edit mode with visible drag handles on each widget
+- **THEN** the dashboard enters edit mode with visible drag handles on each
+  widget
 
 #### Scenario: Reorder widgets
 
@@ -188,7 +206,8 @@ User layout preferences SHALL be persisted across sessions.
 
 ### Requirement: Responsive Dashboard Layout
 
-The system SHALL provide a responsive grid layout that adapts to different viewport sizes.
+The system SHALL provide a responsive grid layout that adapts to different
+viewport sizes.
 
 #### Scenario: Desktop layout
 
@@ -235,7 +254,8 @@ The system SHALL automatically refresh widget data at regular intervals.
 
 ### Requirement: Widget Loading States
 
-The system SHALL display appropriate loading states while widget data is being fetched.
+The system SHALL display appropriate loading states while widget data is being
+fetched.
 
 #### Scenario: Initial page load
 

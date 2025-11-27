@@ -1,6 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+
+import { IconLoader2, IconAlertCircle, IconArchive } from '@tabler/icons-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -10,9 +14,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { deleteProjectAction } from '@/lib/actions/business-center/projects';
-import { IconLoader2, IconAlertCircle, IconArchive } from '@tabler/icons-react';
+
 
 interface DeleteProjectDialogProps {
   projectId: string;

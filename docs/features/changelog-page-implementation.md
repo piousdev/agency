@@ -1,12 +1,14 @@
 # Changelog Page Implementation Plan
 
-**Date:** 2025-11-09
-**Status:** Planning
-**Feature:** Unified Changelog Page in Dashboard
+**Date:** 2025-11-09 **Status:** Planning **Feature:** Unified Changelog Page in
+Dashboard
 
 ## Overview
 
-Implement a changelog page in the `/dashboard` sidebar (general section) that displays a unified changelog for the entire monorepo (both `@repo/web` and `@repo/api` packages). The changelog will be rendered from MDX files using the official `@next/mdx` package, following the existing help documentation pattern.
+Implement a changelog page in the `/dashboard` sidebar (general section) that
+displays a unified changelog for the entire monorepo (both `@repo/web` and
+`@repo/api` packages). The changelog will be rendered from MDX files using the
+official `@next/mdx` package, following the existing help documentation pattern.
 
 ## Why This Approach
 
@@ -17,16 +19,19 @@ Implement a changelog page in the `/dashboard` sidebar (general section) that di
 **Rationale:**
 
 1. **Local Content** - CHANGELOG.md files already exist in the repository
-2. **Server-First** - Aligns with Next.js App Router and Server Components architecture
+2. **Server-First** - Aligns with Next.js App Router and Server Components
+   architecture
 3. **Zero Runtime Overhead** - No client-side JavaScript for rendering
-4. **Official Support** - Maintained by Vercel, guaranteed Next.js 16 compatibility
+4. **Official Support** - Maintained by Vercel, guaranteed Next.js 16
+   compatibility
 5. **Existing Pattern** - Reuses the help documentation implementation pattern
 6. **Plugin Ecosystem** - Supports remark/rehype plugins for extended features
 
 **Alternatives Considered:**
 
 - `next-mdx-remote-client` - Overkill for local files, adds runtime overhead
-- Simple markdown parser (`marked`, `remark`) - Less features, manual component mapping
+- Simple markdown parser (`marked`, `remark`) - Less features, manual component
+  mapping
 
 ### Research Summary
 
@@ -39,7 +44,8 @@ Implement a changelog page in the `/dashboard` sidebar (general section) that di
 
 **2025 Best Practices:**
 
-- Use `.mjs` or `.ts` for `next.config` when using ESM-only plugins (like `remark-gfm`)
+- Use `.mjs` or `.ts` for `next.config` when using ESM-only plugins (like
+  `remark-gfm`)
 - Place `mdx-components.tsx` at root for global component customization
 - Leverage `@tailwindcss/typography` for markdown styling
 - Use Server Components to avoid shipping MDX runtime to client
@@ -144,7 +150,8 @@ Root:
 2. **Configure Next.js for MDX**
    - Update `next.config.mjs` to enable MDX support
    - Add `pageExtensions` to include `.mdx` files
-   - Configure remark/rehype plugins (GitHub Flavored Markdown, syntax highlighting)
+   - Configure remark/rehype plugins (GitHub Flavored Markdown, syntax
+     highlighting)
 
 3. **Create MDX Components File**
    - Create `apps/web/mdx-components.tsx` at root

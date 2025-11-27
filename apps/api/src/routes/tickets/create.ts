@@ -1,12 +1,13 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
 import { ticket, client, user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { createTicketSchema } from '../../schemas/ticket';
-import { eq } from 'drizzle-orm';
 import { logActivity, ActivityTypes, EntityTypes } from '../../utils/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
@@ -42,7 +43,7 @@ app.post(
       }
 
       // If assignedToId provided, verify user exists
-      if (body.assignedToId) {
+      if (body.assignedToId !== undefined && body.assignedToId !== '') {
         const assignedUser = await db.query.user.findFirst({
           where: eq(user.id, body.assignedToId),
         });
@@ -63,7 +64,7 @@ app.post(
           description: body.description,
           type: body.type,
           priority: body.priority,
-          status: body.assignedToId ? 'in_progress' : 'open',
+          status: body.assignedToId !== undefined && body.assignedToId !== '' ? 'in_progress' : 'open',
           clientId: body.clientId,
           projectId: body.projectId,
           assignedToId: body.assignedToId,
@@ -72,8 +73,13 @@ app.post(
         .returning();
 
       // Fetch the complete ticket with relations
+      const firstTicket = newTicket[0];
+      if (!firstTicket) {
+        throw new HTTPException(500, { message: 'Failed to create ticket' });
+      }
+
       const createdTicket = await db.query.ticket.findFirst({
-        where: eq(ticket.id, newTicket[0]!.id),
+        where: eq(ticket.id, firstTicket.id),
         with: {
           client: true,
           project: true,
@@ -99,7 +105,7 @@ app.post(
       await logActivity({
         type: ActivityTypes.CREATED,
         entityType: EntityTypes.TICKET,
-        entityId: newTicket[0]!.id,
+        entityId: firstTicket.id,
         actorId: currentUser.id,
         metadata: {
           title: body.title,

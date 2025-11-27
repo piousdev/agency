@@ -1,8 +1,12 @@
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { requireUser } from '@/lib/auth/session';
+import { redirect } from 'next/navigation';
+
+
 import { IconArrowLeft } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
+import { requireUser } from '@/lib/auth/session';
+
 import { NewClientForm } from './form';
 
 /**

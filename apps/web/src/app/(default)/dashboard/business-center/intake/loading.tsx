@@ -20,6 +20,7 @@ export default function IntakeLoading() {
         {/* Stage tabs */}
         <div className="flex gap-1 p-1 bg-muted rounded-lg w-fit">
           {['All', 'In Treatment', 'On Hold', 'Estimation', 'Ready'].map((_, i) => (
+            // eslint-disable-next-line react/no-array-index-key -- Static skeleton, no reordering
             <Skeleton key={i} className="h-9 w-28 rounded-md" />
           ))}
         </div>

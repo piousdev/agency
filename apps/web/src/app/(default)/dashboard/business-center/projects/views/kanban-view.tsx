@@ -1,5 +1,10 @@
 'use client';
 
+import { useState, useTransition } from 'react';
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import {
   DragDropContext,
   Draggable,
@@ -18,16 +23,15 @@ import {
   IconPlus,
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { updateProjectStatusAction } from '@/lib/actions/business-center/projects';
-import type { Project, ProjectWithRelations } from '@/lib/api/projects/types';
 import { cn } from '@/lib/utils';
+
+import type { Project, ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface ProjectKanbanViewProps {
   projects: ProjectWithRelations[];
@@ -243,7 +247,7 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                             project.deliveredAt &&
                             new Date(project.deliveredAt) < new Date() &&
                             project.status !== 'delivered';
-                          const progress = project.completionPercentage || 0;
+                          const progress = project.completionPercentage;
 
                           return (
                             <button
@@ -274,7 +278,7 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                                   )}
                                   <button
                                     type="button"
-                                    {...(dragProvided.dragHandleProps ?? {})}
+                                    {...(dragProvided.dragHandleProps)}
                                     className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing"
                                     onClick={(e) => e.stopPropagation()}
                                   >
@@ -297,7 +301,7 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                               {/* Meta: Client + Date */}
                               <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
                                 <span className="truncate max-w-[55%]">
-                                  {project.client?.name || 'No client'}
+                                  {project.client.name || 'No client'}
                                 </span>
                                 <div
                                   className={cn(
@@ -320,7 +324,7 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
 
                               {/* Footer: Team Avatars */}
                               <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                                {project.assignees && project.assignees.length > 0 ? (
+                                {project.assignees.length > 0 ? (
                                   <div className="flex items-center gap-1">
                                     <div className="flex -space-x-1">
                                       {project.assignees.slice(0, 3).map((assignee) => (
@@ -331,7 +335,7 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                                           {assignee.image && (
                                             <AvatarImage
                                               src={assignee.image}
-                                              alt={assignee.name || ''}
+                                              alt={assignee.name}
                                             />
                                           )}
                                           <AvatarFallback className="text-[7px] font-medium bg-muted">

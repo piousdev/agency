@@ -15,6 +15,6 @@ export async function getAuthHeaders(): Promise<HeadersInit> {
   const headersList = await headers();
   return {
     'Content-Type': 'application/json',
-    cookie: headersList.get('cookie') || '',
+    cookie: headersList.get('cookie'),
   };
 }

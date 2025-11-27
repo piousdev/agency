@@ -1,14 +1,7 @@
 'use client';
 
-import { useRef, useCallback, useMemo, useId, useState, useEffect } from 'react';
-import {
-  flexRender,
-  type ColumnDef,
-  type Row,
-  type Header,
-  type Table as TanStackTable,
-} from '@tanstack/react-table';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useRef, useCallback, useId, useState, useEffect, useMemo } from 'react';
+
 import {
   DragDropContext,
   Droppable,
@@ -18,9 +11,17 @@ import {
   type DraggableProvided,
   type DroppableProvided,
   type DraggableStateSnapshot,
-  type DroppableStateSnapshot,
 } from '@hello-pangea/dnd';
-import { createPortal } from 'react-dom';
+import { IconGripVertical, IconLoader2 } from '@tabler/icons-react';
+import {
+  flexRender,
+  type ColumnDef,
+  type Row,
+  type Header,
+  type Table as ReactTable,
+} from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
@@ -30,12 +31,65 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { IconGripVertical, IconLoader2 } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
 import { useDataTable } from '@/hooks/use-data-table';
+
 import { DataTableColumnHeader, getColumnPinningStyles } from './column-header';
+import { DataTableLoadMore, DataTablePagination } from './pagination';
 import { DataTableToolbar, DataTableBulkActions } from './toolbar';
-import { DataTablePagination, DataTableLoadMore } from './pagination';
+import { cn } from '../../lib/utils';
+
+import type { DataTableProps, DataTableConfig } from './types';
+
+/**
+ * Default empty config object to avoid creating new object on each render
+ */
+const DEFAULT_CONFIG: Partial<DataTableConfig> = {};
+
+/**
+ * SelectionHeader - Checkbox header for multi-row selection
+ */
+function SelectionHeader<TData>({ table }: { table: ReactTable<TData> }) {
+  return (
+    <Checkbox
+      checked={
+        table.getIsAllPageRowsSelected() ||
+        (table.getIsSomePageRowsSelected() ? 'indeterminate' : false)
+      }
+      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      aria-label="Select all rows"
+    />
+  );
+}
+
+/**
+ * SelectionCell - Checkbox cell for single row selection
+ */
+function SelectionCell<TData>({ row }: { row: Row<TData> }) {
+  return (
+    <Checkbox
+      checked={row.getIsSelected()}
+      onCheckedChange={(value) => row.toggleSelected(!!value)}
+      aria-label={`Select row ${String(row.index + 1)}`}
+      onClick={(e) => e.stopPropagation()}
+    />
+  );
+}
+
+/**
+ * DragHandleCell - Drag handle cell for row reordering
+ */
+function DragHandleCell() {
+  return (
+    <div className="flex items-center justify-center text-muted-foreground">
+      <IconGripVertical className="h-4 w-4" />
+    </div>
+  );
+}
+
+/**
+ * DataTable - Enterprise-grade data table component
+import { DataTableToolbar, DataTableBulkActions } from './toolbar';
+
 import type { DataTableProps, DataTableConfig } from './types';
 
 /**
@@ -45,15 +99,21 @@ import type { DataTableProps, DataTableConfig } from './types';
  * - Sorting, filtering, pagination
  * - Column visibility, ordering, pinning, resizing
  * - Row selection (single/multi)
- * - Virtual scrolling for large datasets
- * - Drag-and-drop column AND row reordering
- * - Full keyboard navigation
- * - WCAG 2.1 compliant
+ * - Virtualization for large datasets
+ * - Drag-and-drop column and row reordering
+ * - Keyboard navigation
+ * - Accessible (ARIA compliant)
+ *
+ * This component follows the Single Responsibility Principle by:
+ * - Delegating table state management to useDataTable hook
+ * - Delegating rendering of sub-components (toolbar, pagination, bulk actions)
+ * - Focusing solely on orchestrating the data table structure and behavior
  */
+
 export function DataTable<TData>({
   columns: userColumns,
   data,
-  config = {},
+  config = DEFAULT_CONFIG,
   initialSorting,
   initialColumnFilters,
   initialColumnVisibility,
@@ -99,8 +159,7 @@ export function DataTable<TData>({
   };
 
   const generatedId = useId();
-  const resolvedTableId = tableId || `data-table-${generatedId}`;
-  const [dragMode, setDragMode] = useState<'column' | 'row' | null>(null);
+  const resolvedTableId = tableId ?? `data-table-${generatedId}`;
   // Track column drag state for visual feedback
   const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
   const [dragOverColumnIndex, setDragOverColumnIndex] = useState<number | null>(null);
@@ -117,13 +176,28 @@ export function DataTable<TData>({
     setIsMounted(true);
   }, []);
 
-  // Add selection column if enabled
-  const columnsWithDragHandle = useMemo<ColumnDef<TData, unknown>[]>(() => {
-    const cols: ColumnDef<TData, unknown>[] = [];
+  // Memoize selection header renderer to avoid creating new component on each render
+  const selectionHeaderRenderer = useCallback(
+    ({ table }: { table: ReactTable<TData> }) =>
+      defaultConfig.enableRowSelection === 'multi' || defaultConfig.enableRowSelection === true ? (
+        <SelectionHeader table={table} />
+      ) : null,
+    [defaultConfig.enableRowSelection]
+  );
 
-    // Add row drag handle column if row ordering is enabled
+  // Memoize selection cell renderer to avoid creating new component on each render
+  const selectionCellRenderer = useCallback(
+    ({ row }: { row: Row<TData> }) => <SelectionCell row={row} />,
+    []
+  );
+
+  // Memoize columns with drag handle to avoid recreating on every render
+  const columnsWithDragHandle = useMemo(() => {
+    const cols: ColumnDef<TData>[] = [];
+
+    // Add drag handle column if enabled
     if (defaultConfig.enableRowOrdering) {
-      const dragHandleColumn: ColumnDef<TData, unknown> = {
+      const dragHandleColumn: ColumnDef<TData> = {
         id: 'drag-handle',
         size: 40,
         enableSorting: false,
@@ -133,14 +207,7 @@ export function DataTable<TData>({
         enablePinning: false,
         enableResizing: false,
         header: () => null,
-        cell: ({ row }) => (
-          <div
-            className="flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
-            data-row-drag-handle={row.id}
-          >
-            <IconGripVertical className="h-4 w-4" />
-          </div>
-        ),
+        cell: DragHandleCell,
         meta: {
           canReorder: false,
         },
@@ -150,7 +217,7 @@ export function DataTable<TData>({
 
     // Add selection column if enabled
     if (defaultConfig.enableRowSelection) {
-      const selectionColumn: ColumnDef<TData, unknown> = {
+      const selectionColumn: ColumnDef<TData> = {
         id: 'select',
         size: 40,
         enableSorting: false,
@@ -159,26 +226,8 @@ export function DataTable<TData>({
         enableGlobalFilter: false,
         enablePinning: false,
         enableResizing: false,
-        header: ({ table }) =>
-          defaultConfig.enableRowSelection === 'multi' ||
-          defaultConfig.enableRowSelection === true ? (
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && 'indeterminate')
-              }
-              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-              aria-label="Select all rows"
-            />
-          ) : null,
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label={`Select row ${row.index + 1}`}
-            onClick={(e) => e.stopPropagation()}
-          />
-        ),
+        header: selectionHeaderRenderer,
+        cell: selectionCellRenderer,
         meta: {
           canReorder: false,
         },
@@ -187,7 +236,13 @@ export function DataTable<TData>({
     }
 
     return [...cols, ...userColumns];
-  }, [userColumns, defaultConfig.enableRowSelection, defaultConfig.enableRowOrdering]);
+  }, [
+    userColumns,
+    defaultConfig.enableRowSelection,
+    defaultConfig.enableRowOrdering,
+    selectionHeaderRenderer,
+    selectionCellRenderer,
+  ]);
 
   // Initialize table state
   const {
@@ -223,7 +278,7 @@ export function DataTable<TData>({
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => defaultConfig.estimatedRowHeight!,
+    estimateSize: () => defaultConfig.estimatedRowHeight ?? 50,
     overscan: defaultConfig.virtualOverscan,
     enabled: defaultConfig.enableVirtualization,
   });
@@ -231,10 +286,8 @@ export function DataTable<TData>({
   // Unified drag-and-drop handler
   const handleDragStart = useCallback((start: DragStart) => {
     if (start.type === 'COLUMN') {
-      setDragMode('column');
       setDraggedColumnId(start.draggableId.replace('col-', ''));
     } else if (start.type === 'ROW') {
-      setDragMode('row');
       setDraggedRowId(start.draggableId);
     }
   }, []);
@@ -251,7 +304,7 @@ export function DataTable<TData>({
         // Get the column ID at the destination index for highlighting the entire column
         // Use getHeaderGroups to get headers in the same order as they're rendered
         const headerGroups = table.getHeaderGroups();
-        const headers = headerGroups[0]?.headers || [];
+        const headers = headerGroups[0]?.headers ?? [];
         const sourceIndex = update.source.index;
         const destIndex = update.destination.index;
         const lastValidIndex = headers.length - 1;
@@ -265,7 +318,7 @@ export function DataTable<TData>({
         setIsDropAtEnd(dropAtEnd);
 
         const targetHeader = headers[Math.min(destIndex, lastValidIndex)];
-        setDropTargetColumnId(targetHeader?.id || null);
+        setDropTargetColumnId(targetHeader?.id ?? null);
       } else if (update.type === 'ROW' && update.destination) {
         const sourceIndex = update.source.index;
         const destIndex = update.destination.index;
@@ -290,7 +343,6 @@ export function DataTable<TData>({
 
   const handleDragEnd = useCallback(
     (result: DropResult) => {
-      setDragMode(null);
       setDraggedColumnId(null);
       setDragOverColumnIndex(null);
       setDropTargetColumnId(null);
@@ -313,7 +365,7 @@ export function DataTable<TData>({
 
         // Get the visible headers to map indices correctly
         const headerGroups = table.getHeaderGroups();
-        const visibleHeaders = headerGroups[0]?.headers.map((h) => h.id) || [];
+        const visibleHeaders = headerGroups[0]?.headers.map((h) => h.id) ?? [];
         const sourceIndex = result.source.index;
         const destIndex = result.destination.index;
 
@@ -393,36 +445,44 @@ export function DataTable<TData>({
           e.preventDefault();
           if (currentRowIndex > 0) {
             const targetRow = document.querySelector(
-              `[data-row-index="${currentRowIndex - 1}"] [data-cell-index="${cellIndex}"]`
-            ) as HTMLElement;
-            targetRow?.focus();
+              `[data-row-index="${String(currentRowIndex - 1)}"] [data-cell-index="${String(cellIndex)}"]`
+            );
+            if (targetRow) {
+              (targetRow as HTMLElement).focus();
+            }
           }
           break;
         case 'ArrowDown':
           e.preventDefault();
           if (currentRowIndex < rows.length - 1) {
             const targetRow = document.querySelector(
-              `[data-row-index="${currentRowIndex + 1}"] [data-cell-index="${cellIndex}"]`
-            ) as HTMLElement;
-            targetRow?.focus();
+              `[data-row-index="${String(currentRowIndex + 1)}"] [data-cell-index="${String(cellIndex)}"]`
+            );
+            if (targetRow) {
+              (targetRow as HTMLElement).focus();
+            }
           }
           break;
         case 'ArrowLeft':
           e.preventDefault();
           if (cellIndex > 0) {
             const targetCell = document.querySelector(
-              `[data-row-index="${currentRowIndex}"] [data-cell-index="${cellIndex - 1}"]`
-            ) as HTMLElement;
-            targetCell?.focus();
+              `[data-row-index="${String(currentRowIndex)}"] [data-cell-index="${String(cellIndex - 1)}"]`
+            );
+            if (targetCell) {
+              (targetCell as HTMLElement).focus();
+            }
           }
           break;
         case 'ArrowRight':
           e.preventDefault();
           if (cellIndex < visibleCells.length - 1) {
             const targetCell = document.querySelector(
-              `[data-row-index="${currentRowIndex}"] [data-cell-index="${cellIndex + 1}"]`
-            ) as HTMLElement;
-            targetCell?.focus();
+              `[data-row-index="${String(currentRowIndex)}"] [data-cell-index="${String(cellIndex + 1)}"]`
+            );
+            if (targetCell) {
+              (targetCell as HTMLElement).focus();
+            }
           }
           break;
         case 'Enter':
@@ -478,7 +538,7 @@ export function DataTable<TData>({
     return (
       <DataTableColumnHeader
         column={column}
-        title={headerDef as string}
+        title={headerDef ?? column.id}
         enableSorting={defaultConfig.enableSorting}
         enableHiding={defaultConfig.enableColumnVisibility}
         enablePinning={defaultConfig.enableColumnPinning}
@@ -542,6 +602,15 @@ export function DataTable<TData>({
               {...dragHandleProps}
               className="flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
               onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Drag to reorder row"
             >
               <IconGripVertical className="h-4 w-4" />
             </div>
@@ -683,8 +752,8 @@ export function DataTable<TData>({
       return (
         <>
           {/* Spacer for virtual scroll */}
-          {virtualRows.length > 0 && virtualRows[0]!.start > 0 && (
-            <tr style={{ height: virtualRows[0]!.start }} />
+          {virtualRows.length > 0 && virtualRows[0] && virtualRows[0].start > 0 && (
+            <tr style={{ height: virtualRows[0].start }} />
           )}
           {virtualRows.map((virtualRow) => {
             const row = rows[virtualRow.index];
@@ -717,7 +786,7 @@ export function DataTable<TData>({
       }
       return <span>{rendered}</span>;
     }
-    return <span>{headerDef as string}</span>;
+    return <span>{headerDef ?? header.column.id}</span>;
   };
 
   return (
@@ -747,16 +816,15 @@ export function DataTable<TData>({
           'rounded-md border',
           // Disable overflow-auto when row ordering is enabled to avoid nested scroll container issues
           // @hello-pangea/dnd doesn't support drag-and-drop within nested scroll containers
-          !defaultConfig.enableRowOrdering && 'overflow-auto',
-          defaultConfig.enableVirtualization && `h-[${defaultConfig.virtualTableHeight}px]`
+          !defaultConfig.enableRowOrdering && 'overflow-auto'
         )}
         style={
           defaultConfig.enableVirtualization
-            ? { height: defaultConfig.virtualTableHeight }
+            ? { height: defaultConfig.virtualTableHeight ?? 600 }
             : undefined
         }
         role="region"
-        aria-label={tableCaption || 'Data table'}
+        aria-label={tableCaption ?? 'Data table'}
         tabIndex={0}
       >
         <DragDropContext
@@ -962,7 +1030,8 @@ export function DataTable<TData>({
                             (cell) =>
                               cell.column.id !== 'select' && cell.column.id !== 'drag-handle'
                           )
-                          ?.getValue() as string) || `Row ${rubric.source.index + 1}`}
+                          ?.getValue() as string | undefined) ??
+                          `Row ${String(rubric.source.index + 1)}`}
                       </span>
                     </div>
                   );
@@ -975,7 +1044,7 @@ export function DataTable<TData>({
                     style={
                       defaultConfig.enableVirtualization
                         ? {
-                            height: `${rowVirtualizer.getTotalSize()}px`,
+                            height: `${String(rowVirtualizer.getTotalSize())}px`,
                             position: 'relative',
                           }
                         : undefined
@@ -991,7 +1060,7 @@ export function DataTable<TData>({
                 style={
                   defaultConfig.enableVirtualization
                     ? {
-                        height: `${rowVirtualizer.getTotalSize()}px`,
+                        height: `${String(rowVirtualizer.getTotalSize())}px`,
                         position: 'relative',
                       }
                     : undefined
@@ -1005,15 +1074,15 @@ export function DataTable<TData>({
       </div>
 
       {/* Loading indicator for virtual scroll */}
-      {isLoading && rows.length > 0 && (
+      {isLoading && (
         <div className="flex justify-center py-2">
           <IconLoader2 className="h-4 w-4 animate-spin" />
         </div>
       )}
 
       {/* Pagination */}
-      {pagination ? (
-        <DataTableLoadMore pagination={pagination} onLoadMore={onLoadMore!} isLoading={isLoading} />
+      {pagination && onLoadMore ? (
+        <DataTableLoadMore pagination={pagination} onLoadMore={onLoadMore} isLoading={isLoading} />
       ) : (
         <DataTablePagination table={table} />
       )}

@@ -23,10 +23,12 @@
  * Base Path: `/api/invitations`
  */
 import { Hono } from 'hono';
-import { type AuthVariables } from '../../middleware/auth';
+
+import acceptRoutes from './accept';
 import createRoutes from './create';
 import validateRoutes from './validate';
-import acceptRoutes from './accept';
+
+import type { AuthVariables } from '../../middleware/auth';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 

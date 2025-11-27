@@ -32,5 +32,8 @@ pnpm-debug.log*
 # Test coverage
 coverage/
 
+# Third-party UI components
+apps/web/src/components/ui/
+
 # Other
 .git/

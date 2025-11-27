@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document tracks all files that need to be **DELETED** or **UPDATED** as part of the Intake refactoring. The existing "Intake Queue" implementation must be completely removed before the new "Intake Pipeline" is built.
+This document tracks all files that need to be **DELETED** or **UPDATED** as
+part of the Intake refactoring. The existing "Intake Queue" implementation must
+be completely removed before the new "Intake Pipeline" is built.
 
 ---
 
@@ -164,7 +166,8 @@ grep -r "intake" apps/web/src --include="*.tsx" --include="*.ts" | grep -v "node
 
 ## Notes
 
-- The new Intake Pipeline will be at `/dashboard/business-center/intake` (not `intake-queue`)
+- The new Intake Pipeline will be at `/dashboard/business-center/intake` (not
+  `intake-queue`)
 - New implementation uses `request` entity (not `ticket` for intake items)
 - Old implementation used tickets with `status: 'intake'` filter
 - New implementation has dedicated `request` table with stage workflow

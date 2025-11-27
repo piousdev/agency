@@ -1,7 +1,9 @@
-import { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
-export const errorHandler = (err: Error, c: Context) => {
+import type { Context } from 'hono';
+import type { StatusCode } from 'hono/utils/http-status';
+
+export const errorHandler = (err: Error, c: Context): Response => {
   console.error('Error:', err);
 
   if (err instanceof HTTPException) {
@@ -10,7 +12,7 @@ export const errorHandler = (err: Error, c: Context) => {
         error: err.message,
         status: err.status,
       },
-      err.status
+      err.status as StatusCode
     );
   }
 

@@ -1,21 +1,22 @@
 import { index, jsonb, pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core';
+
 import { user } from './user';
 
 // Widget layout configuration type
-export type WidgetLayout = {
+export interface WidgetLayout {
   id: string;
   type: string;
   size: 'small' | 'medium' | 'large';
   position: number;
   visible: boolean;
-};
+}
 
 // Widget-specific configuration type
-export type WidgetConfig = {
+export interface WidgetConfig {
   filters?: Record<string, unknown>;
   displayOptions?: Record<string, unknown>;
   refreshInterval?: number;
-};
+}
 
 /**
  * User dashboard preferences table

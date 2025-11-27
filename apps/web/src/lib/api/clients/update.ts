@@ -4,8 +4,9 @@
  */
 
 import { getAuthHeaders } from './api-utils';
-import type { UpdateClientInput } from '@/lib/schemas';
+
 import type { Client } from './types';
+import type { UpdateClientInput } from '@/lib/schemas';
 
 export interface UpdateClientResponse {
   success: boolean;
@@ -27,19 +28,20 @@ export async function updateClient(
   data: UpdateClientInput
 ): Promise<UpdateClientResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/clients/${clientId}`, {
+  const response = await fetch(`${apiUrl}/api/clients/${clientId}`, {
     method: 'PATCH',
     headers: authHeaders,
     body: JSON.stringify(data),
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as UpdateClientResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to update client');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as UpdateClientResponse;
 }

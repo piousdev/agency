@@ -5,15 +5,17 @@ import {
   IconPalette,
   IconUsers,
 } from '@tabler/icons-react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
-import type { TicketWithRelations } from '@/lib/api/tickets/types';
-import type { TeamMember } from '@/lib/api/users/types';
+
 import { ActiveWorkContent } from './active-work-content';
 import { ActiveWorkSoftware } from './active-work-software';
 import { DeliveryCalendar } from './delivery-calendar';
 import { RecentlyCompleted } from './recently-completed';
 import { TeamCapacity } from './team-capacity';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
+import type { TeamMember } from '@/lib/api/users/types';
 
 /**
  * Business Center Data Interface

@@ -6,6 +6,8 @@
 
 'use client';
 
+import { useActionState, useEffect, useState } from 'react';
+
 import {
   IconAlertCircle,
   IconCircleCheck,
@@ -13,8 +15,8 @@ import {
   IconPlus,
   IconShield,
 } from '@tabler/icons-react';
-import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
 import { type ActionState, assignRoleAction } from '../../actions';
 
 interface Role {
@@ -61,8 +64,10 @@ export function AssignRoleForm({ userId, availableRoles }: AssignRoleFormProps) 
   // Handle success - show toast and reset form
   useEffect(() => {
     if (state.success) {
-      toast.success(state.message || 'Role assigned successfully!');
-      setSelectedRoleId('');
+      toast.success(state.message ?? 'Role assigned successfully!');
+      // Reset form after showing toast
+      const timer = setTimeout(() => setSelectedRoleId(''), 100);
+      return () => clearTimeout(timer);
     }
   }, [state.success, state.message]);
 

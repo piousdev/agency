@@ -91,6 +91,33 @@ export interface IntakeAssignedPayload {
   timestamp: string;
 }
 
+// Notification payload matching the database schema
+export interface NotificationPayload {
+  id: string;
+  recipientId: string;
+  senderId: string | null;
+  type:
+    | 'mention'
+    | 'comment'
+    | 'reply'
+    | 'assignment'
+    | 'unassignment'
+    | 'status_change'
+    | 'due_date_reminder'
+    | 'overdue'
+    | 'project_update'
+    | 'system';
+  entityType: 'ticket' | 'project' | 'comment' | 'client' | 'sprint' | 'milestone' | null;
+  entityId: string | null;
+  title: string;
+  message: string;
+  actionUrl: string | null;
+  read: boolean;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ServerToClientEvents {
   alert: (payload: AlertPayload) => void;
   activity: (payload: ActivityPayload) => void;
@@ -98,6 +125,9 @@ export interface ServerToClientEvents {
   'activity:read': (activityId: string) => void;
   connected: (data: { userId: string; rooms: string[] }) => void;
   error: (message: string) => void;
+  // User notification events
+  notification: (payload: NotificationPayload) => void;
+  'notification:read': (notificationId: string) => void;
   // Intake Pipeline events
   'intake:created': (payload: IntakeRequestPayload) => void;
   'intake:updated': (payload: IntakeRequestPayload) => void;
@@ -124,7 +154,7 @@ export interface ClientToServerEvents {
 export type SocketClient = Socket<ServerToClientEvents, ClientToServerEvents>;
 
 // Socket configuration
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 // Singleton socket instance
 let socket: SocketClient | null = null;
@@ -133,23 +163,21 @@ let socket: SocketClient | null = null;
  * Get or create the socket connection
  */
 export function getSocket(): SocketClient {
-  if (!socket) {
-    socket = io(SOCKET_URL, {
-      // Don't connect automatically - we'll connect when the user is authenticated
-      autoConnect: false,
-      // Use websocket transport for better performance
-      transports: ['websocket', 'polling'],
-      // Include credentials (cookies) for authentication
-      withCredentials: true,
-      // Reconnection settings
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      // Timeout settings
-      timeout: 20000,
-    });
-  }
+  socket ??= io(SOCKET_URL, {
+    // Don't connect automatically - we'll connect when the user is authenticated
+    autoConnect: false,
+    // Use websocket transport for better performance
+    transports: ['websocket', 'polling'],
+    // Include credentials (cookies) for authentication
+    withCredentials: true,
+    // Reconnection settings
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    // Timeout settings
+    timeout: 20000,
+  });
   return socket;
 }
 

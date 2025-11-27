@@ -1,4 +1,5 @@
 import { boolean, index, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+
 import { client } from './client';
 import { userRoleEnum } from './enums';
 import { user } from './user';

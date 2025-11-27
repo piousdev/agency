@@ -1,7 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { useRouter } from 'next/navigation';
 
 /**
  * Client-Side Business Center Access Guard
@@ -45,10 +46,10 @@ export function useBusinessCenterAccess() {
           return;
         }
 
-        const data = await response.json();
+        const data = (await response.json()) as { user?: { isInternal?: boolean } };
 
         // Check if user is internal (agency team member)
-        if (!data?.user?.isInternal) {
+        if (!data.user.isInternal) {
           // Not authorized for Business Center
           router.push('/dashboard');
           return;
@@ -59,7 +60,7 @@ export function useBusinessCenterAccess() {
       }
     }
 
-    checkAccess();
+    void checkAccess();
   }, [router]);
 
   // In a real implementation, you would track loading and access state

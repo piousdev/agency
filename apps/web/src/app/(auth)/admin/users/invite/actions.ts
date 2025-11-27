@@ -6,16 +6,17 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+
 import { createInvitation } from '@/lib/api/invitations';
 import { requireRole } from '@/lib/auth/session';
 import { type CreateInvitationFormData, createInvitationSchema } from '@/lib/schemas/invitation';
 
-export type ActionState = {
+export interface ActionState {
   success?: boolean;
   message?: string;
   errors?: Record<string, string[]>;
   invitationToken?: string; // DEV ONLY - for displaying invitation link
-};
+}
 
 /**
  * Create and send a new invitation
@@ -45,7 +46,7 @@ export async function createInvitationAction(
     if (!validation.success) {
       return {
         success: false,
-        errors: validation.error.flatten().fieldErrors,
+        message: validation.error.issues[0]?.message ?? 'Validation failed',
       };
     }
 

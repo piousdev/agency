@@ -91,10 +91,12 @@
 - [ ] Create endpoint: Archive client
 - [ ] Create endpoint: Delete client (Admin only)
 - [ ] Implement pagination
-- [ ] Implement filtering (stage, industry, owner, health, revenue, source, tags, last contact)
+- [ ] Implement filtering (stage, industry, owner, health, revenue, source,
+      tags, last contact)
 - [ ] Implement sorting (name, health, last contact, revenue, stage)
 - [ ] Implement grouping (stage, owner, industry, health)
-- [ ] Implement search (company name, contact names, emails, phones, tags, notes)
+- [ ] Implement search (company name, contact names, emails, phones, tags,
+      notes)
 - [ ] Test with 10,000+ client records
 
 ### 3.2 Contact Management API
@@ -245,7 +247,8 @@
 ### 5.1 List View
 
 - [ ] Create client list component (table format)
-- [ ] Display columns: Priority, Client, Stage, Health, Owner, Last Touch, Revenue, Projects, Documents, Actions
+- [ ] Display columns: Priority, Client, Stage, Health, Owner, Last Touch,
+      Revenue, Projects, Documents, Actions
 - [ ] Implement sortable columns
 - [ ] Implement row selection
 - [ ] Implement row click to open profile
@@ -255,7 +258,8 @@
 ### 5.2 Card View
 
 - [ ] Create client card component
-- [ ] Display: Logo, Name, Stage, Health Score (visual), Owner, Last Contact, Revenue, Projects, Documents
+- [ ] Display: Logo, Name, Stage, Health Score (visual), Owner, Last Contact,
+      Revenue, Projects, Documents
 - [ ] Implement responsive grid (3/2/1 columns)
 - [ ] Test card rendering
 
@@ -283,7 +287,8 @@
 ### 6.1 Pipeline Kanban Board
 
 - [ ] Create pipeline Kanban board component
-- [ ] Create columns for stages (Lead, Prospect, Proposal, Negotiation, Won, Lost)
+- [ ] Create columns for stages (Lead, Prospect, Proposal, Negotiation, Won,
+      Lost)
 - [ ] Display deal count and total value per column
 - [ ] Create deal card component
 - [ ] Display: Company, Value, Probability, Owner, Last Activity
@@ -315,7 +320,8 @@
 
 - [ ] Create client profile page/panel
 - [ ] Create header with company info and health score
-- [ ] Create tabbed interface (Overview, Activity, Projects, Contacts, Documents, Finance)
+- [ ] Create tabbed interface (Overview, Activity, Projects, Contacts,
+      Documents, Finance)
 - [ ] Create sidebar with quick info and actions
 - [ ] Test profile rendering
 
@@ -343,7 +349,8 @@
 ### 7.4 Projects Tab
 
 - [ ] Display active projects for client
-- [ ] Display project cards with: Name, Status, Progress, Budget, PM, Last Update
+- [ ] Display project cards with: Name, Status, Progress, Budget, PM, Last
+      Update
 - [ ] Display completed projects (collapsed)
 - [ ] Link to project details
 - [ ] Create new project from client profile
@@ -353,7 +360,8 @@
 
 - [ ] Display all contacts for client
 - [ ] Create contact card with full details
-- [ ] Display: Avatar, Name, Title, Emails, Phones, LinkedIn, Role, Last Contact, Interaction Count, Notes
+- [ ] Display: Avatar, Name, Title, Emails, Phones, LinkedIn, Role, Last
+      Contact, Interaction Count, Notes
 - [ ] Quick actions: Email, Call, Schedule Meeting, Edit
 - [ ] Add new contact
 - [ ] Edit existing contact
@@ -399,7 +407,9 @@
 ### 8.1 Log Meeting Form
 
 - [ ] Create log meeting modal
-- [ ] Fields: Type, Date/Time, Duration, Attendees (client & internal), Location/Link, Purpose, Notes, Outcome, Follow-up Actions, Attachments, Related To
+- [ ] Fields: Type, Date/Time, Duration, Attendees (client & internal),
+      Location/Link, Purpose, Notes, Outcome, Follow-up Actions, Attachments,
+      Related To
 - [ ] Validate required fields
 - [ ] Save meeting to activity feed
 - [ ] Create tasks from follow-up actions
@@ -408,7 +418,8 @@
 ### 8.2 Log Call Form
 
 - [ ] Create log call modal
-- [ ] Fields: Type (Outbound/Inbound/Missed), Date/Time, Duration, Contact Person, Notes, Outcome, Follow-up Required
+- [ ] Fields: Type (Outbound/Inbound/Missed), Date/Time, Duration, Contact
+      Person, Notes, Outcome, Follow-up Required
 - [ ] Validate required fields
 - [ ] Save call to activity feed
 - [ ] Test call logging
@@ -416,7 +427,8 @@
 ### 8.3 Add Note Form
 
 - [ ] Create add note modal
-- [ ] Fields: Note Type, Note Content, Visibility, Related To (Contact, Project), Tags
+- [ ] Fields: Note Type, Note Content, Visibility, Related To (Contact,
+      Project), Tags
 - [ ] Validate required fields
 - [ ] Save note to activity feed
 - [ ] Test note creation
@@ -435,7 +447,9 @@
 ### 9.1 Add Lead Form
 
 - [ ] Create add lead modal
-- [ ] Fields: Contact Name, Company, Email, Phone, Industry, Company Size, Lead Source, Interest/Need, Estimated Value, Timeframe, Budget Confirmed, Assign To, Next Step
+- [ ] Fields: Contact Name, Company, Email, Phone, Industry, Company Size, Lead
+      Source, Interest/Need, Estimated Value, Timeframe, Budget Confirmed,
+      Assign To, Next Step
 - [ ] Validate required fields
 - [ ] Create lead record
 - [ ] Option to convert to prospect immediately
@@ -454,7 +468,8 @@
 ### 9.3 Create Opportunity
 
 - [ ] Create opportunity form
-- [ ] Fields: Name, Value, Probability, Expected Close Date, Stage, Competitors, Decision Criteria, Key Stakeholders
+- [ ] Fields: Name, Value, Probability, Expected Close Date, Stage, Competitors,
+      Decision Criteria, Key Stakeholders
 - [ ] Link to client/prospect
 - [ ] Test opportunity creation
 
@@ -566,7 +581,8 @@
 ### 13.1 Executive Dashboard
 
 - [ ] Create executive dashboard
-- [ ] Display key metrics (Total Clients, Active, New, Churn, Pipeline Value, Revenue, Growth)
+- [ ] Display key metrics (Total Clients, Active, New, Churn, Pipeline Value,
+      Revenue, Growth)
 - [ ] Display health distribution chart
 - [ ] Display revenue by industry chart
 - [ ] Display client acquisition chart

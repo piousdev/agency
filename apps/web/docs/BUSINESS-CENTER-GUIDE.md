@@ -1,8 +1,7 @@
 # Business Center User Guide
 
-**Version**: 1.0.0
-**Last Updated**: November 9, 2025
-**Audience**: Internal Agency Team Members
+**Version**: 1.0.0 **Last Updated**: November 9, 2025 **Audience**: Internal
+Agency Team Members
 
 ---
 
@@ -25,7 +24,8 @@
 
 ## Overview
 
-The **Business Center** is the central command hub for internal agency operations. It provides a unified dashboard for:
+The **Business Center** is the central command hub for internal agency
+operations. It provides a unified dashboard for:
 
 - **Intake Management**: Process and assign new client requests
 - **Active Work Tracking**: Monitor ongoing content and software projects
@@ -60,7 +60,8 @@ https://your-domain.com/dashboard/business-center
 
 1. Log in to the agency dashboard
 2. Click **Business Center** in the main navigation sidebar
-3. If you don't see this option, you may not have internal access (contact your administrator)
+3. If you don't see this option, you may not have internal access (contact your
+   administrator)
 
 ### Access Control
 
@@ -303,7 +304,8 @@ The Business Center is divided into six key sections:
 
 ## Keyboard Shortcuts
 
-Currently, the Business Center does not implement custom keyboard shortcuts. Standard browser shortcuts apply:
+Currently, the Business Center does not implement custom keyboard shortcuts.
+Standard browser shortcuts apply:
 
 - **Refresh Page**: `Cmd+R` (Mac) / `Ctrl+R` (Windows)
 - **Focus Search**: Use browser's "Find on Page" (`Cmd+F` / `Ctrl+F`)
@@ -379,7 +381,8 @@ Currently, the Business Center does not implement custom keyboard shortcuts. Sta
 3. Update project completion % if needed (use project management tools)
 4. Refresh the Business Center page to see updated grouping
 
-**Example**: A content project at 75% completion is in "In-Production". To move it to "Post-Production", update completion to ≥80%.
+**Example**: A content project at 75% completion is in "In-Production". To move
+it to "Post-Production", update completion to ≥80%.
 
 ---
 
@@ -390,20 +393,24 @@ Currently, the Business Center does not implement custom keyboard shortcuts. Sta
 - **Triage Daily**: Review Intake Queue at the start of each day
 - **Prioritize Correctly**: Use Critical/High for urgent client needs
 - **Balance Workload**: Check capacity before assigning
-- **Document Context**: Add notes to tickets before assigning (if feature available)
+- **Document Context**: Add notes to tickets before assigning (if feature
+  available)
 
 ### For Project Tracking
 
-- **Update Completion Weekly**: Keep completion % current for accurate stage grouping
+- **Update Completion Weekly**: Keep completion % current for accurate stage
+  grouping
 - **Review Stuck Projects**: Investigate projects in same stage >2 weeks
-- **Monitor Delivery Dates**: Check Delivery Calendar daily for upcoming deadlines
+- **Monitor Delivery Dates**: Check Delivery Calendar daily for upcoming
+  deadlines
 - **Celebrate Completions**: Review Recently Completed section for team wins
 
 ### For Capacity Planning
 
 - **Weekly Capacity Reviews**: Update capacity every Monday
 - **Account for Non-Project Work**: Include meetings, admin tasks in capacity %
-- **Avoid Chronic Overload**: Address 100%+ capacity immediately (redistribute work)
+- **Avoid Chronic Overload**: Address 100%+ capacity immediately (redistribute
+  work)
 - **Plan for Time Off**: Reduce capacity in advance for vacations/holidays
 
 ### For Team Collaboration
@@ -419,7 +426,8 @@ Currently, the Business Center does not implement custom keyboard shortcuts. Sta
 
 ### Understanding Capacity Percentages
 
-**Capacity** represents the % of a team member's work hours allocated to active projects.
+**Capacity** represents the % of a team member's work hours allocated to active
+projects.
 
 - **0%**: No active assignments (available for new work)
 - **50%**: Half of work hours allocated
@@ -467,69 +475,74 @@ Currently, the Business Center does not implement custom keyboard shortcuts. Sta
 
 ### General
 
-**Q: Who can access the Business Center?**
-A: Only internal team members (agency staff with `isInternal = true`). Clients and external users cannot access this page.
+**Q: Who can access the Business Center?** A: Only internal team members (agency
+staff with `isInternal = true`). Clients and external users cannot access this
+page.
 
-**Q: How often is data refreshed?**
-A: Data is server-rendered on every page load. Refresh the page to see the latest updates.
+**Q: How often is data refreshed?** A: Data is server-rendered on every page
+load. Refresh the page to see the latest updates.
 
-**Q: Can I filter or search within sections?**
-A: Not currently. Future versions may include search/filter functionality.
+**Q: Can I filter or search within sections?** A: Not currently. Future versions
+may include search/filter functionality.
 
-**Q: Can I export data to CSV or Excel?**
-A: Not currently. This is a planned feature for a future release.
+**Q: Can I export data to CSV or Excel?** A: Not currently. This is a planned
+feature for a future release.
 
 ---
 
 ### Intake Queue
 
-**Q: What happens to a ticket after it's assigned?**
-A: It moves out of the Intake Queue and becomes a tracked project (visible in Active Work sections).
+**Q: What happens to a ticket after it's assigned?** A: It moves out of the
+Intake Queue and becomes a tracked project (visible in Active Work sections).
 
-**Q: Can I assign a ticket to multiple team members?**
-A: No, tickets use single-select assignment. Once assigned, it becomes a project that can have multiple assignees.
+**Q: Can I assign a ticket to multiple team members?** A: No, tickets use
+single-select assignment. Once assigned, it becomes a project that can have
+multiple assignees.
 
-**Q: How do I change the priority of a ticket?**
-A: Priority is set when the ticket is created. Contact your administrator or use the project management system to update it.
+**Q: How do I change the priority of a ticket?** A: Priority is set when the
+ticket is created. Contact your administrator or use the project management
+system to update it.
 
 ---
 
 ### Active Work
 
-**Q: Why is my project in the wrong stage?**
-A: Stage grouping is automatic based on completion %. Check the thresholds in the Appendix and update the project's completion percentage.
+**Q: Why is my project in the wrong stage?** A: Stage grouping is automatic
+based on completion %. Check the thresholds in the Appendix and update the
+project's completion percentage.
 
-**Q: Can I manually move a project between stages?**
-A: No, stage grouping is automatic. Update the completion % to move projects.
+**Q: Can I manually move a project between stages?** A: No, stage grouping is
+automatic. Update the completion % to move projects.
 
-**Q: What's the difference between Content and Software sections?**
-A: They use different stage grouping logic optimized for each workflow type. Projects are filtered by client type.
+**Q: What's the difference between Content and Software sections?** A: They use
+different stage grouping logic optimized for each workflow type. Projects are
+filtered by client type.
 
 ---
 
 ### Team Capacity
 
-**Q: What does 150% capacity mean?**
-A: The team member is assigned 1.5x their normal work hours. This indicates overallocation and potential burnout risk.
+**Q: What does 150% capacity mean?** A: The team member is assigned 1.5x their
+normal work hours. This indicates overallocation and potential burnout risk.
 
-**Q: Can capacity be over 200%?**
-A: The system allows up to 200%, but this should never happen in practice. Address immediately.
+**Q: Can capacity be over 200%?** A: The system allows up to 200%, but this
+should never happen in practice. Address immediately.
 
-**Q: How do I reduce someone's capacity?**
-A: Click "Update Capacity" and enter a lower percentage. Then reassign or postpone some of their projects.
+**Q: How do I reduce someone's capacity?** A: Click "Update Capacity" and enter
+a lower percentage. Then reassign or postpone some of their projects.
 
 ---
 
 ### Delivery Calendar
 
-**Q: How far ahead does the calendar show?**
-A: 30 days from today.
+**Q: How far ahead does the calendar show?** A: 30 days from today.
 
-**Q: Can I change a project's delivery date here?**
-A: No, delivery dates are managed in the project management system. This is a read-only view.
+**Q: Can I change a project's delivery date here?** A: No, delivery dates are
+managed in the project management system. This is a read-only view.
 
-**Q: What if a project is late?**
-A: It will still show in the calendar until the status is updated to "Completed" or the delivery date is changed in the source system.
+**Q: What if a project is late?** A: It will still show in the calendar until
+the status is updated to "Completed" or the delivery date is changed in the
+source system.
 
 ---
 
@@ -646,7 +659,10 @@ if (
   (project.status === 'in_development' && project.completionPercentage < 20)
 ) {
   return 'Design';
-} else if (project.status === 'in_development' && project.completionPercentage >= 70) {
+} else if (
+  project.status === 'in_development' &&
+  project.completionPercentage >= 70
+) {
   if (project.completionPercentage >= 95) {
     return 'Delivery';
   }
@@ -746,7 +762,8 @@ interface TeamMember {
 | `updateProjectCompletionAction` | Update completion %            | projectId, FormData (completionPercentage)        | Success/Error                  |
 | `updateCapacityAction`          | Update team member capacity    | userId, FormData (capacityPercentage)             | Success/Error                  |
 
-All actions use `useActionState` hook and revalidate `/dashboard/business-center` on success.
+All actions use `useActionState` hook and revalidate
+`/dashboard/business-center` on success.
 
 ---
 
@@ -769,8 +786,10 @@ The Business Center uses semantic CSS variables defined in `globals.css`:
 
 ### Performance Considerations
 
-- **Server Components**: All display components are Server Components for optimal performance
-- **Client Components**: Only interactive elements (modals, triggers) use 'use client'
+- **Server Components**: All display components are Server Components for
+  optimal performance
+- **Client Components**: Only interactive elements (modals, triggers) use 'use
+  client'
 - **Data Fetching**: Single data fetch in page.tsx, props passed down
 - **Filtering**: Client-side filtering of activeProjects (minimal overhead)
 - **Revalidation**: Cache revalidation on mutations ensures fresh data
@@ -822,4 +841,5 @@ The Business Center uses semantic CSS variables defined in `globals.css`:
 
 **End of User Guide**
 
-For the latest version of this document, visit the internal knowledge base or check the repository at `apps/web/docs/BUSINESS-CENTER-GUIDE.md`.
+For the latest version of this document, visit the internal knowledge base or
+check the repository at `apps/web/docs/BUSINESS-CENTER-GUIDE.md`.

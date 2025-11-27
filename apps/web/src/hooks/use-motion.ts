@@ -1,8 +1,9 @@
 'use client';
 
 import { useRef, useCallback, useMemo } from 'react';
-import gsap from 'gsap';
+
 import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 
 // Register GSAP plugin
 gsap.registerPlugin(useGSAP);
@@ -131,7 +132,7 @@ export function useCardAnimation(userConfig: CardAnimationConfig = {}): UseCardA
   // Check for reduced motion preference
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, []);
 
   // Set up entry animation
@@ -161,119 +162,139 @@ export function useCardAnimation(userConfig: CardAnimationConfig = {}): UseCardA
   );
 
   // Hover start animation
-  const handleMouseEnter = contextSafe(
-    useCallback(() => {
-      if (!cardRef.current || prefersReducedMotion) return;
-
-      gsap.to(cardRef.current, {
-        y: config.hoverY,
-        scale: config.hoverScale,
-        boxShadow: config.shadows.hover,
-        duration: config.durations.hover,
+  const animateHoverEnter = contextSafe(
+    (
+      card: HTMLElement,
+      gradient: HTMLDivElement | null,
+      border: HTMLDivElement | null,
+      conf: Required<CardAnimationConfig>
+    ) => {
+      gsap.to(card, {
+        y: conf.hoverY,
+        scale: conf.hoverScale,
+        boxShadow: conf.shadows.hover,
+        duration: conf.durations.hover,
         ease: 'power2.out',
         force3D: true,
       });
 
-      if (gradientRef.current) {
-        gsap.to(gradientRef.current, {
+      if (gradient) {
+        gsap.to(gradient, {
           opacity: 1,
-          duration: config.durations.hover,
+          duration: conf.durations.hover,
           ease: 'power2.out',
         });
       }
 
-      if (borderGlowRef.current) {
-        gsap.to(borderGlowRef.current, {
+      if (border) {
+        gsap.to(border, {
           opacity: 1,
-          duration: config.durations.hover,
+          duration: conf.durations.hover,
           ease: 'power2.out',
         });
       }
-    }, [config, prefersReducedMotion])
+    }
   );
+
+  const handleMouseEnter = useCallback(() => {
+    if (!cardRef.current || prefersReducedMotion) return;
+    animateHoverEnter(cardRef.current, gradientRef.current, borderGlowRef.current, config);
+  }, [config, prefersReducedMotion, animateHoverEnter]);
 
   // Hover end animation
-  const handleMouseLeave = contextSafe(
-    useCallback(() => {
-      if (!cardRef.current || prefersReducedMotion) return;
-
-      gsap.to(cardRef.current, {
+  const animateHoverLeave = contextSafe(
+    (
+      card: HTMLElement,
+      gradient: HTMLDivElement | null,
+      border: HTMLDivElement | null,
+      conf: Required<CardAnimationConfig>
+    ) => {
+      gsap.to(card, {
         y: 0,
         scale: 1,
-        boxShadow: config.shadows.rest,
-        duration: config.durations.rest,
+        boxShadow: conf.shadows.rest,
+        duration: conf.durations.rest,
         ease: 'power2.out',
       });
 
-      if (gradientRef.current) {
-        gsap.to(gradientRef.current, {
+      if (gradient) {
+        gsap.to(gradient, {
           opacity: 0,
-          duration: config.durations.rest,
+          duration: conf.durations.rest,
           ease: 'power2.out',
         });
       }
 
-      if (borderGlowRef.current) {
-        gsap.to(borderGlowRef.current, {
+      if (border) {
+        gsap.to(border, {
           opacity: 0,
-          duration: config.durations.rest,
+          duration: conf.durations.rest,
           ease: 'power2.out',
         });
       }
-    }, [config, prefersReducedMotion])
+    }
   );
+
+  const handleMouseLeave = useCallback(() => {
+    if (!cardRef.current || prefersReducedMotion) return;
+    animateHoverLeave(cardRef.current, gradientRef.current, borderGlowRef.current, config);
+  }, [config, prefersReducedMotion, animateHoverLeave]);
 
   // Press animation
-  const handleMouseDown = contextSafe(
-    useCallback(() => {
-      if (!cardRef.current || prefersReducedMotion) return;
+  const animatePress = contextSafe((card: HTMLElement, conf: Required<CardAnimationConfig>) => {
+    gsap.to(card, {
+      scale: conf.pressScale,
+      duration: conf.durations.press,
+      ease: 'power2.inOut',
+    });
+  });
 
-      gsap.to(cardRef.current, {
-        scale: config.pressScale,
-        duration: config.durations.press,
-        ease: 'power2.inOut',
-      });
-    }, [config, prefersReducedMotion])
-  );
+  const handleMouseDown = useCallback(() => {
+    if (!cardRef.current || prefersReducedMotion) return;
+    animatePress(cardRef.current, config);
+  }, [config, prefersReducedMotion, animatePress]);
 
   // Release animation
-  const handleMouseUp = contextSafe(
-    useCallback(() => {
-      if (!cardRef.current || prefersReducedMotion) return;
+  const animateRelease = contextSafe((card: HTMLElement, conf: Required<CardAnimationConfig>) => {
+    gsap.to(card, {
+      scale: conf.hoverScale,
+      duration: conf.durations.release,
+      ease: 'back.out(1.7)',
+    });
+  });
 
-      gsap.to(cardRef.current, {
-        scale: config.hoverScale,
-        duration: config.durations.release,
-        ease: 'back.out(1.7)',
-      });
-    }, [config, prefersReducedMotion])
-  );
+  const handleMouseUp = useCallback(() => {
+    if (!cardRef.current || prefersReducedMotion) return;
+    animateRelease(cardRef.current, config);
+  }, [config, prefersReducedMotion, animateRelease]);
 
   // Focus animation
-  const handleFocus = contextSafe(
-    useCallback(() => {
-      if (!cardRef.current || prefersReducedMotion) return;
+  const animateFocus = contextSafe((card: HTMLElement, conf: Required<CardAnimationConfig>) => {
+    gsap.to(card, {
+      boxShadow: conf.shadows.focus,
+      duration: conf.durations.focus,
+      ease: 'power2.out',
+    });
+  });
 
-      gsap.to(cardRef.current, {
-        boxShadow: config.shadows.focus,
-        duration: config.durations.focus,
-        ease: 'power2.out',
-      });
-    }, [config, prefersReducedMotion])
-  );
+  const handleFocus = useCallback(() => {
+    if (!cardRef.current || prefersReducedMotion) return;
+    animateFocus(cardRef.current, config);
+  }, [config, prefersReducedMotion, animateFocus]);
 
   // Blur animation
-  const handleBlur = contextSafe(
-    useCallback(() => {
-      if (!cardRef.current || prefersReducedMotion) return;
+  const animateBlur = contextSafe((card: HTMLElement, conf: Required<CardAnimationConfig>) => {
+    gsap.to(card, {
+      boxShadow: conf.shadows.rest,
+      duration: conf.durations.focus,
+      ease: 'power2.out',
+    });
+  });
 
-      gsap.to(cardRef.current, {
-        boxShadow: config.shadows.rest,
-        duration: config.durations.focus,
-        ease: 'power2.out',
-      });
-    }, [config, prefersReducedMotion])
-  );
+  const handleBlur = useCallback(() => {
+    if (!cardRef.current || prefersReducedMotion) return;
+    animateBlur(cardRef.current, config);
+  }, [config, prefersReducedMotion, animateBlur]);
 
   return {
     cardRef,
@@ -303,9 +324,9 @@ export function useCardAnimation(userConfig: CardAnimationConfig = {}): UseCardA
  */
 export function animateCardsEntry(
   container: HTMLElement | null,
-  selector: string = '[data-slot="animated-card"]',
-  staggerDelay: number = 0.08,
-  prefersReducedMotion: boolean = false
+  selector = '[data-slot="animated-card"]',
+  staggerDelay = 0.08,
+  prefersReducedMotion = false
 ): gsap.core.Tween | null {
   if (!container || prefersReducedMotion) return null;
 

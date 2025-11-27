@@ -1,8 +1,10 @@
 import { Suspense } from 'react';
+
 import { notFound, redirect } from 'next/navigation';
-import { requireAuth } from '@/lib/auth/session';
+
+import { EstimationForm } from '@/components/default/dashboard/business-center/intake/estimation-form';
 import { getRequest } from '@/lib/actions/business-center/requests';
-import { EstimationForm } from '@/components/dashboard/business-center/intake/estimation-form';
+import { requireAuth } from '@/lib/auth/session';
 
 export const metadata = {
   title: 'Submit Estimation - Intake Pipeline',
@@ -25,7 +27,7 @@ function EstimationSkeleton() {
 async function EstimationData({ id }: { id: string }) {
   const result = await getRequest(id);
 
-  if (!result.success || !result.data) {
+  if (!result.success) {
     notFound();
   }
 

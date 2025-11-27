@@ -2,9 +2,10 @@
  * Delete milestone API route
  */
 
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { eq } from 'drizzle-orm';
+
 import { db } from '../../db/index.js';
 import { milestone } from '../../db/schema/milestone.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth.js';

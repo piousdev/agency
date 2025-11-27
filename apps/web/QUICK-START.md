@@ -2,7 +2,8 @@
 
 ## 🚀 Getting Started
 
-All navigation and UX features are now live in your dashboard. Here's how to use them:
+All navigation and UX features are now live in your dashboard. Here's how to use
+them:
 
 ## Command Palette (`⌘K`)
 

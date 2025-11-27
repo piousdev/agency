@@ -2,13 +2,17 @@
 
 ## Overview
 
-This implementation adds 10+ enterprise-grade navigation and UX features to enhance user productivity and experience across the platform. All features are designed for scale (1M+ users) with performance, accessibility, and user customization in mind.
+This implementation adds 10+ enterprise-grade navigation and UX features to
+enhance user productivity and experience across the platform. All features are
+designed for scale (1M+ users) with performance, accessibility, and user
+customization in mind.
 
 ## Implemented Features
 
 ### 1. ✅ Enhanced Command Palette (Cmd+K)
 
-**Location:** `src/components/default/dashboard/navigation/header/command-palette.tsx`
+**Location:**
+`src/components/default/dashboard/navigation/header/command-palette.tsx`
 
 - **Global search** for pages, actions, projects, clients, and issues
 - **Recent items** tracking with quick access
@@ -114,14 +118,20 @@ This implementation adds 10+ enterprise-grade navigation and UX features to enha
 **Example Usage:**
 
 ```tsx
-const { selectedIds, selectedCount, toggleSelection, clearSelection } = useBulkSelection(items);
+const { selectedIds, selectedCount, toggleSelection, clearSelection } =
+  useBulkSelection(items);
 
 <BulkActionsBar
   selectedCount={selectedCount}
   onClearSelection={clearSelection}
   actions={[
     { id: 'assign', label: 'Assign', action: handleAssign },
-    { id: 'delete', label: 'Delete', variant: 'destructive', action: handleDelete },
+    {
+      id: 'delete',
+      label: 'Delete',
+      variant: 'destructive',
+      action: handleDelete,
+    },
   ]}
 />;
 ```

@@ -4,26 +4,32 @@
 
 The Business Center currently lacks essential CRUD functionality:
 
-1. **No Create Operations**: Users cannot create new tickets, projects, or clients
+1. **No Create Operations**: Users cannot create new tickets, projects, or
+   clients
 2. **No Delete Operations**: No way to remove or archive entities
-3. **No Permission System**: All internal users have identical access - no role-based restrictions
+3. **No Permission System**: All internal users have identical access - no
+   role-based restrictions
 4. **No Audit Trail**: Changes are not tracked - no accountability or history
 5. **No Bulk Operations**: Cannot efficiently manage multiple items at once
 
-This makes the Business Center unsuitable for production use where teams need proper access control, accountability, and efficient workflows.
+This makes the Business Center unsuitable for production use where teams need
+proper access control, accountability, and efficient workflows.
 
 ## What Changes
 
 ### Permission-Based RBAC System
 
-- Implement fine-grained permissions: `can_create_project`, `can_edit_ticket`, `can_delete_client`, etc.
+- Implement fine-grained permissions: `can_create_project`, `can_edit_ticket`,
+  `can_delete_client`, etc.
 - Add permission checking middleware for Server Actions
-- Create permission-aware UI that hides/disables actions based on user permissions
+- Create permission-aware UI that hides/disables actions based on user
+  permissions
 - Integrate with existing `role` and `role_assignment` tables
 
 ### Full CRUD Operations
 
-- **Create**: Dedicated pages for creating tickets, projects, and clients (`/new` routes)
+- **Create**: Dedicated pages for creating tickets, projects, and clients
+  (`/new` routes)
 - **Edit**: Dialog-based editing forms (using existing Dialog component)
 - **Delete**: Soft delete with confirmation dialogs and proper cascade handling
 - Add "+ New" buttons to kanban columns and list views
@@ -63,7 +69,8 @@ This makes the Business Center unsuitable for production use where teams need pr
 
 **New Server Actions:**
 
-- `apps/web/src/lib/actions/business-center/projects.ts` - Add create, update, delete
+- `apps/web/src/lib/actions/business-center/projects.ts` - Add create, update,
+  delete
 - `apps/web/src/lib/actions/business-center/tickets.ts` - Add create, delete
 - `apps/web/src/lib/actions/business-center/clients.ts` - Full CRUD (new)
 - `apps/web/src/lib/actions/business-center/bulk.ts` - Bulk operations (new)
@@ -82,7 +89,8 @@ This makes the Business Center unsuitable for production use where teams need pr
 **Audit System:**
 
 - `apps/api/src/db/schema/activity.ts` - Extend for all entities
-- `apps/web/src/components/business-center/activity-feed.tsx` - Reusable activity component
+- `apps/web/src/components/business-center/activity-feed.tsx` - Reusable
+  activity component
 
 ### Dependencies on Other Changes
 

@@ -1,8 +1,11 @@
 'use client';
 
-import { IconFileText, IconSearch, IconX } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import * as React from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { IconFileText, IconSearch, IconX } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -15,7 +18,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Kbd, KbdGroup } from '@/components/ui/kbd';
 import { sidebarNavigationWithIcons } from '@/config/navigation-with-icons';
 
-type SearchResult = {
+interface SearchResult {
   id: string;
   type: 'page';
   title: string;
@@ -23,7 +26,7 @@ type SearchResult = {
   url: string;
   icon?: React.ComponentType<{ className?: string }>;
   group?: string;
-};
+}
 
 // Flatten navigation structure to get all pages
 function flattenNavigation(): SearchResult[] {
@@ -95,8 +98,8 @@ export function CommandSearchBar() {
     const query = searchQuery.toLowerCase();
     return allPages.filter((page) => {
       const matchesTitle = page.title.toLowerCase().includes(query);
-      const matchesSubtitle = page.subtitle?.toLowerCase().includes(query);
-      const matchesGroup = page.group?.toLowerCase().includes(query);
+      const matchesSubtitle = page.subtitle?.toLowerCase().includes(query) ?? false;
+      const matchesGroup = page.group?.toLowerCase().includes(query) ?? false;
       return matchesTitle || matchesSubtitle || matchesGroup;
     });
   }, [searchQuery, allPages]);

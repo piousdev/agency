@@ -6,6 +6,7 @@
  */
 
 import { nanoid } from 'nanoid';
+
 import { db } from '../db';
 import {
   activity,
@@ -77,7 +78,9 @@ export interface LogActivityParams {
  *   }
  * });
  */
-export async function logActivity(params: LogActivityParams) {
+export async function logActivity(
+  params: LogActivityParams
+): Promise<typeof activity.$inferSelect | undefined> {
   const { entityType, entityId, actorId, type, metadata, projectId } = params;
 
   const activityRecord = await db
@@ -110,7 +113,7 @@ export async function logEntityChange<T extends Record<string, unknown>>(
   oldValues: Partial<T> | null,
   newValues: Partial<T>,
   type?: ActivityType
-) {
+): Promise<typeof activity.$inferSelect | undefined> {
   // Determine activity type based on old/new values
   let activityType: ActivityType = type ?? 'updated';
   if (!oldValues) {
@@ -118,11 +121,13 @@ export async function logEntityChange<T extends Record<string, unknown>>(
   }
 
   // Calculate changes
-  const changes: Array<{ field: string; oldValue: unknown; newValue: unknown }> = [];
+  const changes: { field: string; oldValue: unknown; newValue: unknown }[] = [];
 
   if (oldValues) {
     for (const key of Object.keys(newValues)) {
+      // eslint-disable-next-line security/detect-object-injection
       const oldVal = oldValues[key];
+      // eslint-disable-next-line security/detect-object-injection
       const newVal = newValues[key];
 
       // Only log if value actually changed
@@ -150,7 +155,7 @@ export async function logEntityChange<T extends Record<string, unknown>>(
     }
   }
 
-  return logActivity({
+  return await logActivity({
     ...params,
     type: activityType,
     metadata,
@@ -168,10 +173,10 @@ export async function logBulkOperation(
     affectedIds: string[];
     description?: string;
   }
-) {
+): Promise<typeof activity.$inferSelect | undefined> {
   const { affectedIds, description, ...rest } = params;
 
-  return logActivity({
+  return await logActivity({
     ...rest,
     entityId: 'bulk',
     metadata: {

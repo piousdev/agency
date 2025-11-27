@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
+
+import { RequestFormClient } from '@/components/default/dashboard/business-center/intake/request-form-client';
 import { requireAuth } from '@/lib/auth/session';
-import { RequestFormClient } from '@/components/dashboard/business-center/intake/request-form-client';
 
 export const metadata = {
   title: 'New Request - Intake Pipeline',

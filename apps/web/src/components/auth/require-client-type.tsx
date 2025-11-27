@@ -21,8 +21,9 @@
 
 'use client';
 
-import type { ReactNode } from 'react';
 import { useAuth } from '@/lib/hooks/use-auth';
+
+import type { ReactNode } from 'react';
 
 /**
  * Client types from database enum
@@ -89,12 +90,12 @@ export function RequireClientType({
 
   // Show loading state
   if (isLoading) {
-    return <>{loadingFallback}</>;
+    return loadingFallback;
   }
 
   // Not authenticated
   if (!isAuthenticated || !user) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
   // TODO: Implement client type check once session is extended
@@ -112,7 +113,7 @@ export function RequireClientType({
       'RequireClientType: clientType not found in session. ' +
         'Session needs to be extended server-side with customSession plugin.'
     );
-    return <>{fallback}</>;
+    return fallback;
   }
 
   // Check if user's client type matches required type(s)
@@ -120,8 +121,8 @@ export function RequireClientType({
   const hasAccess = allowedTypes.includes(userClientType);
 
   if (!hasAccess) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
-  return <>{children}</>;
+  return children;
 }

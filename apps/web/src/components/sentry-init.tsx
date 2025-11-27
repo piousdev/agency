@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 export function SentryInit() {
   useEffect(() => {
     // Dynamically import Sentry client config only in the browser
-    import('../../sentry.client.config');
+    void import('../../sentry.client.config');
   }, []);
 
   return null;

@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import { IconChevronLeft, IconDownload, IconAdjustmentsHorizontal } from '@tabler/icons-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 interface BusinessCenterHeaderProps {
@@ -54,15 +57,15 @@ export function BusinessCenterHeader({
     const parentMatch = tabs.find(
       (tab) => tab.href !== '/dashboard/business-center' && pathname.startsWith(tab.href)
     );
-    return parentMatch?.href || '/dashboard/business-center';
+    return parentMatch?.href ?? '/dashboard/business-center';
   });
 
   // Always show personalized welcome or default (first name only)
-  const firstName = userName?.split(' ')[0];
+  const firstName = userName.split(' ')[0];
   const displayTitle = firstName ? `Welcome back, ${firstName}` : 'Welcome back';
   const displayDescription = "Glad to have you back! Let's get started.";
 
-  const hasActions = viewSwitcher || filterContent || onExport || primaryAction;
+  const hasActions = viewSwitcher ?? filterContent ?? onExport ?? primaryAction;
 
   return (
     <TooltipProvider delayDuration={300}>

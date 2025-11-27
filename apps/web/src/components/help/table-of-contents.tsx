@@ -1,7 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
+
+import Link from 'next/link';
+
 import { cn } from '@/lib/utils';
 
 interface Heading {
@@ -33,7 +35,7 @@ export function TableOfContents({ className }: TableOfContentsProps) {
 
     for (const element of headingElements) {
       const id = element.id;
-      const text = element.textContent || '';
+      const text = element.textContent;
       const level = Number.parseInt(element.tagName.slice(1), 10);
 
       if (id && text) {
@@ -41,7 +43,9 @@ export function TableOfContents({ className }: TableOfContentsProps) {
       }
     }
 
-    setHeadings(extractedHeadings);
+    requestAnimationFrame(() => {
+      setHeadings(extractedHeadings);
+    });
   }, []);
 
   useEffect(() => {
@@ -54,41 +58,38 @@ export function TableOfContents({ className }: TableOfContentsProps) {
 
     if (headingElements.length === 0) return;
 
-    // Set initial active state to first heading
-    if (headingElements[0]) {
-      setActiveId(headingElements[0].id);
-    }
+    const updateActiveHeading = () => {
+      // Get scroll position with offset for header
+      const scrollY = window.scrollY + 150;
+
+      // Find the heading that's currently in view
+      let currentHeading = headingElements[0];
+
+      for (const heading of headingElements) {
+        const headingTop = heading.offsetTop;
+
+        if (scrollY >= headingTop) {
+          currentHeading = heading;
+        } else {
+          break;
+        }
+      }
+
+      if (currentHeading) {
+        setActiveId(currentHeading.id);
+      }
+    };
+
+    // Initial check
+    requestAnimationFrame(updateActiveHeading);
 
     let timeoutId: NodeJS.Timeout;
 
     const handleScroll = () => {
       // Debounce scroll events
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        // Get scroll position with offset for header
-        const scrollY = window.scrollY + 150;
-
-        // Find the heading that's currently in view
-        let currentHeading = headingElements[0];
-
-        for (const heading of headingElements) {
-          const headingTop = heading.offsetTop;
-
-          if (scrollY >= headingTop) {
-            currentHeading = heading;
-          } else {
-            break;
-          }
-        }
-
-        if (currentHeading) {
-          setActiveId(currentHeading.id);
-        }
-      }, 50);
+      timeoutId = setTimeout(updateActiveHeading, 50);
     };
-
-    // Initial check
-    handleScroll();
 
     // Listen to scroll events
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -141,7 +142,7 @@ export function TableOfContents({ className }: TableOfContentsProps) {
                       e.preventDefault();
                       handleClick(heading.id);
                     }}
-                    style={{ paddingLeft: `${indent + 16}px` }}
+                    style={{ paddingLeft: `${String(indent + 16)}px` }}
                     className={cn(
                       'relative block border-l-2 py-1 text-sm transition-colors hover:text-foreground',
                       isActive

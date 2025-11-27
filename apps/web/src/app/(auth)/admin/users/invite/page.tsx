@@ -4,10 +4,13 @@
  * Protected route - requires internal team member access
  */
 
-import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
+
+import { IconArrowLeft } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 import { requireRole } from '@/lib/auth/session';
+
 import { InviteForm } from './form';
 
 export const metadata = {

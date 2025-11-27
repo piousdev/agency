@@ -1,18 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+
 import { IconUsers } from '@tabler/icons-react';
-import { cn } from '@/lib/utils';
+
 import {
   BentoCard,
   BentoCardContent,
   BentoCardFooter,
   BentoCardHeader,
 } from '@/components/ui/bento-grid';
-import { TimeFilter, type TimeFilterOption } from './time-filter';
-import { InfoTooltip } from './info-tooltip';
+import { cn } from '@/lib/utils';
+
 import { CardActionButton } from './card-action-button';
+import { InfoTooltip } from './info-tooltip';
 import { MiniSparkline } from './mini-sparkline';
+import { TimeFilter, type TimeFilterOption } from './time-filter';
 
 interface TeamCapacityHeroProps {
   available: number;
@@ -61,7 +64,7 @@ export function TeamCapacityHero({
   ].filter((s) => s.count > 0);
 
   return (
-    <BentoCard aria-label={`Team Capacity: ${availabilityRate}% available`}>
+    <BentoCard aria-label={`Team Capacity: ${String(availabilityRate)}% available`}>
       {/* Watermark Icon */}
       <div className="absolute -top-4 -right-4 opacity-[0.03] pointer-events-none">
         <IconUsers className="w-32 h-32" />
@@ -100,7 +103,7 @@ export function TeamCapacityHero({
         <div
           className="h-2 w-full bg-muted/20 rounded-full overflow-hidden flex"
           role="img"
-          aria-label={`Capacity: ${available} available, ${atCapacity} at capacity, ${overloaded} overloaded`}
+          aria-label={`Capacity: ${String(available)} available, ${String(atCapacity)} at capacity, ${String(overloaded)} overloaded`}
         >
           {segments.map((segment) => {
             const width = total > 0 ? (segment.count / total) * 100 : 0;
@@ -112,7 +115,7 @@ export function TeamCapacityHero({
                   'h-full transition-all duration-500 motion-reduce:transition-none',
                   config.bgClass
                 )}
-                style={{ width: `${width}%` }}
+                style={{ width: `${String(width)}%` }}
               />
             );
           })}

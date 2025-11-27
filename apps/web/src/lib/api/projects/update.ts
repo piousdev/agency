@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { ProjectResponse, UpdateProjectInput } from './types';
 
 /**
@@ -21,21 +22,27 @@ export async function updateProject(
 ): Promise<ProjectResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}`, {
-    method: 'PATCH',
-    headers: {
-      ...authHeaders,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-    cache: 'no-store',
-  });
+  const headersObject: Record<string, string> = Array.isArray(authHeaders)
+    ? Object.fromEntries(authHeaders)
+    : Object.fromEntries(Object.entries(authHeaders));
+  const response = await fetch(
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        ...headersObject,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      cache: 'no-store',
+    }
+  );
 
-  const result = await response.json();
+  const result = (await response.json()) as { message?: string } & Partial<ProjectResponse>;
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to update project');
+    throw new Error(result.message ?? 'Failed to update project');
   }
 
-  return result;
+  return result as ProjectResponse;
 }

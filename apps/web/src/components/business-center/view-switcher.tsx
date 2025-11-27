@@ -1,8 +1,9 @@
 'use client';
 
 import { IconLayoutGrid, IconList, IconLayoutKanban } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+
 
 export type ViewMode = 'table' | 'cards' | 'kanban';
 

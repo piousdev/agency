@@ -2,13 +2,15 @@
 
 ## Purpose
 
-TBD - created by archiving change fix-testing-and-production-readiness. Update Purpose after archive.
+TBD - created by archiving change fix-testing-and-production-readiness. Update
+Purpose after archive.
 
 ## Requirements
 
 ### Requirement: Separate Test Runners
 
-The system SHALL maintain separate test runners for unit tests and E2E tests to prevent conflicts and ensure proper test execution.
+The system SHALL maintain separate test runners for unit tests and E2E tests to
+prevent conflicts and ensure proper test execution.
 
 #### Scenario: Unit tests run independently
 
@@ -26,7 +28,8 @@ The system SHALL maintain separate test runners for unit tests and E2E tests to 
 
 ### Requirement: Mock External Services in Tests
 
-The system SHALL provide mocks for external services (SMTP, third-party APIs) to enable reliable integration testing without external dependencies.
+The system SHALL provide mocks for external services (SMTP, third-party APIs) to
+enable reliable integration testing without external dependencies.
 
 #### Scenario: SMTP mock in API tests
 

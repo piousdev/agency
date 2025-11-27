@@ -1,6 +1,8 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+
 import matter from 'gray-matter';
+
 import { mdxComponents } from './mdx-components';
 
 /**
@@ -80,7 +82,7 @@ export function scanMDXDirectory(contentRoot: string, baseDir = ''): MDXFile[] {
  * Build navigation tree from MDX files
  * Uses directory structure + frontmatter metadata
  */
-export function buildNavigationTree(files: MDXFile[], rootPath = ''): NavigationItem[] {
+export function buildNavigationTree(files: MDXFile[], _rootPath = ''): NavigationItem[] {
   const tree: NavigationItem[] = [];
   const pathMap = new Map<string, NavigationItem>();
 
@@ -168,7 +170,7 @@ export function getContentNavigation(contentRoot: string): NavigationItem[] {
  */
 export function findFileBySlug(files: MDXFile[], slugParts: string[]): MDXFile | null {
   const targetSlug = slugParts.join('/');
-  return files.find((file) => file.slug === targetSlug) || null;
+  return files.find((file) => file.slug === targetSlug) ?? null;
 }
 
 /**

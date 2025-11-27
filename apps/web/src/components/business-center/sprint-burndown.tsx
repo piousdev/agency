@@ -1,14 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import {
-  calculateSprintProgress,
-  calculateDaysRemaining,
-  getSprintStatusColor,
-} from '@/lib/schemas/sprint';
-import type { Sprint } from '@/lib/api/sprints/types';
+
 import {
   IconChartLine,
   IconTarget,
@@ -19,26 +12,38 @@ import {
 import {
   differenceInDays,
   format,
-  addDays,
+  
   eachDayOfInterval,
-  isAfter,
+  
   isBefore,
   isToday,
 } from 'date-fns';
+
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  calculateSprintProgress,
+  calculateDaysRemaining,
+  getSprintStatusColor,
+} from '@/lib/schemas/sprint';
 import { cn } from '@/lib/utils';
+
+import type { Sprint } from '@/lib/api/sprints/types';
 
 interface SprintBurndownProps {
   sprint: Sprint;
   /** Daily completed points data - array of { date: string, points: number } */
-  dailyData?: Array<{ date: string; completedPoints: number }>;
+  dailyData?: { date: string; completedPoints: number }[];
   className?: string;
 }
+
+const DEFAULT_DAILY_DATA: { date: string; completedPoints: number }[] = [];
 
 /**
  * Sprint Burndown Chart Component
  * Shows a visual representation of sprint progress with an ideal burndown line
  */
-export function SprintBurndown({ sprint, dailyData = [], className }: SprintBurndownProps) {
+export function SprintBurndown({ sprint, dailyData = DEFAULT_DAILY_DATA, className }: SprintBurndownProps) {
   const progress = calculateSprintProgress(sprint.plannedPoints, sprint.completedPoints);
   const daysRemaining = calculateDaysRemaining(sprint.endDate);
 
@@ -99,7 +104,7 @@ export function SprintBurndown({ sprint, dailyData = [], className }: SprintBurn
 
     const expectedProgress =
       chartData.totalDays > 0
-        ? ((chartData.totalDays - (daysRemaining ?? 0)) / chartData.totalDays) * 100
+        ? ((chartData.totalDays - (daysRemaining)) / chartData.totalDays) * 100
         : 0;
 
     const diff = progress - expectedProgress;
@@ -145,7 +150,7 @@ export function SprintBurndown({ sprint, dailyData = [], className }: SprintBurn
             </p>
             <p className="text-xs text-muted-foreground">
               {daysRemaining !== null && daysRemaining < 0
-                ? `${Math.abs(daysRemaining)} days overdue`
+                ? `${String(Math.abs(daysRemaining))} days overdue`
                 : 'days left'}
             </p>
           </div>
@@ -167,11 +172,11 @@ export function SprintBurndown({ sprint, dailyData = [], className }: SprintBurn
         </div>
 
         {/* Simple Visual Burndown */}
-        {chartData && (
+        {chartData && sprint.startDate && sprint.endDate && (
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{format(new Date(sprint.startDate!), 'MMM d')}</span>
-              <span>{format(new Date(sprint.endDate!), 'MMM d')}</span>
+              <span>{format(new Date(sprint.startDate), 'MMM d')}</span>
+              <span>{format(new Date(sprint.endDate), 'MMM d')}</span>
             </div>
 
             {/* Visual Progress Bar with Day Markers */}
@@ -185,7 +190,7 @@ export function SprintBurndown({ sprint, dailyData = [], className }: SprintBurn
               {/* Actual progress */}
               <div
                 className="absolute bottom-0 left-0 h-full bg-primary/60 transition-all duration-500"
-                style={{ width: `${progress}%` }}
+                style={{ width: `${String(progress)}%` }}
               />
 
               {/* Day markers */}
@@ -194,6 +199,7 @@ export function SprintBurndown({ sprint, dailyData = [], className }: SprintBurn
                   .filter((_, i) => i % Math.ceil(chartData.totalDays / 7) === 0)
                   .map((point, i) => (
                     <div
+                      // eslint-disable-next-line react/no-array-index-key -- Static milestone markers
                       key={i}
                       className={cn(
                         'w-1 h-2 rounded-full',
@@ -212,7 +218,7 @@ export function SprintBurndown({ sprint, dailyData = [], className }: SprintBurn
                 <div
                   className="absolute top-0 bottom-0 w-0.5 bg-destructive"
                   style={{
-                    left: `${Math.min(100, ((chartData.totalDays - (daysRemaining ?? 0)) / chartData.totalDays) * 100)}%`,
+                    left: `${String(Math.min(100, ((chartData.totalDays - (daysRemaining)) / chartData.totalDays) * 100))}%`,
                   }}
                 />
               )}
@@ -277,7 +283,7 @@ export function SprintBurndownMini({ sprint, className }: SprintBurndownMiniProp
             'h-full transition-all duration-300',
             progress >= 100 ? 'bg-green-500' : progress >= 75 ? 'bg-blue-500' : 'bg-primary'
           )}
-          style={{ width: `${Math.min(100, progress)}%` }}
+          style={{ width: `${String(Math.min(100, progress))}%` }}
         />
       </div>
       {sprint.status === 'active' && daysRemaining !== null && (
@@ -288,10 +294,10 @@ export function SprintBurndownMini({ sprint, className }: SprintBurndownMiniProp
           )}
         >
           {daysRemaining < 0
-            ? `${Math.abs(daysRemaining)} days overdue`
+            ? `${String(Math.abs(daysRemaining))} days overdue`
             : daysRemaining === 0
               ? 'Ends today'
-              : `${daysRemaining} days left`}
+              : `${String(daysRemaining)} days left`}
         </p>
       )}
     </div>

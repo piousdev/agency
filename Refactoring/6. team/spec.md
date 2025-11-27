@@ -13,7 +13,10 @@
 
 ### 1.1 Purpose
 
-The Team navigation serves as Skyll's comprehensive team management system, providing visibility into team member profiles, capacity, workload, performance, availability, and collaboration. It enables effective resource allocation, workload balancing, skill management, and team coordination.
+The Team navigation serves as Skyll's comprehensive team management system,
+providing visibility into team member profiles, capacity, workload, performance,
+availability, and collaboration. It enables effective resource allocation,
+workload balancing, skill management, and team coordination.
 
 ### 1.2 Scope
 
@@ -134,7 +137,8 @@ TEAM NAVIGATION
 - Preferred name/nickname
 - Profile photo
 - Job title (required)
-- Department (Engineering, Design, Product, Marketing, Sales, Operations, Leadership)
+- Department (Engineering, Design, Product, Marketing, Sales, Operations,
+  Leadership)
 - Employment type (Full-time, Part-time, Contract, Intern)
 - Employment status (Active, On Leave, Inactive, Former)
 - Start date (required)
@@ -183,9 +187,12 @@ TEAM NAVIGATION
 
 **Skill Categories**:
 
-- Design (UI/UX Design, Graphic Design, Branding, Illustration, Motion Graphics, 3D Design)
-- Development (Frontend, Backend, Full-Stack, Mobile, DevOps, QA/Testing, Database)
-- Content (Copywriting, Content Strategy, Video Production, Photography, Editing)
+- Design (UI/UX Design, Graphic Design, Branding, Illustration, Motion Graphics,
+  3D Design)
+- Development (Frontend, Backend, Full-Stack, Mobile, DevOps, QA/Testing,
+  Database)
+- Content (Copywriting, Content Strategy, Video Production, Photography,
+  Editing)
 - Marketing (SEO, Social Media, Email Marketing, Analytics, Paid Ads)
 - Project Management (Agile, Waterfall, Scrum, Client Management)
 - Business (Strategy, Operations, Finance, Legal, HR)
@@ -332,8 +339,7 @@ Lucas Kim        40h         25h          63%  ▓▓▓▓▓▓▓▓░░░
 - Filter by team/department
 - Export calendar
 
-**Time-Off Management**:
-See section 5 for detailed time-off system.
+**Time-Off Management**: See section 5 for detailed time-off system.
 
 ---
 
@@ -1019,7 +1025,8 @@ Configure team settings        Yes    No     No       No
 
 **Actor**: Project Manager (Noah)
 
-**Context**: Noah needs to plan team for a new 8-week project requiring design and development skills.
+**Context**: Noah needs to plan team for a new 8-week project requiring design
+and development skills.
 
 **Flow**:
 
@@ -1045,7 +1052,9 @@ Configure team settings        Yes    No     No       No
    - Lucas: Has 15h/week available, best option
    - Sarah: Over-utilized, skip
 
-**Decision**: 7. Noah selects Ava (Design, 12h/week) and Lucas (Frontend, 15h/week) 8. Checks their availability calendar: No major time-off scheduled ✓ 9. Reviews their skill levels:
+**Decision**: 7. Noah selects Ava (Design, 12h/week) and Lucas (Frontend,
+15h/week) 8. Checks their availability calendar: No major time-off scheduled
+✓ 9. Reviews their skill levels:
 
 - Ava: UI Design (Advanced), Figma (Expert) ✓
 - Lucas: React (Expert), TypeScript (Advanced) ✓
@@ -1061,7 +1070,8 @@ Configure team settings        Yes    No     No       No
 12. Notifications sent to Ava and Lucas about new project assignment
 13. Noah schedules kickoff meeting with team
 
-**Outcome**: Team allocated efficiently based on skills, capacity, and availability.
+**Outcome**: Team allocated efficiently based on skills, capacity, and
+availability.
 
 ---
 
@@ -1095,9 +1105,20 @@ Configure team settings        Yes    No     No       No
 8. Submits request
 9. Notification sent to manager (Noah Rodriguez)
 
-**Manager Review**: 10. Noah receives notification 11. Opens time-off request 12. Reviews Emma's request and team coverage: - Sees Emma's current projects - Sees other team members' vacation schedules - Identifies coverage gaps 13. Concern: Emma is lead designer on Project X, due mid-January 14. Noah contacts Emma: - Can the deadline be moved? - Can Ava take over? 15. Emma responds: Project X will be complete by Jan 10, before vacation 16. Noah approves request 17. System updates: - Emma's time-off balance: 10 days → 0 days remaining - Emma's availability calendar: Shows "On Vacation" Jan 15-26 - Emma's capacity for Jan 15-26 sprints: Reduced to 0 - Team calendar updated 18. Emma receives approval notification 19. Reminder set for Emma: 1 week before vacation to prepare handoff
+**Manager Review**: 10. Noah receives notification 11. Opens time-off
+request 12. Reviews Emma's request and team coverage: - Sees Emma's current
+projects - Sees other team members' vacation schedules - Identifies coverage
+gaps 13. Concern: Emma is lead designer on Project X, due mid-January 14. Noah
+contacts Emma: - Can the deadline be moved? - Can Ava take over? 15. Emma
+responds: Project X will be complete by Jan 10, before vacation 16. Noah
+approves request 17. System updates: - Emma's time-off balance: 10 days → 0 days
+remaining - Emma's availability calendar: Shows "On Vacation" Jan 15-26 - Emma's
+capacity for Jan 15-26 sprints: Reduced to 0 - Team calendar updated 18. Emma
+receives approval notification 19. Reminder set for Emma: 1 week before vacation
+to prepare handoff
 
-**Outcome**: Time-off approved with proper coverage planning and project considerations.
+**Outcome**: Time-off approved with proper coverage planning and project
+considerations.
 
 ---
 
@@ -1105,7 +1126,8 @@ Configure team settings        Yes    No     No       No
 
 **Actor**: Team Lead (Noah Rodriguez) reviewing Team Member (Lucas Kim)
 
-**Context**: End of Q4 2025. Noah needs to conduct Lucas's quarterly performance review.
+**Context**: End of Q4 2025. Noah needs to conduct Lucas's quarterly performance
+review.
 
 **Flow**:
 
@@ -1138,28 +1160,42 @@ Configure team settings        Yes    No     No       No
    - Goal 3: Mentor junior developer ✓ Achieved (mentored Sarah)
 6. Reviews feedback from peers:
    - Sarah Chen: "Lucas is an excellent mentor. Very patient and thorough."
-   - Emma Miller: "Great collaboration on Project X. Lucas's technical expertise was crucial."
+   - Emma Miller: "Great collaboration on Project X. Lucas's technical expertise
+     was crucial."
    - Ava Jones: "Lucas helped me understand the API integration. Very helpful."
 
 **Self-Assessment**: 7. Lucas has completed self-assessment:
 
 - Strengths: Technical skills, problem-solving, mentorship
-- Areas for growth: Time estimation, communication with non-technical stakeholders
+- Areas for growth: Time estimation, communication with non-technical
+  stakeholders
 - Career goals: Become Tech Lead within 2 years
 
 **Review Meeting**: 8. Noah schedules review meeting 9. During meeting:
 
-- Noah praises Lucas's performance: "Exceptional quarter. 29% above target is impressive."
+- Noah praises Lucas's performance: "Exceptional quarter. 29% above target is
+  impressive."
 - Discusses quality: "Consistently high quality. Only 3 tasks needed rework."
 - Highlights mentorship: "Sarah has grown significantly under your guidance."
-- Discusses growth areas: "Let's work on time estimation. Consider padding estimates by 20%."
-- Discusses stakeholder communication: "I'll include you in more client meetings for practice."
+- Discusses growth areas: "Let's work on time estimation. Consider padding
+  estimates by 20%."
+- Discusses stakeholder communication: "I'll include you in more client meetings
+  for practice."
 
-**Q1 2026 Goal Setting**: 10. Noah and Lucas set new goals: - Goal 1: Lead Project Y (first time as technical lead) - Goal 2: Improve time estimation accuracy to 90% - Goal 3: Present at 1 client meeting per month 11. Noah documents review in system: - Overall Rating: Exceeds Expectations (4.5/5) - Strengths noted - Development areas noted - Q1 goals entered 12. Lucas signs off on review 13. Noah discusses compensation: "Your performance warrants a raise. I'll submit the request to leadership."
+**Q1 2026 Goal Setting**: 10. Noah and Lucas set new goals: - Goal 1: Lead
+Project Y (first time as technical lead) - Goal 2: Improve time estimation
+accuracy to 90% - Goal 3: Present at 1 client meeting per month 11. Noah
+documents review in system: - Overall Rating: Exceeds Expectations (4.5/5) -
+Strengths noted - Development areas noted - Q1 goals entered 12. Lucas signs off
+on review 13. Noah discusses compensation: "Your performance warrants a raise.
+I'll submit the request to leadership."
 
-**Post-Review**: 14. Review saved to Lucas's profile 15. Q1 goals now visible and trackable 16. Lucas can see review anytime 17. Reminder set for mid-Q1 check-in (6 weeks)
+**Post-Review**: 14. Review saved to Lucas's profile 15. Q1 goals now visible
+and trackable 16. Lucas can see review anytime 17. Reminder set for mid-Q1
+check-in (6 weeks)
 
-**Outcome**: Structured performance review completed, goals set, development areas identified.
+**Outcome**: Structured performance review completed, goals set, development
+areas identified.
 
 ---
 
@@ -1167,7 +1203,8 @@ Configure team settings        Yes    No     No       No
 
 **Actor**: Admin (Leadership)
 
-**Context**: Company wants to expand mobile app development services. Need to assess team's mobile development skills.
+**Context**: Company wants to expand mobile app development services. Need to
+assess team's mobile development skills.
 
 **Flow**:
 
@@ -1211,9 +1248,17 @@ Configure team settings        Yes    No     No       No
 
 9. Recruitment: Post job for Senior Mobile Developer (iOS/Android)
 
-**Implementation**: 10. Admin assigns training to team members: - Opens each profile - Adds training goals - Allocates time for learning (10% of weekly capacity) 11. Updates capacity planning: - Lucas: Available capacity reduced by 4h/week for 12 weeks - Sarah: Available capacity reduced by 4h/week for 8 weeks 12. Tracks progress: - Weekly check-ins on learning - Skills updated as competency grows - Certificates added to profiles when earned 13. After training completion: - Skills verified by manager - Team members ready for mobile projects - Skill inventory updated
+**Implementation**: 10. Admin assigns training to team members: - Opens each
+profile - Adds training goals - Allocates time for learning (10% of weekly
+capacity) 11. Updates capacity planning: - Lucas: Available capacity reduced by
+4h/week for 12 weeks - Sarah: Available capacity reduced by 4h/week for 8
+weeks 12. Tracks progress: - Weekly check-ins on learning - Skills updated as
+competency grows - Certificates added to profiles when earned 13. After training
+completion: - Skills verified by manager - Team members ready for mobile
+projects - Skill inventory updated
 
-**Outcome**: Skill gap identified, training plan executed, team capabilities expanded.
+**Outcome**: Skill gap identified, training plan executed, team capabilities
+expanded.
 
 ---
 
@@ -1221,7 +1266,8 @@ Configure team settings        Yes    No     No       No
 
 **Actor**: Project Manager (Noah)
 
-**Context**: Multiple projects hitting deadlines simultaneously. Some team members are overloaded.
+**Context**: Multiple projects hitting deadlines simultaneously. Some team
+members are overloaded.
 
 **Flow**:
 
@@ -1283,7 +1329,8 @@ Configure team settings        Yes    No     No       No
     - Emma → Ava handoff for Project Z
     - Lucas → David onboarding for Project Y
 
-**Outcome**: Workload rebalanced, no one over-allocated, projects adequately staffed.
+**Outcome**: Workload rebalanced, no one over-allocated, projects adequately
+staffed.
 
 ---
 
@@ -1328,17 +1375,42 @@ Configure team settings        Yes    No     No       No
    - Assigns onboarding buddy: Lucas Kim
    - Prepares first project: Small bug fixes (starter tasks)
 
-**Day 1 (December 2)**: 8. Alex arrives 9. HR updates status: Pending → Active 10. System sends welcome email to Alex with: - Login credentials - First day schedule - Team directory - Company handbook - IT setup guide 11. Alex completes Day 1 checklist items: - [ ] ✓ Badge/Access card received - [ ] ✓ Equipment received and set up - [ ] ✓ Email and Slack verified - [ ] ✓ Welcome meeting with Noah (manager) - [ ] ✓ Office tour - [ ] ✓ HR orientation - [ ] ✓ Team lunch 12. Noah adds Alex to team: - Adds to Engineering channel (Slack) - Adds to standups - Introduces to team members 13. Lucas (buddy) scheduled for check-in tomorrow
+**Day 1 (December 2)**: 8. Alex arrives 9. HR updates status: Pending →
+Active 10. System sends welcome email to Alex with: - Login credentials - First
+day schedule - Team directory - Company handbook - IT setup guide 11. Alex
+completes Day 1 checklist items: - [ ] ✓ Badge/Access card received - [ ] ✓
+Equipment received and set up - [ ] ✓ Email and Slack verified - [ ] ✓ Welcome
+meeting with Noah (manager) - [ ] ✓ Office tour - [ ] ✓ HR orientation - [ ] ✓
+Team lunch 12. Noah adds Alex to team: - Adds to Engineering channel (Slack) -
+Adds to standups - Introduces to team members 13. Lucas (buddy) scheduled for
+check-in tomorrow
 
-**First Week**: 14. Alex continues onboarding: - Day 2: System training, tool setup - Day 3: Codebase walkthrough with Lucas - Day 4: First task assigned (bug fix) - Day 5: Week 1 check-in with Noah 15. Noah tracks progress in onboarding checklist: - [ ] ✓ Orientation completed - [ ] ✓ System accounts active - [ ] ✓ Team introductions - [ ] ✓ Training completed - [ ] ✓ First task assigned - [ ] ⏳ First task completed (in progress) 16. Alex adds skills to profile: - React (Advanced) - JavaScript (Expert) - CSS (Advanced) - Git (Advanced) 17. Noah verifies skills based on past experience
+**First Week**: 14. Alex continues onboarding: - Day 2: System training, tool
+setup - Day 3: Codebase walkthrough with Lucas - Day 4: First task assigned (bug
+fix) - Day 5: Week 1 check-in with Noah 15. Noah tracks progress in onboarding
+checklist: - [ ] ✓ Orientation completed - [ ] ✓ System accounts active - [ ] ✓
+Team introductions - [ ] ✓ Training completed - [ ] ✓ First task assigned - [ ]
+⏳ First task completed (in progress) 16. Alex adds skills to profile: - React
+(Advanced) - JavaScript (Expert) - CSS (Advanced) - Git (Advanced) 17. Noah
+verifies skills based on past experience
 
-**30-Day Check-In**: 18. System reminder: "30-day check-in with Alex Chen" 19. Noah opens Alex's profile 20. Reviews performance so far: - Tasks completed: 12 - On-time: 100% - Quality: Good (2 minor issues) 21. Meeting with Alex: - How's onboarding going? Any questions? - How's the team? Do you feel supported? - How's the workload? Too much/too little? - What training would be helpful? 22. Alex feedback: "Going well. Would like more complex tasks." 23. Noah notes in profile: "Ready for more challenging work" 24. Assigns Alex to Project Y (frontend work)
+**30-Day Check-In**: 18. System reminder: "30-day check-in with Alex Chen" 19.
+Noah opens Alex's profile 20. Reviews performance so far: - Tasks completed:
+12 - On-time: 100% - Quality: Good (2 minor issues) 21. Meeting with Alex: -
+How's onboarding going? Any questions? - How's the team? Do you feel
+supported? - How's the workload? Too much/too little? - What training would be
+helpful? 22. Alex feedback: "Going well. Would like more complex tasks." 23.
+Noah notes in profile: "Ready for more challenging work" 24. Assigns Alex to
+Project Y (frontend work)
 
-**60-Day Check-In**: 25. Similar check-in process 26. Alex settling in well 27. Skills being demonstrated in real projects
+**60-Day Check-In**: 25. Similar check-in process 26. Alex settling in well 27.
+Skills being demonstrated in real projects
 
-**90-Day Review**: 28. Formal review process (see Scenario 3) 29. Onboarding officially complete 30. Alex is now a fully integrated team member
+**90-Day Review**: 28. Formal review process (see Scenario 3) 29. Onboarding
+officially complete 30. Alex is now a fully integrated team member
 
-**Outcome**: Smooth onboarding process with structured support and regular check-ins.
+**Outcome**: Smooth onboarding process with structured support and regular
+check-ins.
 
 ---
 

@@ -1,10 +1,13 @@
 # Versioning Guide
 
-This project uses [Changesets](https://github.com/changesets/changesets) for version management and changelog generation, following industry-standard practices for monorepo versioning.
+This project uses [Changesets](https://github.com/changesets/changesets) for
+version management and changelog generation, following industry-standard
+practices for monorepo versioning.
 
 ## Overview
 
-**Changesets** is the official Turborepo recommendation for managing versions in monorepos. It provides:
+**Changesets** is the official Turborepo recommendation for managing versions in
+monorepos. It provides:
 
 - ✅ Independent versioning for each package (`@repo/web` and `@repo/api`)
 - ✅ Automatic CHANGELOG.md generation
@@ -224,18 +227,22 @@ Example CHANGELOG entry with GitHub integration:
 ```markdown
 ### Minor Changes
 
-- [#42](https://github.com/piousdev/agency/pull/42) [`abc1234`](https://github.com/piousdev/agency/commit/abc1234) Thanks [@username](https://github.com/username)! - Add user dashboard with analytics
+- [#42](https://github.com/piousdev/agency/pull/42)
+  [`abc1234`](https://github.com/piousdev/agency/commit/abc1234) Thanks
+  [@username](https://github.com/username)! - Add user dashboard with analytics
 ```
 
 To enable full GitHub integration locally (optional):
 
-1. Create a GitHub Personal Access Token (Settings → Developer settings → Personal access tokens)
+1. Create a GitHub Personal Access Token (Settings → Developer settings →
+   Personal access tokens)
 2. Add to `.env` (not committed):
    ```
    GITHUB_TOKEN=your_token_here
    ```
 
-Note: This is only needed for local CHANGELOG generation. CI/CD can use `GITHUB_TOKEN` automatically.
+Note: This is only needed for local CHANGELOG generation. CI/CD can use
+`GITHUB_TOKEN` automatically.
 
 ## Best Practices
 
@@ -306,7 +313,8 @@ When changing `@repo/api`, consider if `@repo/web` needs updates:
 
 Add new user status field to API
 
-API now returns a `status` field in user objects. Web app updated to display this information.
+API now returns a `status` field in user objects. Web app updated to display
+this information.
 ```
 
 ## FAQ
@@ -326,11 +334,13 @@ git push
 
 ### Q: Can I edit a changeset after creating it?
 
-Yes! Changesets are just markdown files in `.changeset/`. Edit them before running `pnpm changeset:version`.
+Yes! Changesets are just markdown files in `.changeset/`. Edit them before
+running `pnpm changeset:version`.
 
 ### Q: Should I commit changeset files?
 
-Yes! Always commit changeset files with your code changes. They're part of your PR.
+Yes! Always commit changeset files with your code changes. They're part of your
+PR.
 
 ### Q: How do I check what will be released?
 
@@ -350,7 +360,9 @@ pnpm changeset --empty
 
 ### Q: What if I need to version packages together?
 
-Edit `.changeset/config.json` and use the `linked` or `fixed` options. See [Changesets documentation](https://github.com/changesets/changesets/blob/main/docs/linked-packages.md) for details.
+Edit `.changeset/config.json` and use the `linked` or `fixed` options. See
+[Changesets documentation](https://github.com/changesets/changesets/blob/main/docs/linked-packages.md)
+for details.
 
 ## Resources
 
@@ -369,4 +381,6 @@ If you're unsure whether to create a changeset or what bump type to use:
 
 ---
 
-**Remember**: Changesets are about communicating changes to users and other developers. Write summaries that help people understand what changed and why it matters.
+**Remember**: Changesets are about communicating changes to users and other
+developers. Write summaries that help people understand what changed and why it
+matters.

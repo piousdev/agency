@@ -2,6 +2,7 @@ import { zValidator } from '@hono/zod-validator';
 import { and, asc, count, desc, eq, inArray } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { project, projectAssignment } from '../../db/schema';
 import { type AuthVariables, requireAuth, requireInternal } from '../../middleware/auth';
@@ -27,24 +28,26 @@ app.get(
       // Build WHERE clause
       const whereConditions = [];
 
-      if (status) {
+      if (status !== undefined && status !== '') {
         whereConditions.push(eq(project.status, status));
       }
-      if (clientId) {
+      if (clientId !== undefined && clientId !== '') {
         whereConditions.push(eq(project.clientId, clientId));
       }
 
       let whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
       // Determine sort column
-      const sortColumn = {
+      const sortColumnMap: Record<string, typeof project.name | typeof project.createdAt | typeof project.updatedAt | typeof project.deliveredAt> = {
         name: project.name,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
         deliveredAt: project.deliveredAt,
-      }[sortBy];
+      };
+      // eslint-disable-next-line security/detect-object-injection -- sortBy is validated by zod schema as enum
+      const sortColumn = sortColumnMap[sortBy];
 
-      if (assignedToId) {
+      if (assignedToId !== undefined && assignedToId !== '') {
         // Get project IDs assigned to this user
         const assignments = await db.query.projectAssignment.findMany({
           where: eq(projectAssignment.userId, assignedToId),

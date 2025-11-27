@@ -2,14 +2,17 @@
 
 ## Why
 
-The Business Center currently lacks a centralized command center. Users must navigate through multiple pages to find critical information, leading to:
+The Business Center currently lacks a centralized command center. Users must
+navigate through multiple pages to find critical information, leading to:
 
 1. **Inefficient workflows** - No quick overview of daily priorities
 2. **Delayed response to issues** - Critical alerts buried in different views
-3. **Role mismatch** - All users see the same interface regardless of their needs
+3. **Role mismatch** - All users see the same interface regardless of their
+   needs
 4. **No customization** - Users cannot arrange widgets to match their workflow
 
-This feature addresses these gaps by providing a role-based, customizable dashboard that surfaces the most relevant information for each user.
+This feature addresses these gaps by providing a role-based, customizable
+dashboard that surfaces the most relevant information for each user.
 
 ## What Changes
 
@@ -63,8 +66,10 @@ This feature addresses these gaps by providing a role-based, customizable dashbo
 
 **New Components:**
 
-- `apps/web/src/components/overview/` - All dashboard widgets and shared components
-- `apps/web/src/components/overview/widgets/` - Individual widget implementations
+- `apps/web/src/components/overview/` - All dashboard widgets and shared
+  components
+- `apps/web/src/components/overview/widgets/` - Individual widget
+  implementations
 - `apps/web/src/components/overview/shared/` - Widget container, grid, etc.
 
 **New State:**

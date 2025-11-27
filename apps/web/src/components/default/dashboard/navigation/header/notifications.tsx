@@ -1,7 +1,18 @@
 'use client';
 
-import { IconBell, IconCheck, IconChecks, IconFilter, IconX } from '@tabler/icons-react';
 import * as React from 'react';
+
+import Link from 'next/link';
+
+import {
+  IconBell,
+  IconCheck,
+  IconChecks,
+  IconFilter,
+  IconLoader2,
+  IconX,
+} from '@tabler/icons-react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,85 +22,86 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useNotifications, type Notification } from '@/lib/hooks/use-notifications';
 import { cn } from '@/lib/utils';
 
-type Notification = {
-  id: string;
-  type: 'info' | 'success' | 'warning' | 'error';
-  title: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
-  actionUrl?: string;
-};
-
-// Mock notifications for demo
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'info',
-    title: 'New project assigned',
-    message: 'You have been assigned to Project Alpha',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    read: false,
-    actionUrl: '/projects/alpha',
-  },
-  {
-    id: '2',
-    type: 'success',
-    title: 'Task completed',
-    message: 'Your task "Design mockups" has been marked as complete',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    read: false,
-  },
-  {
-    id: '3',
-    type: 'warning',
-    title: 'Deadline approaching',
-    message: 'Project Beta deadline is in 2 days',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60),
-    read: true,
-    actionUrl: '/projects/beta',
-  },
-  {
-    id: '4',
-    type: 'info',
-    title: 'New comment',
-    message: 'Sarah commented on your issue',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    read: true,
-  },
-];
-
-function formatTimeAgo(date: Date): string {
+function formatTimeAgo(dateString: string): string {
+  const date = new Date(dateString);
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
 
   if (seconds < 60) return 'just now';
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return `${String(minutes)}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${String(hours)}h ago`;
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return `${String(days)}d ago`;
 }
 
-function TimeAgo({ date }: { date: Date }) {
+function TimeAgo({ date }: { date: string }) {
   const [timeAgo, setTimeAgo] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     setTimeAgo(formatTimeAgo(date));
+    // Update time ago every minute
+    const interval = setInterval(() => {
+      setTimeAgo(formatTimeAgo(date));
+    }, 60000);
+    return () => clearInterval(interval);
   }, [date]);
 
   if (!timeAgo) return null;
 
-  return <>{timeAgo}</>;
+  return timeAgo;
+}
+
+// Map notification types to display colors
+function getNotificationTypeColor(type: Notification['type']): string {
+  switch (type) {
+    case 'mention':
+    case 'comment':
+    case 'reply':
+      return 'bg-blue-500';
+    case 'assignment':
+      return 'bg-green-500';
+    case 'unassignment':
+      return 'bg-orange-500';
+    case 'status_change':
+    case 'project_update':
+      return 'bg-purple-500';
+    case 'due_date_reminder':
+      return 'bg-yellow-500';
+    case 'overdue':
+      return 'bg-red-500';
+    case 'system':
+    default:
+      return 'bg-gray-500';
+  }
+}
+
+function NotificationContent({ notification }: { notification: Notification }) {
+  return (
+    <div className="flex-1 space-y-1">
+      <p className="text-sm font-medium leading-none">{notification.title}</p>
+      <p className="text-sm text-muted-foreground line-clamp-2">{notification.message}</p>
+      <p className="text-xs text-muted-foreground">
+        <TimeAgo date={notification.createdAt} />
+      </p>
+    </div>
+  );
 }
 
 export function Notifications() {
-  const [notifications, setNotifications] = React.useState<Notification[]>(mockNotifications);
+  const {
+    notifications,
+    unreadCount,
+    isLoading,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    clearAll,
+  } = useNotifications({ pageSize: 20 });
   const [filter, setFilter] = React.useState<'all' | 'unread'>('all');
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const filteredNotifications = React.useMemo(() => {
     if (filter === 'unread') {
@@ -97,22 +109,6 @@ export function Notifications() {
     }
     return notifications;
   }, [notifications, filter]);
-
-  const markAsRead = (id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
-
-  const deleteNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
-
-  const clearAll = () => {
-    setNotifications([]);
-  };
 
   return (
     <DropdownMenu>
@@ -168,11 +164,16 @@ export function Notifications() {
         </div>
 
         <ScrollArea className="h-[400px]">
-          {filteredNotifications.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <IconLoader2 className="mb-2 size-8 text-muted-foreground animate-spin" />
+              <p className="text-sm text-muted-foreground">Loading notifications...</p>
+            </div>
+          ) : filteredNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <IconBell className="mb-2 size-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                {filter === 'unread' ? 'No unread notifications' : 'No notifications'}
+                {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
               </p>
             </div>
           ) : (
@@ -188,17 +189,21 @@ export function Notifications() {
                   <div
                     className={cn(
                       'mt-1 size-2 shrink-0 rounded-full',
-                      !notification.read && 'bg-primary',
+                      !notification.read && getNotificationTypeColor(notification.type),
                       notification.read && 'bg-transparent'
                     )}
                   />
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium leading-none">{notification.title}</p>
-                    <p className="text-sm text-muted-foreground">{notification.message}</p>
-                    <p className="text-xs text-muted-foreground">
-                      <TimeAgo date={notification.timestamp} />
-                    </p>
-                  </div>
+                  {notification.actionUrl ? (
+                    <Link
+                      href={notification.actionUrl}
+                      className="flex-1 cursor-pointer"
+                      onClick={() => !notification.read && markAsRead(notification.id)}
+                    >
+                      <NotificationContent notification={notification} />
+                    </Link>
+                  ) : (
+                    <NotificationContent notification={notification} />
+                  )}
                   <div className="flex shrink-0 items-start gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                     {!notification.read && (
                       <Button

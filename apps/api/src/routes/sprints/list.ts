@@ -2,8 +2,9 @@
  * List sprints API route
  */
 
-import { Hono } from 'hono';
 import { and, desc, eq } from 'drizzle-orm';
+import { Hono } from 'hono';
+
 import { db } from '../../db/index.js';
 import { sprint, type Sprint } from '../../db/schema/sprint.js';
 import { requireAuth, requireInternal } from '../../middleware/auth.js';
@@ -23,15 +24,15 @@ type SprintStatus = Sprint['status'];
 app.get('/', requireAuth(), requireInternal(), async (c) => {
   const projectId = c.req.query('projectId');
   const status = c.req.query('status') as SprintStatus | undefined;
-  const sort = c.req.query('sort') || 'startDate';
+  const sort = c.req.query('sort') ?? 'startDate';
 
   try {
     // Build where conditions
     const conditions = [];
-    if (projectId) {
+    if (projectId !== undefined && projectId !== '') {
       conditions.push(eq(sprint.projectId, projectId));
     }
-    if (status) {
+    if (status !== undefined && status !== '') {
       conditions.push(eq(sprint.status, status));
     }
 
@@ -39,7 +40,7 @@ app.get('/', requireAuth(), requireInternal(), async (c) => {
 
     const sprints = await db.query.sprint.findMany({
       where: whereClause,
-      with: projectId
+      with: projectId !== undefined && projectId !== ''
         ? undefined
         : {
             project: {

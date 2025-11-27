@@ -4,7 +4,9 @@
 
 ### Requirement: Health Check Endpoint
 
-The system SHALL provide health check endpoints that report the operational status of the application and its dependencies for monitoring and deployment validation.
+The system SHALL provide health check endpoints that report the operational
+status of the application and its dependencies for monitoring and deployment
+validation.
 
 #### Scenario: Basic health check - healthy
 
@@ -31,7 +33,8 @@ The system SHALL provide health check endpoints that report the operational stat
 
 ### Requirement: Health Check Response Format
 
-The health check endpoint SHALL return a standardized JSON response format for consistent monitoring integration.
+The health check endpoint SHALL return a standardized JSON response format for
+consistent monitoring integration.
 
 #### Scenario: Standard response structure
 

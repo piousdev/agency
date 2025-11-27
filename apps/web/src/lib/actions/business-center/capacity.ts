@@ -1,8 +1,10 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireUser } from '@/lib/auth/session';
+
 import { updateCapacity } from '@/lib/api/users';
+import { requireUser } from '@/lib/auth/session';
+
 import { withErrorHandling, type ActionResult } from './errors';
 
 export async function updateCapacityAction(

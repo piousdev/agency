@@ -28,6 +28,7 @@ export function UsersTableSkeleton() {
         </TableHeader>
         <TableBody>
           {Array.from({ length: 5 }).map((_, i) => (
+            // eslint-disable-next-line react/no-array-index-key -- Static skeleton, no reordering
             <TableRow key={String(i)}>
               <TableCell>
                 <Skeleton className="h-4 w-32" />

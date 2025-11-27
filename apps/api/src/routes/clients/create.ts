@@ -1,7 +1,8 @@
+import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { zValidator } from '@hono/zod-validator';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
 import { client } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -38,10 +39,10 @@ app.post(
           name: data.name,
           type: data.type,
           email: data.email,
-          phone: data.phone || null,
-          website: data.website || null,
-          address: data.address || null,
-          notes: data.notes || null,
+          phone: data.phone ?? null,
+          website: data.website ?? null,
+          address: data.address ?? null,
+          notes: data.notes ?? null,
         })
         .returning();
 

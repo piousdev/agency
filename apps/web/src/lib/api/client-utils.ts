@@ -13,7 +13,7 @@
  * @returns Full URL with query string
  */
 export function buildApiUrl(path: string, params?: Record<string, unknown>): string {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
   const url = `${baseUrl}${path}`;
 
   if (!params) {
@@ -24,7 +24,20 @@ export function buildApiUrl(path: string, params?: Record<string, unknown>): str
 
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      queryParams.append(key, value.toString());
+      // Handle various types properly for URL encoding
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        queryParams.append(key, String(value));
+      } else if (Array.isArray(value)) {
+        // For arrays, append each item separately
+        value.forEach((item) => {
+          if (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean') {
+            queryParams.append(key, String(item));
+          }
+        });
+      } else {
+        // For objects, serialize to JSON
+        queryParams.append(key, JSON.stringify(value));
+      }
     }
   });
 
@@ -42,11 +55,11 @@ export function buildApiUrl(path: string, params?: Record<string, unknown>): str
  */
 export async function clientFetch(url: string, options: RequestInit = {}): Promise<Response> {
   return fetch(url, {
-    ...options,
     credentials: 'include',
+    ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     },
   });
 }

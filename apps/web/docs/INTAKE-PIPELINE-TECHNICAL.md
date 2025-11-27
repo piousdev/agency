@@ -1,6 +1,7 @@
 # Intake Pipeline Technical Documentation
 
-Component architecture, state management, and development guide for the Intake Pipeline feature.
+Component architecture, state management, and development guide for the Intake
+Pipeline feature.
 
 ## Component Architecture
 
@@ -202,8 +203,8 @@ persist(
 )
 ```
 
-**Persisted:** `viewMode`, `draft`, `draftStep`
-**Not persisted:** `filters`, `selectedIds`
+**Persisted:** `viewMode`, `draft`, `draftStep` **Not persisted:** `filters`,
+`selectedIds`
 
 ---
 
@@ -357,7 +358,10 @@ export class BusinessCenterError extends Error {
 }
 
 // Error handler
-export function handleApiError<T>(error: unknown, context: string): ActionResponse<T> {
+export function handleApiError<T>(
+  error: unknown,
+  context: string
+): ActionResponse<T> {
   console.error(`${context} error:`, error);
 
   if (error instanceof BusinessCenterError) {
@@ -378,11 +382,11 @@ export function handleApiError<T>(error: unknown, context: string): ActionRespon
 
 ### Unit Tests
 
-**Location:** `src/lib/schemas/__tests__/request.test.ts`
-**Coverage:** 70 tests for all Zod schemas and routing logic
+**Location:** `src/lib/schemas/__tests__/request.test.ts` **Coverage:** 70 tests
+for all Zod schemas and routing logic
 
-**Location:** `src/lib/stores/__tests__/intake-store.test.ts`
-**Coverage:** 57 tests for Zustand store actions and selectors
+**Location:** `src/lib/stores/__tests__/intake-store.test.ts` **Coverage:** 57
+tests for Zustand store actions and selectors
 
 ### Component Tests
 
@@ -396,11 +400,11 @@ export function handleApiError<T>(error: unknown, context: string): ActionRespon
 
 ### E2E Tests
 
-**Location:** `tests/e2e/intake-pipeline.spec.ts`
-**Coverage:** Full user flows (submission, transition, estimation, conversion)
+**Location:** `tests/e2e/intake-pipeline.spec.ts` **Coverage:** Full user flows
+(submission, transition, estimation, conversion)
 
-**Location:** `tests/e2e/intake-pipeline-a11y.spec.ts`
-**Coverage:** Accessibility (keyboard, screen reader, focus)
+**Location:** `tests/e2e/intake-pipeline-a11y.spec.ts` **Coverage:**
+Accessibility (keyboard, screen reader, focus)
 
 ---
 

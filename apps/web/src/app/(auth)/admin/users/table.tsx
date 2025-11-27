@@ -5,10 +5,14 @@
 
 'use client';
 
-import { IconDots, IconPencil, IconTrash, IconUserCog } from '@tabler/icons-react';
+import { useState } from 'react';
+
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+
+import { IconDots, IconPencil, IconTrash, IconUserCog } from '@tabler/icons-react';
+
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,8 +31,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { User } from '@/lib/api/users';
+
 import { DeleteUserDialog } from './delete-dialog';
+
+import type { User } from '@/lib/api/users';
 
 interface UsersTableProps {
   users: User[];
@@ -60,7 +66,7 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
    * Format date for display
    */
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-BE', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

@@ -13,4 +13,5 @@ You can use Next.js App Router's special file naming:
 - Place `favicon.ico`, `icon.png`, or `apple-icon.png` in the `/app` directory
 - Next.js will automatically handle them
 
-See: https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons
+See:
+https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons

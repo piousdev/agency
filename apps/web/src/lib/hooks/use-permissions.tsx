@@ -30,13 +30,16 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useAuth } from './use-auth';
-import type { Permission } from '@/lib/auth/permissions-constants';
-import { DefaultRolePermissions, Permissions } from '@/lib/auth/permissions-constants';
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { DefaultRolePermissions } from '@/lib/auth/permissions-constants';
+
+import { useAuth } from './use-auth';
+
+import type { Permission } from '@/lib/auth/permissions-constants';
 
 // Re-export for convenience in client components
-export { Permissions, type Permission } from '@/lib/auth/permissions-constants';
+export { type Permission, Permissions } from '@/lib/auth/permissions-constants';
 
 interface UsePermissionsReturn {
   /**
@@ -107,23 +110,23 @@ export function usePermissions(): UsePermissionsReturn {
       if (!response.ok) {
         // Fallback: if user is internal (has @company email), grant editor permissions
         // This maintains backward compatibility until roles are fully seeded
-        if (user.email?.includes('@')) {
+        if (user.email.includes('@')) {
           // Check if internal user based on some criteria
           // For now, fall back to editor permissions
-          setPermissions(DefaultRolePermissions.editor as Permission[]);
+          setPermissions(DefaultRolePermissions.editor);
         } else {
-          setPermissions(DefaultRolePermissions.viewer as Permission[]);
+          setPermissions(DefaultRolePermissions.viewer);
         }
         return;
       }
 
-      const data = await response.json();
-      setPermissions(data.permissions || []);
+      const data = (await response.json()) as { permissions?: Permission[] };
+      setPermissions(data.permissions ?? []);
     } catch (err) {
       console.error('Failed to fetch permissions:', err);
       setError(err instanceof Error ? err : new Error('Failed to fetch permissions'));
       // Fallback to editor permissions for authenticated users
-      setPermissions(DefaultRolePermissions.editor as Permission[]);
+      setPermissions(DefaultRolePermissions.editor);
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +135,7 @@ export function usePermissions(): UsePermissionsReturn {
   // Fetch permissions when user changes
   useEffect(() => {
     if (!isAuthLoading) {
-      fetchPermissions();
+      void fetchPermissions();
     }
   }, [fetchPermissions, isAuthLoading]);
 
@@ -207,7 +210,7 @@ const PermissionLabels: Record<string, string> = {
  * Get a user-friendly label for a permission
  */
 function getPermissionLabel(permission: Permission): string {
-  return PermissionLabels[permission] || permission;
+  return PermissionLabels[permission] ?? permission;
 }
 
 interface PermissionGateProps {
@@ -280,17 +283,17 @@ export function PermissionGate({
 
   // User has permission - render normally
   if (hasPermission) {
-    return <>{children}</>;
+    return children;
   }
 
   // User lacks permission - handle based on behavior
   if (behavior === 'hide') {
-    return <>{fallback}</>;
+    return { fallback };
   }
 
   // 'disable' behavior - wrap children in disabled state with tooltip
   const tooltipMessage =
-    disabledTooltip ||
+    disabledTooltip ??
     (permission
       ? `You don't have permission to ${getPermissionLabel(permission)}`
       : requiredPermissions && requiredPermissions.length > 0

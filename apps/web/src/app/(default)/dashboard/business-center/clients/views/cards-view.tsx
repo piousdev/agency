@@ -1,16 +1,7 @@
 'use client';
 
-import { format, formatDistanceToNowStrict } from 'date-fns';
 import { useCallback, useId } from 'react';
-import { Badge } from '@/components/ui/badge';
-import {
-  MotionCard,
-  MotionCardContent,
-  MotionCardFooter,
-  MotionCardHeader,
-  MotionCardContainer,
-} from '@/components/ui/motion-card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 import {
   IconBuilding,
   IconMail,
@@ -19,9 +10,22 @@ import {
   IconCircleCheck,
   IconCircleX,
 } from '@tabler/icons-react';
+import { format, formatDistanceToNowStrict } from 'date-fns';
+
+import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { Client } from '@/lib/api/clients/types';
+import {
+  MotionCard,
+  MotionCardContent,
+  MotionCardFooter,
+  MotionCardHeader,
+  MotionCardContainer,
+} from '@/components/ui/motion-card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+
+import type { Client } from '@/lib/api/clients/types';
+
 
 interface ClientsCardsViewProps {
   clients: Client[];
@@ -49,11 +53,13 @@ const typeConfig = {
   },
 } as const;
 
+const EMPTY_ARRAY: string[] = [];
+
 export function ClientsCardsView({
   clients,
   onClientClick,
   selectionMode = false,
-  selectedIds = [],
+  selectedIds = EMPTY_ARRAY,
   onSelectionChange,
 }: ClientsCardsViewProps) {
   const baseId = useId();
@@ -104,7 +110,7 @@ export function ClientsCardsView({
         staggerDelay={0.06}
       >
         {clients.map((client, index) => {
-          const type = typeConfig[client.type] ?? typeConfig.software;
+          const type = typeConfig[client.type];
           const titleId = `${baseId}-title-${client.id}`;
 
           return (

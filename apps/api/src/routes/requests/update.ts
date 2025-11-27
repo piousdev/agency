@@ -1,12 +1,13 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
 import { request, requestHistory, client, project, user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { updateRequestSchema, assignPmSchema, assignEstimatorSchema } from '../../schemas/request';
-import { eq } from 'drizzle-orm';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -40,7 +41,7 @@ app.patch(
       }
 
       // Verify client exists if provided
-      if (body.clientId) {
+      if (body.clientId !== undefined && body.clientId !== '') {
         const clientExists = await db.query.client.findFirst({
           where: eq(client.id, body.clientId),
         });
@@ -50,7 +51,7 @@ app.patch(
       }
 
       // Verify related project exists if provided
-      if (body.relatedProjectId) {
+      if (body.relatedProjectId !== undefined && body.relatedProjectId !== '') {
         const projectExists = await db.query.project.findFirst({
           where: eq(project.id, body.relatedProjectId),
         });
@@ -60,7 +61,7 @@ app.patch(
       }
 
       // Update the request
-      const updatedRequest = await db
+      await db
         .update(request)
         .set({
           ...body,

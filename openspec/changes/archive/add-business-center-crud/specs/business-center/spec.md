@@ -4,9 +4,11 @@
 
 ### Requirement: Permission-Based Access Control
 
-The system SHALL enforce fine-grained permissions for all CRUD operations in the Business Center.
+The system SHALL enforce fine-grained permissions for all CRUD operations in the
+Business Center.
 
-Permissions SHALL be stored in the role table's JSONB permissions field and checked before every mutation.
+Permissions SHALL be stored in the role table's JSONB permissions field and
+checked before every mutation.
 
 The following permissions SHALL be supported:
 
@@ -22,7 +24,8 @@ The following permissions SHALL be supported:
 
 #### Scenario: User without permission denied
 
-- **WHEN** a user without `project:delete` permission attempts to delete a project
+- **WHEN** a user without `project:delete` permission attempts to delete a
+  project
 - **THEN** the action fails with a "Permission denied" error
 - **AND** no data is modified
 
@@ -35,13 +38,17 @@ The following permissions SHALL be supported:
 
 ### Requirement: Ticket CRUD Operations
 
-The system SHALL provide full Create, Read, Update, and Delete operations for tickets.
+The system SHALL provide full Create, Read, Update, and Delete operations for
+tickets.
 
 #### Scenario: Create ticket via dedicated page
 
-- **WHEN** a user with `ticket:create` permission navigates to `/business-center/intake-queue/new`
-- **THEN** a form is displayed with fields for title, description, type, priority, client, and assignee
-- **AND** upon successful submission, the user is redirected to the new ticket's detail view
+- **WHEN** a user with `ticket:create` permission navigates to
+  `/business-center/intake-queue/new`
+- **THEN** a form is displayed with fields for title, description, type,
+  priority, client, and assignee
+- **AND** upon successful submission, the user is redirected to the new ticket's
+  detail view
 
 #### Scenario: Create ticket from kanban column
 
@@ -64,13 +71,17 @@ The system SHALL provide full Create, Read, Update, and Delete operations for ti
 
 ### Requirement: Project CRUD Operations
 
-The system SHALL provide full Create, Read, Update, and Delete operations for projects.
+The system SHALL provide full Create, Read, Update, and Delete operations for
+projects.
 
 #### Scenario: Create project via dedicated page
 
-- **WHEN** a user with `project:create` permission navigates to `/business-center/projects/new`
-- **THEN** a form is displayed with fields for name, description, client, priority, due date, and team members
-- **AND** upon successful submission, the user is redirected to the new project's detail view
+- **WHEN** a user with `project:create` permission navigates to
+  `/business-center/projects/new`
+- **THEN** a form is displayed with fields for name, description, client,
+  priority, due date, and team members
+- **AND** upon successful submission, the user is redirected to the new
+  project's detail view
 
 #### Scenario: Create project from kanban column
 
@@ -87,23 +98,28 @@ The system SHALL provide full Create, Read, Update, and Delete operations for pr
 
 - **WHEN** a user with `project:delete` permission clicks "Delete" on a project
 - **THEN** a confirmation dialog appears warning about associated tickets
-- **AND** upon confirmation, the project is soft-deleted (status set to 'archived')
+- **AND** upon confirmation, the project is soft-deleted (status set to
+  'archived')
 
 ---
 
 ### Requirement: Client CRUD Operations
 
-The system SHALL provide full Create, Read, Update, and Delete operations for clients.
+The system SHALL provide full Create, Read, Update, and Delete operations for
+clients.
 
 #### Scenario: View clients list
 
 - **WHEN** a user navigates to `/business-center/clients`
-- **THEN** a table of all clients is displayed with name, type, email, and project count
+- **THEN** a table of all clients is displayed with name, type, email, and
+  project count
 
 #### Scenario: Create client via dedicated page
 
-- **WHEN** a user with `client:create` permission navigates to `/business-center/clients/new`
-- **THEN** a form is displayed with fields for name, type, email, phone, website, and address
+- **WHEN** a user with `client:create` permission navigates to
+  `/business-center/clients/new`
+- **THEN** a form is displayed with fields for name, type, email, phone,
+  website, and address
 - **AND** upon successful submission, the user is redirected to the clients list
 
 #### Scenario: Edit client via dialog
@@ -113,15 +129,18 @@ The system SHALL provide full Create, Read, Update, and Delete operations for cl
 
 #### Scenario: Delete client with cascade warning
 
-- **WHEN** a user with `client:delete` permission clicks "Delete" on a client with associated projects
-- **THEN** a confirmation dialog shows the number of associated projects and tickets
+- **WHEN** a user with `client:delete` permission clicks "Delete" on a client
+  with associated projects
+- **THEN** a confirmation dialog shows the number of associated projects and
+  tickets
 - **AND** upon confirmation, the client is soft-deleted (active set to false)
 
 ---
 
 ### Requirement: Bulk Operations
 
-The system SHALL support bulk selection and bulk actions for tickets and projects.
+The system SHALL support bulk selection and bulk actions for tickets and
+projects.
 
 #### Scenario: Select multiple items
 
@@ -131,19 +150,22 @@ The system SHALL support bulk selection and bulk actions for tickets and project
 
 #### Scenario: Bulk status update
 
-- **WHEN** a user with `ticket:edit` permission selects multiple tickets and chooses "Change Status"
+- **WHEN** a user with `ticket:edit` permission selects multiple tickets and
+  chooses "Change Status"
 - **THEN** all selected tickets are updated to the chosen status
 - **AND** a success toast shows how many items were updated
 
 #### Scenario: Bulk assign
 
-- **WHEN** a user with `project:assign` permission selects multiple projects and chooses "Assign to"
+- **WHEN** a user with `project:assign` permission selects multiple projects and
+  chooses "Assign to"
 - **THEN** a user selection dialog appears
 - **AND** upon selection, all projects are assigned to the chosen user
 
 #### Scenario: Bulk delete
 
-- **WHEN** a user with `ticket:delete` permission selects multiple tickets and chooses "Delete"
+- **WHEN** a user with `ticket:delete` permission selects multiple tickets and
+  chooses "Delete"
 - **THEN** a confirmation dialog shows the count of items to be deleted
 - **AND** upon confirmation, all selected items are soft-deleted
 
@@ -157,27 +179,32 @@ The system SHALL support bulk selection and bulk actions for tickets and project
 
 ### Requirement: Audit Logging
 
-The system SHALL log all CRUD operations with actor, timestamp, and change details.
+The system SHALL log all CRUD operations with actor, timestamp, and change
+details.
 
 #### Scenario: Log creation
 
 - **WHEN** a user creates a ticket, project, or client
-- **THEN** an activity record is created with action='created', actor, and entity details
+- **THEN** an activity record is created with action='created', actor, and
+  entity details
 
 #### Scenario: Log update with change diff
 
 - **WHEN** a user updates an entity
-- **THEN** an activity record is created with action='updated' and a JSON diff of changed fields
+- **THEN** an activity record is created with action='updated' and a JSON diff
+  of changed fields
 
 #### Scenario: Log deletion
 
 - **WHEN** a user deletes an entity
-- **THEN** an activity record is created with action='deleted' before the soft-delete
+- **THEN** an activity record is created with action='deleted' before the
+  soft-delete
 
 #### Scenario: View activity feed
 
 - **WHEN** a user views an entity's detail page
-- **THEN** an activity feed shows all changes to that entity in reverse chronological order
+- **THEN** an activity feed shows all changes to that entity in reverse
+  chronological order
 
 #### Scenario: Activity feed pagination
 
@@ -188,7 +215,8 @@ The system SHALL log all CRUD operations with actor, timestamp, and change detai
 
 ### Requirement: Optimistic Updates
 
-The system SHALL provide optimistic UI updates for all mutations with automatic rollback on failure.
+The system SHALL provide optimistic UI updates for all mutations with automatic
+rollback on failure.
 
 #### Scenario: Optimistic create
 

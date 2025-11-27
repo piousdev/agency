@@ -2,9 +2,10 @@
  * Delete sprint API route
  */
 
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { eq } from 'drizzle-orm';
+
 import { db } from '../../db/index.js';
 import { sprint } from '../../db/schema/sprint.js';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth.js';

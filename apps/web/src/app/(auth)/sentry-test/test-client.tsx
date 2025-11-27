@@ -1,7 +1,8 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import { useState } from 'react';
+
+import * as Sentry from '@sentry/nextjs';
 
 /**
  * Client Component for testing client-side Sentry error tracking
@@ -46,7 +47,7 @@ export function TestClient() {
     try {
       setApiResult('Loading...');
       const res = await fetch('/api/sentry-test');
-      const data = await res.json();
+      const data = (await res.json()) as unknown;
       setApiResult(JSON.stringify(data, null, 2));
     } catch (error) {
       setApiResult(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -58,7 +59,7 @@ export function TestClient() {
     try {
       setApiResult('Loading...');
       const res = await fetch('/api/sentry-test?error=true');
-      const data = await res.json();
+      const data = (await res.json()) as unknown;
       setApiResult(JSON.stringify(data, null, 2));
     } catch (error) {
       setApiResult(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);

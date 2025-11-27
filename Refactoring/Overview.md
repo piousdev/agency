@@ -2,7 +2,8 @@ Given your context, here's my thinking:
 
 ## The Core Challenge
 
-You're **not** a traditional agency doing many small client projects. You're more like a **creative studio + dev shop hybrid** where:
+You're **not** a traditional agency doing many small client projects. You're
+more like a **creative studio + dev shop hybrid** where:
 
 - Projects can be **large and long-running** (software takes months)
 - Projects can be **quick content pieces** (design, video, copy)
@@ -78,9 +79,11 @@ Work
 
 - Developers don't want to hunt across "Projects" and "Tasks"
 - Managers want to see the full pipeline in one place
-- "Projects" as a separate nav creates confusion about where work actually happens
+- "Projects" as a separate nav creates confusion about where work actually
+  happens
 
-**The "Projects" concept still exists** - but as a **filter/grouping** within Work:
+**The "Projects" concept still exists** - but as a **filter/grouping** within
+Work:
 
 - Filter by: "Customer Portal" project
 - Filter by: "Acme Studios" client
@@ -147,7 +150,8 @@ In the **Work** section:
 
 - Every work item has a "Project" field
 - You can filter/group by project
-- You can have a "Project Detail" view (click project name → see all related work)
+- You can have a "Project Detail" view (click project name → see all related
+  work)
 
 **Benefits**:
 
@@ -192,19 +196,24 @@ In the **Work** section:
 
 ### "But won't Work become too crowded?"
 
-**Answer**: That's what filters, views, and tabs are for. Better to have everything in one place with good filtering than scattered across multiple nav items.
+**Answer**: That's what filters, views, and tabs are for. Better to have
+everything in one place with good filtering than scattered across multiple nav
+items.
 
 ### "What if someone wants to see all projects?"
 
-**Answer**: In Work section, switch view to "Projects" (grouped by project). Or in Dashboard, have a "Projects Overview" widget.
+**Answer**: In Work section, switch view to "Projects" (grouped by project). Or
+in Dashboard, have a "Projects Overview" widget.
 
 ### "Where do I see completed projects?"
 
-**Answer**: Work > Archive (or filter by status: Completed). Or Dashboard shows recent completions.
+**Answer**: Work > Archive (or filter by status: Completed). Or Dashboard shows
+recent completions.
 
 ### "What about financial reports per project?"
 
-**Answer**: Resources > Financials, filter by project. Or within Work, each work item shows time/cost data.
+**Answer**: Resources > Financials, filter by project. Or within Work, each work
+item shows time/cost data.
 
 Perfect! Now I understand your system completely. This is excellent clarity.
 

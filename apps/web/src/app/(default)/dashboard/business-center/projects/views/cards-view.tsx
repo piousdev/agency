@@ -1,9 +1,15 @@
 'use client';
 
-import { format, formatDistanceToNowStrict } from 'date-fns';
-import { useRouter } from 'next/navigation';
 import { useCallback, useId } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { IconAlertTriangle, IconClipboardList, IconCalendar, IconUsers } from '@tabler/icons-react';
+import { format, formatDistanceToNowStrict } from 'date-fns';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   MotionCard,
   MotionCardContent,
@@ -12,12 +18,10 @@ import {
   MotionCardContainer,
 } from '@/components/ui/motion-card';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { IconAlertTriangle, IconClipboardList, IconCalendar, IconUsers } from '@tabler/icons-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import type { ProjectWithRelations } from '@/lib/api/projects/types';
 import { cn } from '@/lib/utils';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface ProjectCardsViewProps {
   projects: ProjectWithRelations[];
@@ -86,11 +90,13 @@ function getProgressTextColor(percentage: number): string {
   return 'text-blue-600';
 }
 
+const EMPTY_ARRAY: string[] = [];
+
 export function ProjectCardsView({
   projects,
   onProjectClick,
   selectionMode = false,
-  selectedIds = [],
+  selectedIds = EMPTY_ARRAY,
   onSelectionChange,
 }: ProjectCardsViewProps) {
   const router = useRouter();
@@ -146,12 +152,8 @@ export function ProjectCardsView({
             new Date(project.deliveredAt) < new Date() &&
             project.status !== 'delivered';
 
-          const status = statusConfig[project.status] ?? {
-            label: 'Proposal',
-            color: 'bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-500/30',
-            dot: 'bg-blue-500',
-          };
-          const progress = project.completionPercentage || 0;
+          const status = statusConfig[project.status];
+          const progress = project.completionPercentage;
           const titleId = `${baseId}-title-${project.id}`;
 
           return (
@@ -222,7 +224,7 @@ export function ProjectCardsView({
                 <Progress
                   value={progress}
                   className={cn('h-1.5 bg-muted/50', getProgressColor(progress))}
-                  aria-label={`Project progress: ${progress}%`}
+                  aria-label={`Project progress: ${String(progress)}%`}
                 />
               </div>
 
@@ -232,7 +234,7 @@ export function ProjectCardsView({
                   <div className="flex items-center gap-2 min-w-0 flex-1">
                     <span className="text-xs text-muted-foreground shrink-0">Client</span>
                     <span className="text-sm font-medium truncate">
-                      {project.client?.name || 'Unassigned'}
+                      {project.client.name || 'Unassigned'}
                     </span>
                   </div>
                   <div
@@ -262,7 +264,7 @@ export function ProjectCardsView({
                     <IconUsers className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Team</span>
                   </div>
-                  {project.assignees && project.assignees.length > 0 ? (
+                  {project.assignees.length > 0 ? (
                     <div className="flex items-center gap-2">
                       <div className="flex -space-x-1.5">
                         {project.assignees.slice(0, 3).map((assignee) => (
@@ -270,7 +272,7 @@ export function ProjectCardsView({
                             <TooltipTrigger asChild>
                               <Avatar className="h-6 w-6 border-2 border-background ring-0">
                                 {assignee.image && (
-                                  <AvatarImage src={assignee.image} alt={assignee.name || ''} />
+                                  <AvatarImage src={assignee.image} alt={assignee.name} />
                                 )}
                                 <AvatarFallback className="text-[9px] font-semibold bg-muted">
                                   {getInitials(assignee.name || assignee.email || '?')}

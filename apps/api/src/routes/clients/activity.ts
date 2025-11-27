@@ -1,9 +1,11 @@
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { activity, client } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+
 import type { ActivityType } from '../../db/schema/activity';
 
 const app = new Hono<{ Variables: AuthVariables }>();
@@ -20,10 +22,10 @@ const app = new Hono<{ Variables: AuthVariables }>();
  */
 app.get('/:id/activity', requireAuth(), requireInternal(), async (c) => {
   const clientId = c.req.param('id');
-  const limit = Math.min(parseInt(c.req.query('limit') || '50'), 100);
-  const offset = parseInt(c.req.query('offset') || '0');
+  const limit = Math.min(parseInt(c.req.query('limit') ?? '50'), 100);
+  const offset = parseInt(c.req.query('offset') ?? '0');
   const typesParam = c.req.query('types');
-  const types = typesParam ? (typesParam.split(',') as ActivityType[]) : undefined;
+  const types = typesParam !== undefined && typesParam !== '' ? (typesParam.split(',') as ActivityType[]) : undefined;
 
   try {
     // Verify client exists

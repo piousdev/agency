@@ -13,7 +13,10 @@
 
 ### 1.1 Purpose of This Document
 
-This document describes the structural design, layout, and feature organization of the Intake navigation without specifying visual styling, colors, or specific implementation details. It serves as a blueprint for UI/UX designers and developers.
+This document describes the structural design, layout, and feature organization
+of the Intake navigation without specifying visual styling, colors, or specific
+implementation details. It serves as a blueprint for UI/UX designers and
+developers.
 
 ### 1.2 Design Principles
 

@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+
 import {
   listNotifications,
   getUnreadCount,
@@ -8,6 +9,7 @@ import {
   markAllNotificationsRead,
   deleteNotification,
 } from '@/lib/api/notifications';
+
 import type {
   ListNotificationsParams,
   PaginatedNotificationsResponse,

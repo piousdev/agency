@@ -1,12 +1,14 @@
 import Link from 'next/link';
-import { format, differenceInDays } from 'date-fns';
+
 import { IconTimeline, IconPlus } from '@tabler/icons-react';
+import { format, differenceInDays } from 'date-fns';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { requireUser } from '@/lib/auth/session';
 import { listProjects } from '@/lib/api/projects';
+import { requireUser } from '@/lib/auth/session';
 
 const statusColors: Record<string, string> = {
   proposal: 'bg-yellow-500',
@@ -130,7 +132,7 @@ export default async function ProjectTimelineViewPage() {
                               {project.name}
                             </h3>
                             <p className="text-sm text-muted-foreground truncate">
-                              {project.client?.name ?? 'No client'}
+                              {project.client.name || 'No client'}
                             </p>
                           </div>
                           <Badge
@@ -173,10 +175,10 @@ export default async function ProjectTimelineViewPage() {
                             </div>
                             <div className="text-xs text-muted-foreground">
                               {isOverdue
-                                ? `${Math.abs(daysUntilDue!)} days overdue`
+                                ? `${String(Math.abs(daysUntilDue))} days overdue`
                                 : daysUntilDue === 0
                                   ? 'Due today'
-                                  : `${daysUntilDue} days left`}
+                                  : `${String(daysUntilDue)} days left`}
                             </div>
                           </>
                         ) : (

@@ -3,6 +3,7 @@
  */
 
 import { cookies } from 'next/headers';
+
 import type { ClientsListResponse } from './types';
 
 /**
@@ -16,8 +17,9 @@ export async function listClients(activeOnly = true): Promise<ClientsListRespons
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
   const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/clients`);
+  const url = new URL(`${apiUrl}/api/clients`);
   if (!activeOnly) {
     url.searchParams.set('active', 'false');
   }
@@ -30,9 +32,12 @@ export async function listClients(activeOnly = true): Promise<ClientsListRespons
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Failed to list clients' }));
-    throw new Error(error.message || 'Failed to list clients');
+    const error = (await response
+      .json()
+      .catch(() => ({ message: 'Failed to list clients' }))) as { message?: string };
+    const errorMessage = error.message ?? 'Failed to list clients';
+    throw new Error(errorMessage);
   }
 
-  return response.json();
+  return response.json() as Promise<ClientsListResponse>;
 }

@@ -1,17 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { formatDistanceToNow } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+
 import {
   IconArchive,
   IconArrowRight,
   IconCircleCheck,
   IconClock,
-  IconFileText,
   IconLoader2,
   IconMessage,
   IconPaperclip,
@@ -24,6 +19,12 @@ import {
   IconAlertTriangle,
   IconEdit,
 } from '@tabler/icons-react';
+import { formatDistanceToNow } from 'date-fns';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // ============================================================================
 // Types
@@ -40,11 +41,11 @@ export interface ActivityMetadata {
   field?: string;
   oldValue?: string | number | boolean | null;
   newValue?: string | number | boolean | null;
-  changes?: Array<{
+  changes?: {
     field: string;
     oldValue: unknown;
     newValue: unknown;
-  }>;
+  }[];
   assigneeId?: string;
   assigneeName?: string;
   commentId?: string;
@@ -228,19 +229,18 @@ const activityConfig: Record<
 
 function formatStatusLabel(value: unknown): string {
   if (value === null || value === undefined) return 'None';
-  return String(value)
+  if (typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+  const strValue = String(value);
+  return strValue
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function getActivityConfig(type: ActivityType) {
-  return (
-    activityConfig[type] || {
-      icon: IconFileText,
-      label: type.replace(/_/g, ' '),
-      color: 'text-gray-600',
-    }
-  );
+  return activityConfig[type];
 }
 
 // ============================================================================
@@ -254,7 +254,7 @@ function ActivityItem({ activity }: { activity: Activity }) {
   const renderChangeDetail = () => {
     if (!activity.metadata) return null;
 
-    const { oldValue, newValue, field, fileName, changes, affectedCount, assigneeName } =
+    const { oldValue, newValue, fileName, changes, affectedCount, assigneeName } =
       activity.metadata;
 
     // File operations
@@ -295,7 +295,7 @@ function ActivityItem({ activity }: { activity: Activity }) {
     }
 
     // Multiple field changes
-    if (changes && changes.length > 0) {
+    if (changes.length > 0) {
       if (changes.length === 1) {
         const change = changes[0];
         return (
@@ -328,9 +328,9 @@ function ActivityItem({ activity }: { activity: Activity }) {
       <div className="flex-1 pb-6">
         <div className="flex items-start gap-2">
           <Avatar className="h-6 w-6">
-            <AvatarImage src={activity.actor.image || undefined} />
+            <AvatarImage src={activity.actor.image ?? undefined} />
             <AvatarFallback className="text-xs">
-              {activity.actor.name?.charAt(0) || '?'}
+              {activity.actor.name ? activity.actor.name.charAt(0) : '?'}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -357,7 +357,7 @@ function ActivitySkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="flex gap-3">
+        <div key={`activity-skeleton-${String(i)}`} className="flex gap-3">
           <Skeleton className="h-7 w-7 rounded-full" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/4" />
@@ -396,34 +396,30 @@ export function ActivityFeed({
   showCard = true,
   emptyMessage = 'No activity yet',
 }: ActivityFeedProps) {
-  const content = (
+  const content = loading ? (
+    <ActivitySkeleton />
+  ) : activities.length === 0 ? (
+    <EmptyState message={emptyMessage} />
+  ) : (
     <>
-      {loading ? (
-        <ActivitySkeleton />
-      ) : activities.length === 0 ? (
-        <EmptyState message={emptyMessage} />
-      ) : (
-        <>
-          <div className="space-y-0">
-            {activities.map((activity) => (
-              <ActivityItem key={activity.id} activity={activity} />
-            ))}
-          </div>
-          {hasMore && onLoadMore && (
-            <div className="pt-4 text-center">
-              <Button variant="outline" size="sm" onClick={onLoadMore} disabled={loadingMore}>
-                {loadingMore ? (
-                  <>
-                    <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Loading...
-                  </>
-                ) : (
-                  'Load more'
-                )}
-              </Button>
-            </div>
-          )}
-        </>
+      <div className="space-y-0">
+        {activities.map((activity) => (
+          <ActivityItem key={activity.id} activity={activity} />
+        ))}
+      </div>
+      {hasMore && onLoadMore && (
+        <div className="pt-4 text-center">
+          <Button variant="outline" size="sm" onClick={onLoadMore} disabled={loadingMore}>
+            {loadingMore ? (
+              <>
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              'Load more'
+            )}
+          </Button>
+        </div>
       )}
     </>
   );
@@ -458,7 +454,6 @@ interface UseActivityFeedOptions {
 }
 
 export function useActivityFeed({
-  entityType,
   entityId,
   fetchFn,
   limit = 20,
@@ -510,7 +505,7 @@ export function useActivityFeed({
   }, []);
 
   useEffect(() => {
-    loadInitial();
+    void loadInitial();
   }, [loadInitial]);
 
   return {

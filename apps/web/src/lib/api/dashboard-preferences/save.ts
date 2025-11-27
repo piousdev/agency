@@ -3,6 +3,7 @@
  */
 
 import { getAuthHeaders, buildApiUrl } from './api-utils';
+
 import type {
   ApiResponse,
   DashboardPreferences,
@@ -23,16 +24,16 @@ export async function saveDashboardPreferences(
       body: JSON.stringify(input),
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as ApiResponse<DashboardPreferences> & { error?: string };
 
     if (!response.ok) {
       return {
         success: false,
-        error: data.error || 'Failed to save preferences',
+        error: data.error ?? 'Failed to save preferences',
       };
     }
 
-    return data;
+    return data as ApiResponse<DashboardPreferences>;
   } catch (error) {
     console.error('Error saving dashboard preferences:', error);
     return {
@@ -52,19 +53,19 @@ export async function resetDashboardPreferences(
     const response = await fetch(buildApiUrl('/reset'), {
       method: 'POST',
       headers: await getAuthHeaders(),
-      body: JSON.stringify(input || {}),
+      body: JSON.stringify(input),
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as ApiResponse<DashboardPreferences> & { error?: string };
 
     if (!response.ok) {
       return {
         success: false,
-        error: data.error || 'Failed to reset preferences',
+        error: data.error ?? 'Failed to reset preferences',
       };
     }
 
-    return data;
+    return data as ApiResponse<DashboardPreferences>;
   } catch (error) {
     console.error('Error resetting dashboard preferences:', error);
     return {

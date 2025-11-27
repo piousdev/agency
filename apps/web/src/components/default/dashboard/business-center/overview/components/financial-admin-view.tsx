@@ -1,0 +1,67 @@
+import { memo } from 'react';
+
+import { FinancialActions } from '@/components/default/dashboard/business-center/overview/components/financial-actions';
+import { BudgetProgress } from '@/components/default/dashboard/business-center/overview/components/financial-budget-progress';
+import { MetricCard } from '@/components/default/dashboard/business-center/overview/components/financial-metric-card';
+import { METRIC_CONFIG } from '@/components/default/dashboard/business-center/overview/constants/financial-config';
+import { cn } from '@/lib/utils';
+
+import type { FinancialSnapshot } from '@/components/default/dashboard/business-center/overview/types';
+
+interface AdminViewProps {
+  readonly data: FinancialSnapshot;
+  readonly budgetPercentage: number;
+  readonly className?: string;
+}
+
+export const AdminView = memo(function AdminView({
+  data,
+  budgetPercentage,
+  className,
+}: AdminViewProps) {
+  return (
+    <div className={cn('flex flex-col h-full', className)} data-testid="financial-admin-view">
+      {/* Main Metrics Grid */}
+      <div className="grid grid-cols-2 gap-3 mb-4" data-testid="financial-admin-view-metrics">
+        <MetricCard
+          metric={data.revenue}
+          icon={METRIC_CONFIG.revenue.icon}
+          isPositiveGood={METRIC_CONFIG.revenue.isPositiveGood}
+          data-testid="financial-admin-view-metrics-revenue"
+        />
+        <MetricCard
+          metric={data.paidThisMonth}
+          icon={METRIC_CONFIG.paidThisMonth.icon}
+          isPositiveGood={METRIC_CONFIG.paidThisMonth.isPositiveGood}
+          data-testid="financial-admin-view-metrics-paidThisMonth"
+        />
+        <MetricCard
+          metric={data.outstanding}
+          icon={METRIC_CONFIG.outstanding.icon}
+          isPositiveGood={METRIC_CONFIG.outstanding.isPositiveGood}
+          data-testid="financial-admin-view-metrics-outstanding"
+        />
+        <MetricCard
+          metric={data.overdue}
+          icon={METRIC_CONFIG.overdue.icon}
+          isPositiveGood={METRIC_CONFIG.overdue.isPositiveGood}
+          data-testid="financial-admin-view-metrics-overdue"
+        />
+      </div>
+
+      {/* Budget Progress */}
+      <div className="mb-4" data-testid="financial-admin-view-budget-progress">
+        <BudgetProgress
+          used={data.projectBudgetUsed}
+          total={data.projectBudgetTotal}
+          percentage={budgetPercentage}
+          showValues
+          showStatus
+          data-testid="financial-admin-view-budget-progress"
+        />
+      </div>
+
+      <FinancialActions variant="admin" data-testid="financial-admin-view-actions" />
+    </div>
+  );
+});

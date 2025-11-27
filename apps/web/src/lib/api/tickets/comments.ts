@@ -54,7 +54,7 @@ export async function getTicketComments(ticketId: string): Promise<CommentsRespo
     throw new Error(`Failed to fetch comments: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as CommentsResponse;
 }
 
 /**
@@ -76,8 +76,8 @@ export async function createTicketComment(
   if (!response.ok) {
     const errorText = await response.text();
     console.error('API Error Response:', response.status, errorText);
-    throw new Error(`Failed to create comment: ${response.status} - ${errorText}`);
+    throw new Error(`Failed to create comment: ${String(response.status)} - ${errorText}`);
   }
 
-  return response.json();
+  return (await response.json()) as CommentResponse;
 }

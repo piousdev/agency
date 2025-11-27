@@ -49,7 +49,6 @@ export const projectPriorityOptions = [
  * URL validation helper
  */
 const optionalUrl = z
-  .string()
   .url('Must be a valid URL')
   .max(2048, 'URL too long')
   .optional()

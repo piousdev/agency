@@ -1,0 +1,27 @@
+# Pre-push hook: Run full lint and tests before pushing
+# This provides an extra safety net beyond pre-commit
+
+echo "Running pre-push checks..."
+
+# Run full lint across all workspaces
+echo "Checking lint..."
+pnpm lint || {
+  echo "Lint check failed. Please fix lint errors before pushing."
+  exit 1
+}
+
+# Check formatting
+echo "Checking formatting..."
+pnpm format:check || {
+  echo "Format check failed. Run 'pnpm format' to fix formatting issues."
+  exit 1
+}
+
+# Run tests
+echo "Running tests..."
+pnpm test || {
+  echo "Tests failed. Please fix failing tests before pushing."
+  exit 1
+}
+
+echo "All pre-push checks passed!"

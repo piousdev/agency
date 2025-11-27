@@ -10,6 +10,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "turbo run test",
     "prepare": "husky",
     "commit": "cz",
@@ -50,11 +51,11 @@
   },
   "lint-staged": {
     "apps/api/**/*.{js,jsx,ts,tsx}": [
-      "bash -c 'turbo run lint --filter=@repo/api'",
+      "eslint --fix --max-warnings=0 --no-warn-ignored --config apps/api/eslint.config.mjs",
       "prettier --write"
     ],
     "apps/web/**/*.{js,jsx,ts,tsx}": [
-      "bash -c 'turbo run lint --filter=@repo/web'",
+      "eslint --fix --max-warnings=0 --no-warn-ignored --config apps/web/eslint.config.mjs",
       "prettier --write"
     ],
     "**/*.{json,css,md,mdx}": [

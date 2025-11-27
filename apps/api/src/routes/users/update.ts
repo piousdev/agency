@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { user } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -36,7 +37,7 @@ app.patch(
       }
 
       // Check if email is being updated and if it's already taken
-      if (body.email && body.email !== existingUser.email) {
+      if (body.email !== undefined && body.email !== existingUser.email) {
         const emailTaken = await db.query.user.findFirst({
           where: eq(user.email, body.email),
         });
@@ -56,7 +57,7 @@ app.patch(
       if (body.role !== undefined) updateData.role = body.role;
       if (body.isInternal !== undefined) updateData.isInternal = body.isInternal;
       if (body.expiresAt !== undefined) {
-        updateData.expiresAt = body.expiresAt ? new Date(body.expiresAt) : null;
+        updateData.expiresAt = body.expiresAt !== null ? new Date(body.expiresAt) : null;
       }
 
       // Update user

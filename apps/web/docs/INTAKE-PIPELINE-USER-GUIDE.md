@@ -1,10 +1,13 @@
 # Intake Pipeline User Guide
 
-A comprehensive guide for using the Intake Pipeline to manage incoming work requests.
+A comprehensive guide for using the Intake Pipeline to manage incoming work
+requests.
 
 ## Overview
 
-The Intake Pipeline is a structured workflow for processing client requests before they become actionable tickets or projects. It ensures all requests are properly triaged, estimated, and routed to the appropriate destination.
+The Intake Pipeline is a structured workflow for processing client requests
+before they become actionable tickets or projects. It ensures all requests are
+properly triaged, estimated, and routed to the appropriate destination.
 
 ## Pipeline Stages
 
@@ -276,7 +279,8 @@ Requests show warning/critical indicators when they've been in a stage too long:
 
 ### "Invalid stage transition"
 
-You can only move requests between adjacent stages. Check the valid transitions diagram.
+You can only move requests between adjacent stages. Check the valid transitions
+diagram.
 
 ### "Request must be in ready stage to convert"
 

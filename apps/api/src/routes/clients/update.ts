@@ -1,7 +1,8 @@
-import { Hono } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+
 import { db } from '../../db';
 import { client } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
@@ -47,10 +48,10 @@ app.patch(
       if (data.name !== undefined) updateData.name = data.name;
       if (data.type !== undefined) updateData.type = data.type;
       if (data.email !== undefined) updateData.email = data.email;
-      if (data.phone !== undefined) updateData.phone = data.phone || null;
-      if (data.website !== undefined) updateData.website = data.website || null;
-      if (data.address !== undefined) updateData.address = data.address || null;
-      if (data.notes !== undefined) updateData.notes = data.notes || null;
+      if (data.phone !== undefined) updateData.phone = data.phone ?? null;
+      if (data.website !== undefined) updateData.website = data.website ?? null;
+      if (data.address !== undefined) updateData.address = data.address ?? null;
+      if (data.notes !== undefined) updateData.notes = data.notes ?? null;
       if (data.active !== undefined) updateData.active = data.active;
 
       // Update the client
@@ -61,15 +62,17 @@ app.patch(
         .returning();
 
       // Log activity for client update
-      await logEntityChange(
-        {
-          entityType: EntityTypes.CLIENT,
-          entityId: clientId,
-          actorId: currentUser.id,
-        },
-        existingClient,
-        updatedClient!
-      );
+      if (updatedClient) {
+        await logEntityChange(
+          {
+            entityType: EntityTypes.CLIENT,
+            entityId: clientId,
+            actorId: currentUser.id,
+          },
+          existingClient,
+          updatedClient
+        );
+      }
 
       return c.json({
         success: true,

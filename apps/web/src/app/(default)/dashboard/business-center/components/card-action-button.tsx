@@ -1,7 +1,9 @@
 'use client';
 
-import { IconArrowRight } from '@tabler/icons-react';
 import Link from 'next/link';
+
+import { IconArrowRight } from '@tabler/icons-react';
+
 import { Button } from '@/components/ui/button';
 
 interface CardActionButtonProps {

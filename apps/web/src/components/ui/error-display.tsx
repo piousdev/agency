@@ -205,7 +205,7 @@ function ErrorCodeDisplay({ code, isHighSeverity }: { code: string; isHighSeveri
     <div
       className={`
         transition-all duration-700 ease-out
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+        ${String(isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}
       `}
     >
       <h1
@@ -237,7 +237,7 @@ function ErrorContent({ title, message }: { title: string; message: string }) {
     <div
       className={`
         space-y-3 transition-all duration-700 ease-out delay-100
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+        ${String(isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}
       `}
     >
       <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">{title}</h2>
@@ -299,7 +299,7 @@ function ErrorActions({
       className={`
         mt-8 flex flex-col sm:flex-row items-center justify-center gap-3
         transition-all duration-700 ease-out delay-200
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+        ${String(isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}
       `}
     >
       {showGoBack && (
@@ -314,7 +314,7 @@ function ErrorActions({
           disabled={isRetrying}
           className="w-full sm:w-auto min-w-[140px]"
         >
-          <IconRefresh className={`size-4 ${isRetrying ? 'animate-spin' : ''}`} />
+          <IconRefresh className={`size-4 ${String(isRetrying ? 'animate-spin' : '')}`} />
           {isRetrying ? 'Retrying...' : actionLabel || 'Try again'}
         </Button>
       )}
@@ -439,7 +439,7 @@ export function ErrorInline({ message, onRetry, severity = 'error' }: ErrorInlin
           disabled={isRetrying}
           className="shrink-0 -mr-2"
         >
-          <IconRefresh className={`size-3.5 ${isRetrying ? 'animate-spin' : ''}`} />
+          <IconRefresh className={`size-3.5 ${String(isRetrying ? 'animate-spin' : '')}`} />
           {isRetrying ? 'Retrying...' : 'Retry'}
         </Button>
       )}

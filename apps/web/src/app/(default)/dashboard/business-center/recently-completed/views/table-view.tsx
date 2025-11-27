@@ -1,9 +1,10 @@
 'use client';
 
+import * as React from 'react';
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
-import { type ColumnDef, type Row } from '@tanstack/react-table';
+
 import {
   IconDots,
   IconExternalLink,
@@ -11,6 +12,9 @@ import {
   IconRotate2,
   IconFileText,
 } from '@tabler/icons-react';
+import { format } from 'date-fns';
+
+import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,8 +25,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DataTable } from '@/components/data-table';
-import type { ProjectWithRelations, Project } from '@/lib/api/projects/types';
+
+import type { ProjectWithRelations } from '@/lib/api/projects/types';
+import type { ColumnDef, Row } from '@tanstack/react-table';
 
 interface CompletedTableViewProps {
   projects: ProjectWithRelations[];
@@ -66,118 +71,125 @@ export function CompletedTableView({ projects }: CompletedTableViewProps) {
     });
   };
 
-  const columns: ColumnDef<ProjectWithRelations>[] = [
-    {
-      accessorKey: 'name',
-      header: 'Project',
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate" title={row.original.name}>
-          {row.original.name}
-        </div>
-      ),
-      meta: {
-        displayName: 'Project Name',
-      },
-    },
-    {
-      accessorKey: 'client.name',
-      header: 'Client',
-      cell: ({ row }) => (
-        <div className="max-w-[150px] truncate" title={row.original.client?.name}>
-          {row.original.client?.name || 'N/A'}
-        </div>
-      ),
-      meta: {
-        displayName: 'Client',
-      },
-    },
-    {
-      accessorKey: 'client.type',
-      header: 'Type',
-      cell: ({ row }) => {
-        const type = row.original.client?.type as ClientType | undefined;
-        if (!type) return <span className="text-muted-foreground">N/A</span>;
-        return <Badge variant={typeVariants[type]}>{typeLabels[type]}</Badge>;
-      },
-      filterFn: (row, id, value: string[]) => {
-        if (!value?.length) return true;
-        const type = row.original.client?.type;
-        return type ? value.includes(type) : false;
-      },
-      meta: {
-        displayName: 'Project Type',
-        filterType: 'multi-select',
-        filterOptions: Object.entries(typeLabels).map(([value, label]) => ({
-          label,
-          value,
-        })),
-      },
-    },
-    {
-      accessorKey: 'assignees',
-      header: 'Team',
-      enableSorting: false,
-      cell: ({ row }) => {
-        const assignees = row.original.assignees;
-        if (!assignees?.length) {
-          return <span className="text-muted-foreground text-sm">No team</span>;
-        }
-
-        return (
-          <div className="flex flex-wrap gap-1 max-w-[180px]">
-            {assignees.slice(0, 2).map((assignee) => (
-              <Badge
-                key={assignee.id}
-                variant="outline"
-                className="text-xs truncate max-w-[80px]"
-                title={assignee.name}
-              >
-                {assignee.name}
-              </Badge>
-            ))}
-            {assignees.length > 2 && (
-              <Badge variant="outline" className="text-xs">
-                +{assignees.length - 2}
-              </Badge>
-            )}
+  const columns = React.useMemo<ColumnDef<ProjectWithRelations>[]>(
+    () => {
+      /* eslint-disable react/no-unstable-nested-components */
+      return [
+      {
+        accessorKey: 'name',
+        header: 'Project',
+        cell: ({ row }) => (
+          <div className="font-medium max-w-[200px] truncate" title={row.original.name}>
+            {row.original.name}
           </div>
-        );
+        ),
+        meta: {
+          displayName: 'Project Name',
+        },
       },
-      meta: {
-        displayName: 'Team Members',
+      {
+        accessorKey: 'client.name',
+        header: 'Client',
+        cell: ({ row }) => (
+          <div className="max-w-[150px] truncate" title={row.original.client.name}>
+            {row.original.client.name || 'N/A'}
+          </div>
+        ),
+        meta: {
+          displayName: 'Client',
+        },
       },
+      {
+        accessorKey: 'client.type',
+        header: 'Type',
+        cell: ({ row }) => {
+          const type = row.original.client.type as ClientType | undefined;
+          if (!type) return <span className="text-muted-foreground">N/A</span>;
+          return <Badge variant={typeVariants[type]}>{typeLabels[type]}</Badge>;
+        },
+        filterFn: (row, id, value: string[]) => {
+          if (!value.length) return true;
+          const type = row.original.client.type;
+          return type ? value.includes(type) : false;
+        },
+        meta: {
+          displayName: 'Project Type',
+          filterType: 'multi-select',
+          filterOptions: Object.entries(typeLabels).map(([value, label]) => ({
+            label,
+            value,
+          })),
+        },
+      },
+      {
+        accessorKey: 'assignees',
+        header: 'Team',
+        enableSorting: false,
+        cell: ({ row }) => {
+          const assignees = row.original.assignees as { id: string; name: string }[] | undefined;
+          if (!assignees?.length) {
+            return <span className="text-muted-foreground text-sm">No team</span>;
+          }
+
+          return (
+            <div className="flex flex-wrap gap-1 max-w-[180px]">
+              {assignees.slice(0, 2).map((assignee) => (
+                <Badge
+                  key={assignee.id}
+                  variant="outline"
+                  className="text-xs truncate max-w-[80px]"
+                  title={assignee.name}
+                >
+                  {assignee.name}
+                </Badge>
+              ))}
+              {assignees.length > 2 && (
+                <Badge variant="outline" className="text-xs">
+                  +{assignees.length - 2}
+                </Badge>
+              )}
+            </div>
+          );
+        },
+        meta: {
+          displayName: 'Team Members',
+        },
+      },
+      {
+        accessorKey: 'createdAt',
+        header: 'Created',
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {row.original.createdAt ? format(new Date(row.original.createdAt), 'MMM d, yyyy') : 'N/A'}
+          </span>
+        ),
+        sortingFn: 'datetime',
+        meta: {
+          displayName: 'Created Date',
+          filterType: 'date',
+        },
+      },
+      {
+        accessorKey: 'deliveredAt',
+        header: 'Delivered',
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {row.original.deliveredAt
+              ? format(new Date(row.original.deliveredAt), 'MMM d, yyyy')
+              : format(new Date(row.original.updatedAt), 'MMM d, yyyy')}
+          </span>
+        ),
+        sortingFn: 'datetime',
+        meta: {
+          displayName: 'Delivery Date',
+          filterType: 'date',
+        },
+      },
+    ];
+      /* eslint-enable react/no-unstable-nested-components */
     },
-    {
-      accessorKey: 'createdAt',
-      header: 'Created',
-      cell: ({ row }) => (
-        <span className="text-muted-foreground">
-          {row.original.createdAt ? format(new Date(row.original.createdAt), 'MMM d, yyyy') : 'N/A'}
-        </span>
-      ),
-      sortingFn: 'datetime',
-      meta: {
-        displayName: 'Created Date',
-        filterType: 'date',
-      },
-    },
-    {
-      accessorKey: 'deliveredAt',
-      header: 'Delivered',
-      cell: ({ row }) => (
-        <span className="text-muted-foreground">
-          {row.original.deliveredAt
-            ? format(new Date(row.original.deliveredAt), 'MMM d, yyyy')
-            : format(new Date(row.original.updatedAt), 'MMM d, yyyy')}
-        </span>
-      ),
-      sortingFn: 'datetime',
-      meta: {
-        displayName: 'Delivery Date',
-        filterType: 'date',
-      },
-    },
-  ];
+    []
+  );
 
   const handleRowClick = (row: Row<ProjectWithRelations>) => {
     router.push(`/dashboard/business-center/projects/${row.original.id}`);

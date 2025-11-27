@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { ProjectDetailResponse } from './types';
 
 /**
@@ -17,16 +18,16 @@ import type { ProjectDetailResponse } from './types';
 export async function getProject(projectId: string): Promise<ProjectDetailResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects/${projectId}`, {
+  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}`, {
     headers: authHeaders,
     cache: 'no-store',
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { message?: string } & Partial<ProjectDetailResponse>;
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to fetch project');
+    throw new Error(result.message ?? 'Failed to fetch project');
   }
 
-  return result;
+  return result as ProjectDetailResponse;
 }

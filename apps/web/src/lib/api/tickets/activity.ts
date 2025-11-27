@@ -17,11 +17,11 @@ export interface ActivityMetadata {
   field?: string;
   oldValue?: string | number | boolean | null;
   newValue?: string | number | boolean | null;
-  changes?: Array<{
+  changes?: {
     field: string;
     oldValue: unknown;
     newValue: unknown;
-  }>;
+  }[];
   assigneeId?: string;
   assigneeName?: string;
   commentId?: string;
@@ -115,5 +115,5 @@ export async function getTicketActivity(
     throw new Error(`Failed to fetch ticket activity: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as ActivityResponse;
 }

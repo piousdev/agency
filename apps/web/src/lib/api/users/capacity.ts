@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { UpdateCapacityInput, UserResponse } from './types';
 
 /**
@@ -22,7 +23,7 @@ export async function updateCapacity(
     const authHeaders = await getAuthHeaders();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/capacity`,
+      `${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/${userId}/capacity`,
       {
         method: 'PATCH',
         headers: authHeaders,
@@ -30,10 +31,10 @@ export async function updateCapacity(
       }
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as { message?: string; data?: UserResponse["data"] };
 
     if (!response.ok) {
-      return { success: false, error: result.message || 'Failed to update user capacity' };
+      return { success: false, error: result.message ?? 'Failed to update user capacity' };
     }
 
     return { success: true, data: result.data };

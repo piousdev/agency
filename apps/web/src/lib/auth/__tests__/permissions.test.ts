@@ -4,8 +4,9 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { Permissions, DefaultRolePermissions, type Permission } from '../permissions-constants';
+
 import { PermissionError, isPermissionError } from '../permissions';
+import { Permissions, DefaultRolePermissions, type Permission } from '../permissions-constants';
 
 describe('Permission Constants', () => {
   describe('Permissions object', () => {
@@ -118,7 +119,7 @@ describe('Permission Constants', () => {
     });
 
     it('should have unique permissions per role (no duplicates)', () => {
-      Object.entries(DefaultRolePermissions).forEach(([role, permissions]) => {
+      Object.entries(DefaultRolePermissions).forEach(([_role, permissions]) => {
         const uniquePermissions = new Set(permissions);
         expect(uniquePermissions.size).toBe(permissions.length);
       });

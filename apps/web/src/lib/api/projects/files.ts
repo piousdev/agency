@@ -45,7 +45,7 @@ export async function getProjectFiles(projectId: string): Promise<FilesResponse>
     throw new Error(`Failed to fetch files: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as FilesResponse;
 }
 
 /**
@@ -67,5 +67,5 @@ export async function deleteFile(
     throw new Error(`Failed to delete file: ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()) as { success: boolean; message: string };
 }

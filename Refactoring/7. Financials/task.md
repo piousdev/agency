@@ -178,7 +178,8 @@ TASK CHECKLIST
 ### 5.1 Invoice List
 
 - [ ] Create invoice list component (table)
-- [ ] Display columns: Number, Client, Date, Due Date, Amount, Status, Paid, Actions
+- [ ] Display columns: Number, Client, Date, Due Date, Amount, Status, Paid,
+      Actions
 - [ ] Implement filtering (status, date range, client)
 - [ ] Implement sorting
 - [ ] Implement search
@@ -504,8 +505,7 @@ TASK CHECKLIST
 
 ## Completion Tracking
 
-**Total Tasks**: 320+
-**Overall Progress**: 0%
+**Total Tasks**: 320+ **Overall Progress**: 0%
 
 ---
 

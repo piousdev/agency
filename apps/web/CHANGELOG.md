@@ -4,4 +4,5 @@
 
 ### Minor Changes
 
-- Initial release of the Skyll web application with authentication, user management, and dashboard features
+- Initial release of the Skyll web application with authentication, user
+  management, and dashboard features

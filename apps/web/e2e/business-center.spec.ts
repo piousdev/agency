@@ -35,7 +35,7 @@ test.describe('Business Center', () => {
     await expect(page.getByText('No active software projects')).toBeVisible();
   });
 
-  test('should redirect non-internal users to dashboard', async ({ page }) => {
+  test('should redirect non-internal users to dashboard', async ({ page: _page }) => {
     // TODO: Implement test with non-internal user session
     // This should redirect to /dashboard
   });
@@ -61,13 +61,13 @@ test.describe('Business Center - Team Capacity', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display team members with capacity info', async ({ page }) => {
+  test('should display team members with capacity info', async ({ page: _page }) => {
     // TODO: Add test data setup
     // Verify team members are displayed
     // Check capacity percentages
   });
 
-  test('should open capacity modal when clicking Update Capacity', async ({ page }) => {
+  test('should open capacity modal when clicking Update Capacity', async ({ page: _page }) => {
     // TODO: Add test data setup and implement
     // Click Update Capacity button
     // Expect modal to be visible
@@ -83,17 +83,17 @@ test.describe('Business Center - Active Work', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display content projects grouped by stage', async ({ page }) => {
+  test('should display content projects grouped by stage', async ({ page: _page }) => {
     // TODO: Add test data setup
     // Check for Pre-Production, In-Production, Post-Production sections
   });
 
-  test('should display software projects grouped by stage', async ({ page }) => {
+  test('should display software projects grouped by stage', async ({ page: _page }) => {
     // TODO: Add test data setup
     // Check for Design, Development, Testing, Delivery sections
   });
 
-  test('should open assign modal when clicking Change Assignee', async ({ page }) => {
+  test('should open assign modal when clicking Change Assignee', async ({ page: _page }) => {
     // TODO: Add test data setup and implement
     // Click Change Assignee button
     // Expect assign modal to be visible
@@ -109,7 +109,7 @@ test.describe('Business Center - Assign Modal', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('should show single-select for tickets', async ({ page }) => {
+  test('should show single-select for tickets', async ({ page: _page }) => {
     // TODO: Implement with test data
     // Open assign modal for a ticket
     // Verify radio buttons are shown
@@ -117,7 +117,7 @@ test.describe('Business Center - Assign Modal', () => {
     // Submit
   });
 
-  test('should show multi-select for projects', async ({ page }) => {
+  test('should show multi-select for projects', async ({ page: _page }) => {
     // TODO: Implement with test data
     // Open assign modal for a project
     // Verify checkboxes are shown
@@ -125,14 +125,14 @@ test.describe('Business Center - Assign Modal', () => {
     // Submit
   });
 
-  test('should show capacity warning for overloaded members', async ({ page }) => {
+  test('should show capacity warning for overloaded members', async ({ page: _page }) => {
     // TODO: Implement with test data
     // Open assign modal
     // Select a team member with 100%+ capacity
     // Verify warning message is displayed
   });
 
-  test('should successfully assign team members', async ({ page }) => {
+  test('should successfully assign team members', async ({ page: _page }) => {
     // TODO: Implement with test data
     // Open modal
     // Select team member(s)
@@ -149,7 +149,7 @@ test.describe('Business Center - Capacity Modal', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('should update team member capacity', async ({ page }) => {
+  test('should update team member capacity', async ({ page: _page }) => {
     // TODO: Implement with test data
     // Click Update Capacity button
     // Modal should open
@@ -159,14 +159,14 @@ test.describe('Business Center - Capacity Modal', () => {
     // Verify updated capacity in table
   });
 
-  test('should validate capacity range (0-200%)', async ({ page }) => {
+  test('should validate capacity range (0-200%)', async ({ page: _page }) => {
     // TODO: Implement
     // Try to enter -10 (should fail)
     // Try to enter 250 (should fail)
     // Enter valid value like 85 (should succeed)
   });
 
-  test('should show capacity guidelines', async ({ page }) => {
+  test('should show capacity guidelines', async ({ page: _page }) => {
     // TODO: Implement
     // Open modal
     // Verify guidelines are visible

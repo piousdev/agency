@@ -10,12 +10,14 @@
 
 ### 🎯 Start Here
 
-- **[PROJECT-SUMMARY.md](PROJECT-SUMMARY.md)** - Complete overview, statistics, and usage guide
+- **[PROJECT-SUMMARY.md](PROJECT-SUMMARY.md)** - Complete overview, statistics,
+  and usage guide
 
 ### 1️⃣ Overview (Navigation Hub)
 
 - [overview-spec.md](overview-spec.md) - Unified dashboard specification (26KB)
-- [overview-design.md](overview-design.md) - Dashboard layouts and widgets (61KB)
+- [overview-design.md](overview-design.md) - Dashboard layouts and widgets
+  (61KB)
 - [overview-task.md](overview-task.md) - 280+ implementation tasks (33KB)
 
 ### 2️⃣ Intake (Request Management)
@@ -39,7 +41,8 @@
 ### 5️⃣ Clients (CRM)
 
 - [clients-spec.md](clients-spec.md) - Full CRM with pipeline (46KB)
-- [clients-design.md](clients-design.md) - Client profiles and health scoring (82KB)
+- [clients-design.md](clients-design.md) - Client profiles and health scoring
+  (82KB)
 - [clients-task.md](clients-task.md) - 440+ implementation tasks (24KB)
 
 ### 6️⃣ Team (Team Management)
@@ -50,8 +53,10 @@
 
 ### 7️⃣ Financials (Financial Management)
 
-- [financials-spec.md](financials-spec.md) - Invoicing, expenses, profitability (36KB)
-- [financials-design-and-tasks.md](financials-design-and-tasks.md) - UI + 320+ tasks (28KB)
+- [financials-spec.md](financials-spec.md) - Invoicing, expenses, profitability
+  (36KB)
+- [financials-design-and-tasks.md](financials-design-and-tasks.md) - UI + 320+
+  tasks (28KB)
 
 ---
 
@@ -87,7 +92,8 @@
 
 ## 💡 How to Use
 
-**For Product Planning**: Start with [PROJECT-SUMMARY.md](PROJECT-SUMMARY.md) then read spec files  
+**For Product Planning**: Start with [PROJECT-SUMMARY.md](PROJECT-SUMMARY.md)
+then read spec files  
 **For Design**: Review design files for structural layouts  
 **For Development**: Use spec + design + task files together  
 **For Project Management**: Use task checklists for planning

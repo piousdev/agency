@@ -1,7 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
+
+import Link from 'next/link';
+
 import { cn } from '@/lib/utils';
 
 interface TableOfContentsProps {
@@ -33,7 +35,7 @@ export function TableOfContents({ className }: TableOfContentsProps) {
 
     for (const element of headingElements) {
       const id = element.id;
-      const text = element.textContent || '';
+      const text = element.textContent;
       const tagName = element.tagName.toLowerCase();
       const level = Number.parseInt(tagName.slice(1), 10);
 
@@ -141,7 +143,7 @@ export function TableOfContents({ className }: TableOfContentsProps) {
                       e.preventDefault();
                       handleClick(heading.id);
                     }}
-                    style={{ paddingLeft: `${indent + 16}px` }}
+                    style={{ paddingLeft: `${String(indent + 16)}px` }}
                     className={cn(
                       'relative block border-l-2 py-1 text-sm transition-colors hover:text-foreground',
                       isActive

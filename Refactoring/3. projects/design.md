@@ -13,7 +13,9 @@
 
 ### 1.1 Purpose of This Document
 
-This document describes the structural design, layout, and feature organization of the Projects navigation without specifying visual styling, colors, or specific implementation details.
+This document describes the structural design, layout, and feature organization
+of the Projects navigation without specifying visual styling, colors, or
+specific implementation details.
 
 ### 1.2 Design Principles
 
@@ -170,7 +172,8 @@ This document describes the structural design, layout, and feature organization 
 **Columns**:
 
 1. **ID**: Project number
-2. **Name/Client**: Project name (line 1), Client name (line 2), Task progress (line 3)
+2. **Name/Client**: Project name (line 1), Client name (line 2), Task progress
+   (line 3)
 3. **Status**: Badge showing current stage
 4. **Progress**: Visual bar + percentage
 5. **Due Date**: Date + days remaining

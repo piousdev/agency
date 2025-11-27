@@ -62,7 +62,7 @@ async function main() {
   if (!version) {
     try {
       const packageJsonPath = join(process.cwd(), 'package.json');
-      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as { version?: string };
       version = packageJson.version;
 
       if (!version) {
@@ -78,7 +78,7 @@ async function main() {
   }
 
   // Parse release name
-  const releaseName = values.name || 'Release';
+  const releaseName = values.name ?? 'Release';
 
   // Parse date
   let date: Date;
@@ -92,10 +92,13 @@ async function main() {
     date = new Date();
   }
 
+  const isoString = date.toISOString();
+  const dateString = isoString.substring(0, isoString.indexOf('T'));
+
   console.log('\n📝 Creating changelog entry...\n');
   console.log(`  Version:      ${version}`);
   console.log(`  Release Name: ${releaseName}`);
-  console.log(`  Date:         ${date.toISOString().split('T')[0]}`);
+  console.log(`  Date:         ${dateString}`);
   console.log(`  Date Slug:    ${getCurrentDateSlug()}\n`);
 
   // Create the changelog entry
@@ -106,7 +109,7 @@ async function main() {
   });
 
   if (!result.success) {
-    console.error(`❌ Error: ${result.error}`);
+    console.error(`❌ Error: ${result.error ?? 'Unknown error'}`);
     process.exit(1);
   }
 
@@ -119,7 +122,7 @@ async function main() {
   console.log(`  3. View it at /dashboard/changelog in your app\n`);
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   console.error('❌ Unexpected error:', error);
   process.exit(1);
 });

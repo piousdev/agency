@@ -2,7 +2,10 @@
 
 ## Context
 
-The Business Center is the operational hub for agency management but currently lacks CRUD functionality. The existing database schema supports all required data models (projects, tickets, clients, roles, role_assignments), but the web application only has read operations implemented.
+The Business Center is the operational hub for agency management but currently
+lacks CRUD functionality. The existing database schema supports all required
+data models (projects, tickets, clients, roles, role_assignments), but the web
+application only has read operations implemented.
 
 ### Stakeholders
 
@@ -37,7 +40,8 @@ The Business Center is the operational hub for agency management but currently l
 
 ### 1. Permission System Architecture
 
-**Decision**: Use JSONB permissions stored in role table, checked via middleware.
+**Decision**: Use JSONB permissions stored in role table, checked via
+middleware.
 
 ```typescript
 // Permission constants
@@ -64,7 +68,9 @@ export const Permissions = {
 } as const;
 
 // Server Action wrapper
-export async function requirePermission(permission: string): Promise<SessionUser> {
+export async function requirePermission(
+  permission: string
+): Promise<SessionUser> {
   const user = await requireUser();
   const hasPermission = await checkUserPermission(user.id, permission);
   if (!hasPermission) {
@@ -81,7 +87,8 @@ export async function requirePermission(permission: string): Promise<SessionUser
 
 ### 2. Form Handling Pattern
 
-**Decision**: Use React Hook Form with Zod resolver, integrated with Server Actions.
+**Decision**: Use React Hook Form with Zod resolver, integrated with Server
+Actions.
 
 ```typescript
 // Schema definition
@@ -160,16 +167,19 @@ export const activity = pgTable('activity', {
   entityId: text('entity_id').notNull(),
   actorId: text('actor_id').references(() => user.id),
   action: text('action').notNull(), // 'created' | 'updated' | 'deleted'
-  changes: jsonb('changes').$type<Record<string, { old: unknown; new: unknown }>>(),
+  changes:
+    jsonb('changes').$type<Record<string, { old: unknown; new: unknown }>>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 ```
 
-**Decision**: Use unified activity table for simplicity and cross-entity queries.
+**Decision**: Use unified activity table for simplicity and cross-entity
+queries.
 
 ### 5. Bulk Operations Pattern
 
-**Decision**: Client-side selection state with single Server Action for bulk mutations.
+**Decision**: Client-side selection state with single Server Action for bulk
+mutations.
 
 ```typescript
 // Selection context for bulk operations
@@ -239,7 +249,8 @@ function ProjectFormSkeleton() {
 
 ### Risk: Permission caching causing stale UI
 
-**Mitigation**: Revalidate permissions on role changes, use short cache TTL (5 min)
+**Mitigation**: Revalidate permissions on role changes, use short cache TTL (5
+min)
 
 ### Risk: Bulk operations timeout on large selections
 

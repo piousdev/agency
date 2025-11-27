@@ -11,21 +11,21 @@ import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'development',
+  environment: process.env.SENTRY_ENVIRONMENT ?? 'development',
 
   /**
    * Performance Monitoring
    *
    * Adjust this value in production, or use tracesSampler for fine-grained control
    */
-  tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '0.1'),
+  tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE ?? '0.1'),
 
   /**
    * Before Send Hook
    *
    * Filter and modify events before sending
    */
-  beforeSend(event, hint) {
+  beforeSend(event, _hint) {
     // Don't send events in development unless explicitly enabled
     if (
       process.env.SENTRY_ENVIRONMENT === 'development' &&

@@ -4,6 +4,7 @@
  */
 
 import { getAuthHeaders } from './api-utils';
+
 import type { ExtendExpirationInput, UserResponse } from './types';
 
 /**
@@ -21,7 +22,7 @@ export async function extendExpiration(
   const authHeaders = await getAuthHeaders();
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/extend-expiration`,
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/users/${userId}/extend-expiration`,
     {
       method: 'PATCH',
       headers: authHeaders,
@@ -30,9 +31,9 @@ export async function extendExpiration(
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to extend expiration');
+    const error = (await response.json()) as { message?: string };
+    throw new Error(error.message ?? 'Failed to extend expiration');
   }
 
-  return response.json();
+  return (await response.json()) as UserResponse;
 }

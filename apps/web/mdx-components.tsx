@@ -12,9 +12,7 @@ import React from 'react';
  * For more info: https://nextjs.org/docs/app/api-reference/file-conventions/mdx-components
  */
 
-type MDXComponentsType = {
-  [key: string]: React.ComponentType<any>;
-};
+type MDXComponentsType = Record<string, React.ComponentType<unknown>>;
 
 /**
  * Generate a URL-friendly slug from heading text
@@ -22,15 +20,18 @@ type MDXComponentsType = {
  */
 function slugify(children: React.ReactNode): string {
   // Convert React children to plain text
-  const text = typeof children === 'string' ? children : React.Children.toArray(children).join('');
+  const text = typeof children === 'string'
+    ? children
+    : React.Children.toArray(children).map(child =>
+        typeof child === 'string' || typeof child === 'number' ? String(child) : ''
+      ).join('');
 
   return text
-    .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+    .replace(/--+/g, '-') // Replace multiple - with single -
     .replace(/^-+/, '') // Trim - from start
     .replace(/-+$/, ''); // Trim - from end
 }
@@ -38,7 +39,7 @@ function slugify(children: React.ReactNode): string {
 export function useMDXComponents(components: MDXComponentsType): MDXComponentsType {
   return {
     // Headings with auto-generated IDs for anchor links
-    h1: ({ children }) => {
+    h1: ({ children }: { children?: React.ReactNode }) => {
       const id = slugify(children);
       return (
         <h1
@@ -49,7 +50,7 @@ export function useMDXComponents(components: MDXComponentsType): MDXComponentsTy
         </h1>
       );
     },
-    h2: ({ children }) => {
+    h2: ({ children }: { children?: React.ReactNode }) => {
       const id = slugify(children);
       return (
         <h2
@@ -60,7 +61,7 @@ export function useMDXComponents(components: MDXComponentsType): MDXComponentsTy
         </h2>
       );
     },
-    h3: ({ children }) => {
+    h3: ({ children }: { children?: React.ReactNode }) => {
       const id = slugify(children);
       return (
         <h3
@@ -71,7 +72,7 @@ export function useMDXComponents(components: MDXComponentsType): MDXComponentsTy
         </h3>
       );
     },
-    h4: ({ children }) => {
+    h4: ({ children }: { children?: React.ReactNode }) => {
       const id = slugify(children);
       return (
         <h4
@@ -97,7 +98,7 @@ export function useMDXComponents(components: MDXComponentsType): MDXComponentsTy
     p: ({ children }) => <p className="mb-4 leading-7 text-muted-foreground">{children}</p>,
 
     // Links
-    a: ({ href, children }) => (
+    a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
       <a
         href={href}
         className="font-medium text-primary underline underline-offset-4 hover:opacity-80"
@@ -121,7 +122,7 @@ export function useMDXComponents(components: MDXComponentsType): MDXComponentsTy
     pre: ({ children }) => (
       <pre className="mb-4 overflow-x-auto rounded-lg border bg-muted p-4">{children}</pre>
     ),
-    code: ({ children, className }) => {
+    code: ({ children, className }: { children?: React.ReactNode; className?: string }) => {
       // Check if this is an inline code block
       const isInline = !className;
 
@@ -136,8 +137,8 @@ export function useMDXComponents(components: MDXComponentsType): MDXComponentsTy
       // Code block (inside pre)
       return (
         <code
-          className={`font-mono text-sm ${className ?? ''}`}
-          data-language={className?.replace('language-', '')}
+          className={`font-mono text-sm ${className}`}
+          data-language={className.replace('language-', '')}
         >
           {children}
         </code>

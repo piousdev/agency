@@ -6,10 +6,8 @@
  */
 
 import { NextResponse } from 'next/server';
-import packageJson from '../../../../package.json';
 
-// Force dynamic rendering - health checks should always be fresh
-export const dynamic = 'force-dynamic';
+import packageJson from '../../../../package.json';
 
 interface HealthResponse {
   status: 'healthy';
@@ -31,7 +29,7 @@ export async function GET() {
     timestamp: new Date().toISOString(),
     version: packageJson.version,
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env.NODE_ENV,
   };
 
   return NextResponse.json(response, { status: 200 });

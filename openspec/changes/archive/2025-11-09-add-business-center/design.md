@@ -2,14 +2,19 @@
 
 ## Context
 
-The Business Center is Skyll's internal operational hub for managing work intake, active projects, and team capacity. This is a greenfield feature that must integrate with existing authentication, database schema, and frontend architecture while establishing patterns for future operational tools.
+The Business Center is Skyll's internal operational hub for managing work
+intake, active projects, and team capacity. This is a greenfield feature that
+must integrate with existing authentication, database schema, and frontend
+architecture while establishing patterns for future operational tools.
 
 ### Background
 
-- **Current State**: No centralized business center; tracking is manual/fragmented
+- **Current State**: No centralized business center; tracking is
+  manual/fragmented
 - **Users**: Internal team members only (5-15 users initially, scale to 50+)
 - **Workload**: ~10-30 concurrent projects, ~5-20 intake requests/week
-- **Existing Infrastructure**: Hono API, Next.js App Router, PostgreSQL with Drizzle ORM, Better-Auth
+- **Existing Infrastructure**: Hono API, Next.js App Router, PostgreSQL with
+  Drizzle ORM, Better-Auth
 
 ### Constraints
 
@@ -21,17 +26,21 @@ The Business Center is Skyll's internal operational hub for managing work intake
 
 ### Stakeholders
 
-- **Primary Users**: Skyll internal team (project managers, developers, designers)
+- **Primary Users**: Skyll internal team (project managers, developers,
+  designers)
 - **System Owners**: Engineering team
-- **Dependencies**: Better-Auth (session), Drizzle (ORM), Hono (API), Next.js (frontend)
+- **Dependencies**: Better-Auth (session), Drizzle (ORM), Hono (API), Next.js
+  (frontend)
 
 ## Goals / Non-Goals
 
 ### Goals
 
 1. **Centralized Visibility** - Single source of truth for all operational work
-2. **Intake Management** - Streamline request triage and assignment (reduce from hours to minutes)
-3. **Capacity Planning** - Manual but clear view of team allocation to prevent bottlenecks
+2. **Intake Management** - Streamline request triage and assignment (reduce from
+   hours to minutes)
+3. **Capacity Planning** - Manual but clear view of team allocation to prevent
+   bottlenecks
 4. **Performance** - Page load < 2s, mutations < 500ms
 5. **Scalability** - Support 50 users, 100+ concurrent projects, 1000+ tickets
 6. **Maintainability** - Clear patterns for future operational tools
@@ -50,7 +59,8 @@ The Business Center is Skyll's internal operational hub for managing work intake
 
 ### Decision 1: Use Tickets Table for Intake Queue
 
-**Choice**: Leverage existing `ticket` table with type='intake' for work requests
+**Choice**: Leverage existing `ticket` table with type='intake' for work
+requests
 
 **Rationale**:
 
@@ -75,7 +85,8 @@ The Business Center is Skyll's internal operational hub for managing work intake
 
 ### Decision 2: Many-to-Many Project Assignment (New Table)
 
-**Choice**: Create `project_assignment` junction table for user-to-project relationships
+**Choice**: Create `project_assignment` junction table for user-to-project
+relationships
 
 **Rationale**:
 
@@ -87,7 +98,8 @@ The Business Center is Skyll's internal operational hub for managing work intake
 **Alternatives Considered**:
 
 - ❌ Add `assigned_to_id` to project table - Only supports 1:1
-- ❌ Store user IDs in JSONB array - Poor query performance, no relational integrity
+- ❌ Store user IDs in JSONB array - Poor query performance, no relational
+  integrity
 - ❌ Extend existing user_to_client table - Wrong domain boundary
 
 **Schema**:
@@ -108,13 +120,15 @@ project_assignment {
 - ✅ Pro: Supports many-to-many naturally
 - ✅ Pro: Query performance with proper indexes
 - ✅ Pro: Enables future assignment metadata (role, percentage, etc.)
-- ⚠️ Con: Adds complexity with joins (acceptable, mitigated by Drizzle relations)
+- ⚠️ Con: Adds complexity with joins (acceptable, mitigated by Drizzle
+  relations)
 
 ---
 
 ### Decision 3: Manual Capacity Management (Column on User)
 
-**Choice**: Add `capacity_percentage` column to `user` table, updated manually by admins
+**Choice**: Add `capacity_percentage` column to `user` table, updated manually
+by admins
 
 **Rationale**:
 
@@ -126,7 +140,8 @@ project_assignment {
 
 **Alternatives Considered**:
 
-- ❌ Auto-calculate from project estimates - Requires estimate tracking (out of scope)
+- ❌ Auto-calculate from project estimates - Requires estimate tracking (out of
+  scope)
 - ❌ Create separate `user_capacity` table - Over-engineering for single field
 - ❌ Use user_metadata JSONB - Harder to query/index
 
@@ -165,7 +180,8 @@ user {
 1. **Server Components** - All data fetching, business logic (default)
 2. **Server Actions** - All mutations (forms, assignments, updates)
 3. **Client Components** - Only interactive UI (forms, modals, dropdowns)
-4. **API Client Layer** - Reusable functions in `lib/api/` for server-to-server calls
+4. **API Client Layer** - Reusable functions in `lib/api/` for server-to-server
+   calls
 
 **Example Flow - Assign Ticket**:
 
@@ -208,7 +224,8 @@ export function AssignModal({ ticketId }) {
 - ✅ Pro: Security (no API keys in browser)
 - ✅ Pro: Performance (smaller bundles)
 - ✅ Pro: Simpler state management
-- ⚠️ Con: Real-time updates require polling or manual refresh (acceptable for MVP)
+- ⚠️ Con: Real-time updates require polling or manual refresh (acceptable for
+  MVP)
 
 ---
 
@@ -256,11 +273,13 @@ export function AssignModal({ ticketId }) {
 
 ### Decision 6: Database Query Performance Strategy
 
-**Choice**: Leverage existing indexes + add targeted new indexes for Business Center queries
+**Choice**: Leverage existing indexes + add targeted new indexes for Business
+Center queries
 
 **Existing Indexes** (already optimal):
 
-- `ticket`: type, status, assigned_to_id, client_id, composite (client_status, assigned_status)
+- `ticket`: type, status, assigned_to_id, client_id, composite (client_status,
+  assigned_status)
 - `project`: status, client_id, composite (client_status), delivered_at (BRIN)
 - `user`: is_internal
 
@@ -269,14 +288,20 @@ export function AssignModal({ ticketId }) {
 - `user.capacity_percentage` (B-Tree) - For filtering/sorting team
 - `project_assignment.project_id` (B-Tree) - For fetching assignees
 - `project_assignment.user_id` (B-Tree) - For finding user's projects
-- `project_assignment (project_id, user_id)` (Composite, unique) - Prevent duplicates
+- `project_assignment (project_id, user_id)` (Composite, unique) - Prevent
+  duplicates
 
 **Query Patterns**:
 
-1. Intake Queue: `WHERE type='intake' AND status IN ('open', 'in_progress')` - Uses existing index
-2. Active Work: `WHERE status IN ('in_development', 'in_review') AND client.type='creative'` - Uses existing composite
-3. Team Capacity: `WHERE is_internal=true ORDER BY capacity_percentage` - Uses new index
-4. Delivery Calendar: `WHERE delivered_at BETWEEN X AND Y` - Uses existing BRIN index
+1. Intake Queue: `WHERE type='intake' AND status IN ('open', 'in_progress')` -
+   Uses existing index
+2. Active Work:
+   `WHERE status IN ('in_development', 'in_review') AND client.type='creative'` -
+   Uses existing composite
+3. Team Capacity: `WHERE is_internal=true ORDER BY capacity_percentage` - Uses
+   new index
+4. Delivery Calendar: `WHERE delivered_at BETWEEN X AND Y` - Uses existing BRIN
+   index
 
 **Caching**:
 
@@ -293,7 +318,8 @@ export function AssignModal({ ticketId }) {
 
 ### Decision 7: Access Control - Three Layers
 
-**Choice**: Implement defense-in-depth with middleware + Server Components + Server Actions
+**Choice**: Implement defense-in-depth with middleware + Server Components +
+Server Actions
 
 **Layer 1 - Middleware** (optimistic):
 
@@ -401,7 +427,8 @@ export async function assignTicketAction() {
 
 **Severity**: Medium | **Likelihood**: Medium | **Impact**: High
 
-**Success Metric**: >80% of internal users log in weekly within 4 weeks of launch
+**Success Metric**: >80% of internal users log in weekly within 4 weeks of
+launch
 
 ## Migration Plan
 
@@ -509,7 +536,8 @@ CREATE UNIQUE INDEX "project_assignment_project_user_idx" ON "project_assignment
 - B) In-app notifications only (future enhancement)
 - C) No notifications (manual check of Business Center)
 
-**Decision**: Defer to Phase 2. Start with option C (manual), add in-app notifications after MVP.
+**Decision**: Defer to Phase 2. Start with option C (manual), add in-app
+notifications after MVP.
 
 ---
 
@@ -523,7 +551,9 @@ CREATE UNIQUE INDEX "project_assignment_project_user_idx" ON "project_assignment
 - B) Calculate from ticket completion (requires ticket→project linkage)
 - C) Remove from MVP, add later
 
-**Decision**: **Option A** - Add optional `completion_percentage` column (integer 0-100) to project table. Admin manually updates. Display as visual progress bar on project cards. Keep simple for MVP.
+**Decision**: **Option A** - Add optional `completion_percentage` column
+(integer 0-100) to project table. Admin manually updates. Display as visual
+progress bar on project cards. Keep simple for MVP.
 
 ---
 
@@ -537,13 +567,15 @@ CREATE UNIQUE INDEX "project_assignment_project_user_idx" ON "project_assignment
 - B) Require admin approval to revert (audit trail)
 - C) No revert (create new project instead)
 
-**Decision**: **Option A** - Allow simple status change. Add audit logging in Phase 2.
+**Decision**: **Option A** - Allow simple status change. Add audit logging in
+Phase 2.
 
 ---
 
 ### Q4: Real-time updates vs. manual refresh?
 
-**Context**: If two users are viewing Business Center, changes don't sync in real-time
+**Context**: If two users are viewing Business Center, changes don't sync in
+real-time
 
 **Options**:
 
@@ -551,7 +583,8 @@ CREATE UNIQUE INDEX "project_assignment_project_user_idx" ON "project_assignment
 - B) Auto-refresh every 30s
 - C) Manual refresh only (user clicks refresh or re-navigates)
 
-**Decision**: **Option C** for MVP. Add option B (polling) in Phase 2 if users request it. Avoid WebSockets for simplicity.
+**Decision**: **Option C** for MVP. Add option B (polling) in Phase 2 if users
+request it. Avoid WebSockets for simplicity.
 
 ## Success Metrics
 
@@ -574,6 +607,7 @@ CREATE UNIQUE INDEX "project_assignment_project_user_idx" ON "project_assignment
 
 - `openspec/changes/add-business-center/proposal.md` - Why and what
 - `openspec/changes/add-business-center/tasks.md` - Implementation checklist
-- `openspec/changes/add-business-center/specs/business-center/spec.md` - Requirements
+- `openspec/changes/add-business-center/specs/business-center/spec.md` -
+  Requirements
 - `apps/web/ARCHITECTURE.md` - Server-First patterns
 - `openspec/specs/authentication/spec.md` - Auth requirements

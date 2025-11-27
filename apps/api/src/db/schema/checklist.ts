@@ -1,6 +1,7 @@
 import { boolean, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
-import { ticket } from './ticket';
+
 import { project } from './project';
+import { ticket } from './ticket';
 import { user } from './user';
 
 /**

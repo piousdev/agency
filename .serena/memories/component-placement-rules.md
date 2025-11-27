@@ -2,13 +2,15 @@
 
 ## Summary
 
-This memory documents the critical component placement rules for the Next.js web app. These rules MUST be followed for all future development.
+This memory documents the critical component placement rules for the Next.js web
+app. These rules MUST be followed for all future development.
 
 ## The Rule
 
 **NEVER place components in the `app/` directory.**
 
-- The `app/` directory is ONLY for routing files: `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`
+- The `app/` directory is ONLY for routing files: `page.tsx`, `layout.tsx`,
+  `loading.tsx`, `error.tsx`
 - ALL client components, forms, cards, dialogs go in `src/components/`
 - The component directory structure MUST mirror the app route structure
 

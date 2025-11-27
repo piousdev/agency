@@ -1,12 +1,13 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { inArray } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { nanoid } from 'nanoid';
+
 import { db } from '../../db';
 import { request, requestHistory } from '../../db/schema';
 import { requireAuth, requireInternal, type AuthVariables } from '../../middleware/auth';
 import { bulkTransitionSchema, bulkAssignSchema } from '../../schemas/request';
-import { inArray } from 'drizzle-orm';
 
 const app = new Hono<{ Variables: AuthVariables }>();
 
@@ -42,7 +43,7 @@ app.post(
     }
 
     // Require reason for on_hold transition
-    if (toStage === 'on_hold' && !reason) {
+    if (toStage === 'on_hold' && (reason === undefined || reason === '')) {
       throw new HTTPException(400, {
         message: 'Reason is required when moving to on_hold stage',
       });
@@ -63,13 +64,13 @@ app.post(
       const requestMap = new Map(requests.map((r) => [r.id, r]));
 
       const now = new Date();
-      const historyEntries: Array<{
+      const historyEntries: {
         id: string;
         requestId: string;
         actorId: string;
         action: 'stage_changed' | 'put_on_hold';
         metadata: Record<string, unknown>;
-      }> = [];
+      }[] = [];
 
       // Process each request
       for (const requestId of requestIds) {
@@ -99,8 +100,12 @@ app.post(
         const fromStage = existingRequest.stage;
 
         // Validate transition
-        const validTargets = VALID_TRANSITIONS[fromStage];
-        if (!validTargets?.includes(toStage)) {
+        type ValidStage = keyof typeof VALID_TRANSITIONS;
+        const validStages: ValidStage[] = ['in_treatment', 'on_hold', 'estimation', 'ready'];
+        const isValidStage = validStages.includes(fromStage as ValidStage);
+        const validTargets = isValidStage ? VALID_TRANSITIONS[fromStage as ValidStage] : [];
+        const isValidTransition = validTargets.includes(toStage);
+        if (!isValidTransition) {
           result.failedIds.push({
             id: requestId,
             error: `Invalid transition from ${fromStage} to ${toStage}`,
@@ -154,8 +159,8 @@ app.post(
       return c.json({
         success: true,
         data: result,
-        message: `Transitioned ${result.successIds.length} requests to ${toStage}${
-          result.failedIds.length > 0 ? `, ${result.failedIds.length} failed` : ''
+        message: `Transitioned ${String(result.successIds.length)} requests to ${toStage}${
+          result.failedIds.length > 0 ? `, ${String(result.failedIds.length)} failed` : ''
         }`,
       });
     } catch (error) {
@@ -198,13 +203,13 @@ app.post(
       const requestMap = new Map(requests.map((r) => [r.id, r]));
 
       const now = new Date();
-      const historyEntries: Array<{
+      const historyEntries: {
         id: string;
         requestId: string;
         actorId: string;
         action: 'assigned_pm';
         metadata: Record<string, unknown>;
-      }> = [];
+      }[] = [];
 
       // Validate each request
       for (const requestId of requestIds) {
@@ -269,8 +274,8 @@ app.post(
       return c.json({
         success: true,
         data: result,
-        message: `Assigned PM to ${result.successIds.length} requests${
-          result.failedIds.length > 0 ? `, ${result.failedIds.length} failed` : ''
+        message: `Assigned PM to ${String(result.successIds.length)} requests${
+          result.failedIds.length > 0 ? `, ${String(result.failedIds.length)} failed` : ''
         }`,
       });
     } catch (error) {

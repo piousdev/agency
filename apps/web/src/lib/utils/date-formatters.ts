@@ -10,7 +10,7 @@ export function formatDueDate(dueAt: string): string {
   if (diffDays < 0) return 'Overdue';
   if (diffDays === 0) return 'Today';
   if (diffDays === 1) return 'Tomorrow';
-  if (diffDays < 7) return `In ${diffDays} days`;
+  if (diffDays < 7) return `In ${String(diffDays)} days`;
 
   return date.toLocaleDateString('en-BE', { month: 'long', day: 'numeric', year: 'numeric' });
 }

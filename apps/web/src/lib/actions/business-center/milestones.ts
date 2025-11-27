@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requirePermission, Permissions } from '@/lib/auth/permissions';
+
 import { createMilestone, updateMilestone, deleteMilestone } from '@/lib/api/milestones';
+import { requirePermission, Permissions } from '@/lib/auth/permissions';
 import { createMilestoneSchema, updateMilestoneSchema } from '@/lib/schemas/milestone';
 
 /**
@@ -30,15 +31,15 @@ export async function createMilestoneAction(
   // Validate with Zod
   const parsed = createMilestoneSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
     const result = await createMilestone(parsed.data);
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to create milestone' };
+      return { success: false, error: result.message ?? 'Failed to create milestone' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${parsed.data.projectId}`);
@@ -87,15 +88,15 @@ export async function updateMilestoneAction(
   // Validate with Zod
   const parsed = updateMilestoneSchema.safeParse(rawData);
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const firstError = Object.values(errors)[0]?.[0] || 'Validation failed';
-    return { success: false, error: firstError };
+    const firstError = parsed.error.issues[0]?.message ?? 'Validation failed';
+    const errorMessage = firstError;
+    return { success: false, error: errorMessage };
   }
 
   try {
     const result = await updateMilestone(milestoneId, parsed.data);
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to update milestone' };
+      return { success: false, error: result.message ?? 'Failed to update milestone' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${projectId}`);
@@ -125,7 +126,7 @@ export async function deleteMilestoneAction(
   try {
     const result = await deleteMilestone(milestoneId);
     if (!result.success) {
-      return { success: false, error: result.message || 'Failed to delete milestone' };
+      return { success: false, error: result.message ?? 'Failed to delete milestone' };
     }
 
     revalidatePath(`/dashboard/business-center/projects/${projectId}`);

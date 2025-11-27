@@ -1,6 +1,7 @@
 # OpenSpec Documentation
 
-This directory contains all OpenSpec proposals, specifications, and project documentation for the Skyll Platform.
+This directory contains all OpenSpec proposals, specifications, and project
+documentation for the Skyll Platform.
 
 ## 📁 Directory Structure
 
@@ -137,6 +138,5 @@ Based on STATUS.md, recommended next steps:
 
 ---
 
-**Last Updated**: 2025-11-07
-**Project**: Skyll Platform (Internal Operations System)
-**Scale Target**: 1M+ users globally
+**Last Updated**: 2025-11-07 **Project**: Skyll Platform (Internal Operations
+System) **Scale Target**: 1M+ users globally

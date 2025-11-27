@@ -1,4 +1,5 @@
 import { boolean, index, pgEnum, pgTable, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+
 import { user } from './user';
 
 /**

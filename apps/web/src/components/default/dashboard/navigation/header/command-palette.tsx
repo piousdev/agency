@@ -1,5 +1,9 @@
 'use client';
 
+import * as React from 'react';
+
+import { useRouter } from 'next/navigation';
+
 import {
   IconBolt,
   IconClock,
@@ -10,8 +14,7 @@ import {
   IconStar,
   IconX,
 } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import * as React from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -28,7 +31,7 @@ import { useFavorites } from '@/hooks/use-manage-favorites';
 import { useRecentItems } from '@/hooks/use-track-recent';
 import { cn } from '@/lib/utils';
 
-type SearchResult = {
+interface SearchResult {
   id: string;
   type: 'page' | 'action' | 'recent' | 'favorite';
   title: string;
@@ -38,7 +41,7 @@ type SearchResult = {
   icon?: React.ComponentType<{ className?: string }>;
   group?: string;
   keywords?: string[];
-};
+}
 
 // Flatten navigation structure to get all pages
 function flattenNavigation(): SearchResult[] {
@@ -50,7 +53,7 @@ function flattenNavigation(): SearchResult[] {
       // Add main item if it has a URL
       if (item.url) {
         results.push({
-          id: `page-${id++}`,
+          id: `page-${String(id++)}`,
           type: 'page',
           title: item.title,
           subtitle: item.description,
@@ -65,7 +68,7 @@ function flattenNavigation(): SearchResult[] {
         item.items.forEach((subItem) => {
           if (subItem.url) {
             results.push({
-              id: `page-${id++}`,
+              id: `page-${String(id++)}`,
               type: 'page',
               title: subItem.title,
               subtitle: subItem.description,
@@ -162,9 +165,9 @@ export function CommandPalette() {
     const query = searchQuery.toLowerCase();
     return allItems.filter((item) => {
       const matchesTitle = item.title.toLowerCase().includes(query);
-      const matchesSubtitle = item.subtitle?.toLowerCase().includes(query);
-      const matchesGroup = item.group?.toLowerCase().includes(query);
-      const matchesKeywords = item.keywords?.some((k) => k.toLowerCase().includes(query));
+      const matchesSubtitle = item.subtitle?.toLowerCase().includes(query) ?? false;
+      const matchesGroup = item.group?.toLowerCase().includes(query) ?? false;
+      const matchesKeywords = item.keywords?.some((k) => k.toLowerCase().includes(query)) ?? false;
       return matchesTitle || matchesSubtitle || matchesGroup || matchesKeywords;
     });
   }, [searchQuery, allItems]);
@@ -278,7 +281,6 @@ export function CommandPalette() {
               placeholder="Search pages, actions, or jump to..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              autoFocus
             />
             {searchQuery && (
               <button

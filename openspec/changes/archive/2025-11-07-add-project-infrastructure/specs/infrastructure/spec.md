@@ -4,19 +4,22 @@
 
 ### Requirement: Monorepo Structure
 
-The system SHALL use Turborepo with pnpm workspaces to manage multiple applications and shared packages in a single repository.
+The system SHALL use Turborepo with pnpm workspaces to manage multiple
+applications and shared packages in a single repository.
 
 #### Scenario: Install dependencies across monorepo
 
 - **WHEN** a developer runs `pnpm install` in the root directory
-- **THEN** all dependencies for apps/web, apps/api, and packages/\* SHALL be installed
+- **THEN** all dependencies for apps/web, apps/api, and packages/\* SHALL be
+  installed
 - **AND** pnpm SHALL create symlinks for workspace dependencies
 - **AND** a single pnpm-lock.yaml file SHALL be created at the root
 
 #### Scenario: Run development servers in parallel
 
 - **WHEN** a developer runs `pnpm dev` from the root
-- **THEN** Turborepo SHALL start dev servers for both apps/web and apps/api concurrently
+- **THEN** Turborepo SHALL start dev servers for both apps/web and apps/api
+  concurrently
 - **AND** the Next.js app SHALL be accessible at http://localhost:3000
 - **AND** the Hono API SHALL be accessible at http://localhost:8000
 
@@ -30,7 +33,8 @@ The system SHALL use Turborepo with pnpm workspaces to manage multiple applicati
 
 ### Requirement: Next.js 16 Frontend Application
 
-The system SHALL provide a Next.js 16 application with React 19.2, TypeScript, and Tailwind CSS using the App Router architecture.
+The system SHALL provide a Next.js 16 application with React 19.2, TypeScript,
+and Tailwind CSS using the App Router architecture.
 
 #### Scenario: Next.js app starts successfully
 
@@ -63,7 +67,8 @@ The system SHALL provide a Next.js 16 application with React 19.2, TypeScript, a
 
 ### Requirement: Hono Backend API
 
-The system SHALL provide a Hono-based API with TypeScript, Zod validation, and Hono RPC for type-safe communication.
+The system SHALL provide a Hono-based API with TypeScript, Zod validation, and
+Hono RPC for type-safe communication.
 
 #### Scenario: Hono API starts successfully
 
@@ -89,7 +94,8 @@ The system SHALL provide a Hono-based API with TypeScript, Zod validation, and H
 
 ### Requirement: TypeScript Configuration
 
-The system SHALL use shared TypeScript configurations with strict mode enabled across all apps and packages.
+The system SHALL use shared TypeScript configurations with strict mode enabled
+across all apps and packages.
 
 #### Scenario: Shared TypeScript config inheritance
 
@@ -107,7 +113,8 @@ The system SHALL use shared TypeScript configurations with strict mode enabled a
 
 ### Requirement: Database Connection with Drizzle ORM
 
-The system SHALL connect to Neon Postgres using Drizzle ORM with type-safe schema definitions and migrations.
+The system SHALL connect to Neon Postgres using Drizzle ORM with type-safe
+schema definitions and migrations.
 
 #### Scenario: Database connection established
 
@@ -139,7 +146,8 @@ The system SHALL connect to Neon Postgres using Drizzle ORM with type-safe schem
 
 ### Requirement: Environment Variable Management
 
-The system SHALL manage environment variables securely with validation and type safety for both development and production.
+The system SHALL manage environment variables securely with validation and type
+safety for both development and production.
 
 #### Scenario: Load development environment variables
 
@@ -162,7 +170,8 @@ The system SHALL manage environment variables securely with validation and type 
 
 ### Requirement: Code Quality Tooling
 
-The system SHALL enforce code quality through ESLint, Prettier, and automated checks.
+The system SHALL enforce code quality through ESLint, Prettier, and automated
+checks.
 
 #### Scenario: ESLint catches errors
 
@@ -188,7 +197,8 @@ The system SHALL enforce code quality through ESLint, Prettier, and automated ch
 
 ### Requirement: Testing Infrastructure
 
-The system SHALL support unit, integration, and end-to-end testing with Vitest and Playwright.
+The system SHALL support unit, integration, and end-to-end testing with Vitest
+and Playwright.
 
 #### Scenario: Run unit tests with Vitest
 
@@ -213,7 +223,8 @@ The system SHALL support unit, integration, and end-to-end testing with Vitest a
 
 ### Requirement: Deployment Configuration
 
-The system SHALL support deployment to Fly.io for both web and API applications with proper configuration and environment management.
+The system SHALL support deployment to Fly.io for both web and API applications
+with proper configuration and environment management.
 
 #### Scenario: API deploys to Fly.io
 
@@ -240,7 +251,8 @@ The system SHALL support deployment to Fly.io for both web and API applications 
 
 ### Requirement: Development Experience
 
-The system SHALL provide a fast, productive development experience with hot reload, type safety, and clear error messages.
+The system SHALL provide a fast, productive development experience with hot
+reload, type safety, and clear error messages.
 
 #### Scenario: Fast hot reload in development
 
@@ -265,7 +277,8 @@ The system SHALL provide a fast, productive development experience with hot relo
 
 ### Requirement: Build Performance
 
-The system SHALL build and deploy efficiently with caching and parallel execution to support rapid iteration.
+The system SHALL build and deploy efficiently with caching and parallel
+execution to support rapid iteration.
 
 #### Scenario: Incremental builds with Turbopack
 

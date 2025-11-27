@@ -54,7 +54,7 @@ async function getAuthHeaders(): Promise<HeadersInit> {
   const headersList = await headers();
   return {
     'Content-Type': 'application/json',
-    cookie: headersList.get('cookie') || '',
+    cookie: headersList.get('cookie'),
   };
 }
 
@@ -68,20 +68,21 @@ export async function createInvitation(
   data: CreateInvitationRequest
 ): Promise<CreateInvitationResponse> {
   const authHeaders = await getAuthHeaders();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/invitations/create`, {
+  const response = await fetch(`${apiUrl}/api/invitations/create`, {
     method: 'POST',
     headers: authHeaders,
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as CreateInvitationResponse & { message: string };
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to create invitation');
+    throw new Error(result.message);
   }
 
-  return result;
+  return result as CreateInvitationResponse;
 }
 
 /**
@@ -90,15 +91,14 @@ export async function createInvitation(
  * @returns Validation result with invitation data if valid
  */
 export async function validateInvitation(token: string): Promise<ValidateInvitationResponse> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/invitations/validate/${token}`
-  );
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
+  const response = await fetch(`${apiUrl}/api/invitations/validate/${token}`);
 
   if (!response.ok) {
     throw new Error('Failed to validate invitation');
   }
 
-  return response.json();
+  return response.json() as Promise<ValidateInvitationResponse>;
 }
 
 /**
@@ -109,7 +109,8 @@ export async function validateInvitation(token: string): Promise<ValidateInvitat
 export async function acceptInvitation(
   data: AcceptInvitationRequest
 ): Promise<AcceptInvitationResponse> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/invitations/accept`, {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
+  const response = await fetch(`${apiUrl}/api/invitations/accept`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -117,10 +118,10 @@ export async function acceptInvitation(
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as AcceptInvitationResponse;
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to accept invitation');
+    throw new Error(result.message);
   }
 
   return result;

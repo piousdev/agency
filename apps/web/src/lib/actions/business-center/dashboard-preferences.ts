@@ -5,18 +5,21 @@
  * Manages user dashboard layout and widget preferences
  */
 
-import { requireAuth } from '@/lib/auth/session';
 import {
   getDashboardPreferences,
   saveDashboardPreferences,
   resetDashboardPreferences,
 } from '@/lib/api/dashboard-preferences';
+import { requireAuth } from '@/lib/auth/session';
+
+import { withErrorHandling, type ActionResult } from './errors';
+
 import type {
   DashboardPreferences,
   SavePreferencesInput,
   WidgetLayout,
 } from '@/lib/api/dashboard-preferences';
-import { withErrorHandling, type ActionResult } from './errors';
+
 
 // Re-export types for consumers
 export type { DashboardPreferences, WidgetLayout };
@@ -32,7 +35,7 @@ export async function fetchDashboardPreferences(): Promise<ActionResult<Dashboar
     const response = await getDashboardPreferences();
 
     if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to fetch preferences');
+      throw new Error(response.error ?? 'Failed to fetch preferences');
     }
 
     return response.data;
@@ -51,7 +54,7 @@ export async function updateDashboardPreferences(
     const response = await saveDashboardPreferences(input);
 
     if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to save preferences');
+      throw new Error(response.error ?? 'Failed to save preferences');
     }
 
     return response.data;
@@ -68,7 +71,7 @@ export async function resetToDefaultPreferences(): Promise<ActionResult<Dashboar
     const response = await resetDashboardPreferences();
 
     if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to reset preferences');
+      throw new Error(response.error ?? 'Failed to reset preferences');
     }
 
     return response.data;

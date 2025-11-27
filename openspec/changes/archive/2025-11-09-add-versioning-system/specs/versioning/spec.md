@@ -2,7 +2,8 @@
 
 ### Requirement: Changesets Installation
 
-The system SHALL have the Changesets CLI installed and configured to enable version management and changelog generation.
+The system SHALL have the Changesets CLI installed and configured to enable
+version management and changelog generation.
 
 #### Scenario: Changesets initialized
 
@@ -13,7 +14,8 @@ The system SHALL have the Changesets CLI installed and configured to enable vers
 
 ### Requirement: Version Management Workflow
 
-The system SHALL provide a standardized workflow for creating changesets, versioning packages, and publishing releases.
+The system SHALL provide a standardized workflow for creating changesets,
+versioning packages, and publishing releases.
 
 #### Scenario: Developer creates a changeset
 
@@ -34,7 +36,8 @@ The system SHALL provide a standardized workflow for creating changesets, versio
 
 ### Requirement: Changelog Generation
 
-The system SHALL automatically generate and maintain CHANGELOG.md files for all versioned packages.
+The system SHALL automatically generate and maintain CHANGELOG.md files for all
+versioned packages.
 
 #### Scenario: Changelog created for package
 
@@ -55,7 +58,8 @@ The system SHALL automatically generate and maintain CHANGELOG.md files for all 
 
 ### Requirement: Monorepo Version Independence
 
-The system SHALL support independent versioning for each package in the monorepo.
+The system SHALL support independent versioning for each package in the
+monorepo.
 
 #### Scenario: Packages versioned independently
 
@@ -75,7 +79,8 @@ The system SHALL support independent versioning for each package in the monorepo
 
 ### Requirement: Version Status Checking
 
-The system SHALL provide commands to check the status of pending changesets and version changes.
+The system SHALL provide commands to check the status of pending changesets and
+version changes.
 
 #### Scenario: Status check shows pending changes
 
@@ -93,7 +98,8 @@ The system SHALL provide commands to check the status of pending changesets and 
 
 ### Requirement: Configuration Management
 
-The system SHALL maintain versioning configuration in `.changeset/config.json` with appropriate defaults for the project.
+The system SHALL maintain versioning configuration in `.changeset/config.json`
+with appropriate defaults for the project.
 
 #### Scenario: Configuration is valid
 
@@ -106,7 +112,8 @@ The system SHALL maintain versioning configuration in `.changeset/config.json` w
 
 ### Requirement: Documentation
 
-The system SHALL provide clear documentation for the versioning workflow and conventions.
+The system SHALL provide clear documentation for the versioning workflow and
+conventions.
 
 #### Scenario: Versioning guide exists
 

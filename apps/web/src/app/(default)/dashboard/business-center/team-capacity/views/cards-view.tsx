@@ -1,7 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useCallback, useId } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { IconUsers, IconFolder, IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
   MotionCard,
@@ -11,10 +16,9 @@ import {
   MotionCardContainer,
 } from '@/components/ui/motion-card';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { IconUsers, IconFolder, IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
-import type { TeamMember } from '@/lib/api/users/types';
 import { cn } from '@/lib/utils';
+
+import type { TeamMember } from '@/lib/api/users/types';
 
 interface TeamCardsViewProps {
   teamMembers: TeamMember[];
@@ -93,12 +97,7 @@ export function TeamCardsView({ teamMembers, onMemberClick }: TeamCardsViewProps
   return (
     <MotionCardContainer className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" staggerDelay={0.06}>
       {teamMembers.map((member, index) => {
-        const status = statusConfig[member.status] ?? {
-          label: 'Available',
-          color: 'bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:border-emerald-500/30',
-          dot: 'bg-emerald-500',
-          icon: null,
-        };
+        const status = statusConfig[member.status];
         const titleId = `${baseId}-title-${member.id}`;
         const capacityDisplay = Math.min(member.capacityPercentage, 100);
 
@@ -119,7 +118,7 @@ export function TeamCardsView({ teamMembers, onMemberClick }: TeamCardsViewProps
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <Avatar className="h-11 w-11 border-2 border-border/50 shadow-sm shrink-0">
-                    <AvatarImage src={member.image || undefined} alt={member.name} />
+                    <AvatarImage src={member.image ?? undefined} alt={member.name} />
                     <AvatarFallback className="text-sm font-semibold bg-muted">
                       {getInitials(member.name)}
                     </AvatarFallback>
@@ -172,7 +171,7 @@ export function TeamCardsView({ teamMembers, onMemberClick }: TeamCardsViewProps
                 <Progress
                   value={capacityDisplay}
                   className={cn('h-2 bg-muted/50', getProgressColor(member.capacityPercentage))}
-                  aria-label={`Capacity: ${member.capacityPercentage}%`}
+                  aria-label={`Capacity: ${String(member.capacityPercentage)}%`}
                 />
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Available</span>
@@ -182,7 +181,7 @@ export function TeamCardsView({ teamMembers, onMemberClick }: TeamCardsViewProps
                       member.availableCapacity > 0 ? 'text-emerald-600' : 'text-muted-foreground'
                     )}
                   >
-                    {member.availableCapacity > 0 ? `${member.availableCapacity}%` : 'None'}
+                    {member.availableCapacity > 0 ? `${String(member.availableCapacity)}%` : 'None'}
                   </span>
                 </div>
               </div>
@@ -206,9 +205,7 @@ export function TeamCardsView({ teamMembers, onMemberClick }: TeamCardsViewProps
                     >
                       <span className="text-sm truncate flex-1 mr-3">{project.name}</span>
                       <span className="text-xs font-medium tabular-nums text-muted-foreground shrink-0">
-                        {project.completionPercentage != null
-                          ? `${project.completionPercentage}%`
-                          : '—'}
+                        {`${String(project.completionPercentage)}%`}
                       </span>
                     </div>
                   ))}

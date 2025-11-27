@@ -1,10 +1,13 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -145,7 +148,7 @@ export default function LoginPage() {
             </Button>
 
             <div className="text-sm text-center text-muted-foreground">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <a href="/signup" className="font-medium text-primary hover:text-primary/80">
                 Sign up
               </a>

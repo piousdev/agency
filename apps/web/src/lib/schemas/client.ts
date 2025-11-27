@@ -21,7 +21,6 @@ export const clientTypeOptions = [
  * Email validation helper
  */
 const emailSchema = z
-  .string()
   .email('Must be a valid email address')
   .max(255, 'Email must be less than 255 characters');
 
@@ -29,7 +28,6 @@ const emailSchema = z
  * URL validation helper
  */
 const optionalUrl = z
-  .string()
   .url('Must be a valid URL')
   .max(2048, 'URL too long')
   .optional()

@@ -1,9 +1,11 @@
 import { Suspense } from 'react';
+
 import { notFound } from 'next/navigation';
-import { requireAuth } from '@/lib/auth/session';
-import { getRequest } from '@/lib/actions/business-center/requests';
+
+import { RequestDetailClient } from '@/components/default/dashboard/business-center/intake/request-detail-client';
 import { getTeamStatus } from '@/lib/actions/business-center/overview';
-import { RequestDetailClient } from '@/components/dashboard/business-center/intake/request-detail-client';
+import { getRequest } from '@/lib/actions/business-center/requests';
+import { requireAuth } from '@/lib/auth/session';
 
 export const metadata = {
   title: 'Request Details - Intake Pipeline',
@@ -35,7 +37,7 @@ function DetailSkeleton() {
 async function RequestDetailData({ id }: { id: string }) {
   const [result, teamMembers] = await Promise.all([getRequest(id), getTeamStatus()]);
 
-  if (!result.success || !result.data) {
+  if (!result.success) {
     notFound();
   }
 
