@@ -27,7 +27,6 @@ import {
 } from '@/lib/schemas/sprint';
 import { cn } from '@/lib/utils';
 
-
 interface SprintDetailPageProps {
   params: Promise<{ id: string }>;
 }
@@ -91,11 +90,11 @@ export default async function SprintDetailPage({ params }: SprintDetailPageProps
             </h1>
           </div>
           <Button variant="outline" asChild>
-              <Link href={`/dashboard/business-center/projects/${sprint.projectId}`}>
-                <IconEdit className="h-4 w-4 mr-2" />
-                Edit in Project
-              </Link>
-            </Button>
+            <Link href={`/dashboard/business-center/projects/${sprint.projectId}`}>
+              <IconEdit className="h-4 w-4 mr-2" />
+              Edit in Project
+            </Link>
+          </Button>
         </div>
 
         {/* Sprint Goal */}

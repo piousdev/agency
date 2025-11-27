@@ -190,9 +190,7 @@ async function sendAgingAlert(agingRequest: {
           daysInStage,
           priority: req.priority,
           requesterName:
-            requester?.name !== null && requester?.name !== ''
-              ? requester.name
-              : 'Unknown',
+            requester?.name !== null && requester?.name !== '' ? requester.name : 'Unknown',
           requestUrl,
         }),
         text: intakeAgingAlertText({
@@ -206,9 +204,7 @@ async function sendAgingAlert(agingRequest: {
           daysInStage,
           priority: req.priority,
           requesterName:
-            requester?.name !== null && requester?.name !== ''
-              ? requester.name
-              : 'Unknown',
+            requester?.name !== null && requester?.name !== '' ? requester.name : 'Unknown',
           requestUrl,
         }),
       });

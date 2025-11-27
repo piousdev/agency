@@ -29,8 +29,6 @@ import type { ProjectActionState } from '@/app/(default)/dashboard/projects/acti
 import type { Client } from '@/lib/api/clients/types';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
-
-
 interface ProjectFormProps {
   project?: ProjectWithRelations & {
     repositoryUrl?: string | null;

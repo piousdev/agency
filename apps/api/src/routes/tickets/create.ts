@@ -64,7 +64,8 @@ app.post(
           description: body.description,
           type: body.type,
           priority: body.priority,
-          status: body.assignedToId !== undefined && body.assignedToId !== '' ? 'in_progress' : 'open',
+          status:
+            body.assignedToId !== undefined && body.assignedToId !== '' ? 'in_progress' : 'open',
           clientId: body.clientId,
           projectId: body.projectId,
           assignedToId: body.assignedToId,

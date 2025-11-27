@@ -18,10 +18,13 @@ import type { ProjectDetailResponse } from './types';
 export async function getProject(projectId: string): Promise<ProjectDetailResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}`, {
-    headers: authHeaders,
-    cache: 'no-store',
-  });
+  const response = await fetch(
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/projects/${projectId}`,
+    {
+      headers: authHeaders,
+      cache: 'no-store',
+    }
+  );
 
   const result = (await response.json()) as { message?: string } & Partial<ProjectDetailResponse>;
 

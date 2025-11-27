@@ -394,9 +394,7 @@ export function RequestFormClient() {
                       <dt className="text-muted-foreground">Title:</dt>
                       <dd>{form.getValues('title') || '-'}</dd>
                       <dt className="text-muted-foreground">Type:</dt>
-                      <dd className="capitalize">
-                        {form.getValues('type').replace('_', ' ')}
-                      </dd>
+                      <dd className="capitalize">{form.getValues('type').replace('_', ' ')}</dd>
                       <dt className="text-muted-foreground">Priority:</dt>
                       <dd className="capitalize">{form.getValues('priority')}</dd>
                     </dl>

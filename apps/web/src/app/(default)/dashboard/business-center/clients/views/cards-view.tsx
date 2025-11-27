@@ -26,7 +26,6 @@ import { cn } from '@/lib/utils';
 
 import type { Client } from '@/lib/api/clients/types';
 
-
 interface ClientsCardsViewProps {
   clients: Client[];
   onClientClick?: (client: Client) => void;

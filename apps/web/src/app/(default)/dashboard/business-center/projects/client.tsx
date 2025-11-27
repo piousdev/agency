@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 
 import Link from 'next/link';
 
-import {  IconChevronDown, IconPlus } from '@tabler/icons-react';
+import { IconChevronDown, IconPlus } from '@tabler/icons-react';
 
 import { ViewSwitcher, type ViewMode } from '@/components/business-center/view-switcher';
 import { Badge } from '@/components/ui/badge';

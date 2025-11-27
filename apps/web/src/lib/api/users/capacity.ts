@@ -31,7 +31,7 @@ export async function updateCapacity(
       }
     );
 
-    const result = (await response.json()) as { message?: string; data?: UserResponse["data"] };
+    const result = (await response.json()) as { message?: string; data?: UserResponse['data'] };
 
     if (!response.ok) {
       return { success: false, error: result.message ?? 'Failed to update user capacity' };

@@ -112,9 +112,10 @@ app.get('/:id/permissions', requireAuth(), async (c) => {
         const roleName = assignment.role.name.toLowerCase();
         // Use a safe lookup to avoid object injection warning
         type ValidRoleName = 'admin' | 'editor' | 'viewer' | 'client';
-        const defaultPerms = (roleName in DEFAULT_ROLE_PERMISSIONS) ?
-          DEFAULT_ROLE_PERMISSIONS[roleName as ValidRoleName] :
-          undefined;
+        const defaultPerms =
+          roleName in DEFAULT_ROLE_PERMISSIONS
+            ? DEFAULT_ROLE_PERMISSIONS[roleName as ValidRoleName]
+            : undefined;
         if (defaultPerms) {
           defaultPerms.forEach((p) => permissionsSet.add(p));
         }

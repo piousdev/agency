@@ -25,7 +25,10 @@ app.get('/:id/activity', requireAuth(), requireInternal(), async (c) => {
   const limit = Math.min(parseInt(c.req.query('limit') ?? '50'), 100);
   const offset = parseInt(c.req.query('offset') ?? '0');
   const typesParam = c.req.query('types');
-  const types = typesParam !== undefined && typesParam !== '' ? (typesParam.split(',') as ActivityType[]) : undefined;
+  const types =
+    typesParam !== undefined && typesParam !== ''
+      ? (typesParam.split(',') as ActivityType[])
+      : undefined;
 
   try {
     // Verify ticket exists

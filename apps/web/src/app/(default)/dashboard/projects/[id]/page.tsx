@@ -141,7 +141,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                 <span className="flex items-center gap-1.5">
                   <IconUsers className="h-3.5 w-3.5" />
                   {project.assignees.length} member
-                  {(project.assignees.length) !== 1 ? 's' : ''}
+                  {project.assignees.length !== 1 ? 's' : ''}
                 </span>
                 <span className="text-border">•</span>
                 <span className="flex items-center gap-1.5">
@@ -372,7 +372,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                 </h3>
                 <span className="text-xs text-muted-foreground tabular-nums">
                   {project.assignees.length} member
-                  {(project.assignees.length) !== 1 ? 's' : ''}
+                  {project.assignees.length !== 1 ? 's' : ''}
                 </span>
               </div>
 

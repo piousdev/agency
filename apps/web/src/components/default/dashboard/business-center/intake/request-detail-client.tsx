@@ -50,7 +50,6 @@ import {
 import type { RequestWithRelations } from '@/lib/api/requests/types';
 import type { RequestStage } from '@/lib/schemas/request';
 
-
 interface RequestDetailClientProps {
   request: RequestWithRelations;
   availablePMs?: { id: string; name: string }[];
@@ -125,7 +124,10 @@ function formatTimeInStage(stageEnteredAt: string): string {
 
 const EMPTY_PM_ARRAY: { id: string; name: string }[] = [];
 
-export function RequestDetailClient({ request, availablePMs = EMPTY_PM_ARRAY }: RequestDetailClientProps) {
+export function RequestDetailClient({
+  request,
+  availablePMs = EMPTY_PM_ARRAY,
+}: RequestDetailClientProps) {
   const router = useRouter();
   const [isTransitioning, setIsTransitioning] = useState(false);
 

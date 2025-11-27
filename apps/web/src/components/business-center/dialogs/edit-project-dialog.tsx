@@ -22,7 +22,6 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { updateProjectFullAction } from '@/lib/actions/business-center/projects';
 
-
 interface Project {
   id: string;
   name: string;

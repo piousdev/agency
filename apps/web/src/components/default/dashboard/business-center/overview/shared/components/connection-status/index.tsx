@@ -19,7 +19,6 @@ import { cn } from '@/lib/utils';
 
 import type { ConnectionStatusProps } from '@/components/default/dashboard/business-center/overview/shared/components/connection-status/types';
 
-
 export function ConnectionStatus({
   className,
   showLabel = CONNECTION_DEFAULTS.SHOW_LABEL,

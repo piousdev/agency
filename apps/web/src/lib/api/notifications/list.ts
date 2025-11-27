@@ -41,7 +41,8 @@ export async function listNotifications(
     let errorMessage: string;
     try {
       const errorData = (await response.json()) as { error?: string; message?: string };
-      errorMessage = errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
+      errorMessage =
+        errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
     } catch {
       errorMessage = `Request failed (${String(response.status)})`;
     }
@@ -77,7 +78,8 @@ export async function getUnreadCount(): Promise<UnreadCountResponse> {
     let errorMessage: string;
     try {
       const errorData = (await response.json()) as { error?: string; message?: string };
-      errorMessage = errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
+      errorMessage =
+        errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
     } catch {
       errorMessage = `Request failed (${String(response.status)})`;
     }

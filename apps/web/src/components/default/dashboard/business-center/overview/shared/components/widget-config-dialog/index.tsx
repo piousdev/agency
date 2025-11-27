@@ -19,7 +19,6 @@ import { useDashboardStore, DEFAULT_WIDGET_CONFIGS } from '@/lib/stores/dashboar
 
 import type { WidgetConfigDialogProps } from '@/components/default/dashboard/business-center/overview/shared/components/widget-config-dialog/types';
 
-
 export function WidgetConfigDialog({
   open,
   onOpenChange,

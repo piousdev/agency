@@ -1,9 +1,6 @@
 import { IconMessage, IconAt, IconBell, IconArrowBackUp } from '@tabler/icons-react';
 
-import type { TabValue,
-  DisplayNotificationType,
-  NotificationTypeConfig } from '../types';
-
+import type { TabValue, DisplayNotificationType, NotificationTypeConfig } from '../types';
 
 /**
  * Notification type visual configurations.

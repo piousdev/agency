@@ -22,7 +22,6 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { clientTypeOptions } from '@/lib/schemas';
 
-
 interface ClientFormProps {
   client?: {
     id: string;

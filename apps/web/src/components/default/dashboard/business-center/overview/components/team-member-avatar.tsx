@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 
 import type { TeamMember } from '@/components/default/dashboard/business-center/overview/types';
 
-
 interface MemberAvatarProps {
   readonly name: string;
   readonly image?: string;

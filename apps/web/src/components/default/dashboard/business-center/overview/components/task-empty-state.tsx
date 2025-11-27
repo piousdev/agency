@@ -1,5 +1,3 @@
-
-
 interface TaskEmptyStateProps {
   readonly isFiltered: boolean;
 }

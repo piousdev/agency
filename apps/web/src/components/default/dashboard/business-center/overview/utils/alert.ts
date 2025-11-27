@@ -39,9 +39,7 @@ export function getAlertTypeConfig(type: AlertType): AlertTypeConfig {
 /**
  * Calculates alert counts by type.
  */
-export function calculateAlertCounts(
-  alerts: readonly { type: AlertType }[]
-): {
+export function calculateAlertCounts(alerts: readonly { type: AlertType }[]): {
   total: number;
   critical: number;
   warning: number;

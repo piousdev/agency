@@ -159,7 +159,8 @@ const eslintConfig = tseslint.config(
     },
     rules: {
       // All security rules at error level for API
-      'security/detect-object-injection': 'warn',
+      // detect-object-injection disabled - produces false positives with TypeScript's type system
+      'security/detect-object-injection': 'off',
       'security/detect-non-literal-regexp': 'error',
       'security/detect-unsafe-regex': 'error',
       'security/detect-buffer-noassert': 'error',

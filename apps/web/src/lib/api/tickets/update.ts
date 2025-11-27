@@ -22,11 +22,14 @@ export async function updateTicket(
 ): Promise<TicketResponse> {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${String(process.env.NEXT_PUBLIC_API_URL)}/api/tickets/${ticketId}`, {
-    method: 'PATCH',
-    headers: authHeaders,
-    body: JSON.stringify(data),
-  });
+  const response = await fetch(
+    `${String(process.env.NEXT_PUBLIC_API_URL)}/api/tickets/${ticketId}`,
+    {
+      method: 'PATCH',
+      headers: authHeaders,
+      body: JSON.stringify(data),
+    }
+  );
 
   const result = (await response.json()) as { message?: string } & Partial<TicketResponse>;
 

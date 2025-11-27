@@ -31,8 +31,6 @@ import { StatusSelect } from './status-select';
 import type { ProjectActionState } from '@/app/(default)/dashboard/projects/actions';
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
-
-
 interface ProjectFormProps {
   project?: ProjectWithRelations & {
     priority?: 'low' | 'medium' | 'high' | 'urgent';

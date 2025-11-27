@@ -4,7 +4,6 @@ import { IconLayoutGrid, IconList, IconLayoutKanban } from '@tabler/icons-react'
 
 import { Button } from '@/components/ui/button';
 
-
 export type ViewMode = 'table' | 'cards' | 'kanban';
 
 interface ViewSwitcherProps {

@@ -1,9 +1,6 @@
 import { IconCurrencyEuro, IconReceipt, IconAlertTriangle, IconCheck } from '@tabler/icons-react';
 
-import type {
-  BudgetLevel,
-  
-} from '@/components/default/dashboard/business-center/overview/types';
+import type { BudgetLevel } from '@/components/default/dashboard/business-center/overview/types';
 
 /**
  * Budget thresholds for visual indicators.

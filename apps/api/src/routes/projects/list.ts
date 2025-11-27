@@ -38,13 +38,19 @@ app.get(
       let whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
       // Determine sort column
-      const sortColumnMap: Record<string, typeof project.name | typeof project.createdAt | typeof project.updatedAt | typeof project.deliveredAt> = {
+      const sortColumnMap: Record<
+        string,
+        | typeof project.name
+        | typeof project.createdAt
+        | typeof project.updatedAt
+        | typeof project.deliveredAt
+      > = {
         name: project.name,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
         deliveredAt: project.deliveredAt,
       };
-      // eslint-disable-next-line security/detect-object-injection -- sortBy is validated by zod schema as enum
+
       const sortColumn = sortColumnMap[sortBy];
 
       if (assignedToId !== undefined && assignedToId !== '') {

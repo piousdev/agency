@@ -49,7 +49,8 @@ app.post('/', requireAuth(), requireInternal(), async (c) => {
         id,
         projectId,
         name: name.trim(),
-        description: description !== undefined && description.trim() !== '' ? description.trim() : null,
+        description:
+          description !== undefined && description.trim() !== '' ? description.trim() : null,
         status: status ?? 'pending',
         dueDate: dueDate !== undefined ? new Date(dueDate) : null,
         sortOrder: sortOrder ?? 0,

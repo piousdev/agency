@@ -43,9 +43,12 @@ export function useEditModeState(): UseEditModeStateReturn {
     void store.resetToDefault();
   }, [store]);
 
-  const handleApplyPreset = useCallback((preset: LayoutPreset) => {
-    store.applyPreset(preset);
-  }, [store]);
+  const handleApplyPreset = useCallback(
+    (preset: LayoutPreset) => {
+      store.applyPreset(preset);
+    },
+    [store]
+  );
 
   return {
     editMode,

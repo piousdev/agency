@@ -66,13 +66,13 @@ function getTransporter(): Transporter {
 
     // Return a mock transporter for development
     return {
-      sendMail: async (mailOptions: any) => {
+      sendMail: (mailOptions: { to?: string; subject?: string }) => {
         console.log('📧 [DEV MODE] Simulated email sent:');
-        console.log(`   To: ${mailOptions.to}`);
-        console.log(`   Subject: ${mailOptions.subject}`);
-        return { messageId: 'dev-mock-id-' + Date.now() };
+        console.log(`   To: ${mailOptions.to ?? 'unknown'}`);
+        console.log(`   Subject: ${mailOptions.subject ?? 'no subject'}`);
+        return Promise.resolve({ messageId: 'dev-mock-id-' + String(Date.now()) });
       },
-      verify: async () => true,
+      verify: () => Promise.resolve(true),
     } as unknown as Transporter;
   }
 

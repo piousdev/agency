@@ -48,7 +48,6 @@ import {
 import type { Request, StageCounts } from '@/lib/api/requests/types';
 import type { RequestStage } from '@/lib/schemas/request';
 
-
 interface IntakeClientProps {
   initialRequests: Request[];
   initialStageCounts: StageCounts;
@@ -209,9 +208,12 @@ export function IntakeClient({
               `${String(successIds.length)} request${successIds.length !== 1 ? 's' : ''} moved to ${REQUEST_STAGE_LABELS[pendingAction.stage]}`
             );
           } else {
-            toast.warning(`${String(successIds.length)} succeeded, ${String(failedIds.length)} failed`, {
-              description: failedIds.map((f) => f.error).join(', '),
-            });
+            toast.warning(
+              `${String(successIds.length)} succeeded, ${String(failedIds.length)} failed`,
+              {
+                description: failedIds.map((f) => f.error).join(', '),
+              }
+            );
           }
           clearSelection();
           router.refresh();
@@ -227,9 +229,12 @@ export function IntakeClient({
               `${pendingAction.pmName} assigned to ${String(successIds.length)} request${successIds.length !== 1 ? 's' : ''}`
             );
           } else {
-            toast.warning(`${String(successIds.length)} succeeded, ${String(failedIds.length)} failed`, {
-              description: failedIds.map((f) => f.error).join(', '),
-            });
+            toast.warning(
+              `${String(successIds.length)} succeeded, ${String(failedIds.length)} failed`,
+              {
+                description: failedIds.map((f) => f.error).join(', '),
+              }
+            );
           }
           clearSelection();
           router.refresh();
@@ -248,10 +253,7 @@ export function IntakeClient({
     (requests: Request[]) => {
       return requests.filter((request) => {
         // Stage filter (from filter popover)
-        if (
-          filters.stage.length > 0 &&
-          !filters.stage.includes(request.stage)
-        ) {
+        if (filters.stage.length > 0 && !filters.stage.includes(request.stage)) {
           return false;
         }
 

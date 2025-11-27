@@ -19,7 +19,6 @@ import { cn } from '@/lib/utils';
 
 import type { Sprint } from '@/lib/api/sprints/types';
 
-
 interface SprintSelectProps {
   value?: string | null;
   onValueChange?: (value: string | null) => void;

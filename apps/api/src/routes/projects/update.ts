@@ -51,9 +51,12 @@ app.patch(
       if (data.status !== undefined) updateData.status = data.status;
       if (data.completionPercentage !== undefined)
         updateData.completionPercentage = data.completionPercentage;
-      if (data.repositoryUrl !== undefined) updateData.repositoryUrl = data.repositoryUrl !== '' ? data.repositoryUrl : null;
-      if (data.productionUrl !== undefined) updateData.productionUrl = data.productionUrl !== '' ? data.productionUrl : null;
-      if (data.stagingUrl !== undefined) updateData.stagingUrl = data.stagingUrl !== '' ? data.stagingUrl : null;
+      if (data.repositoryUrl !== undefined)
+        updateData.repositoryUrl = data.repositoryUrl !== '' ? data.repositoryUrl : null;
+      if (data.productionUrl !== undefined)
+        updateData.productionUrl = data.productionUrl !== '' ? data.productionUrl : null;
+      if (data.stagingUrl !== undefined)
+        updateData.stagingUrl = data.stagingUrl !== '' ? data.stagingUrl : null;
       if (data.notes !== undefined) updateData.notes = data.notes !== '' ? data.notes : null;
       if (data.startedAt !== undefined)
         updateData.startedAt = data.startedAt !== '' ? new Date(data.startedAt) : null;

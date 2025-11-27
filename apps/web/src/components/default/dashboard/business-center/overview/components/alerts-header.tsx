@@ -1,5 +1,3 @@
-
-
 import { IconBell } from '@tabler/icons-react';
 
 import { FilterBadge } from '@/components/default/dashboard/business-center/overview/components/alerts-filter-badge';

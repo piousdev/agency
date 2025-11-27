@@ -20,7 +20,6 @@ import type {
 } from '@/components/default/dashboard/business-center/overview/shared/components/widget-config-dialog/types';
 import type { UpcomingDeadlinesConfig } from '@/lib/stores/dashboard-store';
 
-
 export function UpcomingDeadlinesConfigFields({
   config,
   updateConfig,

@@ -16,7 +16,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { deleteTicketAction } from '@/lib/actions/business-center/tickets';
 
-
 interface DeleteTicketDialogProps {
   ticketId: string;
   ticketTitle: string;

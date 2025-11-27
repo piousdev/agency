@@ -65,8 +65,6 @@ import { SprintForm } from './forms/sprint-form';
 
 import type { Sprint } from '@/lib/api/sprints/types';
 
-
-
 interface SprintListProps {
   sprints: Sprint[];
   projectId: string;
@@ -111,7 +109,8 @@ export function SprintList({
         endDate: endDate && typeof endDate === 'string' ? endDate : null,
         plannedPoints: parseInt(formData.get('plannedPoints') as string),
         completedPoints: 0,
-        sprintNumber: sprintNumber && typeof sprintNumber === 'string' ? parseInt(sprintNumber) : null,
+        sprintNumber:
+          sprintNumber && typeof sprintNumber === 'string' ? parseInt(sprintNumber) : null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -144,8 +143,14 @@ export function SprintList({
                 status: (status && typeof status === 'string' ? status : s.status) as SprintStatus,
                 startDate: startDate && typeof startDate === 'string' ? startDate : s.startDate,
                 endDate: endDate && typeof endDate === 'string' ? endDate : s.endDate,
-                plannedPoints: plannedPoints && typeof plannedPoints === 'string' ? parseInt(plannedPoints) : s.plannedPoints,
-                sprintNumber: sprintNumber && typeof sprintNumber === 'string' ? parseInt(sprintNumber) : s.sprintNumber,
+                plannedPoints:
+                  plannedPoints && typeof plannedPoints === 'string'
+                    ? parseInt(plannedPoints)
+                    : s.plannedPoints,
+                sprintNumber:
+                  sprintNumber && typeof sprintNumber === 'string'
+                    ? parseInt(sprintNumber)
+                    : s.sprintNumber,
                 updatedAt: new Date().toISOString(),
               }
             : s

@@ -20,7 +20,6 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { milestoneStatusOptions, type MilestoneStatus } from '@/lib/schemas/milestone';
 
-
 interface MilestoneFormData {
   id: string;
   projectId: string;

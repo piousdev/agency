@@ -10,29 +10,37 @@
 ## Fixes Applied
 
 ### 1. Nullish Coalescing (`??` vs `||`)
-- Fixed `result.error || 'message'` → `result.error ?? 'message'` (when appropriate)
+
+- Fixed `result.error || 'message'` → `result.error ?? 'message'` (when
+  appropriate)
 - Fixed `optional?.property || default` → `optional?.property ?? default`
 - Fixed patterns like `pm?.name || 'PM'` → `pm?.name ?? 'PM'`
 
 ### 2. Template Literal Type Expressions
+
 - Wrapped numeric values with `String()` in template literals
 - Fixed patterns like `${count}` → `${String(count)}`
 - Fixed `${length}`, `${index}`, `${size}` patterns
 
 ### 3. Unused Variables
+
 - Prefixed unused destructured variables with `_`
-- Example: `{ lastEventTimestamp }` → `{ lastEventTimestamp: _lastEventTimestamp }`
+- Example: `{ lastEventTimestamp }` →
+  `{ lastEventTimestamp: _lastEventTimestamp }`
 
 ### 4. Unnecessary Conditions
+
 - Fixed `if (!value)` when value is always truthy
 - Fixed unnecessary optional chaining patterns
 - Changed comparisons from falsy checks to explicit checks
 
 ### 5. Default Props with Array Literals
+
 - Created const references for default empty arrays
 - Example: `availablePMs = []` → `availablePMs = EMPTY_PM_ARRAY`
 
 ### 6. Other Fixes
+
 - Removed unused imports (e.g., `CardDescription`)
 - Fixed async functions without await expressions
 - Fixed unnecessary type conditionals

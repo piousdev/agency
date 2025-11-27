@@ -300,7 +300,11 @@ const eslintConfig = tseslint.config(
 
   // Business Center components (React Compiler experimental rules produce false positives)
   {
-    files: ['**/business-center/**/*.{ts,tsx}', '**/data-table/**/*.{ts,tsx}', '**/changelog/**/*.{ts,tsx}'],
+    files: [
+      '**/business-center/**/*.{ts,tsx}',
+      '**/data-table/**/*.{ts,tsx}',
+      '**/changelog/**/*.{ts,tsx}',
+    ],
     rules: {
       // Disable React Compiler experimental rules - false positives for valid hook patterns
       'react-hooks/set-state-in-effect': 'off',

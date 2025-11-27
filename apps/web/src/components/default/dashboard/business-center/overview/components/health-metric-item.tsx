@@ -11,7 +11,6 @@ import { cn } from '@/lib/utils';
 
 import type { HealthMetric } from '@/components/default/dashboard/business-center/overview/types';
 
-
 interface MetricHeaderProps {
   readonly icon: HealthMetric['icon'];
   readonly label: string;

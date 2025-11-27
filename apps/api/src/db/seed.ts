@@ -97,7 +97,6 @@ const clientPermissions = [
  */
 function permissionsToRecord(perms: string[]): Record<string, boolean> {
   return perms.reduce<Record<string, boolean>>((acc, perm) => {
-    // eslint-disable-next-line security/detect-object-injection
     acc[perm] = true;
     return acc;
   }, {});
@@ -342,7 +341,6 @@ async function seedUsers(): Promise<{
     const name = generateName();
     const email = generateEmail(name, i);
 
-    // eslint-disable-next-line security/detect-object-injection
     const capacity = [50, 75, 85, 100, 120, 150][i] ?? 80;
 
     const [newUser] = await db
@@ -911,7 +909,6 @@ async function seedProjects(
 
   // Projects with upcoming deliveries
   for (let i = 0; i < SEED_CONFIG.upcomingDeliveries.length; i++) {
-    // eslint-disable-next-line security/detect-object-injection
     const daysUntilDelivery = SEED_CONFIG.upcomingDeliveries[i] ?? 7;
     const deliveryDate = new Date(Date.now() + daysUntilDelivery * 24 * 60 * 60 * 1000);
     const projectName = projectNames[nameIndex++ % projectNames.length] ?? 'Project';
@@ -1678,7 +1675,7 @@ async function seedActivities(
       actorId: actor?.id ?? '',
       type: 'comment_added',
       metadata: {
-        description: `Added a comment on "${proj?.name}"`,
+        description: `Added a comment on "${proj?.name ?? 'Unknown Project'}"`,
         commentId: nanoid(),
       },
       createdAt: new Date(now.getTime() - hoursAgo * 60 * 60 * 1000),
@@ -1885,7 +1882,7 @@ async function seedNotifications(
 
       await db.insert(notification).values({
         id: nanoid(),
-        recipientId: adminUser?.id,
+        recipientId: adminUser.id,
         senderId: notifData.type === 'system' ? null : (sender?.id ?? null),
         type: notifData.type,
         entityType: notifData.entityType,

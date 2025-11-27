@@ -31,7 +31,8 @@ const mockGetApiUrl = vi.fn();
 const mockRevalidatePath = vi.fn();
 
 vi.mock('@/lib/api/requests/api-utils', () => ({
-  getAuthHeaders: async (): Promise<Record<string, string>> => mockGetAuthHeaders() as Promise<Record<string, string>>,
+  getAuthHeaders: async (): Promise<Record<string, string>> =>
+    mockGetAuthHeaders() as Promise<Record<string, string>>,
   getApiUrl: (): string => mockGetApiUrl() as string,
 }));
 

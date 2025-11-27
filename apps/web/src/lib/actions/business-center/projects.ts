@@ -14,7 +14,6 @@ import { createProjectSchema, updateProjectSchema } from '@/lib/schemas';
 
 import { withErrorHandling, type ActionResult } from './errors';
 
-
 type ProjectStatus =
   | 'proposal'
   | 'in_development'

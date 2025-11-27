@@ -29,7 +29,7 @@ export function WidgetGridSkeleton({
 }: WidgetGridSkeletonProps) {
   const gridIndices = createSkeletonRange(count);
 
-  if (widgetTypes  ?? widgetTypes.length > 0) {
+  if (widgetTypes ?? widgetTypes.length > 0) {
     return (
       <div className={`grid ${GRID_CONFIGS.RESPONSIVE} gap-4`}>
         {widgetTypes.map((type, index) => {

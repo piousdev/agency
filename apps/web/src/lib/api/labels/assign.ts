@@ -4,11 +4,7 @@
 
 import { getAuthHeaders } from './api-utils';
 
-import type {
-  AssignLabelsResponse,
-  RemoveLabelsResponse,
-  LabelsListResponse,
-} from './types';
+import type { AssignLabelsResponse, RemoveLabelsResponse, LabelsListResponse } from './types';
 
 /**
  * Assign labels to a ticket

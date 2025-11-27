@@ -8,7 +8,6 @@ import { createClientSchema, updateClientSchema } from '@/lib/schemas';
 
 import { withErrorHandling, type ActionResult } from './errors';
 
-
 /**
  * Create a new client
  */

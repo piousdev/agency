@@ -11,10 +11,7 @@ import {
 } from '@/components/default/dashboard/business-center/overview/shared/components/widget-error/utils';
 import { cn } from '@/lib/utils';
 
-import type {
-  IconContainerProps,
-  
-} from '@/components/default/dashboard/business-center/overview/shared/components/widget-error/types';
+import type { IconContainerProps } from '@/components/default/dashboard/business-center/overview/shared/components/widget-error/types';
 
 /**
  * Icon container with variant-based styling

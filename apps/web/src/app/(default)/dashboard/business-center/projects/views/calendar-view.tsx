@@ -57,7 +57,6 @@ import { Separator } from '@/components/ui/separator';
 import { updateDeliveryDateAction } from '@/lib/actions/projects';
 import { cn } from '@/lib/utils';
 
-
 import type { ProjectWithRelations } from '@/lib/api/projects/types';
 
 interface ProjectCalendarViewProps {

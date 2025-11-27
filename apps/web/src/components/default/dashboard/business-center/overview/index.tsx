@@ -63,7 +63,8 @@ export function OverviewDashboard({
 
         {editMode && (
           <div className="mb-4 p-3 bg-muted/50 border border-dashed rounded-lg text-sm text-muted-foreground">
-            <strong>Edit Mode:</strong> Drag widgets to reorder. Click &quot;Done&quot; when finished.
+            <strong>Edit Mode:</strong> Drag widgets to reorder. Click &quot;Done&quot; when
+            finished.
           </div>
         )}
 

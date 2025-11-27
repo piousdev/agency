@@ -103,7 +103,7 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
         comparison = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
         break;
       case 'progress':
-        comparison = (a.completionPercentage) - (b.completionPercentage);
+        comparison = a.completionPercentage - b.completionPercentage;
         break;
       case 'type':
         comparison = a.client.type.localeCompare(b.client.type);
@@ -251,9 +251,7 @@ export function DeliverableListView({ projects }: DeliverableListViewProps) {
                 <TableCell>
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">
-                        {project.completionPercentage}%
-                      </span>
+                      <span className="text-muted-foreground">{project.completionPercentage}%</span>
                     </div>
                     <Progress value={project.completionPercentage} className="h-1.5" />
                   </div>

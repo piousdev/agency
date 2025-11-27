@@ -264,7 +264,7 @@ export function ClientsKanbanView({
                                 )}
                                 <button
                                   type="button"
-                                  {...(dragProvided.dragHandleProps)}
+                                  {...dragProvided.dragHandleProps}
                                   className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing"
                                   onClick={(e) => e.stopPropagation()}
                                 >

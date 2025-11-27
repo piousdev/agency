@@ -379,7 +379,7 @@ export async function getTeamStatus(): Promise<TeamMember[]> {
       return [];
     }
 
-    const result = await response.json() as TeamResponse;
+    const result = (await response.json()) as TeamResponse;
 
     if (!result.success) {
       return [];

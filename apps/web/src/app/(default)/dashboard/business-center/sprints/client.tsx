@@ -48,7 +48,6 @@ import { cn } from '@/lib/utils';
 
 import type { Sprint } from '@/lib/api/sprints/types';
 
-
 interface SprintsClientProps {
   sprints: (Sprint & { project?: { id: string; name: string } })[];
   projects: { id: string; name: string }[];
@@ -113,7 +112,7 @@ export function SprintsClient({
         project: project ? { id: project.id, name: project.name } : undefined,
         name: formData.get('name') as string,
         goal: (formData.get('goal') as string) || null,
-        status: ((formData.get('status') ?? 'planning') as SprintStatus),
+        status: (formData.get('status') ?? 'planning') as SprintStatus,
         startDate: (formData.get('startDate') as string) || null,
         endDate: (formData.get('endDate') as string) || null,
         plannedPoints: parseInt(formData.get('plannedPoints') as string),
@@ -210,7 +209,9 @@ export function SprintsClient({
         <CardContent>
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="space-y-2 flex-1">
-              <label htmlFor="project-filter" className="text-sm font-medium">Project</label>
+              <label htmlFor="project-filter" className="text-sm font-medium">
+                Project
+              </label>
               <Select value={selectedProject} onValueChange={setSelectedProject}>
                 <SelectTrigger id="project-filter">
                   <SelectValue placeholder="All projects" />
@@ -226,7 +227,9 @@ export function SprintsClient({
               </Select>
             </div>
             <div className="space-y-2 flex-1">
-              <label htmlFor="status-filter" className="text-sm font-medium">Status</label>
+              <label htmlFor="status-filter" className="text-sm font-medium">
+                Status
+              </label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger id="status-filter">
                   <SelectValue placeholder="Filter by status" />
@@ -280,7 +283,9 @@ export function SprintsClient({
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="create-sprint-project" className="text-sm font-medium">Project *</label>
+              <label htmlFor="create-sprint-project" className="text-sm font-medium">
+                Project *
+              </label>
               <Select
                 onValueChange={(value) => {
                   const form = document.querySelector('form');

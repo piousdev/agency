@@ -125,9 +125,8 @@ export async function logEntityChange<T extends Record<string, unknown>>(
 
   if (oldValues) {
     for (const key of Object.keys(newValues)) {
-      // eslint-disable-next-line security/detect-object-injection
       const oldVal = oldValues[key];
-      // eslint-disable-next-line security/detect-object-injection
+
       const newVal = newValues[key];
 
       // Only log if value actually changed

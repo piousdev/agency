@@ -57,7 +57,9 @@ describe('requirePermission (session.ts)', () => {
       },
     };
 
-    vi.mocked(headers).mockResolvedValue(new Map([['cookie', 'auth_session=valid']]) as unknown as Headers);
+    vi.mocked(headers).mockResolvedValue(
+      new Map([['cookie', 'auth_session=valid']]) as unknown as Headers
+    );
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve(session),

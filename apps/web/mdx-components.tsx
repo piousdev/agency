@@ -20,11 +20,14 @@ type MDXComponentsType = Record<string, React.ComponentType<unknown>>;
  */
 function slugify(children: React.ReactNode): string {
   // Convert React children to plain text
-  const text = typeof children === 'string'
-    ? children
-    : React.Children.toArray(children).map(child =>
-        typeof child === 'string' || typeof child === 'number' ? String(child) : ''
-      ).join('');
+  const text =
+    typeof children === 'string'
+      ? children
+      : React.Children.toArray(children)
+          .map((child) =>
+            typeof child === 'string' || typeof child === 'number' ? String(child) : ''
+          )
+          .join('');
 
   return text
     .toLowerCase()

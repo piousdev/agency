@@ -32,7 +32,6 @@ import {
   ticketPriorityOptions,
 } from '@/lib/schemas/ticket';
 
-
 interface Ticket {
   id: string;
   title: string;

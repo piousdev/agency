@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils';
 
 import type { SortableWidgetProps } from '@/components/default/dashboard/business-center/overview/shared/components/sortable-widget/types';
 
-
 export function SortableWidget({
   id,
   size,

@@ -27,7 +27,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { updateClientFullAction } from '@/lib/actions/business-center/clients';
 import { clientTypeOptions } from '@/lib/schemas';
 
-
 interface Client {
   id: string;
   name: string;

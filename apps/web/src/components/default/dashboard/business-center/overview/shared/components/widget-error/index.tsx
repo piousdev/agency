@@ -20,7 +20,6 @@ import { cn } from '@/lib/utils';
 
 import type { WidgetErrorProps } from '@/components/default/dashboard/business-center/overview/shared/components/widget-error/types';
 
-
 /**
  * Error state component for dashboard widgets
  * Displays error message with optional retry action

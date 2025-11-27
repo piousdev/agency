@@ -40,7 +40,6 @@ import {
 
 import type { Label } from '@/lib/api/labels';
 
-
 interface LabelsClientProps {
   initialLabels: Label[];
 }

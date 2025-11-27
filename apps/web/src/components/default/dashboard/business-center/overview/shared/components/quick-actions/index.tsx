@@ -23,7 +23,6 @@ import { cn } from '@/lib/utils';
 
 import type { QuickActionsProps } from '@/components/default/dashboard/business-center/overview/shared/components/quick-actions/types';
 
-
 export function QuickActions({ className }: QuickActionsProps) {
   const toggleEditMode = useDashboardStore((state) => state.toggleEditMode);
 

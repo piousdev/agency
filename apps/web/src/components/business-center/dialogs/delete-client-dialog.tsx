@@ -16,7 +16,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { deactivateClientAction } from '@/lib/actions/business-center/clients';
 
-
 interface DeleteClientDialogProps {
   clientId: string;
   clientName: string;

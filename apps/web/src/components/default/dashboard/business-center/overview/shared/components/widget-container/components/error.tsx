@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 
 import type { WidgetErrorProps } from '@/components/default/dashboard/business-center/overview/shared/components/widget-container/type';
 
-
 /**
  * Displays error state for widget with optional retry action
  * Includes proper ARIA live region for screen reader announcements

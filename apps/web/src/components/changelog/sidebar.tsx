@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 
 import { IconChevronDown, IconChevronRight, IconHistory } from '@tabler/icons-react';
 
-
 import { cn } from '@/lib/utils';
 
 import type { ChangelogSection } from './types';

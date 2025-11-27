@@ -20,7 +20,11 @@ const DEFAULT_PARENT_PATH: string[] = [];
  * Renders individual sidebar navigation items
  * Client component for link navigation and active state
  */
-export function SectionItem({ section, isActive, parentPath = DEFAULT_PARENT_PATH }: SectionItemProps) {
+export function SectionItem({
+  section,
+  isActive,
+  parentPath = DEFAULT_PARENT_PATH,
+}: SectionItemProps) {
   // Build the full URL path from parent path and section slug
   const fullPath = [...parentPath, section.slug];
   const href = `/dashboard/help/${fullPath.join('/')}`;

@@ -20,7 +20,8 @@ import {
   WIDGET_TYPES,
   type WidgetSkeletonMap,
   type WidgetType,
-  type SkeletonComponent, type AnimationConfig 
+  type SkeletonComponent,
+  type AnimationConfig,
 } from '@/components/default/dashboard/business-center/overview/shared/type';
 
 /**

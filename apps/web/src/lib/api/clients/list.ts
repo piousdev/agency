@@ -32,9 +32,9 @@ export async function listClients(activeOnly = true): Promise<ClientsListRespons
   });
 
   if (!response.ok) {
-    const error = (await response
-      .json()
-      .catch(() => ({ message: 'Failed to list clients' }))) as { message?: string };
+    const error = (await response.json().catch(() => ({ message: 'Failed to list clients' }))) as {
+      message?: string;
+    };
     const errorMessage = error.message ?? 'Failed to list clients';
     throw new Error(errorMessage);
   }

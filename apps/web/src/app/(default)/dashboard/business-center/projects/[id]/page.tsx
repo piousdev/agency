@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { redirect, notFound } from 'next/navigation';
 
 import {
-  
   IconEdit,
   IconCalendar,
   IconUsers,
@@ -10,14 +9,13 @@ import {
   IconGitBranch,
   IconWorld,
   IconServer,
-  
 } from '@tabler/icons-react';
 
 import { MilestoneList } from '@/components/business-center/milestone-list';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent,  CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { listMilestones } from '@/lib/api/milestones';
@@ -27,7 +25,6 @@ import { projectStatusOptions } from '@/lib/schemas/project';
 
 import { ProjectActivity } from './project-activity';
 import { DetailPageHeader } from '../../components/header';
-
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;

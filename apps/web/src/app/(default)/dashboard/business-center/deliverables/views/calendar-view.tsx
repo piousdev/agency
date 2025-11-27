@@ -253,9 +253,7 @@ export function DeliverableCalendarView({ projects }: DeliverableCalendarViewPro
                                 )}
                                 <h4 className="font-medium text-sm truncate">{project.name}</h4>
                               </div>
-                              <p className="text-xs text-muted-foreground">
-                                {project.client.name}
-                              </p>
+                              <p className="text-xs text-muted-foreground">{project.client.name}</p>
                             </div>
                             <Badge
                               variant="outline"
@@ -279,10 +277,7 @@ export function DeliverableCalendarView({ projects }: DeliverableCalendarViewPro
                                 <span className="text-muted-foreground">Progress</span>
                                 <span>{project.completionPercentage}%</span>
                               </div>
-                              <Progress
-                                value={project.completionPercentage}
-                                className="h-1.5"
-                              />
+                              <Progress value={project.completionPercentage} className="h-1.5" />
                             </div>
                           </div>
 

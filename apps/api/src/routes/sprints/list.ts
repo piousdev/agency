@@ -40,16 +40,17 @@ app.get('/', requireAuth(), requireInternal(), async (c) => {
 
     const sprints = await db.query.sprint.findMany({
       where: whereClause,
-      with: projectId !== undefined && projectId !== ''
-        ? undefined
-        : {
-            project: {
-              columns: {
-                id: true,
-                name: true,
+      with:
+        projectId !== undefined && projectId !== ''
+          ? undefined
+          : {
+              project: {
+                columns: {
+                  id: true,
+                  name: true,
+                },
               },
             },
-          },
       orderBy:
         sort === 'sprintNumber'
           ? [desc(sprint.sprintNumber)]

@@ -20,7 +20,6 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { sprintStatusOptions, type SprintStatus } from '@/lib/schemas/sprint';
 
-
 interface SprintFormData {
   id: string;
   projectId: string;

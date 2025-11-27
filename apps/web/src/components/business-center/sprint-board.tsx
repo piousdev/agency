@@ -6,7 +6,6 @@ import {
   IconGripVertical,
   IconDotsVertical,
   IconEye,
-  
   IconUser,
   IconTag,
   IconClock,
@@ -24,7 +23,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-
 
 import type { Sprint } from '@/lib/api/sprints/types';
 

@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils';
 
 import type { Milestone } from '@/lib/api/milestones/types';
 
-
 interface MilestoneTimelineProps {
   milestones: Milestone[];
   className?: string;

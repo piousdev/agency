@@ -26,7 +26,6 @@ import { ClientsTableView } from './views/table-view';
 
 import type { Client } from '@/lib/api/clients/types';
 
-
 type ClientType = 'all' | 'software' | 'creative' | 'full_service';
 
 interface ClientsClientProps {

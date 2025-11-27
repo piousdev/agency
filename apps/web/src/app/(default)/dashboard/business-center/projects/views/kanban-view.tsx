@@ -278,7 +278,7 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                                   )}
                                   <button
                                     type="button"
-                                    {...(dragProvided.dragHandleProps)}
+                                    {...dragProvided.dragHandleProps}
                                     className="text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing"
                                     onClick={(e) => e.stopPropagation()}
                                   >
@@ -333,10 +333,7 @@ export function ProjectKanbanView({ projects: initialProjects }: ProjectKanbanVi
                                           className="h-5 w-5 border border-background"
                                         >
                                           {assignee.image && (
-                                            <AvatarImage
-                                              src={assignee.image}
-                                              alt={assignee.name}
-                                            />
+                                            <AvatarImage src={assignee.image} alt={assignee.name} />
                                           )}
                                           <AvatarFallback className="text-[7px] font-medium bg-muted">
                                             {getInitials(assignee.name || assignee.email || '?')}

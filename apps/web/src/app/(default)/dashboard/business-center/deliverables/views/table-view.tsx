@@ -88,9 +88,7 @@ const ProjectTypeCell = ({ row }: { row: Row<ProjectWithRelations> }) => {
     <Badge
       variant="outline"
       className={
-        type === 'creative'
-          ? 'border-pink-500 text-pink-500'
-          : 'border-blue-500 text-blue-500'
+        type === 'creative' ? 'border-pink-500 text-pink-500' : 'border-blue-500 text-blue-500'
       }
     >
       {type ? typeLabels[type] : 'N/A'}

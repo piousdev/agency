@@ -102,9 +102,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const port =
-  process.env.PORT !== undefined && process.env.PORT !== ''
-    ? parseInt(process.env.PORT, 10)
-    : 8000;
+  process.env.PORT !== undefined && process.env.PORT !== '' ? parseInt(process.env.PORT, 10) : 8000;
 
 // Only start the server if not running in test mode
 if (process.env.VITEST === undefined) {

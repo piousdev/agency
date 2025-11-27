@@ -15,7 +15,10 @@ function fixFile(filePath) {
   // Fix 2: Template literals with numbers
   // Wrap numeric expressions in String()
   // Pattern: ${expression} where expression is a number
-  content = content.replace(/\$\{([^}]+\.(?:length|count|total|size|width|height|index))\}/g, '${String($1)}');
+  content = content.replace(
+    /\$\{([^}]+\.(?:length|count|total|size|width|height|index))\}/g,
+    '${String($1)}'
+  );
   content = content.replace(/\$\{(payload\.storyPoints)\}/g, '${String($1)}');
 
   // Fix 3: No unescaped entities - replace ' with {`'`} or &apos;

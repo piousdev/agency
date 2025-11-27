@@ -104,8 +104,8 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
               <Alert>
                 <IconDeviceMobile className="size-4" />
                 <AlertDescription>
-                  You&apos;ll need an authenticator app like Google Authenticator, Authy, or 1Password to
-                  scan the QR code.
+                  You&apos;ll need an authenticator app like Google Authenticator, Authy, or
+                  1Password to scan the QR code.
                 </AlertDescription>
               </Alert>
 
@@ -282,8 +282,8 @@ export function TwoFactorSetupDialog({ open, onOpenChange }: TwoFactorSetupDialo
               <Alert>
                 <IconShield className="size-4" />
                 <AlertDescription>
-                  From now on, you&apos;ll need to enter a code from your authenticator app when signing
-                  in.
+                  From now on, you&apos;ll need to enter a code from your authenticator app when
+                  signing in.
                 </AlertDescription>
               </Alert>
             </div>

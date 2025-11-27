@@ -1,5 +1,3 @@
-
-
 import { IconCopy, IconFileText, IconFolder, IconDots, IconPlus } from '@tabler/icons-react';
 
 import { Badge } from '@/components/ui/badge';

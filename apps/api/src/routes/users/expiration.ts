@@ -53,7 +53,8 @@ app.patch(
 
       return c.json({
         success: true,
-        message: body.expiresAt !== null ? 'User expiration date updated' : 'User expiration date removed',
+        message:
+          body.expiresAt !== null ? 'User expiration date updated' : 'User expiration date removed',
         data: {
           id: updatedUser.id,
           expiresAt: updatedUser.expiresAt,

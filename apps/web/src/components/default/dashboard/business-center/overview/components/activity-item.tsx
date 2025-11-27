@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils';
 
 import type { ActivityItem as ActivityItemType } from '@/components/default/dashboard/business-center/overview/types';
 
-
 interface ActivityAvatarProps {
   readonly name: string;
   readonly image?: string;

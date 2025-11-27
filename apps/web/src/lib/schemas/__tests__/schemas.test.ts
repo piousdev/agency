@@ -245,7 +245,9 @@ describe('Ticket Schemas', () => {
 
       if (!result.success) {
         const titleError = result.error.issues.find((issue) => issue.path.includes('title'));
-        const descriptionError = result.error.issues.find((issue) => issue.path.includes('description'));
+        const descriptionError = result.error.issues.find((issue) =>
+          issue.path.includes('description')
+        );
         const clientIdError = result.error.issues.find((issue) => issue.path.includes('clientId'));
         expect(titleError).toBeDefined();
         expect(descriptionError).toBeDefined();

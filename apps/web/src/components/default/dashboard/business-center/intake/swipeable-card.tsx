@@ -128,7 +128,10 @@ export function SwipeableCard({
         >
           <div
             className="flex flex-col items-center gap-1"
-            style={{ opacity: leftProgress, transform: `scale(${String(0.8 + leftProgress * 0.2)})` }}
+            style={{
+              opacity: leftProgress,
+              transform: `scale(${String(0.8 + leftProgress * 0.2)})`,
+            }}
           >
             {leftAction.icon}
             <span className="text-xs font-medium">{leftAction.label}</span>
@@ -148,7 +151,10 @@ export function SwipeableCard({
         >
           <div
             className="flex flex-col items-center gap-1"
-            style={{ opacity: rightProgress, transform: `scale(${String(0.8 + rightProgress * 0.2)})` }}
+            style={{
+              opacity: rightProgress,
+              transform: `scale(${String(0.8 + rightProgress * 0.2)})`,
+            }}
           >
             {rightAction.icon}
             <span className="text-xs font-medium">{rightAction.label}</span>

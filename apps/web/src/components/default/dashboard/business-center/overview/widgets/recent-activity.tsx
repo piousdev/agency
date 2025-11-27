@@ -15,7 +15,6 @@ import { cn } from '@/lib/utils';
 
 import type { ActivityItem as ActivityItemType } from '@/components/default/dashboard/business-center/overview/types';
 
-
 export interface RecentActivityWidgetProps {
   readonly activities?: readonly ActivityItemType[];
   readonly className?: string;

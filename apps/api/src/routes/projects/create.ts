@@ -37,16 +37,28 @@ app.post(
         .values({
           id: projectId,
           name: data.name,
-          description: data.description !== undefined && data.description !== '' ? data.description : null,
+          description:
+            data.description !== undefined && data.description !== '' ? data.description : null,
           clientId: data.clientId,
           status: data.status,
           completionPercentage: data.completionPercentage,
-          repositoryUrl: data.repositoryUrl !== undefined && data.repositoryUrl !== '' ? data.repositoryUrl : null,
-          productionUrl: data.productionUrl !== undefined && data.productionUrl !== '' ? data.productionUrl : null,
-          stagingUrl: data.stagingUrl !== undefined && data.stagingUrl !== '' ? data.stagingUrl : null,
+          repositoryUrl:
+            data.repositoryUrl !== undefined && data.repositoryUrl !== ''
+              ? data.repositoryUrl
+              : null,
+          productionUrl:
+            data.productionUrl !== undefined && data.productionUrl !== ''
+              ? data.productionUrl
+              : null,
+          stagingUrl:
+            data.stagingUrl !== undefined && data.stagingUrl !== '' ? data.stagingUrl : null,
           notes: data.notes !== undefined && data.notes !== '' ? data.notes : null,
-          startedAt: data.startedAt !== undefined && data.startedAt !== '' ? new Date(data.startedAt) : null,
-          deliveredAt: data.deliveredAt !== undefined && data.deliveredAt !== '' ? new Date(data.deliveredAt) : null,
+          startedAt:
+            data.startedAt !== undefined && data.startedAt !== '' ? new Date(data.startedAt) : null,
+          deliveredAt:
+            data.deliveredAt !== undefined && data.deliveredAt !== ''
+              ? new Date(data.deliveredAt)
+              : null,
         })
         .returning();
 

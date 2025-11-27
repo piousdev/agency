@@ -1,7 +1,5 @@
 'use client';
 
-
-
 import { RiskActions } from '@/components/default/dashboard/business-center/overview/components/risk-actions';
 import { RiskEmptyState } from '@/components/default/dashboard/business-center/overview/components/risk-empty-state';
 import { RiskItem } from '@/components/default/dashboard/business-center/overview/components/risk-item';

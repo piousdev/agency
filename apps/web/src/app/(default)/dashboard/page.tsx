@@ -125,8 +125,8 @@ export default function Page() {
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <p className="text-muted-foreground">
-                Customize your sidebar layout by reordering sections or hiding ones you don&apos;t use
-                frequently. Access customization from the sidebar footer.
+                Customize your sidebar layout by reordering sections or hiding ones you don&apos;t
+                use frequently. Access customization from the sidebar footer.
               </p>
               <ul className="ml-4 list-disc space-y-1 text-muted-foreground">
                 <li>Drag to reorder sidebar sections</li>

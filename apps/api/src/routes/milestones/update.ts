@@ -57,7 +57,8 @@ app.patch('/:id', requireAuth(), requireInternal(), async (c) => {
     };
 
     if (name !== undefined) updates.name = name.trim();
-    if (description !== undefined) updates.description = description.trim() !== '' ? description.trim() : null;
+    if (description !== undefined)
+      updates.description = description.trim() !== '' ? description.trim() : null;
     if (status !== undefined) {
       updates.status = status as MilestoneStatus;
       // Set completedAt when status changes to completed

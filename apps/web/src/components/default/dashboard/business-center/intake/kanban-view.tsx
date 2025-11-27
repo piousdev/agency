@@ -346,7 +346,7 @@ export function KanbanView({ requests: initialRequests }: KanbanViewProps) {
                               <div className="flex items-start gap-2">
                                 <button
                                   type="button"
-                                  {...(dragProvided.dragHandleProps)}
+                                  {...dragProvided.dragHandleProps}
                                   className="mt-1 text-muted-foreground/50 hover:text-muted-foreground cursor-grab active:cursor-grabbing shrink-0"
                                 >
                                   <IconGripVertical className="h-4 w-4" />

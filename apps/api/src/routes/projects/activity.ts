@@ -27,7 +27,10 @@ app.get('/:id/activity', requireAuth(), requireInternal(), async (c) => {
   const offsetParam = c.req.query('offset');
   const offset = parseInt(offsetParam ?? '0');
   const typesParam = c.req.query('types');
-  const types = typesParam !== undefined && typesParam !== '' ? (typesParam.split(',') as ActivityType[]) : undefined;
+  const types =
+    typesParam !== undefined && typesParam !== ''
+      ? (typesParam.split(',') as ActivityType[])
+      : undefined;
 
   try {
     // Verify project exists

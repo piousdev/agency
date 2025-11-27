@@ -75,8 +75,8 @@ export function IdleTimeoutProvider({ children }: { children: React.ReactNode })
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-3">
               <p>
-                You&apos;ve been inactive for a while. For your security, you&apos;ll be automatically logged
-                out in:
+                You&apos;ve been inactive for a while. For your security, you&apos;ll be
+                automatically logged out in:
               </p>
               <div className="text-center">
                 <div className="inline-block rounded-lg bg-orange-50 px-4 py-2 text-3xl font-bold text-orange-600">

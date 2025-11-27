@@ -24,12 +24,10 @@ import type {
   HoldRequestInput,
 } from '@/lib/schemas/request';
 
-
-
 // Helper to safely parse JSON with error fallback
 async function safeJsonParse<T>(response: Response, fallback: T): Promise<T> {
   try {
-    return await response.json() as T;
+    return (await response.json()) as T;
   } catch {
     return fallback;
   }
@@ -72,14 +70,16 @@ export async function listRequests(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to fetch requests' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to fetch requests',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to fetch requests',
         'FETCH_ERROR'
       );
     }
 
-    const data = await response.json() as ListRequestsResponse;
+    const data = (await response.json()) as ListRequestsResponse;
     return { success: true, data: { requests: data.data, pagination: data.pagination } };
   } catch (error) {
     return handleApiError(error, 'List requests');
@@ -101,14 +101,16 @@ export async function getRequest(id: string): Promise<ActionResponse<RequestWith
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to fetch request' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to fetch request',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to fetch request',
         'FETCH_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     return { success: true, data: data.data };
   } catch (error) {
     return handleApiError(error, 'Get request');
@@ -130,14 +132,16 @@ export async function getStageCounts(): Promise<ActionResponse<StageCounts>> {
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to fetch stage counts' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to fetch stage counts',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to fetch stage counts',
         'FETCH_ERROR'
       );
     }
 
-    const data = await response.json() as StageCountsResponse;
+    const data = (await response.json()) as StageCountsResponse;
     return { success: true, data: data.data };
   } catch (error) {
     return handleApiError(error, 'Get stage counts');
@@ -164,14 +168,16 @@ export async function createRequest(input: CreateRequestInput): Promise<ActionRe
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to create request' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to create request',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to create request',
         'CREATE_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -198,14 +204,16 @@ export async function updateRequest(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to update request' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to update request',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to update request',
         'UPDATE_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     revalidatePath(`/dashboard/business-center/intake/${id}`);
     return { success: true, data: data.data };
@@ -229,7 +237,9 @@ export async function cancelRequest(id: string): Promise<ActionResponse> {
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to cancel request' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to cancel request',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to cancel request',
         'DELETE_ERROR'
@@ -267,14 +277,16 @@ export async function transitionRequest(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to transition request' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to transition request',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to transition request',
         'TRANSITION_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -301,14 +313,16 @@ export async function holdRequest(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to put request on hold' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to put request on hold',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to put request on hold',
         'HOLD_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -331,14 +345,16 @@ export async function resumeRequest(id: string): Promise<ActionResponse<Request>
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to resume request' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to resume request',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to resume request',
         'RESUME_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -365,14 +381,16 @@ export async function estimateRequest(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to submit estimation' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to submit estimation',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to submit estimation',
         'ESTIMATE_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -399,14 +417,16 @@ export async function convertRequest(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to convert request' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to convert request',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to convert request',
         'CONVERT_ERROR'
       );
     }
 
-    const data = await response.json() as ConvertResponse;
+    const data = (await response.json()) as ConvertResponse;
     revalidatePath('/dashboard/business-center/intake');
     revalidatePath('/dashboard/business-center/projects');
     return { success: true, data: data.data };
@@ -435,14 +455,16 @@ export async function assignPm(id: string, assignedPmId: string): Promise<Action
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to assign PM' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to assign PM',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to assign PM',
         'ASSIGN_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -469,14 +491,16 @@ export async function assignEstimator(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to assign estimator' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to assign estimator',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to assign estimator',
         'ASSIGN_ERROR'
       );
     }
 
-    const data = await response.json() as RequestResponse;
+    const data = (await response.json()) as RequestResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -519,14 +543,16 @@ export async function bulkTransitionRequests(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to bulk transition requests' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to bulk transition requests',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to bulk transition requests',
         'BULK_TRANSITION_ERROR'
       );
     }
 
-    const data = await response.json() as BulkOperationResponse;
+    const data = (await response.json()) as BulkOperationResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {
@@ -553,14 +579,16 @@ export async function bulkAssignPm(
     });
 
     if (!response.ok) {
-      const error = await safeJsonParse<{ error?: string; message?: string }>(response, { error: 'Failed to bulk assign PM' });
+      const error = await safeJsonParse<{ error?: string; message?: string }>(response, {
+        error: 'Failed to bulk assign PM',
+      });
       throw new BusinessCenterError(
         error.error ?? error.message ?? 'Failed to bulk assign PM',
         'BULK_ASSIGN_ERROR'
       );
     }
 
-    const data = await response.json() as BulkOperationResponse;
+    const data = (await response.json()) as BulkOperationResponse;
     revalidatePath('/dashboard/business-center/intake');
     return { success: true, data: data.data };
   } catch (error) {

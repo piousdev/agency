@@ -39,11 +39,18 @@ async function createAdmin() {
     // Debug: log environment variables
     console.log('📋 Environment variables:');
     console.log(`   ADMIN_EMAIL: ${adminEmail ?? '[NOT SET]'}`);
-    console.log(`   ADMIN_PASSWORD: ${adminPassword !== undefined && adminPassword !== '' ? '[SET]' : '[NOT SET]'}`);
+    console.log(
+      `   ADMIN_PASSWORD: ${adminPassword !== undefined && adminPassword !== '' ? '[SET]' : '[NOT SET]'}`
+    );
     console.log(`   ADMIN_NAME (raw): "${process.env.ADMIN_NAME ?? ''}"`);
     console.log(`   ADMIN_NAME (final): "${adminName}"\n`);
 
-    if (adminEmail === undefined || adminEmail === '' || adminPassword === undefined || adminPassword === '') {
+    if (
+      adminEmail === undefined ||
+      adminEmail === '' ||
+      adminPassword === undefined ||
+      adminPassword === ''
+    ) {
       console.error('❌ Error: ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env');
       console.log('\nExample:');
       console.log('  ADMIN_EMAIL=admin@example.com');

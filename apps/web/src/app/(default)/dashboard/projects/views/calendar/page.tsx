@@ -1,16 +1,7 @@
 import Link from 'next/link';
 
 import { IconCalendar, IconChevronLeft, IconChevronRight, IconPlus } from '@tabler/icons-react';
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-  isSameDay,
-  
-  
-} from 'date-fns';
-
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -111,7 +102,10 @@ export default async function ProjectCalendarViewPage() {
           <div className="grid grid-cols-7 gap-1">
             {/* Empty cells for days before the first of the month */}
             {Array.from({ length: firstDayOfWeek }).map((_, index) => (
-              <div key={`empty-${String(index)}`} className="min-h-[100px] bg-muted/20 rounded-lg" />
+              <div
+                key={`empty-${String(index)}`}
+                className="min-h-[100px] bg-muted/20 rounded-lg"
+              />
             ))}
 
             {/* Days of the month */}

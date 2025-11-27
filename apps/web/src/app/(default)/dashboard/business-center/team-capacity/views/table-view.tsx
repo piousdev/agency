@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import { IconDots, IconUser, IconCalendar, IconChartBar } from '@tabler/icons-react';
 
-
 import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -61,128 +60,127 @@ export function TeamTableView({ teamMembers }: TeamTableViewProps) {
     });
   };
 
-  const columns = React.useMemo<ColumnDef<TeamMember>[]>(
-    () => {
-      /* eslint-disable react/no-unstable-nested-components */
-      return [
-    {
-      accessorKey: 'name',
-      header: 'Team Member',
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate" title={row.original.name}>
-          {row.original.name}
-        </div>
-      ),
-      meta: {
-        displayName: 'Team Member',
-      },
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }) => {
-        const status = row.original.status;
-        return <Badge variant={statusVariants[status]}>{statusLabels[status]}</Badge>;
-      },
-      filterFn: (row, id, value: string[]) => {
-        if (!value.length) return true;
-        return value.includes(row.getValue(id));
-      },
-      meta: {
-        displayName: 'Status',
-        filterType: 'multi-select',
-        filterOptions: Object.entries(statusLabels).map(([value, label]) => ({
-          label,
-          value,
-        })),
-      },
-    },
-    {
-      accessorKey: 'capacityPercentage',
-      header: 'Capacity',
-      cell: ({ row }) => {
-        const percentage = row.original.capacityPercentage;
-        return (
-          <div className="flex items-center gap-2 min-w-[140px]">
-            <Progress
-              value={percentage}
-              className={`h-2 w-24 ${percentage > 100 ? '[&>div]:bg-destructive' : percentage > 80 ? '[&>div]:bg-yellow-500' : ''}`}
-            />
-            <span className="text-sm text-muted-foreground w-12">{percentage}%</span>
+  const columns = React.useMemo<ColumnDef<TeamMember>[]>(() => {
+    /* eslint-disable react/no-unstable-nested-components */
+    return [
+      {
+        accessorKey: 'name',
+        header: 'Team Member',
+        cell: ({ row }) => (
+          <div className="font-medium max-w-[200px] truncate" title={row.original.name}>
+            {row.original.name}
           </div>
-        );
+        ),
+        meta: {
+          displayName: 'Team Member',
+        },
       },
-      sortingFn: 'basic',
-      meta: {
-        displayName: 'Capacity Used',
-        filterType: 'number-range',
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: ({ row }) => {
+          const status = row.original.status;
+          return <Badge variant={statusVariants[status]}>{statusLabels[status]}</Badge>;
+        },
+        filterFn: (row, id, value: string[]) => {
+          if (!value.length) return true;
+          return value.includes(row.getValue(id));
+        },
+        meta: {
+          displayName: 'Status',
+          filterType: 'multi-select',
+          filterOptions: Object.entries(statusLabels).map(([value, label]) => ({
+            label,
+            value,
+          })),
+        },
       },
-    },
-    {
-      accessorKey: 'availableCapacity',
-      header: 'Available',
-      cell: ({ row }) => (
-        <span
-          className={`text-sm ${row.original.availableCapacity < 20 ? 'text-destructive' : 'text-muted-foreground'}`}
-        >
-          {row.original.availableCapacity}%
-        </span>
-      ),
-      sortingFn: 'basic',
-      meta: {
-        displayName: 'Available Capacity',
-        filterType: 'number-range',
+      {
+        accessorKey: 'capacityPercentage',
+        header: 'Capacity',
+        cell: ({ row }) => {
+          const percentage = row.original.capacityPercentage;
+          return (
+            <div className="flex items-center gap-2 min-w-[140px]">
+              <Progress
+                value={percentage}
+                className={`h-2 w-24 ${percentage > 100 ? '[&>div]:bg-destructive' : percentage > 80 ? '[&>div]:bg-yellow-500' : ''}`}
+              />
+              <span className="text-sm text-muted-foreground w-12">{percentage}%</span>
+            </div>
+          );
+        },
+        sortingFn: 'basic',
+        meta: {
+          displayName: 'Capacity Used',
+          filterType: 'number-range',
+        },
       },
-    },
-    {
-      accessorKey: 'projectCount',
-      header: 'Projects',
-      cell: ({ row }) => <span className="text-muted-foreground">{row.original.projectCount}</span>,
-      sortingFn: 'basic',
-      meta: {
-        displayName: 'Project Count',
-        filterType: 'number-range',
+      {
+        accessorKey: 'availableCapacity',
+        header: 'Available',
+        cell: ({ row }) => (
+          <span
+            className={`text-sm ${row.original.availableCapacity < 20 ? 'text-destructive' : 'text-muted-foreground'}`}
+          >
+            {row.original.availableCapacity}%
+          </span>
+        ),
+        sortingFn: 'basic',
+        meta: {
+          displayName: 'Available Capacity',
+          filterType: 'number-range',
+        },
       },
-    },
-    {
-      accessorKey: 'projects',
-      header: 'Active Projects',
-      enableSorting: false,
-      cell: ({ row }) => {
-        const projects = row.original.projects;
-        if (!projects.length) {
-          return <span className="text-muted-foreground text-sm">No active projects</span>;
-        }
+      {
+        accessorKey: 'projectCount',
+        header: 'Projects',
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">{row.original.projectCount}</span>
+        ),
+        sortingFn: 'basic',
+        meta: {
+          displayName: 'Project Count',
+          filterType: 'number-range',
+        },
+      },
+      {
+        accessorKey: 'projects',
+        header: 'Active Projects',
+        enableSorting: false,
+        cell: ({ row }) => {
+          const projects = row.original.projects;
+          if (!projects.length) {
+            return <span className="text-muted-foreground text-sm">No active projects</span>;
+          }
 
-        return (
-          <div className="flex flex-wrap gap-1 max-w-[200px]">
-            {projects.slice(0, 2).map((project) => (
-              <Badge
-                key={project.id}
-                variant="outline"
-                className="text-xs truncate max-w-[90px]"
-                title={project.name}
-              >
-                {project.name}
-              </Badge>
-            ))}
-            {projects.length > 2 && (
-              <Badge variant="outline" className="text-xs">
-                +{projects.length - 2}
-              </Badge>
-            )}
-          </div>
-        );
+          return (
+            <div className="flex flex-wrap gap-1 max-w-[200px]">
+              {projects.slice(0, 2).map((project) => (
+                <Badge
+                  key={project.id}
+                  variant="outline"
+                  className="text-xs truncate max-w-[90px]"
+                  title={project.name}
+                >
+                  {project.name}
+                </Badge>
+              ))}
+              {projects.length > 2 && (
+                <Badge variant="outline" className="text-xs">
+                  +{projects.length - 2}
+                </Badge>
+              )}
+            </div>
+          );
+        },
+        meta: {
+          displayName: 'Active Projects',
+        },
       },
-      meta: {
-        displayName: 'Active Projects',
-      },
-    },
-  ];
-      /* eslint-enable react/no-unstable-nested-components */
-    },
-    []
-  );
+    ];
+    /* eslint-enable react/no-unstable-nested-components */
+  }, []);
 
   const renderRowActions = (_row: Row<TeamMember>) => (
     <DropdownMenu>

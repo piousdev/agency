@@ -2,7 +2,7 @@ import { cache } from 'react';
 
 import { serverFetch } from '../api-client';
 
-import type {  Permission } from './permissions-constants';
+import type { Permission } from './permissions-constants';
 
 /**
  * Fetch user permissions from the API
@@ -13,7 +13,9 @@ export const getUserPermissions = cache(async (userId: string): Promise<Permissi
     const response = await serverFetch(`/api/users/${userId}/permissions`);
 
     if (!response.ok) {
-      console.error(`Failed to fetch permissions: ${String(response.status)} ${response.statusText}`);
+      console.error(
+        `Failed to fetch permissions: ${String(response.status)} ${response.statusText}`
+      );
       return [];
     }
 

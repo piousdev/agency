@@ -107,8 +107,8 @@ export function VerifyEmailContent() {
           </div>
           <CardTitle className="text-2xl font-bold">No Verification Token</CardTitle>
           <CardDescription>
-            We couldn&apos;t find a verification token in the URL. Please check your email and click the
-            verification link.
+            We couldn&apos;t find a verification token in the URL. Please check your email and click
+            the verification link.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

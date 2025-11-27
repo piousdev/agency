@@ -82,7 +82,7 @@ export const useAuthUI = create<AuthUIState>()(
       setRememberEmail: (remember, email) =>
         set({
           rememberEmail: remember,
-          savedEmail: remember ? email ?? null : null,
+          savedEmail: remember ? (email ?? null) : null,
         }),
 
       clearSavedEmail: () =>

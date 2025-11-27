@@ -57,8 +57,6 @@ import { MilestoneProgress } from './milestone-progress';
 
 import type { Milestone } from '@/lib/api/milestones/types';
 
-
-
 interface MilestoneListProps {
   milestones: Milestone[];
   projectId: string;
@@ -120,7 +118,7 @@ export function MilestoneList({
                   ...m,
                   name: (formData.get('name') as string) || m.name,
                   description: (formData.get('description') as string) || m.description,
-                  status: ((formData.get('status') ?? m.status) as MilestoneStatus),
+                  status: (formData.get('status') ?? m.status) as MilestoneStatus,
                   dueDate: (formData.get('dueDate') as string) || m.dueDate,
                   sortOrder: parseInt(formData.get('sortOrder') as string) || m.sortOrder,
                   updatedAt: new Date().toISOString(),

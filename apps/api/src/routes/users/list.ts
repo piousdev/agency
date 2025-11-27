@@ -43,7 +43,11 @@ app.get(
       const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
       // Determine sort column using validated sortBy from schema
-      type SortColumn = typeof user.name | typeof user.email | typeof user.createdAt | typeof user.updatedAt;
+      type SortColumn =
+        | typeof user.name
+        | typeof user.email
+        | typeof user.createdAt
+        | typeof user.updatedAt;
       type ValidSortBy = 'name' | 'email' | 'createdAt' | 'updatedAt';
       const sortColumnMap: Record<ValidSortBy, SortColumn> = {
         name: user.name,

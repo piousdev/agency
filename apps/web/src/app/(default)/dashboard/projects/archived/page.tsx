@@ -184,7 +184,7 @@ export default async function ArchivedProjectsPage() {
                                 </AvatarFallback>
                               </Avatar>
                             ))}
-                            {(project.assignees.length) === 0 && (
+                            {project.assignees.length === 0 && (
                               <span className="text-xs text-muted-foreground">No team</span>
                             )}
                           </div>

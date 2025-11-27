@@ -169,129 +169,129 @@ export function TableView({
     }
   };
 
-  const columns = React.useMemo<ColumnDef<Request>[]>(
-    () => {
-      /* eslint-disable react/no-unstable-nested-components */
-      return [
-    {
-      accessorKey: 'title',
-      header: 'Request',
-      cell: ({ row }) => (
-        <div>
-          <div className="font-medium max-w-[250px] truncate" title={row.original.title}>
-            {row.original.title}
+  const columns = React.useMemo<ColumnDef<Request>[]>(() => {
+    /* eslint-disable react/no-unstable-nested-components */
+    return [
+      {
+        accessorKey: 'title',
+        header: 'Request',
+        cell: ({ row }) => (
+          <div>
+            <div className="font-medium max-w-[250px] truncate" title={row.original.title}>
+              {row.original.title}
+            </div>
+            <div className="text-xs text-muted-foreground">{row.original.requestNumber}</div>
           </div>
-          <div className="text-xs text-muted-foreground">{row.original.requestNumber}</div>
-        </div>
-      ),
-      meta: {
-        displayName: 'Request',
+        ),
+        meta: {
+          displayName: 'Request',
+        },
       },
-    },
-    {
-      accessorKey: 'type',
-      header: 'Type',
-      cell: ({ row }) => (
-        <Badge variant="secondary" className="text-xs">
-          {REQUEST_TYPE_LABELS[row.original.type]}
-        </Badge>
-      ),
-      filterFn: (row, id, value: string[]) => {
-        if (!value.length) return true;
-        return value.includes(row.getValue(id));
+      {
+        accessorKey: 'type',
+        header: 'Type',
+        cell: ({ row }) => (
+          <Badge variant="secondary" className="text-xs">
+            {REQUEST_TYPE_LABELS[row.original.type]}
+          </Badge>
+        ),
+        filterFn: (row, id, value: string[]) => {
+          if (!value.length) return true;
+          return value.includes(row.getValue(id));
+        },
+        meta: {
+          displayName: 'Type',
+          filterType: 'multi-select' as const,
+          filterOptions: Object.entries(REQUEST_TYPE_LABELS).map(([value, label]) => ({
+            label,
+            value,
+          })),
+        },
       },
-      meta: {
-        displayName: 'Type',
-        filterType: 'multi-select' as const,
-        filterOptions: Object.entries(REQUEST_TYPE_LABELS).map(([value, label]) => ({
-          label,
-          value,
-        })),
+      {
+        accessorKey: 'stage',
+        header: 'Stage',
+        cell: ({ row }) => {
+          const stage = row.original.stage;
+          return <Badge variant={STAGE_VARIANTS[stage]}>{REQUEST_STAGE_LABELS[stage]}</Badge>;
+        },
+        filterFn: (row, id, value: string[]) => {
+          if (!value.length) return true;
+          return value.includes(row.getValue(id));
+        },
+        meta: {
+          displayName: 'Stage',
+          filterType: 'multi-select' as const,
+          filterOptions: Object.entries(REQUEST_STAGE_LABELS).map(([value, label]) => ({
+            label,
+            value,
+          })),
+        },
       },
-    },
-    {
-      accessorKey: 'stage',
-      header: 'Stage',
-      cell: ({ row }) => {
-        const stage = row.original.stage;
-        return <Badge variant={STAGE_VARIANTS[stage]}>{REQUEST_STAGE_LABELS[stage]}</Badge>;
+      {
+        accessorKey: 'priority',
+        header: 'Priority',
+        cell: ({ row }) => (
+          <Badge
+            variant="outline"
+            className={cn('text-xs', PRIORITY_COLORS[row.original.priority])}
+          >
+            {row.original.priority}
+          </Badge>
+        ),
+        filterFn: (row, id, value: string[]) => {
+          if (!value.length) return true;
+          return value.includes(row.getValue(id));
+        },
+        meta: {
+          displayName: 'Priority',
+          filterType: 'multi-select' as const,
+          filterOptions: [
+            { label: 'Critical', value: 'critical' },
+            { label: 'High', value: 'high' },
+            { label: 'Medium', value: 'medium' },
+            { label: 'Low', value: 'low' },
+          ],
+        },
       },
-      filterFn: (row, id, value: string[]) => {
-        if (!value.length) return true;
-        return value.includes(row.getValue(id));
-      },
-      meta: {
-        displayName: 'Stage',
-        filterType: 'multi-select' as const,
-        filterOptions: Object.entries(REQUEST_STAGE_LABELS).map(([value, label]) => ({
-          label,
-          value,
-        })),
-      },
-    },
-    {
-      accessorKey: 'priority',
-      header: 'Priority',
-      cell: ({ row }) => (
-        <Badge variant="outline" className={cn('text-xs', PRIORITY_COLORS[row.original.priority])}>
-          {row.original.priority}
-        </Badge>
-      ),
-      filterFn: (row, id, value: string[]) => {
-        if (!value.length) return true;
-        return value.includes(row.getValue(id));
-      },
-      meta: {
-        displayName: 'Priority',
-        filterType: 'multi-select' as const,
-        filterOptions: [
-          { label: 'Critical', value: 'critical' },
-          { label: 'High', value: 'high' },
-          { label: 'Medium', value: 'medium' },
-          { label: 'Low', value: 'low' },
-        ],
-      },
-    },
-    {
-      accessorKey: 'createdAt',
-      header: 'Created',
-      cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
-          {format(new Date(row.original.createdAt), 'MMM d, yyyy')}
-        </span>
-      ),
-      sortingFn: 'datetime',
-      meta: {
-        displayName: 'Created Date',
-        filterType: 'date' as const,
-      },
-    },
-    {
-      accessorKey: 'desiredDeliveryDate',
-      header: 'Desired Delivery',
-      cell: ({ row }) => {
-        const date = row.original.desiredDeliveryDate;
-        if (!date) {
-          return <span className="text-muted-foreground">Not set</span>;
-        }
-        const isOverdue = new Date(date) < new Date();
-        return (
-          <span className={isOverdue ? 'text-destructive font-medium' : ''}>
-            {format(new Date(date), 'MMM d, yyyy')}
+      {
+        accessorKey: 'createdAt',
+        header: 'Created',
+        cell: ({ row }) => (
+          <span className="text-sm text-muted-foreground">
+            {format(new Date(row.original.createdAt), 'MMM d, yyyy')}
           </span>
-        );
+        ),
+        sortingFn: 'datetime',
+        meta: {
+          displayName: 'Created Date',
+          filterType: 'date' as const,
+        },
       },
-      sortingFn: 'datetime',
-      meta: {
-        displayName: 'Desired Delivery',
-        filterType: 'date' as const,
+      {
+        accessorKey: 'desiredDeliveryDate',
+        header: 'Desired Delivery',
+        cell: ({ row }) => {
+          const date = row.original.desiredDeliveryDate;
+          if (!date) {
+            return <span className="text-muted-foreground">Not set</span>;
+          }
+          const isOverdue = new Date(date) < new Date();
+          return (
+            <span className={isOverdue ? 'text-destructive font-medium' : ''}>
+              {format(new Date(date), 'MMM d, yyyy')}
+            </span>
+          );
+        },
+        sortingFn: 'datetime',
+        meta: {
+          displayName: 'Desired Delivery',
+          filterType: 'date' as const,
+        },
       },
-    },
-  ];
-      /* eslint-enable react/no-unstable-nested-components */
-    },
-    []
-  );
+    ];
+    /* eslint-enable react/no-unstable-nested-components */
+  }, []);
 
   const handleRowClick = (row: Row<Request>) => {
     router.push(`/dashboard/business-center/intake/${row.original.id}`);

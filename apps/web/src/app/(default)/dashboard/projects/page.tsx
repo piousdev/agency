@@ -241,12 +241,12 @@ export default async function ProjectsPage() {
                                 </AvatarFallback>
                               </Avatar>
                             ))}
-                            {(project.assignees.length) > 3 && (
+                            {project.assignees.length > 3 && (
                               <div className="h-8 w-8 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-medium">
-                                +{(project.assignees.length) - 3}
+                                +{project.assignees.length - 3}
                               </div>
                             )}
-                            {(project.assignees.length) === 0 && (
+                            {project.assignees.length === 0 && (
                               <span className="text-xs text-muted-foreground">No team</span>
                             )}
                           </div>

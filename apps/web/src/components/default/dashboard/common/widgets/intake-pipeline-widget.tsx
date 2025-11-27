@@ -191,12 +191,13 @@ export function IntakePipelineWidget() {
                 className="flex items-center justify-between p-2 rounded bg-muted/50"
               >
                 <span className="text-muted-foreground">
-                  {REQUEST_STAGE_LABELS[stage as keyof typeof REQUEST_STAGE_LABELS].split(
-                    ' '
-                  )[0] ?? stage}
+                  {REQUEST_STAGE_LABELS[stage as keyof typeof REQUEST_STAGE_LABELS].split(' ')[0] ??
+                    stage}
                 </span>
                 <span className="font-medium">
-                  {hours < 24 ? `${String(Math.round(hours))}h` : `${String(Math.round(hours / 24))}d`}
+                  {hours < 24
+                    ? `${String(Math.round(hours))}h`
+                    : `${String(Math.round(hours / 24))}d`}
                 </span>
               </div>
             ))}

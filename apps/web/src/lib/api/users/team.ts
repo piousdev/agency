@@ -26,7 +26,8 @@ export async function listTeamMembers(): Promise<TeamMembersResponse> {
     let errorMessage: string;
     try {
       const errorData = (await response.json()) as { error?: string; message?: string };
-      errorMessage = errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
+      errorMessage =
+        errorData.error ?? errorData.message ?? `Request failed (${String(response.status)})`;
     } catch {
       errorMessage = `Request failed (${String(response.status)})`;
     }

@@ -10,7 +10,6 @@ import {
   IconRotate2,
 } from '@tabler/icons-react';
 
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +24,6 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 import type { Table } from '@tanstack/react-table';
-
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

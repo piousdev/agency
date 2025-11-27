@@ -71,7 +71,7 @@ export function DefaultHeader() {
             <BreadcrumbList>
               {visible.map((breadcrumb, index) => {
                 // Check if we need to show ellipsis after first item
-                const showEllipsisAfter = index === 0  || hidden.length > 0;
+                const showEllipsisAfter = index === 0 || hidden.length > 0;
 
                 return (
                   <div key={breadcrumb.href} className="contents">

@@ -18,15 +18,15 @@ files.forEach((file) => {
   // Fix 1: || to ?? for nullish coalescing (but be careful - only for specific patterns)
   // Pattern: error ?? 'string' or value ?? defaultValue
   const beforeOr = content;
-  content = content.replace(/(\berror\s*)\|\|\s*'/g, '$1?? \'');
-  content = content.replace(/(\bresult\.error\s*)\|\|\s*'/g, '$1?? \'');
+  content = content.replace(/(\berror\s*)\|\|\s*'/g, "$1?? '");
+  content = content.replace(/(\bresult\.error\s*)\|\|\s*'/g, "$1?? '");
   content = content.replace(/(\bresult\.data\s*)\|\|\s*\{/g, '$1?? {');
   content = content.replace(/(\bdata\s*)\|\|\s*\[\]/g, '$1?? []');
   content = content.replace(/(\bdata\s*)\|\|\s*\{/g, '$1?? {');
 
   // But we need to revert certain cases where || is correct
   // Restore for boolean checks, non-null defaults, etc.
-  content = content.replace(/(\?\?\s*')/g, '|| \'');  // Revert simple string defaults
+  content = content.replace(/(\?\?\s*')/g, "|| '"); // Revert simple string defaults
 
   // Fix 2: Template literal with numbers - wrap with String()
   content = content.replace(/\$\{([^}]*?\.length)\}/g, '${String($1)}');

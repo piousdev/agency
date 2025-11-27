@@ -234,9 +234,7 @@ function formatStatusLabel(value: unknown): string {
   }
   // eslint-disable-next-line @typescript-eslint/no-base-to-string
   const strValue = String(value);
-  return strValue
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return strValue.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function getActivityConfig(type: ActivityType) {

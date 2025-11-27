@@ -6,7 +6,10 @@ import { AddWidgetPopover } from '@/components/default/dashboard/business-center
 import { DoneButton } from '@/components/default/dashboard/business-center/overview/components/done-button';
 import { LayoutPresetsMenu } from '@/components/default/dashboard/business-center/overview/components/layout-presets-menu';
 import { SettingsMenu } from '@/components/default/dashboard/business-center/overview/components/settings-menu';
-import { useLayoutInit, useEditModeState  } from '@/components/default/dashboard/business-center/overview/hooks';
+import {
+  useLayoutInit,
+  useEditModeState,
+} from '@/components/default/dashboard/business-center/overview/hooks';
 
 export interface EditModeToggleProps {
   readonly userRole: string;

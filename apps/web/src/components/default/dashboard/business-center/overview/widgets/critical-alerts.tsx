@@ -6,7 +6,10 @@ import { AlertItem } from '@/components/default/dashboard/business-center/overvi
 import { DismissAllButton } from '@/components/default/dashboard/business-center/overview/components/alerts-dismiss-all-button';
 import { AlertsEmptyState } from '@/components/default/dashboard/business-center/overview/components/alerts-empty-state';
 import { AlertsHeader } from '@/components/default/dashboard/business-center/overview/components/alerts-header';
-import { useAlertsData, useAlertFilter  } from '@/components/default/dashboard/business-center/overview/hooks';
+import {
+  useAlertsData,
+  useAlertFilter,
+} from '@/components/default/dashboard/business-center/overview/hooks';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 

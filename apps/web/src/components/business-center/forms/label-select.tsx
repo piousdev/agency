@@ -1,6 +1,6 @@
 'use client';
 
-import { useState,  useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 import { IconCheck, IconChevronDown, IconLoader2 } from '@tabler/icons-react';
 

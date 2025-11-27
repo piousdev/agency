@@ -9,15 +9,7 @@ import {
   IconTrendingUp,
   IconTrendingDown,
 } from '@tabler/icons-react';
-import {
-  differenceInDays,
-  format,
-  
-  eachDayOfInterval,
-  
-  isBefore,
-  isToday,
-} from 'date-fns';
+import { differenceInDays, format, eachDayOfInterval, isBefore, isToday } from 'date-fns';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +35,11 @@ const DEFAULT_DAILY_DATA: { date: string; completedPoints: number }[] = [];
  * Sprint Burndown Chart Component
  * Shows a visual representation of sprint progress with an ideal burndown line
  */
-export function SprintBurndown({ sprint, dailyData = DEFAULT_DAILY_DATA, className }: SprintBurndownProps) {
+export function SprintBurndown({
+  sprint,
+  dailyData = DEFAULT_DAILY_DATA,
+  className,
+}: SprintBurndownProps) {
   const progress = calculateSprintProgress(sprint.plannedPoints, sprint.completedPoints);
   const daysRemaining = calculateDaysRemaining(sprint.endDate);
 
@@ -104,7 +100,7 @@ export function SprintBurndown({ sprint, dailyData = DEFAULT_DAILY_DATA, classNa
 
     const expectedProgress =
       chartData.totalDays > 0
-        ? ((chartData.totalDays - (daysRemaining)) / chartData.totalDays) * 100
+        ? ((chartData.totalDays - daysRemaining) / chartData.totalDays) * 100
         : 0;
 
     const diff = progress - expectedProgress;
@@ -218,7 +214,7 @@ export function SprintBurndown({ sprint, dailyData = DEFAULT_DAILY_DATA, classNa
                 <div
                   className="absolute top-0 bottom-0 w-0.5 bg-destructive"
                   style={{
-                    left: `${String(Math.min(100, ((chartData.totalDays - (daysRemaining)) / chartData.totalDays) * 100))}%`,
+                    left: `${String(Math.min(100, ((chartData.totalDays - daysRemaining) / chartData.totalDays) * 100))}%`,
                   }}
                 />
               )}

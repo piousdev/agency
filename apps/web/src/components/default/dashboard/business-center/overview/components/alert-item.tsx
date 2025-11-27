@@ -8,7 +8,6 @@ import { AlertActionsMenu } from './alert-actions-menu';
 
 import type { AlertPayload } from '@/components/default/dashboard/business-center/overview/types';
 
-
 interface AlertItemProps {
   readonly alert: AlertPayload;
   readonly onDismiss: (alertId: string) => void;

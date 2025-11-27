@@ -71,10 +71,9 @@ export function CompletedTableView({ projects }: CompletedTableViewProps) {
     });
   };
 
-  const columns = React.useMemo<ColumnDef<ProjectWithRelations>[]>(
-    () => {
-      /* eslint-disable react/no-unstable-nested-components */
-      return [
+  const columns = React.useMemo<ColumnDef<ProjectWithRelations>[]>(() => {
+    /* eslint-disable react/no-unstable-nested-components */
+    return [
       {
         accessorKey: 'name',
         header: 'Project',
@@ -160,7 +159,9 @@ export function CompletedTableView({ projects }: CompletedTableViewProps) {
         header: 'Created',
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {row.original.createdAt ? format(new Date(row.original.createdAt), 'MMM d, yyyy') : 'N/A'}
+            {row.original.createdAt
+              ? format(new Date(row.original.createdAt), 'MMM d, yyyy')
+              : 'N/A'}
           </span>
         ),
         sortingFn: 'datetime',
@@ -186,10 +187,8 @@ export function CompletedTableView({ projects }: CompletedTableViewProps) {
         },
       },
     ];
-      /* eslint-enable react/no-unstable-nested-components */
-    },
-    []
-  );
+    /* eslint-enable react/no-unstable-nested-components */
+  }, []);
 
   const handleRowClick = (row: Row<ProjectWithRelations>) => {
     router.push(`/dashboard/business-center/projects/${row.original.id}`);

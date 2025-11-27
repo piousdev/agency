@@ -19,7 +19,6 @@ import { cn } from '@/lib/utils';
 
 import type { Milestone } from '@/lib/api/milestones/types';
 
-
 interface MilestoneSelectProps {
   value?: string | null;
   onValueChange?: (value: string | null) => void;

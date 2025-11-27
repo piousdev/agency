@@ -20,7 +20,6 @@ import type {
   WidgetLayout,
 } from '@/lib/api/dashboard-preferences';
 
-
 // Re-export types for consumers
 export type { DashboardPreferences, WidgetLayout };
 

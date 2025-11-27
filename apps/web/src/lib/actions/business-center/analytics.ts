@@ -42,7 +42,7 @@ export async function getIntakeAnalytics(): Promise<AnalyticsResult> {
     if (!response.ok) {
       let errorData: { error?: string } = {};
       try {
-        errorData = await response.json() as { error?: string };
+        errorData = (await response.json()) as { error?: string };
       } catch {
         // Ignore JSON parse errors
       }
@@ -52,11 +52,10 @@ export async function getIntakeAnalytics(): Promise<AnalyticsResult> {
       };
     }
 
-    const data = await response.json() as AnalyticsResult;
+    const data = (await response.json()) as AnalyticsResult;
     return data;
   } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     console.error('Error fetching analytics:', errorMessage);
     return {
       success: false,
