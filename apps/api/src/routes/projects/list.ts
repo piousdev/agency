@@ -86,9 +86,9 @@ app.get(
       }
 
       // Query projects with pagination
-      // Query projects with pagination
       const offset = (page - 1) * pageSize;
       const projects = await db.query.project.findMany({
+        where: whereClause,
         orderBy: sortOrder === 'asc' ? asc(sortColumn) : desc(sortColumn),
         limit: pageSize,
         offset,

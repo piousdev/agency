@@ -20,7 +20,7 @@ export const getUserPermissions = cache(async (userId: string): Promise<Permissi
     }
 
     const data = (await response.json()) as { permissions?: Permission[] };
-    return data.permissions;
+    return data.permissions ?? [];
   } catch (error) {
     console.error('Failed to get user permissions:', error);
     return [];
