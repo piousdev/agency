@@ -57,7 +57,7 @@ export function EstimationForm({ request }: EstimationFormProps) {
     defaultValues: {
       storyPoints: request.storyPoints ?? undefined,
       confidence: request.confidence ?? 'medium',
-      estimationNotes: request.estimationNotes,
+      estimationNotes: request.estimationNotes ?? '',
     },
   });
 
